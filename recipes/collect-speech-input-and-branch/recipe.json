@@ -1,0 +1,23 @@
+{
+  "slug": "collect-speech-input-and-branch",
+  "title": "Collect speech input and branch on it",
+  "alias": "prompt + speech recognition",
+  "summary": "Ask an open question, recognise the answer, and take a different path for each.",
+  "scenario": "Natural-language routing without a full agent",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "stt",
+    "tts"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "launch"
+}

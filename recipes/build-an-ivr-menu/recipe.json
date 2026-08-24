@@ -1,0 +1,24 @@
+{
+  "slug": "build-an-ivr-menu",
+  "title": "Build an IVR menu",
+  "alias": "DTMF collect + branch",
+  "summary": "Play a menu, collect keypad input, and route the caller to the right place.",
+  "scenario": "Press 1 for sales",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "dtmf",
+    "tts"
+  ],
+  "surfaces": [
+    "python",
+    "typescript",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "launch"
+}

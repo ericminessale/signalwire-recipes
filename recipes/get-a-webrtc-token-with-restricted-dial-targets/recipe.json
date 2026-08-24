@@ -1,0 +1,23 @@
+{
+  "slug": "get-a-webrtc-token-with-restricted-dial-targets",
+  "title": "Issue a browser calling token that cannot dial anywhere",
+  "alias": "scoped WebRTC token",
+  "summary": "Mint a short-lived browser token and restrict what it is allowed to call.",
+  "scenario": "Click-to-call without handing out your account",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "webrtc",
+    "security"
+  ],
+  "surfaces": [
+    "typescript",
+    "python"
+  ],
+  "governed": true,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "next"
+}

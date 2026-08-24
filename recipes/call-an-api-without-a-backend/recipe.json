@@ -1,0 +1,22 @@
+{
+  "slug": "call-an-api-without-a-backend",
+  "title": "Call an API without running a backend",
+  "alias": "declarative REST integration",
+  "summary": "Wire an agent to a REST endpoint with no webhook server in the middle.",
+  "scenario": "Package tracking, weather, stock quotes",
+  "category": "agent-basics",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "datamap"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "next"
+}

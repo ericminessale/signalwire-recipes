@@ -1,0 +1,22 @@
+{
+  "slug": "whisper-to-an-agent-mid-call",
+  "title": "Whisper to an agent mid-call",
+  "alias": "join_conference coach=",
+  "summary": "One-way audio that only the agent's leg can hear.",
+  "scenario": "Coaching without the caller knowing",
+  "category": "observe",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "conference",
+    "coach"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "observe",
+  "provenance": "extract",
+  "tier": "next"
+}

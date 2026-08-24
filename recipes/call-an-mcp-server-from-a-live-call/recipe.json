@@ -1,0 +1,22 @@
+{
+  "slug": "call-an-mcp-server-from-a-live-call",
+  "title": "Call an MCP server from a live call",
+  "alias": "mcp_gateway skill",
+  "summary": "Reach tools on an existing MCP server from inside a conversation.",
+  "scenario": "Booking a meeting by phone",
+  "category": "integrations",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "mcp",
+    "tool-calling"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "extract",
+  "tier": "next"
+}

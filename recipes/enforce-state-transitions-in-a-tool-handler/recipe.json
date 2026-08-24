@@ -1,0 +1,21 @@
+{
+  "slug": "enforce-state-transitions-in-a-tool-handler",
+  "title": "Enforce state transitions in a tool handler",
+  "alias": "handler-forced transitions",
+  "summary": "Your code decides what happens next, so the model cannot strand or misroute the caller.",
+  "scenario": "When step instructions alone are not enough",
+  "category": "governance",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "talk",
+  "provenance": "extract",
+  "tier": "next"
+}

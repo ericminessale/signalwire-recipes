@@ -1,0 +1,24 @@
+{
+  "slug": "route-a-call-to-an-ai-agent",
+  "title": "Route a call to an AI agent",
+  "alias": "agent as dial target",
+  "summary": "Point a phone number at an agent and let it answer.",
+  "scenario": "The first voice AI call you will make",
+  "category": "agent-basics",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "agent"
+  ],
+  "surfaces": [
+    "python",
+    "typescript",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "demos",
+  "tier": "launch"
+}

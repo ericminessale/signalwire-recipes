@@ -1,0 +1,23 @@
+{
+  "slug": "start-live-transcription",
+  "title": "Start live transcription and consume the webhook",
+  "alias": "live_transcribe",
+  "summary": "Turn on transcription for a call and receive the text as it is spoken.",
+  "scenario": "Feeding a transcript to your own system",
+  "category": "observe",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "stt",
+    "webhooks"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "observe",
+  "provenance": "rewrite",
+  "tier": "next"
+}

@@ -1,0 +1,24 @@
+{
+  "slug": "answer-an-inbound-call",
+  "title": "Answer an inbound call",
+  "alias": "answer + play",
+  "summary": "Accept an incoming call, greet the caller, and hang up cleanly.",
+  "scenario": "The hello-world of telephony",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "answer",
+    "tts"
+  ],
+  "surfaces": [
+    "python",
+    "typescript",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "launch"
+}

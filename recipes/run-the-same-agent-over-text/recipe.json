@@ -1,0 +1,24 @@
+{
+  "slug": "run-the-same-agent-over-text",
+  "title": "Run the same agent over text",
+  "alias": "chat transport",
+  "summary": "One agent definition answering by SMS as well as by voice.",
+  "scenario": "Channel parity without a second build",
+  "category": "messaging",
+  "products": [
+    "messaging",
+    "ai-agents"
+  ],
+  "capabilities": [
+    "chat",
+    "sms"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "text",
+  "provenance": "new",
+  "tier": "next"
+}

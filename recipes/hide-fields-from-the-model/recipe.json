@@ -1,0 +1,21 @@
+{
+  "slug": "hide-fields-from-the-model",
+  "title": "Hide fields from the model",
+  "alias": "server-side projection",
+  "summary": "Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.",
+  "scenario": "Risk flags and pricing the caller must not hear",
+  "category": "governance",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "talk",
+  "provenance": "extract",
+  "tier": "launch"
+}

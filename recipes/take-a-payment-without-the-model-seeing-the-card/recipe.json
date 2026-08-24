@@ -1,0 +1,22 @@
+{
+  "slug": "take-a-payment-without-the-model-seeing-the-card",
+  "title": "Take a payment without the model seeing the card",
+  "alias": "payment isolation",
+  "summary": "Collect card details on a recorded call with the digits never entering the prompt.",
+  "scenario": "Bill payment by phone",
+  "category": "governance",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "payment",
+    "compliance"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "none",
+  "provenance": "blocked",
+  "tier": "later"
+}

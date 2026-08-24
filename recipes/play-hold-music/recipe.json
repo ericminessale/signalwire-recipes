@@ -1,0 +1,22 @@
+{
+  "slug": "play-hold-music",
+  "title": "Play hold music on a parked leg",
+  "alias": "hold_music",
+  "summary": "Park a caller and cycle audio at them until something changes.",
+  "scenario": "Waiting without silence",
+  "category": "call-control",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "hold"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "narrow",
+  "tier": "next"
+}

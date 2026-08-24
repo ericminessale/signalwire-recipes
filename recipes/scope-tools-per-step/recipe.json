@@ -1,0 +1,22 @@
+{
+  "slug": "scope-tools-per-step",
+  "title": "Scope an agent's tools per step",
+  "alias": "set_functions per step",
+  "summary": "At each point in the conversation the model can only see the tools you allowed there.",
+  "scenario": "An agent that structurally cannot go off-script",
+  "category": "governance",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "tool-calling",
+    "governance"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "talk",
+  "provenance": "extract",
+  "tier": "launch"
+}

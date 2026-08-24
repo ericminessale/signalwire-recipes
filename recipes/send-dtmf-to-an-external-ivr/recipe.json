@@ -1,0 +1,22 @@
+{
+  "slug": "send-dtmf-to-an-external-ivr",
+  "title": "Send DTMF to someone else's IVR",
+  "alias": "send_digits",
+  "summary": "Drive another company's phone tree from your own code.",
+  "scenario": "Reaching a human at a carrier",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "dtmf"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "next"
+}

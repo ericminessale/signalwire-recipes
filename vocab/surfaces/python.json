@@ -1,0 +1,1 @@
+{"label":"Python","abbr":"py","entry":"app.py","deps":"requirements.txt","install":"pip install -r requirements.txt","run":"python app.py","verify":"python -m py_compile app.py"}

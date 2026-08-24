@@ -1,0 +1,22 @@
+{
+  "slug": "require-verification-before-unlocking-tools",
+  "title": "Require verification before unlocking tools",
+  "alias": "conditional tool exposure",
+  "summary": "The account tools do not exist in the model's world until a handler says the caller passed.",
+  "scenario": "Balance and account enquiries",
+  "category": "governance",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance",
+    "tool-calling"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "next"
+}

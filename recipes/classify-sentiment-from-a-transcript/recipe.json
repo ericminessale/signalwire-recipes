@@ -1,0 +1,22 @@
+{
+  "slug": "classify-sentiment-from-a-transcript",
+  "title": "Classify sentiment from a transcript",
+  "alias": "transcript classifier",
+  "summary": "Score the conversation in your own code and escalate on a threshold.",
+  "scenario": "Catching a call going wrong",
+  "category": "observe",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "stt",
+    "inference"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "observe",
+  "provenance": "new",
+  "tier": "later"
+}

@@ -1,0 +1,23 @@
+{
+  "slug": "send-an-sms",
+  "title": "Send an SMS",
+  "alias": "messages.create",
+  "summary": "The three-line version, plus what to do when it fails.",
+  "scenario": "Where every messaging project starts",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "sms"
+  ],
+  "surfaces": [
+    "python",
+    "typescript",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "launch"
+}

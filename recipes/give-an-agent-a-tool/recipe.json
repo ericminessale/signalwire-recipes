@@ -1,0 +1,22 @@
+{
+  "slug": "give-an-agent-a-tool",
+  "title": "Give an agent a tool",
+  "alias": "tool calling into your backend",
+  "summary": "Let the model call your function, and decide what it gets back.",
+  "scenario": "Looking something up mid-conversation",
+  "category": "agent-basics",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "tool-calling"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "demos",
+  "tier": "launch"
+}

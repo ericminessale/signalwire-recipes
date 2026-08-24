@@ -1,0 +1,24 @@
+{
+  "slug": "verify-a-webhook-signature",
+  "title": "Verify a webhook signature",
+  "alias": "signature check + idempotency",
+  "summary": "Reject forged webhooks and make your handler safe to call twice with the same event.",
+  "scenario": "The thing every tutorial skips",
+  "category": "foundations",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "webhooks",
+    "security"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "launch"
+}

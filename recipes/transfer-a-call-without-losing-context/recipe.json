@@ -1,0 +1,23 @@
+{
+  "slug": "transfer-a-call-without-losing-context",
+  "title": "Transfer a call without losing context",
+  "alias": "global_data across the handoff",
+  "summary": "State and identity travel with the call, so the next leg already knows who this is.",
+  "scenario": "The thing that breaks on every other platform",
+  "category": "handoff",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "transfer",
+    "governance"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "ai-to-ai",
+  "provenance": "extract",
+  "tier": "launch"
+}

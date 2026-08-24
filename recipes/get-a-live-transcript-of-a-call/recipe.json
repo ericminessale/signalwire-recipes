@@ -1,0 +1,22 @@
+{
+  "slug": "get-a-live-transcript-of-a-call",
+  "title": "Get a live transcript of a call",
+  "alias": "transcript stream consumer",
+  "summary": "Receive, order and render the text of a call as it happens.",
+  "scenario": "Live captions and compliance monitoring",
+  "category": "observe",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "stt"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "observe",
+  "provenance": "rewrite",
+  "tier": "later"
+}

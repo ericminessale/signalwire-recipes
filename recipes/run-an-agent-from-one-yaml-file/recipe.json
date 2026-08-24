@@ -1,0 +1,21 @@
+{
+  "slug": "run-an-agent-from-one-yaml-file",
+  "title": "Run an agent from one YAML file",
+  "alias": "declarative markup, no SDK",
+  "summary": "A complete working agent with nothing installed and no server of your own.",
+  "scenario": "For teams that are not a Python shop",
+  "category": "agent-basics",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "declarative"
+  ],
+  "surfaces": [
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "new",
+  "tier": "launch"
+}

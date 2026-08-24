@@ -1,0 +1,21 @@
+{
+  "slug": "measure-voice-ai-latency",
+  "title": "Measure voice AI latency",
+  "alias": "latency_checker",
+  "summary": "Full round-trip turn latency measured off a stereo recording, not a vendor median.",
+  "scenario": "Proving a number instead of claiming one",
+  "category": "integrations",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "observe",
+  "provenance": "demos",
+  "tier": "next"
+}

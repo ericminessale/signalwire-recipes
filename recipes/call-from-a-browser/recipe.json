@@ -1,0 +1,21 @@
+{
+  "slug": "call-from-a-browser",
+  "title": "Call from a browser",
+  "alias": "WebRTC leg",
+  "summary": "Place a call from a web page into the same flow a phone reaches.",
+  "scenario": "Support widget on a website",
+  "category": "call-control",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "webrtc"
+  ],
+  "surfaces": [
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "demos",
+  "tier": "next"
+}

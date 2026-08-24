@@ -1,0 +1,22 @@
+{
+  "slug": "barge-into-a-live-call",
+  "title": "Barge into a live call",
+  "alias": "silent-entry full participant",
+  "summary": "Join an in-progress call with full audio, and leave without tearing it down.",
+  "scenario": "Supervisor takeover",
+  "category": "observe",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "conference",
+    "barge"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "observe",
+  "provenance": "extract",
+  "tier": "next"
+}

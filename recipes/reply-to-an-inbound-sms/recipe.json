@@ -1,0 +1,23 @@
+{
+  "slug": "reply-to-an-inbound-sms",
+  "title": "Reply to an inbound SMS",
+  "alias": "inbound webhook + threaded reply",
+  "summary": "Receive a text and answer it in the same thread.",
+  "scenario": "Two-way texting",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "sms",
+    "webhooks"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "text",
+  "provenance": "new",
+  "tier": "launch"
+}

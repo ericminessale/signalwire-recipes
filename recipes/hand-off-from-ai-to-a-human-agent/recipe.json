@@ -1,0 +1,23 @@
+{
+  "slug": "hand-off-from-ai-to-a-human-agent",
+  "title": "Hand off from AI to a human agent",
+  "alias": "queue handoff with intake",
+  "summary": "Put the caller in a queue and hand the human everything the AI already collected.",
+  "scenario": "The hybrid contact centre pattern",
+  "category": "handoff",
+  "products": [
+    "voice",
+    "ai-agents"
+  ],
+  "capabilities": [
+    "queue",
+    "transfer"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "observe",
+  "provenance": "rewrite",
+  "tier": "later"
+}

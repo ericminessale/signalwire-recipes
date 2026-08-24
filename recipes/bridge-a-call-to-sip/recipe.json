@@ -1,0 +1,23 @@
+{
+  "slug": "bridge-a-call-to-sip",
+  "title": "Bridge a call to a SIP endpoint",
+  "alias": "connect to SIP",
+  "summary": "Send a PSTN call to a SIP address and back again.",
+  "scenario": "Putting a cloud number in front of existing gear",
+  "category": "foundations",
+  "products": [
+    "sip",
+    "voice"
+  ],
+  "capabilities": [
+    "sip"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "next"
+}

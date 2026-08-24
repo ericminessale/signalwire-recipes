@@ -1,0 +1,22 @@
+{
+  "slug": "handle-call-status-callbacks",
+  "title": "Handle call status callbacks and failures",
+  "alias": "status events + failure states",
+  "summary": "React to ringing, answered, busy, no-answer and failed without guessing at state.",
+  "scenario": "Knowing what actually happened to a call",
+  "category": "foundations",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "webhooks"
+  ],
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "tier": "next"
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "translate-a-call-in-real-time",
+  "title": "Translate a call in real time",
+  "alias": "live_translate",
+  "summary": "Each side speaks their own language on one bridge.",
+  "scenario": "Support without a language-matched agent",
+  "category": "handoff",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "live-translate"
+  ],
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "ai-to-ai",
+  "provenance": "narrow",
+  "tier": "later"
+}

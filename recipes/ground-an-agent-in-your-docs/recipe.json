@@ -1,0 +1,21 @@
+{
+  "slug": "ground-an-agent-in-your-docs",
+  "title": "Ground an agent in your own documents",
+  "alias": "vector search over a local index",
+  "summary": "Answers that come from your content rather than the model's memory.",
+  "scenario": "A docs hotline that does not invent features",
+  "category": "agent-basics",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "rag"
+  ],
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "talk",
+  "provenance": "rewrite",
+  "tier": "next"
+}

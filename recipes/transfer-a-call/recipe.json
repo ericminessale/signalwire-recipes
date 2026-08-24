@@ -1,0 +1,23 @@
+{
+  "slug": "transfer-a-call",
+  "title": "Transfer a call",
+  "alias": "connect / transfer action",
+  "summary": "Move a live caller to another number or address.",
+  "scenario": "The simplest handoff there is",
+  "category": "call-control",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "transfer"
+  ],
+  "surfaces": [
+    "python",
+    "typescript",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "talk",
+  "provenance": "extract",
+  "tier": "next"
+}

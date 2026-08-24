@@ -1,0 +1,8 @@
+# generated — regenerate with `python build.py`
+site/
+
+__pycache__/
+*.pyc
+.env
+.venv/
+node_modules/
