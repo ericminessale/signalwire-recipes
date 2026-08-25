@@ -188,6 +188,12 @@ own rule.
 - `docs/PROPOSED_LIST.md` is the narrative: principle, kinds, taxonomy
   decision, the 34-item verdict (22 Recipe · 6 Merge · 3 Kill · 2 Hold · 1
   Tool), the coverage record, the launch set (19).
+- **Progress board**: `python tools/progress.py` renders every inventory row —
+  verified in full, folders-not-written dimmed, planned dimmer, holds tagged —
+  to `site/progress.html`. It is published as the artifact
+  https://claude.ai/code/artifact/d8f9c247-3e3e-42b3-865a-7ddc8bca878f (the
+  one Eric shows his boss); **republish it to that URL after every wave** so
+  there is one source, not a sheet and a site.
 - Enumeration outputs live in `docs/enum/` (SDK surface, platform docs, demos,
   Telnyx stems). Marketing's backlog is verbatim in `docs/MARKETING_BACKLOG.md`
   — a resource, not a build order.
