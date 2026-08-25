@@ -47,5 +47,8 @@
   ],
   "next": [
     "offer-a-callback-instead-of-a-hold"
-  ]
+  ],
+  "featured": true,
+  "feature_line": "The second agent already knows who this is.",
+  "feature_rank": 3
 }

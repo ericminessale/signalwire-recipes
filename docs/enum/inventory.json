@@ -172,7 +172,10 @@
         "demo afterhours / bobbystable swml_change_context (same-agent context switch, not a transfer)",
         "verified 2026-08-25: recipes/transfer-a-call-without-losing-context/verify.py against sdk 3.0.1",
         "resolved: params.persist_global_data restores global_data when a new AI session starts on the same call (sdk schema.json AIParams); SDK finding: execute_swml(transfer=True) puts the transfer flag inside the SWML document, unlike connect() and the documented action shape - build the action explicitly"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "The second agent already knows who this is.",
+      "feature_rank": 3
     },
     {
       "slug": "enforce-state-transitions-in-a-tool-handler",
@@ -420,8 +423,8 @@
     {
       "slug": "expose-an-agent-as-an-mcp-server",
       "claim": "The agent's tools are served over MCP JSON-RPC, so a coding assistant can call the same functions a caller can.",
-      "kind": "recipe",
-      "status": "stub",
+      "kind": "hold",
+      "status": "hold",
       "launch": false,
       "products": [
         "ai-agents"
@@ -440,11 +443,9 @@
       ],
       "evidence": [
         "sdk ai_config_mixin.py:521 enable_mcp_server",
-        "sdk mcp_server_mixin.py:60-142"
-      ],
-      "featured": true,
-      "feature_line": "Give Claude a phone number.",
-      "feature_rank": 3
+        "sdk mcp_server_mixin.py:60-142",
+        "HOLD 2026-08-25: enable_mcp_server() does not serve the agent's tools. mcp_server_mixin.py reads self._swaig_functions, but tools live in self._tool_registry._swaig_functions, so tools/list returns [] and tools/call returns -32602 Unknown tool. Reproduced on 3.0.1 and on 3.3.0.dev107."
+      ]
     },
     {
       "slug": "write-a-reusable-agent-skill",
@@ -476,7 +477,7 @@
       "slug": "run-an-agent-from-one-yaml-file",
       "claim": "One SWML document hosted on SignalWire runs a complete agent; no SDK, no server.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "ai-agents"
@@ -500,7 +501,8 @@
       "evidence": [
         "docs swml/guides/deployment",
         "docs apis/rest/ai-agents/ai-agents-custom/create-ai-agent",
-        "docs platform/resources"
+        "docs platform/resources",
+        "verified 2026-08-25: recipes/run-an-agent-from-one-yaml-file/verify.py"
       ]
     },
     {
@@ -1026,7 +1028,7 @@
       "slug": "place-an-outbound-call",
       "claim": "Your backend originates a call over REST and hands it a document to run when answered.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1049,7 +1051,8 @@
       "evidence": [
         "docs apis/rest/calls/call-commands (dial)",
         "sdk relay/client.py:343 dial",
-        "compat Calls create"
+        "compat Calls create",
+        "verified 2026-08-25: recipes/place-an-outbound-call/verify.py"
       ]
     },
     {
@@ -1078,7 +1081,8 @@
       "evidence": [
         "docs swml/reference/calling/prompt, switch",
         "docs compatibility-api/cxml/reference/voice (Gather)",
-        "verified 2026-08-25: recipes/build-an-ivr-menu/verify.py (schema-validated SWML, both surfaces)"
+        "verified 2026-08-25: recipes/build-an-ivr-menu/verify.py (schema-validated SWML, both surfaces)",
+        "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable."
       ]
     },
     {
@@ -1133,7 +1137,8 @@
       ],
       "evidence": [
         "docs swml/reference/calling/prompt (speech_engine, speech_hints)",
-        "docs compatibility-api/cxml/reference/voice (Gather input=speech)"
+        "docs compatibility-api/cxml/reference/voice (Gather input=speech)",
+        "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable."
       ]
     },
     {
@@ -1410,7 +1415,7 @@
       "slug": "get-recording-consent-before-recording",
       "claim": "No business step is reachable until the disclosure step's criteria are met, and recording starts from the consent tool's result, not before.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "ai-agents",
@@ -1437,7 +1442,8 @@
         "docs swml/reference/calling/record-call",
         "sdk function_result.py:883 record_call from a tool result",
         "sdk contexts.py:179 set_step_criteria, :252 set_valid_steps",
-        "t:ai-debt-collection-compliance-agent"
+        "t:ai-debt-collection-compliance-agent",
+        "verified 2026-08-25: recipes/get-recording-consent-before-recording/verify.py"
       ]
     },
     {
@@ -1709,14 +1715,15 @@
       "evidence": [
         "docs swml/reference/calling/detect-machine (detect_message_end)",
         "compat Calls MachineDetection/AsyncAmd",
-        "features AMD shipped 2026-06-09"
+        "features AMD shipped 2026-06-09",
+        "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error."
       ]
     },
     {
       "slug": "send-dtmf-to-an-external-ivr",
       "claim": "Your call navigates someone else's phone tree by sending digits at the right moments.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1738,7 +1745,8 @@
         "docs swml/reference/calling/send-digits",
         "demo pathfinder",
         "features DTMF keypad",
-        "demo pathfinder tools.py:110-114,265-273 execute_swml -> send_digits with w/W pacing; model classifies, code picks the digit"
+        "demo pathfinder tools.py:110-114,265-273 execute_swml -> send_digits with w/W pacing; model classifies, code picks the digit",
+        "verified 2026-08-25: recipes/send-dtmf-to-an-external-ivr/verify.py"
       ]
     },
     {

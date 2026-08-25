@@ -82,6 +82,16 @@ def main():
     assert actions(r) == [{"change_step": "schedule"}], r
     assert "swml_change_step" not in json.dumps(r), r
 
+    # A step is not a boundary: the booking tool refuses on its own state,
+    # however the call arrived at the step that exposes it.
+    r = agent._execute_swaig_function("confirm_slot", {"slot": "Thursday 9am"},
+                                      call_id="c1", raw_data={"global_data": {}})
+    assert r["response"].startswith("NOT_READY"), r
+    r = agent._execute_swaig_function(
+        "confirm_slot", {"slot": "Thursday 9am"}, call_id="c1",
+        raw_data={"global_data": {"bike_type": "gravel"}})
+    assert "Booked a gravel" in r["response"], r
+
     print(f"ok: identify_bike has no valid_steps, so the handler is the only "
           f"way forward; it refuses start_scheduling until one of "
           f"{sorted(SERVICEABLE)} is recorded, then emits change_step")

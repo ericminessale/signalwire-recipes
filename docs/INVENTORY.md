@@ -4,9 +4,9 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**121 rows.** By kind: recipe 101 · build 8 · guide 4 · tool 2 · hold 6.  
-By status: verified 26 · written 4 · stub 25 · proposed 60 · hold 6.  
-Recipes per public category: AI Agents 37 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
+**121 rows.** By kind: recipe 100 · build 8 · guide 4 · tool 2 · hold 7.  
+By status: verified 30 · written 4 · stub 20 · proposed 60 · hold 7.  
+Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
 Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 8.
 
@@ -18,7 +18,7 @@ Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 8.
 - **folds** are the backlog IDs (#n), scenarios, Telnyx stems (t:) and corpus slugs (c:) this row absorbs. Scenarios are tags, never rows.
 - **evidence** cites code (sdk file:line), docs (path under signalwire.com/docs/), demos (repo file:line) or FEATURES.md, or says NEEDS VERIFICATION.
 
-## AI Agents — 37 recipes
+## AI Agents — 36 recipes
 
 #### Call control
 
@@ -158,7 +158,7 @@ A tool webhook signed for one call cannot be replayed on another call or from ou
 
 No business step is reachable until the disclosure step's criteria are met, and recording starts from the consent tool's result, not before.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents, voice) · task group **Governance** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents, voice) · task group **Governance** · lens Voice & Call Control
 - interfaces: agents-sdk, swml · capabilities: governance, recording, compliance, contexts
 - folds: #12 (canonical: medical appointment line - recording disclosure spoken, consent captured, then recording starts); t:call-compliance; c:force-a-disclosure-before-the-call-proceeds (same mechanism: no business step reachable before the consent step)
 - evidence:
@@ -166,6 +166,7 @@ No business step is reachable until the disclosure step's criteria are met, and 
   - sdk function_result.py:883 record_call from a tool result
   - sdk contexts.py:179 set_step_criteria, :252 set_valid_steps
   - t:ai-debt-collection-compliance-agent
+  - verified 2026-08-25: recipes/get-recording-consent-before-recording/verify.py
 
 ### `keep-heavy-state-out-of-global-data`
 
@@ -317,17 +318,6 @@ Tools on an existing MCP server are discovered at startup and callable by the ag
   - features External Tools
   - demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)
 
-### `expose-an-agent-as-an-mcp-server`
-
-The agent's tools are served over MCP JSON-RPC, so a coding assistant can call the same functions a caller can.
-
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
-- interfaces: agents-sdk · capabilities: mcp
-- folds: #29; t:edge-mcp-server-deploy
-- evidence:
-  - sdk ai_config_mixin.py:521 enable_mcp_server
-  - sdk mcp_server_mixin.py:60-142
-
 ### `write-a-reusable-agent-skill`
 
 A SkillBase subclass packages tools, hints and prompt sections so any agent can add_skill it with params.
@@ -412,13 +402,14 @@ A tool result swaps the system prompt (or resets the conversation) on the same c
 
 One SWML document hosted on SignalWire runs a complete agent; no SDK, no server.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Other** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Other** · lens AI Agents & Automation
 - interfaces: swml, hosted, rest · capabilities: serverless
 - folds: #6; variant: POST /api/fabric/resources/ai_agents creates the same agent as a Resource; t:ai-assistant-phone-setup; t:create-ai-assistant
 - evidence:
   - docs swml/guides/deployment
   - docs apis/rest/ai-agents/ai-agents-custom/create-ai-agent
   - docs platform/resources
+  - verified 2026-08-25: recipes/run-an-agent-from-one-yaml-file/verify.py
 
 ### `configure-an-agent-per-request`
 
@@ -529,13 +520,14 @@ A number rings your URL, your response answers it, plays TTS and hangs up.
 
 Your backend originates a call over REST and hands it a document to run when answered.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
 - interfaces: rest, swml, cxml, relay · capabilities: outbound
 - folds: t:make-outbound-phone-call; t:fraud-alert-verification
 - evidence:
   - docs apis/rest/calls/call-commands (dial)
   - sdk relay/client.py:343 dial
   - compat Calls create
+  - verified 2026-08-25: recipes/place-an-outbound-call/verify.py
 
 ### `take-a-voicemail`
 
@@ -597,12 +589,13 @@ An outbound call is classified human, machine or fax before your logic runs, and
   - docs swml/reference/calling/detect-machine (detect_message_end)
   - compat Calls MachineDetection/AsyncAmd
   - features AMD shipped 2026-06-09
+  - settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.
 
 ### `send-dtmf-to-an-external-ivr`
 
 Your call navigates someone else's phone tree by sending digits at the right moments.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
 - interfaces: swml, rest, relay · capabilities: dtmf
 - folds: t:outbound-hold-agent
 - evidence:
@@ -610,6 +603,7 @@ Your call navigates someone else's phone tree by sending digits at the right mom
   - demo pathfinder
   - features DTMF keypad
   - demo pathfinder tools.py:110-114,265-273 execute_swml -> send_digits with w/W pacing; model classifies, code picks the digit
+  - verified 2026-08-25: recipes/send-dtmf-to-an-external-ivr/verify.py
 
 ### `reduce-background-noise-on-a-call`
 
@@ -710,6 +704,7 @@ Press-1 menus branch to different sections without a line of server code.
   - docs swml/reference/calling/prompt, switch
   - docs compatibility-api/cxml/reference/voice (Gather)
   - verified 2026-08-25: recipes/build-an-ivr-menu/verify.py (schema-validated SWML, both surfaces)
+  - settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.
 
 ### `build-an-ivr-without-a-server`
 
@@ -733,6 +728,7 @@ The caller says what they want and the document branches on the recognised phras
 - evidence:
   - docs swml/reference/calling/prompt (speech_engine, speech_hints)
   - docs compatibility-api/cxml/reference/voice (Gather input=speech)
+  - settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.
 
 ### `route-calls-by-dialed-number-or-time`
 
@@ -1486,7 +1482,19 @@ Turn latency is measured from end-of-speech to first audio, with the method publ
   - demo testbot catalog.py (107 capabilities / 16 suites; README says 99 - stale)
   - demo testbot README: update_global_data -> set_global_data, set_metadata -> set_meta_data, swml_change_step -> change_step, play_background_file -> playback_bg
 
-## Holds — 6
+## Holds — 7
+
+### `expose-an-agent-as-an-mcp-server`
+
+The agent's tools are served over MCP JSON-RPC, so a coding assistant can call the same functions a caller can.
+
+- kind **hold** · status **hold** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
+- interfaces: agents-sdk · capabilities: mcp
+- folds: #29; t:edge-mcp-server-deploy
+- evidence:
+  - sdk ai_config_mixin.py:521 enable_mcp_server
+  - sdk mcp_server_mixin.py:60-142
+  - HOLD 2026-08-25: enable_mcp_server() does not serve the agent's tools. mcp_server_mixin.py reads self._swaig_functions, but tools live in self._tool_registry._swaig_functions, so tools/list returns [] and tools/call returns -32602 Unknown tool. Reproduced on 3.0.1 and on 3.3.0.dev107.
 
 ### `run-an-ai-sidecar-on-a-live-call`
 

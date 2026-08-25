@@ -1,9 +1,10 @@
 """Enforce state transitions in a tool handler.
 
-`valid_steps` constrains the model. It does not constrain your webhook: a
-step change emitted from a handler bypasses the clamp entirely. That makes the
-handler the last authority on whether the caller moves on, so the handler is
-where the rule belongs.
+`valid_steps` shapes the navigation tool the model is offered. It does not
+constrain your webhook, and it is not a lock: a step change from a handler
+bypasses it. The handler is the last authority on whether the caller moves on,
+and the tool that finally acts checks the state again rather than trusting
+where it sits in the flow.
 
 This agent takes a repair booking. The caller cannot reach scheduling until a
 bike has actually been identified, and the check reads collected state rather
@@ -119,7 +120,17 @@ class BookingAgent(AgentBase):
         },
     )
     def confirm_slot(self, args, raw_data):
-        return FunctionResult(f"Booked for {args.get('slot')}.")
+        # Reaching this step is not permission to book. A step is a place in a
+        # flow, not a security boundary, so the tool that acts checks the state
+        # it depends on rather than trusting how the call arrived.
+        recorded = (raw_data or {}).get("global_data", {}).get("bike_type")
+        if recorded not in SERVICEABLE:
+            return FunctionResult(
+                "NOT_READY: no serviceable bike has been recorded, so there is "
+                "nothing to book. Ask what kind of bike it is and call "
+                "record_bike first."
+            )
+        return FunctionResult(f"Booked a {recorded} for {args.get('slot')}.")
 
 
 agent = BookingAgent()

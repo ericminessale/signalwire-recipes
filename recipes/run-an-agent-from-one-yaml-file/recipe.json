@@ -21,7 +21,7 @@
   "subcategory": "other",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#6",
@@ -32,7 +32,8 @@
     "evidence": [
       "docs swml/guides/deployment",
       "docs apis/rest/ai-agents/ai-agents-custom/create-ai-agent",
-      "docs platform/resources"
+      "docs platform/resources",
+      "verified 2026-08-25: recipes/run-an-agent-from-one-yaml-file/verify.py"
     ]
   }
 }

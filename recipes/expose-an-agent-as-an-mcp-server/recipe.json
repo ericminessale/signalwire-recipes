@@ -20,8 +20,8 @@
   "tier": "next",
   "subcategory": "tools",
   "plan": {
-    "kind": "recipe",
-    "status": "stub",
+    "kind": "hold",
+    "status": "hold",
     "lens": "ai",
     "folds": [
       "#29",
@@ -29,10 +29,8 @@
     ],
     "evidence": [
       "sdk ai_config_mixin.py:521 enable_mcp_server",
-      "sdk mcp_server_mixin.py:60-142"
+      "sdk mcp_server_mixin.py:60-142",
+      "HOLD 2026-08-25: enable_mcp_server() does not serve the agent's tools. mcp_server_mixin.py reads self._swaig_functions, but tools live in self._tool_registry._swaig_functions, so tools/list returns [] and tools/call returns -32602 Unknown tool. Reproduced on 3.0.1 and on 3.3.0.dev107."
     ]
-  },
-  "featured": true,
-  "feature_line": "Give Claude a phone number.",
-  "feature_rank": 3
+  }
 }

@@ -1,33 +1,99 @@
 # Get recording consent before recording
 
-> Speak the disclosure and capture the answer before any audio is written to disk.
+> Recording starts from the consent tool's result, so it cannot start before
+> the caller agrees.
 
-**Technical:** `disclosure gate`
-**Scenario:** Two-party-consent jurisdictions
+**Scenario:** a credit union taking account queries
 
 ## What this demonstrates
 
-_TODO: the pattern, in two sentences. This is the part that carries the argument._
+The document contains no `record_call`. Recording begins only when the consent
+handler emits one, and the handler emits one only when the caller actually
+said yes. A refusal moves the call on without recording, and an ambiguous
+answer does neither.
 
-## Prerequisites
+In a two-party consent jurisdiction the refusal path is the one that has to
+work. This recipe treats "not a clear yes" as not consent.
 
-- A SignalWire account and API token
-- A phone number on that account
+## How it works
 
-## Setup
+Two things keep recording behind the disclosure, and they are worth different
+amounts.
 
-```bash
-cp .env.example .env    # add your credentials
+The **hard one** is where the recording action comes from. Nothing in the
+document records; the only `record_call` on the whole agent is built inside the
+consent handler.
+
+```python
+return (
+    FunctionResult("Thank you. Starting the recording now.")
+    .update_global_data({"recording": "consented"})
+    .record_call(control_id="consented", stereo=True, direction="both")
+    .swml_change_step("assist")
+)
 ```
+
+`record_call()` on a `FunctionResult` wraps its verb in a `SWML` action, so what
+the platform receives is a document fragment containing `record_call`, not a
+method name. The account tool also lives on a later step, so it is not on the
+table while the question is still being asked. Both of those are code.
+
+The **soft one** is the flow itself. `set_step_criteria()` reads like a gate, but it
+is a sentence the model judges, and `valid_steps` shapes a navigation tool rather than
+locking a door. Neither keeps a caller out of the next step, so `get_balance` checks
+that the recording question was answered before it answers anything. A step is a place
+in a flow, not a security boundary.
+
+The handler compares the whole normalised answer against a refusal set, then an
+agreement set. Whole answers, not substrings: `yesterday` contains `yes`, and so does
+`I can't say yes`. Contractions are expanded before apostrophes go, so `that's fine`
+and `that is fine` are one answer. Hedges are left alone, because dropping `perhaps`
+would turn `perhaps, sure` into consent. Anything matching neither set returns
+`UNCLEAR` and emits no action.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python_
+```bash
+cd python
+pip install -r requirements.txt
+cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
+python app.py
+```
+
+Point a phone number's SWML webhook at
+`https://<user>:<password>@<your-host>/intake`, using the credentials you set.
+
+## Verify it
+
+No network, no account:
+
+```bash
+python verify.py
+```
+
+It renders the SWML and runs the handler, asserting:
+
+- `record_call` appears nowhere in the document
+- the disclosure step exposes only `record_consent` and has no route onward
+- a yes emits `record_call` in stereo on both directions, plus `change_step`
+- a no moves on and emits no recording
+- seven non-answers emit no recording and no transition, including
+  `yesterday`, `I can't say yes` and `perhaps, sure`
+- real refusals and real agreements still land on the right side
+- `get_balance` refuses until the question has been answered
+
+## Limitations
+
+Consent is matched against fixed answer sets. That is thin for production: a caller
+who says something neither set contains is asked again, which is safe but blunt. A
+real deployment keeps the utterance alongside the recording, and has the disclosure
+wording reviewed by someone qualified to review it.
+
+Nothing here stops a caller withdrawing consent later. That needs
+`stop_record_call` on a second tool, keyed to the same `control_id`.
 
 ## What to change first
 
-_TODO_
-
-## Related
-
-_TODO_
+Move `record_call` out of the handler and into the document, above the `ai`
+verb. Everything still works, and the recording now starts while the disclosure
+is still being read.

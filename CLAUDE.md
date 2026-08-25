@@ -525,6 +525,42 @@ cards could sit under the sticky filter strip, 113 cards had no
    second pair of eyes is not optional for the artifact Eric shows his boss.
 4. Only then republish the artifact.
 
+## Platform facts learned the hard way
+
+These cost a review round each. They are not in any single doc.
+
+- **A step is not a security boundary.** `valid_steps` shapes the `next_step`
+  tool the model is offered, and `set_step_criteria()` is a sentence the model
+  judges; the runtime advances on criteria (which is why
+  `set_skip_to_next_step` exists to bypass them). Neither keeps a caller out of
+  the next step. **The tool that acts is what checks**, and it checks
+  `global_data` from `raw_data`, not its position in the flow. Two governance
+  recipes claimed otherwise before sol caught it.
+- **`connect` owns the bridge until the far leg ends.** Any verb after it runs
+  only once the call is over. A `send_digits` after `connect` fires at nobody;
+  DTMF for an external tree goes in `dial`'s `send_digits` parameter, sent
+  after the call is answered. The same trap made a `live_translate` claim wrong.
+- **`play` auto-answers** (`auto_answer`, default true), so `answer` is about
+  *when* the call is picked up, not a prerequisite for audio.
+- **`enable_mcp_server()` is broken** in 3.0.1 and 3.3.0.dev107:
+  `mcp_server_mixin.py` reads `self._swaig_functions`, but tools live in
+  `self._tool_registry._swaig_functions`, so `tools/list` returns `[]` and
+  `tools/call` returns -32602. The row is on hold.
+- **The chat-mode AI kernel is unreleased** (Knowledge MCP `get_doc('mary')`
+  lists it under "Unreleased but functioning" and on the two-quarter roadmap).
+  Both chat rows are on hold; chat is *not* the cheap path to an interactive
+  demo.
+- `prompt_value` holds a prompt's collected digits or utterance;
+  `prompt_result` is the status enum (`match_digits`, `match_speech`,
+  `no_input`). `detect_result` is lowercase `machine` / `human` / `fax` /
+  `unknown` / `detecting` / `error`.
+- **The bundled schema requires `play` to be an object** with a `url`. The
+  `play: "say:..."` shorthand in the docs does not validate locally.
+- **Matching an utterance is substring-unsafe.** "yesterday" contains "yes"
+  and "I can't say yes" contains it too. Normalise the whole answer (expand
+  contractions before dropping apostrophes, strip politeness but never hedges
+  like "perhaps") and compare against a set.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

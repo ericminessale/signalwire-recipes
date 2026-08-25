@@ -35,7 +35,7 @@ VIEWPORTS = ((2560, 1100), (1920, 1000), (1280, 720), (820, 900))  # (width, hei
 RECIPES_TO_CHECK = ("scope-tools-per-step", "build-an-ivr-menu", "register-a-10dlc-brand-and-campaign")
 
 
-JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var paint=function(e){return getComputedStyle(e).display!=='none'};var cards=function(sel){return [].slice.call(f.querySelectorAll(sel)).filter(paint).length};var q=document.getElementById('q');var chip=[].slice.call(document.querySelectorAll('.chip')).filter(function(c){return c.dataset.f&&c.dataset.f!=='all'&&c.dataset.f.indexOf('kind:')!==0})[0];var o={dup:document.querySelectorAll('.fcard.card').length};o.initial=paint(f);q.value='transfer';q.dispatchEvent(new Event('input'));o.onSearch=paint(f);q.value='';q.dispatchEvent(new Event('input'));o.cleared=paint(f);if(chip){chip.click();o.onChip=paint(f);chip.click();o.chipOff=paint(f);}var t=document.getElementById('pvtog');if(t){var before=cards('.fcard');t.click();o.togBand=paint(f);o.togShrank=cards('.fcard')<before;o.togPlanned=cards('.fcard.planned');t.click();}return JSON.stringify(o)})()"""
+JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var paint=function(e){return getComputedStyle(e).display!=='none'};var cards=function(sel){return [].slice.call(f.querySelectorAll(sel)).filter(paint).length};var q=document.getElementById('q');var chip=[].slice.call(document.querySelectorAll('.chip')).filter(function(c){return c.dataset.f&&c.dataset.f!=='all'&&c.dataset.f.indexOf('kind:')!==0})[0];var o={dup:document.querySelectorAll('.fcard.card').length};o.initial=paint(f);q.value='transfer';q.dispatchEvent(new Event('input'));o.onSearch=paint(f);q.value='';q.dispatchEvent(new Event('input'));o.cleared=paint(f);if(chip){chip.click();o.onChip=paint(f);chip.click();o.chipOff=paint(f);}var t=document.getElementById('pvtog');if(t){var before=cards('.fcard');o.plannedBefore=cards('.fcard.planned');t.click();o.togBand=paint(f);o.togShrank=cards('.fcard')<before;o.togPlanned=cards('.fcard.planned');t.click();}return JSON.stringify(o)})()"""
 
 
 def pw(*args, timeout=90):
@@ -133,7 +133,10 @@ def main(argv):
                     fail(w, "featured", "the band did not come back when the chip was released")
                 if r.get("togBand") is False:
                     fail(w, "featured", "hiding the unbuilt hid the whole band, not just its planned cards")
-                if r.get("togShrank") is False:
+                # Only meaningful while some featured recipe is still unwritten.
+                # With all six written there is nothing for the toggle to hide,
+                # and demanding a shrink would fail on a fully built band.
+                if r.get("plannedBefore") and r.get("togShrank") is False:
                     fail(w, "featured", "hiding the unbuilt left every featured card painted")
                 if r.get("togPlanned"):
                     fail(w, "featured", f"{r['togPlanned']} planned featured card(s) still painted "

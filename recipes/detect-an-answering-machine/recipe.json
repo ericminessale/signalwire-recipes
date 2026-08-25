@@ -29,7 +29,8 @@
     "evidence": [
       "docs swml/reference/calling/detect-machine (detect_message_end)",
       "compat Calls MachineDetection/AsyncAmd",
-      "features AMD shipped 2026-06-09"
+      "features AMD shipped 2026-06-09",
+      "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error."
     ]
   }
 }

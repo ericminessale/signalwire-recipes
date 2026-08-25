@@ -12,9 +12,7 @@
     "outbound"
   ],
   "surfaces": [
-    "python",
-    "typescript",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -23,7 +21,7 @@
   "subcategory": "call-control",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:make-outbound-phone-call",
@@ -32,7 +30,8 @@
     "evidence": [
       "docs apis/rest/calls/call-commands (dial)",
       "sdk relay/client.py:343 dial",
-      "compat Calls create"
+      "compat Calls create",
+      "verified 2026-08-25: recipes/place-an-outbound-call/verify.py"
     ]
   }
 }

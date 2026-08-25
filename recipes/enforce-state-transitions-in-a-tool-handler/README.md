@@ -11,17 +11,19 @@ The caller cannot reach scheduling until a bike the shop actually services has
 been recorded. The rule lives in the tool handler, which reads collected state
 instead of asking the model whether it collected anything.
 
-`valid_steps` constrains the model. It does not constrain your webhook, so the
-handler is the last authority on the transition and the only place the rule can
-be enforced.
+`valid_steps` shapes the navigation tool the model is offered. It does not constrain
+your webhook, so the handler is the last authority on the transition. It is also not a
+lock, which is why the tool at the destination checks the same state again.
 
 ## How it works
 
 Two things move the conversation, and only one of them is clamped.
 
-The model's path is the `next_step` tool, bounded by `valid_steps` on the
-current step. The other path is a handler emitting a step change, and the SDK is
-explicit that this bypasses the clamp. Anything the handler emits happens.
+The model's path is the `next_step` tool, bounded by `valid_steps` on the current
+step. The other path is a handler emitting a step change, and the SDK is explicit that
+this bypasses the clamp. Anything the handler emits happens. Neither path makes a step a boundary. A step is a
+place in a flow, so the tool that books the slot checks for a recorded bike whatever
+route reached it.
 
 So the handler checks first:
 
@@ -74,6 +76,7 @@ It renders the SWML and runs the handlers, asserting:
   is present but unserviceable
 - with real state it emits `{"change_step": "schedule"}`, and the SDK method
   name appears nowhere in the payload
+- `confirm_slot` refuses with no recorded bike, however the call reached it
 
 ## Limitations
 

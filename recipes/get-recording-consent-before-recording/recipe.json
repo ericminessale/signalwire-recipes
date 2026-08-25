@@ -25,7 +25,7 @@
   "subcategory": "governance",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "#12 (canonical: medical appointment line - recording disclosure spoken, consent captured, then recording starts)",
@@ -36,7 +36,8 @@
       "docs swml/reference/calling/record-call",
       "sdk function_result.py:883 record_call from a tool result",
       "sdk contexts.py:179 set_step_criteria, :252 set_valid_steps",
-      "t:ai-debt-collection-compliance-agent"
+      "t:ai-debt-collection-compliance-agent",
+      "verified 2026-08-25: recipes/get-recording-consent-before-recording/verify.py"
     ]
   }
 }
