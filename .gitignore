@@ -15,3 +15,13 @@ docs/_sol_*.log
 
 # playwright-cli session logs and snapshots
 .playwright-cli/
+
+# internal planning material stays local: briefs, reviews, handoffs, marketing
+# inputs, competitive enumeration. The shareable list is docs/INVENTORY.md;
+# inventory.json and its renderer stay because scaffold.py seeds from them.
+docs/*
+!docs/INVENTORY.md
+!docs/enum/
+docs/enum/*
+!docs/enum/inventory.json
+!docs/enum/render_inventory.py
