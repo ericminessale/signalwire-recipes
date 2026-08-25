@@ -198,7 +198,13 @@ own rule.
   separate "progress board" UI was built and reverted on 2026-08-25 for exactly
   that reason.)
 - Enumeration outputs live in `docs/enum/` (SDK surface, platform docs, demos,
-  Telnyx stems). Marketing's backlog is verbatim in `docs/MARKETING_BACKLOG.md`
+  Telnyx stems).
+- **`docs/` is local-only except `INVENTORY.md`, `enum/inventory.json` and
+  `enum/render_inventory.py`** (`.gitignore`; history was purged of the rest
+  on 2026-08-25 before the repo was shared). Briefs, reviews, handoffs, the
+  marketing inputs and the competitive enumeration exist only on this machine
+  — they are not backed up by git. The remote is
+  `github.com/ericminessale/signalwire-recipes` (private, default `master`). Marketing's backlog is verbatim in `docs/MARKETING_BACKLOG.md`
   — a resource, not a build order.
 - Corpus reality (end of 2026-08-25): 55 folders (51 recipes, 4 builds), the
   20 launch-set recipes written and verified (`python verify.py` → 20/20), 34
