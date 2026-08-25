@@ -1,171 +1,144 @@
 # CLAUDE.md — signalwire-recipes
 
-Guidance for Claude Code working in this directory.
+Guidance for Claude Code working in this directory. **Keep this current.** When a
+decision is made here — a protocol, a taxonomy rule, a visual rule — write it
+down in this file in the same session it is decided.
 
 ## What this is
 
-A **recipes directory**: many small, self-contained, clone-and-run examples on the
-SignalWire platform, plus a static generator that turns them into a browsable,
-crawlable site. Answer to Telnyx's `telnyx.com/products/builds`.
+A **recipes directory**: many small, self-contained, clone-and-run examples on
+the SignalWire platform, plus a static generator that turns them into a
+browsable, crawlable site. Our answer to `telnyx.com/products/builds`.
 
 Two audiences, in this order:
-1. **Answer engines and coding assistants.** A developer asking a model "how do I
-   transfer a call without losing context" should retrieve our page.
+1. **Answer engines and coding assistants.** A developer asking a model "how do
+   I transfer a call without losing context" should retrieve our page.
 2. **Developers** who then clone the folder and run it.
 
 ## What this is NOT
 
 - **Not the call center.** `../signalwire-call-center` is a separate product that
-  ships clone-and-own. Never add recipes-directory concerns to it, and never
-  import from it.
-- **Not a monolith.** A recipe that needs much more than ~200 lines of application
-  code is probably two recipes.
-- **Not a marketing site.** See the skill-routing rule below.
+  ships clone-and-own. It is a source of patterns and the anchor build, never a
+  ready-made corpus — extraction claims must be verified against code.
+- **Not a marketing site.** See the visual language section.
 
-## Layout
+## The two kinds, and the test between them
 
-```
-signalwire-recipes/
-  recipes.json          # seed list — the human-reviewable master list
-  scaffold.py           # recipes.json -> recipes/<slug>/   (idempotent, never overwrites)
-  build.py              # recipes/*/recipe.json -> site/    (globs; no registry)
-  recipes/<slug>/
-    recipe.json         # THE manifest. Only metadata source for this recipe.
-    README.md           # author-owned prose
-    .env.example
-    python/ typescript/ swml/    # surfaces are SUBDIRS of one recipe
-  site/                 # GENERATED — gitignored, never hand-edited
-```
+| | Recipe | Build |
+|---|---|---|
+| Is | one idea, one claim | an application you deploy and operate |
+| Size | usually under 200 lines | a repository |
+| Field | `prerequisites` / `related` | `composes` |
+| Test | "can I state its claim in one sentence?" | "is this a thing you run, not a thing you read?" |
 
-## Commands
+**The test is not how many recipes it touches.** A chat-to-voice handoff draws on
+two other recipes and is still one idea with one claim, so it is a RECIPE with
+`prerequisites`. The call center is an application, so it is a BUILD with
+`composes`. Do not let `composes` become "things this is related to" — that
+collapses the distinction and the card contract then serves neither well.
 
-```bash
-python scaffold.py    # seed folders from recipes.json (safe to re-run)
-python build.py       # regenerate site/ from the folders
-```
+## Taxonomy
+
+- **Categories are SignalWire product lines**: AI Agents, Voice, Messaging,
+  Browser & Video, SIP. They mirror what the company sells. Never invent a
+  parallel axis (an earlier pedagogical taxonomy — "governance", "handoff" as
+  categories — was wrong and is gone).
+- **Category is derived** from the recipe's declared `products`, not chosen
+  independently.
+- **Task groups** (`subcategory`) are a required field and the second level:
+  Call control, Routing & queueing, Monitoring, Governance, Knowledge, Tools &
+  integrations, Handoff, Other. They are cross-cutting — Governance appears
+  under Voice as well as AI Agents.
+- **Builds project, they do not own.** A build is associated with every category
+  its composition touches, marked "also in X" where borrowed, and deduped to its
+  home copy when the Builds filter is on.
 
 ## Hard rules
 
-1. **`recipes/<slug>/recipe.json` is the only metadata source.** Do not add a
-   central registry. `build.py` discovers by globbing, which is why there is no
-   registry to drift.
-2. **Never hand-edit anything under `site/`**, including `llms.txt` and
-   `sitemap.xml`. Regenerate.
-3. **Never rewrite an author-owned `README.md` from a build step.** Generated
-   headers go into build output only.
-4. **One recipe, many surfaces — never one recipe per language.** Language is a
-   subdirectory and a tab on the page, not a separate slug. Telnyx emitted
-   `call-forwarding` seven times; that is how they got 36% of entries with no
-   description, and seven thin pages cannibalise one keyword.
-5. **`slug` must equal the directory name.** `build.py` warns on mismatch.
-6. **Every recipe needs a real `summary`.** An empty or placeholder summary is the
-   single failure mode that made Telnyx's corpus look padded.
+1. `recipes/<slug>/recipe.json` is the only metadata source. No central registry.
+2. Never hand-edit anything under `site/`. Regenerate.
+3. Never write to an author-owned `README.md` from a build step.
+4. **One recipe, many surfaces** — language is a subdirectory and a tab, never a
+   separate slug. Telnyx emitted `call-forwarding` seven times; that is how 36%
+   of their entries ended up with no description.
+5. `slug` must equal the directory name.
+6. Every recipe needs a real `summary` and a task group. Both are enforced.
+7. Public pages carry no internal metadata. `tier`, `provenance` and `governed`
+   are planning state and must not render.
 
-## Naming convention
+## Validation (all of these refuse the build)
 
-Capability-first, dual-field. This is deliberate and was argued over — do not
-drift back to scenario names like `holyguacamole` or `bobbystable`.
+- unknown category / surface / evidence type
+- **dangling composition edge** — a `composes` entry with no such recipe. Two
+  builds shipped with fabricated edges before this existed; the counts were
+  counting strings.
+- missing task group on a recipe
+- `check_extensible.py`: a LEAK guard (no vocabulary literal in generator
+  source) and a SYNTH guard (invent a category, surface and recipe; the build
+  must render them with zero code changes).
 
-| Field | Job | Example |
-|---|---|---|
-| `slug` | search intent, URL | `whisper-to-an-agent-mid-call` |
-| `title` | plain-language H1 | "Whisper to an agent mid-call" |
-| `alias` | the technical term devs also search | `join_conference coach=` |
-| `summary` | what it does, outcome-first | "One-way audio that only the agent's leg can hear." |
-| `scenario` | the flavour / the demo you hear | "Coaching without the caller knowing" |
+**Adding a required field narrows the "adding a folder" promise.** When you add
+one, update the SYNTH fixture too — it is the definition of what a new folder
+must contain.
 
-Do **not** apply a blanket "no SDK names" lint. Developers search for `tap`,
-`post_prompt`, `live_translate`, `ai_sidecar`. Plain language goes in `title`,
-the jargon goes in `alias`. Both are indexed.
+## Visual language
 
-## Provenance vocabulary — and the honesty rule
+Lifted from the live site (`signalwire.com/products/ai-agent`), not from the
+brand cheatsheet's abstractions and not invented:
 
-`provenance` in the manifest is a claim about cost, and it gets read as a
-commitment. Values:
+- ground `#0f0f12`; surfaces `#16161a` / `#1c1c21`. **Neutral, not blue-tinted.**
+- Instrument Sans 600 at `-0.04em` / 1.1 for headings; Lexend body; JetBrains
+  Mono for identifiers, with `tnum` and slashed zero
+- the official logo SVG carries the wordmark — never set the company name as type
+- **fuchsia `#F72A72` has exactly four jobs**: primary button, build rail, active
+  Builds chip, selected surface tab. If you are reaching for it a fifth time,
+  the answer is a neutral.
+- turquoise for links and identifiers; no purple anywhere
+- no glows, no gradients, no texture — the call center disables its own grain and
+  dot-grid deliberately
+- labels are sentence-case sans, **not uppercase mono** — weight does hierarchy
+- horizontal separators are `border-top` on the card, so a rule stops where the
+  cards stop. A `border-bottom` scheme draws a full-width line over cells that
+  do not exist.
 
-- `extract` — genuinely liftable from existing code into <200 lines
-- `narrow` — the primitive is small, but the shipped product behaviour is bigger;
-  the recipe must promise only the primitive
-- `rewrite` — a capability exists somewhere but the recipe is new authorship
-- `new` — nothing exists
-- `blocked` — has an unresolved platform or policy dependency
-- `demos` — a version exists in the `signalwire-demos` org
+## Working method
 
-**Verify `extract` against code, never against prose.** A plan review on
-2026-08-24 downgraded 26 claimed extractions to 11 clean, 3 narrowed, 7 rewrites
-and 5 kills. The repo next door demonstrates why: its `ARCHITECTURE.md` documents
-`/sales` and `/support` routes that 404, and its `CLAUDE.md` says install SDK
-`0.1.55` while `ai-agents/requirements.txt` pins `signalwire-sdk>=3.0.1,<4`.
-Feature docs describe intent; only code and a passing test describe behaviour.
+- **Look at the render, not the code.** `playwright-cli` against a local
+  `python -m http.server`. Every visual bug this session was found by looking:
+  mojibake from an octal escape, a missing `<meta charset>`, a doubled CSS
+  selector, unstyled chips, orphaned rules.
+- **Design at real volume.** `python build.py --preview --all` renders every
+  recipe. A layout that works at 5 items can be wrong at 55.
+- **Verify replacements took.** `str.replace` fails silently; a "fixed" message
+  proves nothing. Assert, then check the output.
+- **Anchor deletions.** Cleanup regexes have twice eaten more than intended —
+  the content readers (twice) and a nested CSS rule.
+- **Heredocs eat backslashes.** For any patch containing them, write a script
+  file and run it.
 
-## Corrections that already cost us — do not re-derive
+## Review loop
 
-- **`step_criteria` is not hard control.** Step advancement is model-evaluated.
-  The real enforcement is per-step `set_functions` allowlists plus handlers that
-  validate and force transitions. Never write "a step machine the agent cannot
-  skip."
-- **The call-center test harness is not a demo runtime.** `testing/run_scenario.py`
-  places real PSTN calls from project-owned numbers, permits one run at a time
-  because number binding is exclusive, runs up to 240s, and its synthetic agent
-  leg is silent. A public gallery runner is new work.
-- **Colocated manifests do not make drift impossible.** They reduce merge
-  contention and clarify ownership. Drift still happens between manifest, README,
-  entrypoints, and generated output — so validate, don't assert.
-- **Live demo cost is not just PSTN.** WebRTC removes termination cost, not
-  STT/LLM/TTS/translation. Any runtime needs atomic global admission, spend
-  ceilings, per-leg bounds on duration *and* turns *and* tool calls, a
-  least-privilege demo project, and server-side destination allowlists.
-- **The `ai_sidecar` copilot tier is not shippable yet** — unverified suggestion
-  stream, unresolved stop contract, broken mid-call mode switches, and it
-  competes with live transcription for one transcriber slot.
+Plans and output go to **sol via the codex CLI** before they are trusted:
+`codex exec --skip-git-repo-check "<prompt>" < /dev/null > log 2>&1`, backgrounded.
+Redirect stdin or it hangs waiting on it. Write the brief to a file and point at
+the path rather than inlining it.
 
-## Competitive framing
+Three reviews are preserved in `docs/`. Each one killed something real:
+extraction estimates that were 2.4x optimistic, an architecture whose central
+claim was unprotected, and an IA that presented a growing graph as one ordered
+list.
 
-Telnyx **co-locates** AI beside telephony; SignalWire **embeds** the AI kernel in
-the media pipeline. Co-location reduces hops, embedding eliminates them for the
-orchestration layer. Never write that Telnyx "bolts AI on from outside" — they
-are a licensed carrier with a FreeSWITCH fork and their own TTS, and that framing
-will not survive a technical reader.
+## Open work
 
-## Skill routing — read before any UI work
-
-Several installed skills all advertise "use me for UI" and auto-selection is
-unreliable. For this project:
-
-| Surface | Use | Do not use |
-|---|---|---|
-| The gallery shell / index | `minimalist-skill` | `taste-skill` |
-| In-page demo widgets, dense panels | `minimalist-skill` | `taste-skill` |
-| Accessibility / semantics audit | `web-design-guidelines` | — |
-| Screenshot-and-iterate loop | `playwright-cli` | — |
-| Long code generation | `output-skill` | — |
-
-`taste-skill` is a marketing-site tool. Its rules — hero minimalism, "reduce
-micro-UI clutter" — are actively wrong here, because on a dense technical index
-and inside a live demo panel **the clutter is the product**. This page has no
-hero and should not acquire one.
-
-Register to aim for: Linear, Sentry, Vercel, Supabase. Dense rows, mono for
-identifiers, keyboard navigation, semantic state colour.
-
-`playwright-cli video-start` with `video-show-actions` annotates each action on a
-recording — useful for generating demo clips from the same tool that tests the page.
-
-## Known gaps
-
-- `scaffold.py` writes **empty** surface files. A naive "surface exists" CI check
-  would pass on an empty `app.py`. Validate in a clean environment using the
-  declared dependency file and run command, not file existence or syntax alone.
-- No `DESIGN.md` yet. That is the layer that keeps many recipe pages consistent.
-- Detail pages carry a placeholder where the live demo goes, and a generated
-  placeholder for "What this demonstrates". Both need per-recipe authorship.
-- No CI. Gates still to write: manifest schema + version, slug/dirname match,
-  summary length, clean-env surface validation, secret scan, generated-output
-  staleness, immutable IDs with slug aliases for renames.
-
-## Environment
-
-Windows, PowerShell primary, Bash available. `core.autocrlf=true` on this machine
-with mixed line endings in sibling repos — if this becomes a git repo, check
-`git diff --numstat` against `--ignore-space-at-eol` before believing a
-whole-file rewrite.
+- **Protocol for authoring a new recipe** — to be established from one recipe
+  taken genuinely end-to-end, not written in advance.
+- **Typed relationships** (`prerequisites`, `related`, `next`) are specified here
+  but not implemented. Recipe→build, recipe→prerequisite and build→composed
+  navigation should be designed once, together.
+- The **detail page** has not had the visual pass the index has.
+- **Chat is absent from the corpus** and is the cheapest path to an interactive
+  demo: text in, text out, no WebRTC, no PSTN, no media stack. Voice
+  interactivity needs a runtime service and belongs behind it.
+- The seed list needs an enumeration pass (SDK surface, FEATURES.md, the 22
+  demos in `signalwire-demos`, Telnyx's stems as a coverage checklist) rather
+  than a recall pass.
