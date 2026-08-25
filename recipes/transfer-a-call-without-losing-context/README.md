@@ -14,9 +14,9 @@ CPaaS this is application code you write and maintain yourself.
 ## How it works
 
 Two agents run on one `AgentServer`: `/intake` and `/billing-specialist`. Both set
-`params.persist_global_data = true` — the platform saves `global_data` to a
+`params.persist_global_data = true`, so the platform saves `global_data` to a
 channel variable when an AI session ends and restores it when the next AI
-session starts on the same call — and `params.transfer_summary = true` so the
+session starts on the same call, and `params.transfer_summary = true` so the
 next agent also receives a summary of the conversation so far.
 
 The intake tool `route_caller` writes what it learned from the handler, not
@@ -28,7 +28,7 @@ through the model:
 ```
 
 The transfer URL carries none of the context. The billing agent's prompt reads
-it directly — `${global_data.caller_name}`, `${global_data.intake_reason}` — so
+it directly, `${global_data.caller_name}` and `${global_data.intake_reason}`, so
 its first turn already knows who is calling and why.
 
 One SDK note: `FunctionResult.execute_swml(..., transfer=True)` in 3.0.1 places

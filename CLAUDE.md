@@ -241,6 +241,58 @@ own rule.
   all wrong against 3.0.1 (`signalwire_agents`, `self.result_data`,
   `signalwire.rest.Client`, a bare `connect` action); all four were rewritten.
 
+## Where authority comes from
+
+In this order. Never invent, never infer from a name, never trust prose in a
+repo over the code next to it.
+
+1. **The `signalwire-agent-protocol` skill.** Its `references/` are pre-extracted
+   and distilled and are the house patterns: `pgi-rules.md` (prompts propose,
+   code decides, which is the thesis of every governance recipe),
+   `sdk-quick-reference.md`, `best-practices.md`, `common-mistakes.md`,
+   `decision-trees.md` (POM vs Contexts/Steps, DataMap vs webhook),
+   `voice-tuning.md`, `lessons-learned.md`. Read the relevant ones before
+   writing an agent recipe. Its non-negotiables are ours.
+2. **The vendored SDK, read as code** (`docs/enum/sdk-surface.md` is the map;
+   the source is the authority). A README in that tree is stale by default.
+3. **`signalwire.com/docs`, cited by URL** for anything the SDK does not wrap:
+   SWML verbs, REST, cXML, Browser SDK, Call Flow Builder. `docs/enum/platform-docs.md`
+   is the standing extract. Two OpenAPI specs are vendored in `tools/openapi/`
+   and `verifylib.assert_documented()` checks requests against them.
+4. **The SignalWire Knowledge MCP** (`mcp__claude_ai_SignalWire_Knowledge__*`),
+   when authenticated. Ask Eric to authorise it once per machine; it is the
+   company's own knowledge base and outranks a web search.
+5. **`signalwire-demos`** for how a pattern is really used
+   (`docs/enum/demos.md`). Seven of the 22 repos are on the legacy
+   `signalwire_agents` package. Never quote those.
+
+A claim with no entry from this list is not ready to write; mark it
+NEEDS VERIFICATION in the inventory and move on.
+
+## Writing
+
+Recipes are engineering writing. The reader is a developer deciding whether the
+platform does the thing, and an answer engine deciding whether to cite us.
+
+- **Length**: 230-380 words of prose, median 300, excluding code. If it runs
+  longer the recipe is doing two things; split it. If it runs shorter the claim
+  is probably unproven.
+- **The first paragraph of *What this demonstrates* is the claim.** It renders
+  as the claim plate and is the sentence the page is judged on. One idea,
+  stated flatly, no throat-clearing.
+- **Say the mechanism, not the marketing.** Name the verb, the field, the
+  action key. "`record_call` before `connect`, so the bridged leg is inside the
+  recording" beats "seamlessly capture your conversations".
+- **Prefer the shorter word and the active voice.** Second person. No first
+  person plural.
+- **`tools/lint_recipes.py` enforces the prose tells mechanically** - em dashes
+  first among them, plus delve / leverage / seamless / robust / it's worth
+  noting / dive in / not only X but also / whether you're / game-changer and
+  the rest. An em dash is a comma, a colon, parentheses, or a full stop; pick
+  one. The list grows the first time a tell survives review.
+- Every claim in the prose is either proven by `verify.py` or attributed to a
+  cited doc. No third category.
+
 ## Authoring protocol (established 2026-08-25 from 20 recipes taken end-to-end)
 
 A recipe folder is done when **`python verify.py <slug>` passes**, not when it
@@ -391,7 +443,14 @@ cards could sit under the sticky filter strip, 113 cards had no
 
 ## QC gate — before any publish or commit that touches build.py
 
-1. `python build.py && python check_extensible.py && python verify.py`
+1. `python tools/lint_recipes.py && python build.py && python check_extensible.py && python verify.py`
+   The lint is the authoring protocol made mechanical: required README sections,
+   the prose tells, line length, `load_dotenv()` where the environment is read,
+   no `signalwire_agents`, a `verify.py` per recipe. Every rule in it is a
+   mistake that shipped once. **All 20 recipes shipped without `load_dotenv()`
+   while pinning `python-dotenv`** - the README said `cp .env.example .env` and
+   the app never read it, so every credentialed recipe failed from a clean
+   clone. The verifiers missed it because they set the environment in-process.
 2. `python build.py --preview --all && python tools/qc.py` — the render QC:
    overflow, sticky overlap at six scroll offsets, card click and back with
    exactly one view visible, the unbuilt toggle by *painted* count with its

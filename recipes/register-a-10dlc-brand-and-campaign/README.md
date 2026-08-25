@@ -9,8 +9,9 @@
 US carriers require A2P traffic from local (10-digit) numbers to come from a
 registered brand (the business) and campaign (the use case and sample
 messages). Both are REST resources here, so registration can be part of your
-onboarding code rather than a form someone fills in. Approval is asynchronous
-— days, not seconds — and each state change arrives at `status_callback_url`.
+onboarding code rather than a form someone fills in. Approval is asynchronous,
+measured in days rather than seconds, and each state change arrives at
+`status_callback_url`.
 
 ## How it works
 
@@ -32,7 +33,7 @@ and the content flags). Numbers can be assigned within about a day of campaign
 approval; brand *edits* after submission go through Support.
 
 What this does not cover: toll-free numbers use a verification form instead of
-10DLC, and short codes go through sales — see
+10DLC, and short codes go through sales. See
 `get-toll-free-messaging-verified`. Opt-out handling on the numbers is yours:
 `handle-opt-outs-yourself`.
 
@@ -46,7 +47,7 @@ python app.py                      # webhook receiver for status changes
 python app.py register +1555... +1555...   # in another shell; edit BRAND/CAMPAIGN first
 ```
 
-Brands carry a registration fee and campaigns a monthly fee — read the numbers
+Brands carry a registration fee and campaigns a monthly fee, so read the numbers
 in the Dashboard before running this against a real project.
 
 ## Verify it

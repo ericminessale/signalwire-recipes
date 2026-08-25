@@ -9,7 +9,11 @@ Written against signalwire-sdk 3.0.1.
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import AgentBase, FunctionResult
+
+# the SDK does not read .env for you
+load_dotenv()
 
 ACCOUNT_TOOLS = ["get_balance", "list_recent_transactions"]
 

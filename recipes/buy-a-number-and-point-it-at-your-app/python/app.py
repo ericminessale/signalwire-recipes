@@ -12,7 +12,11 @@ Written against signalwire-sdk 3.0.1 (RestClient.phone_numbers).
 import os
 import sys
 
+from dotenv import load_dotenv
 from signalwire.rest import RestClient
+
+# the SDK does not read .env for you
+load_dotenv()
 
 # reads SIGNALWIRE_PROJECT_ID / SIGNALWIRE_API_TOKEN / SIGNALWIRE_SPACE from the env
 client = RestClient()

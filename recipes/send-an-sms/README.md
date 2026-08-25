@@ -13,7 +13,7 @@ status webhook rather than in the API response.
 `RestClient().compat.messages.create(From=..., To=..., Body=..., StatusCallback=...)`
 posts to the Compatibility Messages endpoint
 (`/api/laml/2010-04-01/Accounts/<project>/Messages`). It returns as soon as the
-message is *accepted* — `status` is `queued`. Delivery, failure and carrier
+message is *accepted*: `status` is `queued`. Delivery, failure and carrier
 filtering arrive afterwards as POSTs to `StatusCallback` with `MessageSid`,
 `MessageStatus` and, on failure, `ErrorCode`.
 

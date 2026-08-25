@@ -8,7 +8,11 @@ Written against signalwire-sdk 3.0.1 (SWMLService).
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import SWMLService
+
+# the SDK does not read .env for you
+load_dotenv()
 
 SALES = os.getenv("SALES_NUMBER", "+15550100001")
 SUPPORT = os.getenv("SUPPORT_NUMBER", "+15550100002")

@@ -21,10 +21,10 @@ client.phone_numbers.update(number_id, call_handler="relay_script",             
 ```
 
 `call_handler: relay_script` with `call_relay_script_url` routes inbound calls
-to a SWML document — the same thing the Dashboard's "SWML webhook" handler
+to a SWML document, the same thing the Dashboard's "SWML webhook" handler
 does. The other handlers on the same field route to a Relay topic, a cXML URL,
 or a Dialogflow agent; `message_handler` fields do the same for SMS. Lookup
-(carrier and CNAM) is a sibling call on the same namespace — see
+(carrier and CNAM) is a sibling call on the same namespace. See
 `look-up-a-callers-carrier-and-name`.
 
 Purchasing is billable and immediate. Releasing is `DELETE` on the same
@@ -47,7 +47,7 @@ python verify.py
 ```
 
 With the HTTP layer replaced by a recorder, `provision()` must make exactly
-three requests in order — GET search, POST purchase, PUT update — each checked
+three requests in order (GET search, POST purchase, PUT update), each checked
 against `tools/openapi/rest.json` for path, method, documented fields and
 required fields, and the URL the number is pointed at must be the one passed in.
 

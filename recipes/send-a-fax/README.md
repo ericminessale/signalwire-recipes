@@ -6,8 +6,8 @@
 
 ## What this demonstrates
 
-Fax is one REST call — `POST .../Faxes` with `To`, `From` and a `MediaUrl`
-pointing at a PDF — followed by a wait. Transmission takes minutes and can fail
+Fax is one REST call, `POST .../Faxes` with `To`, `From` and a `MediaUrl`
+pointing at a PDF, followed by a wait. Transmission takes minutes and can fail
 half-way, so the outcome (`delivered` with `NumPages`, or `failed` with an
 `ErrorCode`) arrives at `StatusCallback`; the create response only says
 `queued`.
@@ -20,7 +20,7 @@ client.compat.faxes.create(To=to, From=FROM, MediaUrl=pdf_url, Quality="fine",
 ```
 
 The send goes through the Compatibility API's Faxes endpoint
-(`/api/laml/2010-04-01/Accounts/<project>/Faxes`) — there is no native
+(`/api/laml/2010-04-01/Accounts/<project>/Faxes`). There is no native
 `/api/fax` send; the native surface has fax *logs* (`GET /api/fax/logs`) for
 reconciliation. From inside a call the same operation is the SWML verb
 `send_fax`; over RELAY it is `call.send_fax`. Non-final statuses (`queued`,
@@ -50,4 +50,4 @@ statuses, with page count or error code.
 ## What to change first
 
 Point `MediaUrl` at a document your own app generated a minute earlier, and
-retry on `busy` or `no-answer` with a backoff — the fax world still has both.
+retry on `busy` or `no-answer` with a backoff, because the fax world still has both.

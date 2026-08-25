@@ -9,7 +9,11 @@ Written against signalwire-sdk 3.0.1.
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import AgentBase, AgentServer, FunctionResult
+
+# the SDK does not read .env for you
+load_dotenv()
 
 PUBLIC_URL = os.getenv("PUBLIC_URL", "http://localhost:8080")
 

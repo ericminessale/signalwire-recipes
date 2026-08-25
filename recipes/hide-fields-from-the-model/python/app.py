@@ -8,7 +8,11 @@ Written against signalwire-sdk 3.0.1.
 import json
 import os
 
+from dotenv import load_dotenv
 from signalwire import AgentBase, FunctionResult
+
+# the SDK does not read .env for you
+load_dotenv()
 
 # Everything the model is ever allowed to see about a customer. Adding a field
 # here is a code review, not a prompt edit.

@@ -7,7 +7,7 @@
 ## What this demonstrates
 
 A video room is a Fabric *Conference Room* resource: one REST call creates it
-and gives it an address, `/public/<name>`. A participant needs no account —
+and gives it an address, `/public/<name>`. A participant needs no account:
 your server mints a Guest token pinned to that one address, and the browser
 dials it with audio and video using the Browser SDK v4. SignalWire's video is an
 MCU, so each participant receives one mixed stream; layouts and screen share are

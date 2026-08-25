@@ -9,7 +9,7 @@
 WebRTC calling needs two things a static page cannot hold: a credential and a
 destination. A small server mints a Subscriber Access Token for the signed-in
 user (`POST /api/fabric/subscribers/tokens`); the Browser SDK v4 connects with
-it and dials — a phone number, or a Fabric address such as `/public/support`
+it and dials a phone number, or a Fabric address such as `/public/support`,
 that lands on a SWML script, an AI agent or another subscriber. The project API
 token never leaves the server.
 
@@ -33,7 +33,7 @@ call.state$.subscribe((state) => status.textContent = state);
 ```
 
 A Subscriber Access Token identifies one user and can also *receive* calls
-after `client.register()` — see `receive-calls-in-the-browser`. For an anonymous
+after `client.register()`. See `receive-calls-in-the-browser`. For an anonymous
 visitor who should reach exactly one destination, mint a Guest token instead
 (`get-a-webrtc-token-with-restricted-dial-targets`); for a button with no
 backend at all, use the embeddable widget (`embed-a-call-widget-with-no-backend`).

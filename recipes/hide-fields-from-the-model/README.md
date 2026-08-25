@@ -17,7 +17,7 @@ a caller who asks cleverly.
 `get_account` is a SWAIG tool with no parameters. The handler loads the full
 record from your own system, builds an explicit allowlist projection
 (`EXPOSED = ("first_name", "plan", "renewal_date", "open_tickets")`) and returns
-it as the tool's response text — `FunctionResult(json.dumps(projection))`. That
+it as the tool's response text, `FunctionResult(json.dumps(projection))`. That
 response is the only thing the model receives; `risk_score`, `margin_pct`,
 `internal_notes` and `card_last_four` are never in the conversation.
 

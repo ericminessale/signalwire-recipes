@@ -12,8 +12,12 @@ Written against signalwire-sdk 3.0.1 (RestClient.datasphere).
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import AgentBase, FunctionResult
 from signalwire.rest import RestClient
+
+# the SDK does not read .env for you
+load_dotenv()
 
 CORPUS_TAGS = os.getenv("DATASPHERE_TAGS", "product-docs").split(",")
 TOP_K = int(os.getenv("DATASPHERE_COUNT", "3"))

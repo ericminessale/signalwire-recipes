@@ -14,8 +14,12 @@ the same authenticated HTTP layer by path.
 import os
 import sys
 
+from dotenv import load_dotenv
 from signalwire import SWMLService
 from signalwire.rest import RestClient
+
+# the SDK does not read .env for you
+load_dotenv()
 
 client = RestClient()
 

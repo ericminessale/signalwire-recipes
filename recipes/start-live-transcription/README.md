@@ -8,7 +8,7 @@
 
 `live_transcribe` is a call-level verb, independent of any AI agent. Started
 before `connect`, it transcribes both legs of the bridged conversation and
-POSTs events to your webhook as they happen — partials when `live_events` is
+POSTs events to your webhook as they happen: partials when `live_events` is
 on, finals per utterance with the leg they came from, and an AI-written
 summary when `ai_summary` is on and the session ends. Stopping (`action:
 stop`) and summarising on demand (`action: summarize`) are the same verb.
@@ -30,7 +30,7 @@ stop`) and summarising on demand (`action: summarize`) are the same verb.
 ```
 
 The Flask route at `/transcript` keeps finals per call (with the leg), keeps
-the summary, and drops partials — a caption display would render the partials
+the summary, and drops partials, where a caption display would render them
 instead. The same session can be started on a live call over REST
 (`calling.live_transcribe`) or from RELAY.
 

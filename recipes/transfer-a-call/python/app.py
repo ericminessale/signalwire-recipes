@@ -8,7 +8,11 @@ Written against signalwire-sdk 3.0.1 (SWMLService).
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import SWMLService
+
+# the SDK does not read .env for you
+load_dotenv()
 
 DEST = os.getenv("TRANSFER_TO", "+15550100001")
 SIP_DEST = os.getenv("SIP_TRANSFER_TO", "sip:support@pbx.example.com")

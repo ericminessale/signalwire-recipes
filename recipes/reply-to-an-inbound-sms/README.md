@@ -13,7 +13,7 @@ the same branching in code and shows where MMS attachments arrive.
 
 ## How it works
 
-Markup only — the whole handler is one document:
+Markup only: the whole handler is one document.
 
 ```yaml
 - reply:
@@ -27,7 +27,7 @@ Markup only — the whole handler is one document:
       default: "Thanks for your message. A person will reply shortly."
 ```
 
-Python — SignalWire POSTs the documented inbound-message payload
+Python: SignalWire POSTs the documented inbound-message payload
 (`message.from`, `message.to`, `message.body`, `message.media[]` with `url`
 and `content_type`) and executes whatever document the handler returns:
 
@@ -40,7 +40,7 @@ handler. `reply` can also attach `media` to answer with an MMS, and takes a
 `status_url` for delivery callbacks (see `send-an-sms` for handling those).
 
 **STOP is your job.** SignalWire does not manage opt-outs; the handler records
-the sender so nothing is sent to them later — the full pattern is
+the sender so nothing is sent to them later. The full pattern is
 `handle-opt-outs-yourself`.
 
 ## Run it

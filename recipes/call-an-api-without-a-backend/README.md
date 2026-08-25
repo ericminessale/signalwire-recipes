@@ -7,7 +7,7 @@
 
 ## What this demonstrates
 
-_TODO — the pattern, in two sentences. This is the part that carries the argument._
+_TODO: the pattern, in two sentences. This is the part that carries the argument._
 
 ## Prerequisites
 

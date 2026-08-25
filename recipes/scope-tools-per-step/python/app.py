@@ -7,8 +7,12 @@ Written against signalwire-sdk 3.0.1.
 """
 import os
 
+from dotenv import load_dotenv
 from signalwire import AgentBase
 from signalwire.core.function_result import FunctionResult
+
+# the SDK does not read .env for you
+load_dotenv()
 
 
 class IntakeAgent(AgentBase):

@@ -7,7 +7,7 @@
 ## What this demonstrates
 
 `record_call` starts a background recording and returns immediately, so the
-verbs after it — including the `connect` that brings in the agent — run inside
+verbs after it, including the `connect` that brings in the agent, run inside
 the recording. The recording URL is not in the SWML response and not in the
 call; it arrives at `status_url` when the recording finishes.
 
@@ -30,7 +30,7 @@ stores the URL only when `state` is `finished`.
 
 Stopping early is `stop_record_call`; recordings are listed and deleted over
 REST (`/api/relay/rest/recordings`). To send recordings to your own storage
-instead of SignalWire's, see `export-recordings-and-enforce-retention` — that
+instead of SignalWire's, see `export-recordings-and-enforce-retention`. That
 path exists only in the Compatibility API's `<Record storageUrl>`.
 
 ## Run it

@@ -48,7 +48,7 @@ README = """# {title}
 
 ## What this demonstrates
 
-_TODO — the pattern, in two sentences. This is the part that carries the argument._
+_TODO: the pattern, in two sentences. This is the part that carries the argument._
 
 ## Prerequisites
 
@@ -166,7 +166,7 @@ def main():
         (d / "README.md").write_text(
             README.format(
                 title=m["title"], summary=m["summary"],
-                scenario=m["scenario"] or "—",
+                scenario=m["scenario"] or "_not set_",
                 surfaces=", ".join(m["surfaces"]) or "none yet",
             ),
             encoding="utf-8",

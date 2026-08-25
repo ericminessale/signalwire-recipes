@@ -9,7 +9,7 @@
 One-time codes are a platform service, not something you generate, store,
 expire and rate-limit yourself. `POST /mfa/sms` creates and delivers a code and
 returns a request id; `POST /mfa/call` does the same by reading it out on a
-phone call — the fallback for landlines and users whose SMS does not arrive;
+phone call, the fallback for landlines and users whose SMS does not arrive;
 `POST /mfa/{id}/verify` checks what the user typed. Your application holds only
 the request id.
 

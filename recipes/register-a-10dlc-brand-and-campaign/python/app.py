@@ -11,8 +11,12 @@ Written against signalwire-sdk 3.0.1 (RestClient.registry) and Flask.
 import os
 import sys
 
+from dotenv import load_dotenv
 from flask import Flask, request
 from signalwire.rest import RestClient
+
+# the SDK does not read .env for you
+load_dotenv()
 
 app = Flask(__name__)
 client = RestClient()

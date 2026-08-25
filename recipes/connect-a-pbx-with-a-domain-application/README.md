@@ -12,7 +12,7 @@ that accepts INVITEs from the IP addresses you list and runs a SWML document
 for each call. **Outbound** (SignalWire → PBX): a *SIP Gateway* is a Fabric
 resource with an address (`/private/<name>`) that any SWML can `connect` to;
 SignalWire delivers the call to the PBX's SIP URI. Neither side needs SIP
-registration or credentials — the PBX trusts by IP, SignalWire trusts by IP.
+registration or credentials: the PBX trusts by IP, SignalWire trusts by IP.
 
 ## How it works
 
@@ -28,7 +28,7 @@ client.fabric.sip_gateways.create(name="acme-pbx-gateway", uri="sip:pbx.example.
 ```
 
 The SWML the Domain Application runs bridges the incoming call onward
-(`connect: { to: "${call.to}" }` — the PSTN number the PBX dialled); the SWML
+(`connect: { to: "${call.to}" }`, the PSTN number the PBX dialled); the SWML
 a PSTN number runs to reach the PBX is `connect: { to: "/private/acme-pbx-gateway" }`.
 Put an `ai` verb in either document and the PBX has an AI agent behind an
 extension.

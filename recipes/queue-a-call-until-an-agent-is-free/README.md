@@ -8,7 +8,7 @@
 
 Queues are native. A caller enters a named queue with `enter_queue`; an agent
 takes the next waiting caller with `connect: { to: "queue:<name>" }`. The
-platform keeps the order, plays the hold document, and bounds the wait — no
+platform keeps the order, plays the hold document, and bounds the wait. No
 queue service of your own, no polling.
 
 ## How it works
@@ -32,7 +32,7 @@ agent:                                 # what an agent dials
 ```
 
 The verbs after `enter_queue` run only if `wait_time` expires with nobody
-answering — that is where you offer a callback instead
+answering, and that is where you offer a callback instead
 (`offer-a-callback-instead-of-a-hold`). Queue depth and the next member are also
 readable over REST (`/api/relay/rest/queues`), and the Compatibility API has the
 same shape as `<Enqueue>` / `<Dial><Queue>`.

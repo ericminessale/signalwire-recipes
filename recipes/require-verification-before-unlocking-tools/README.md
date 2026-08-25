@@ -8,7 +8,7 @@
 
 The model cannot call a tool that is not active. `get_balance` and
 `list_recent_transactions` are declared with `active: false`, so at the start of
-the call they are not in the model's world — not discouraged, absent. The only
+the call they are not in the model's world: not discouraged, absent. The only
 thing that turns them on is a `toggle_functions` action emitted by the
 `verify_pin` handler, and the handler emits it only when the PIN matches the
 caller's record. A prompt that says "verify before discussing the account" is a
@@ -39,8 +39,8 @@ composes:
 {"toggle_functions": [{"function": "get_balance", "active": true}, {"function": "list_recent_transactions", "active": true}]}
 ```
 
-The check is code — a caller from an unknown number with the right digits still
-fails — and `verify_pin` retires itself once it has done its job. Retiring is
+The check is code, so a caller from an unknown number with the right digits still
+fails, and `verify_pin` retires itself once it has done its job. Retiring is
 optional; re-verification mid-call is the same toggle in reverse.
 
 ## Run it

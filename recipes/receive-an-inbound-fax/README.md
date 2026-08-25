@@ -8,8 +8,8 @@
 
 Receiving a fax is a three-verb SWML document on a fax-capable number:
 `answer`, `receive_fax`, `hangup`. The platform handles the tones and the page
-transfer; when the fax completes it POSTs the result — success, page count and
-the document URL — to `status_url`. Nothing about T.30 reaches your code.
+transfer; when the fax completes it POSTs the result to `status_url`: success, page count and
+the document URL. Nothing about T.30 reaches your code.
 
 ## How it works
 
@@ -21,7 +21,7 @@ the document URL — to `status_url`. Nothing about T.30 reaches your code.
 
 The Flask route at `/fax-received` stores the document URL and page count when
 `success` is true and ignores a failed receive. From there the document is a
-normal file: OCR it, extract fields with a model, file it — the Telnyx
+normal file: OCR it, extract fields with a model, file it. The Telnyx
 "fax-to-structured-data" stems are this recipe plus a parser.
 
 Fax media URLs can be protected so they require API auth to fetch (Dashboard →
@@ -56,4 +56,4 @@ and the document URL only for a successful receive.
 ## What to change first
 
 Feed the document URL to `extract-structured-data-after-a-call`'s sibling
-pattern — a model with a typed schema — and post the JSON to your system.
+pattern, a model with a typed schema, and post the JSON to your system.

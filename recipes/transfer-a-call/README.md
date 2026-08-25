@@ -8,8 +8,8 @@
 
 `connect` is the transfer verb. Its `to` can be a phone number, a `sip:` URI or
 a Resource address such as `/public/support`. Execution pauses while the two
-legs are bridged; when the far end hangs up, the verbs *after* `connect` run —
-that is the return path, and it is where the caller can be offered something
+legs are bridged; when the far end hangs up, the verbs *after* `connect` run.
+That is the return path, and it is where the caller can be offered something
 else. `transfer_after_bridge: "true"` makes the transfer permanent instead.
 
 ## How it works
@@ -33,8 +33,8 @@ The `sip` section is the SIP variant: the same `connect` with a `sip:` URI and
 ```
 
 To try several destinations in order or ring them at once, replace `to` with
-`serial` or `parallel` — see `try-destinations-in-order`. To brief the person
-before the bridge completes, add `confirm` — see
+`serial` or `parallel`. See `try-destinations-in-order`. To brief the person
+before the bridge completes, add `confirm`. See
 `brief-the-human-before-the-bridge-completes`.
 
 ## Run it

@@ -13,8 +13,12 @@ Written against signalwire-sdk 3.0.1 (SWMLService) and Flask.
 """
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from signalwire import SWMLService
+
+# the SDK does not read .env for you
+load_dotenv()
 
 PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-host.example.com")
 QUEUE = os.getenv("QUEUE_NAME", "support")

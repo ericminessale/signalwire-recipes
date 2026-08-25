@@ -10,7 +10,11 @@ SWML `reply` (docs: swml/reference/messaging/reply).
 """
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
+
+# the SDK does not read .env for you
+load_dotenv()
 
 app = Flask(__name__)
 

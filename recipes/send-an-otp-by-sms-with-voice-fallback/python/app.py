@@ -12,8 +12,12 @@ Written against signalwire-sdk 3.0.1 (RestClient.mfa) and Flask.
 """
 import os
 
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from signalwire.rest import RestClient
+
+# the SDK does not read .env for you
+load_dotenv()
 
 app = Flask(__name__)
 client = RestClient()

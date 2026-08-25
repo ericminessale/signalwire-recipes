@@ -7,8 +7,8 @@
 ## What this demonstrates
 
 A complete phone menu is one SWML document: `prompt` collects a digit, `switch`
-branches on it, and each branch is a named section. Nothing here needs a server
-— host the YAML as a SWML Script in the Dashboard and point a number at it.
+branches on it, and each branch is a named section. Nothing here needs a server:
+host the YAML as a SWML Script in the Dashboard and point a number at it.
 
 The Python surface builds the identical document with `SWMLService`, so the
 destinations can come from the environment and every verb is validated against
@@ -63,4 +63,4 @@ and the default branch re-prompts.
 
 Add a fourth option that transfers to a SIP address instead of a number, or
 replace `prompt`'s digit collection with speech (`speech_hints`) and branch on
-what the caller says — see `collect-speech-input-and-branch`.
+what the caller says. See `collect-speech-input-and-branch`.

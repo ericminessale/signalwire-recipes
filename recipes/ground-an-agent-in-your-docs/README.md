@@ -27,8 +27,8 @@ passages = [c["text"] for c in res["chunks"]]
 return FunctionResult("Relevant documentation:\n\n" + "\n\n".join(f"- {p}" for p in passages))
 ```
 
-The request body — `query_string`, `tags`, `count` (also `distance`,
-`language`, `pos_to_expand`, `max_synonyms`) — is the documented Datasphere
+The request body (`query_string`, `tags`, `count`, and also `distance`,
+`language`, `pos_to_expand`, `max_synonyms`) is the documented Datasphere
 search API; `tags` is what scopes the corpus. An empty result returns an
 explicit "not covered" response rather than nothing, so the model has something
 truthful to say.
@@ -62,5 +62,5 @@ and that an empty result says so.
 
 ## What to change first
 
-Give two agents two tags over one Datasphere project — a sales corpus and a
-support corpus — and confirm neither can retrieve the other's documents.
+Give two agents two tags over one Datasphere project, a sales corpus and a
+support corpus, and confirm neither can retrieve the other's documents.
