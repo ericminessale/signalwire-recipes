@@ -15,9 +15,25 @@ Two audiences, in this order:
    I transfer a call without losing context" should retrieve our page.
 2. **Developers** who then clone the folder and run it.
 
+## Where things are
+
+This project lives at `C:\Projects\SignalWire\signalwire-recipes` — a peer of the
+other projects under the SignalWire workspace root, NOT inside `AI Call Center/`.
+It is independent of the call center and must not inherit that project's
+CLAUDE.md.
+
+The Agents SDK (3.0.1) is vendored next door and is importable:
+
+```bash
+PYTHONPATH="../AI Call Center/signalwire-call-center/ai-agents/signalwire-sdk/signalwire"
+```
+
+The import is `from signalwire import AgentBase` — **not** `signalwire_agents`,
+which is the 0.1.x name and appears in several stale docs.
+
 ## What this is NOT
 
-- **Not the call center.** `../signalwire-call-center` is a separate product that
+- **Not the call center.** `../AI Call Center/signalwire-call-center` is a separate product that
   ships clone-and-own. It is a source of patterns and the anchor build, never a
   ready-made corpus — extraction claims must be verified against code.
 - **Not a marketing site.** See the visual language section.
