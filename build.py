@@ -36,12 +36,26 @@ CSS = """
   --page:#0f0f12;
   --surface:#16161a;
   --raised:#1c1c21;
+  /* depth scale: a well is recessed (read into), a plate is raised (asserted
+     at you). Both are neutral - the hierarchy costs no colour. */
+  --well:#0a0a0c;
+  --well-line:rgba(0,0,0,.6);
+  --plate:#1c1c22;
+  --lip:inset 0 1px 0 rgba(255,255,255,.05);
+  --sunk:inset 0 1px 3px rgba(0,0,0,.5);
+  --lift:0 1px 2px rgba(0,0,0,.4),0 10px 28px -14px rgba(0,0,0,.7);
   --fg:#f4f4f6;
   --fg-2:#c9c9d0;
   --fg-muted:#8b8b96;
   --fg-subtle:#63636e;
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
+  /* a ladder: a hairline inside a panel, a border around one, and an edge that
+     is being pointed at. One strength is not a hierarchy. */
+  --line:rgba(255,255,255,.11);
+  --line-2:rgba(255,255,255,.17);
+  --line-3:rgba(255,255,255,.24);
+  --r-lg:10px;  /* code window, claim */
+  --r-md:6px;   /* command wells, inline code blocks */
+  --r-sm:3px;   /* chips */
   --fuchsia:#F72A72;
   --turquoise:#40E0D0;
   --head:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
@@ -49,6 +63,9 @@ CSS = """
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+.skip{position:absolute;left:-9999px;top:0;background:var(--fuchsia);color:#fff;
+  padding:10px 16px;border-radius:0 0 var(--r-md) 0;font-size:13px;z-index:100;}
+.skip:focus{left:0;}
 /* author display rules (.card{display:flex}) beat the UA's [hidden]; the
    filters and the unbuilt toggle set the attribute, so it must always win */
 [hidden]{display:none!important;}
@@ -63,7 +80,8 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 /* the frame grows with the screen: 1180 was a strip on a 4K monitor and left a
    code pane 80 characters wide. 1560 fits the longest recipe line (114ch) at
    1920 with room; below 1244px the viewport decides anyway */
-.wrap{max-width:1560px;margin:0 auto;padding:0 32px 120px;}
+.wrap{max-width:1560px;margin:0 auto;
+  padding:0 max(32px,env(safe-area-inset-right)) 120px max(32px,env(safe-area-inset-left));}
 
 /* hero, centred like the site's section heads */
 .hero{padding:76px 0 0;text-align:center;}
@@ -91,7 +109,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   border:1px solid var(--line-2);border-radius:4px;padding:8px 12px;
   font-family:var(--mono);font-size:12px;}
 #q::placeholder{color:var(--fg-subtle);}
-#q:focus-visible{outline:none;border-color:var(--fuchsia);}
+#q:focus-visible{outline:2px solid var(--fuchsia);outline-offset:1px;border-color:var(--fuchsia);}
 .chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:4px;
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
@@ -109,7 +127,12 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   border-radius:8px;overflow:hidden;
   grid-template-columns:repeat(auto-fill,minmax(258px,1fr));}
 .card{display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--page);
-  padding:17px 19px 18px;color:inherit;transition:background 140ms ease;}
+  padding:17px 19px 18px;color:inherit;transition:background 140ms ease;
+  /* the filter strip is sticky: keep a focused card out from under it */
+  scroll-margin-top:86px;
+  /* 113 cards in the preview: skip layout for offscreen ones. Find-in-page
+     still reaches them, unlike virtualisation, which the crawler needs. */
+  content-visibility:auto;contain-intrinsic-size:auto 186px;}
 .card:hover{background:var(--surface);}
 .card:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
 /* preview --all: not yet written */
@@ -137,57 +160,86 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 
 /* ---- recipe page ---- */
 .detail{padding:56px 0 0;}
-/* two columns from 1080px: reading on the left, the code it describes on the
-   right and kept in view; below that, one column that fills the frame */
-.dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 56px;align-items:start;margin-top:8px;}
-@media (min-width:1080px){
-  .dgrid{grid-template-columns:minmax(0,2fr) minmax(0,3fr);}  /* code gets the larger share */
-  .dside{position:sticky;top:14px;}          /* code only: nothing beneath it to cover */
-  .dside .cw{margin-top:34px;}
-  .dside pre.src{max-height:calc(100vh - 150px);}
-}
+/* Two columns from 1080px: the argument on the left, the code and what to do
+   with it on the right. Nothing sticks - both columns simply run, so neither
+   can cover the other and neither dies halfway down. */
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 60px;align-items:start;margin-top:32px;}
+@media (min-width:1080px){.dgrid{grid-template-columns:minmax(0,2fr) minmax(0,3fr);}
+  .dgrid.solo{grid-template-columns:minmax(0,1fr);}}
+/* nothing to sit beside the prose: one centred column reads as an essay,
+   where a 2fr strip against an empty 3fr reads as a broken page */
+.detail.solo{max-width:900px;margin-inline:auto;}
+.detail.solo .rels{margin-top:44px;}
 .dh{max-width:60ch;}
+.drule{height:1px;background:var(--line);margin:30px 0 0;}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
 .tech{font-family:var(--mono);font-size:12px;color:var(--turquoise);margin-top:12px;}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;
+  color:var(--fg-2);margin-top:16px;}
+.kicker::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--turquoise);}
 .sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
 .b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
-  background:var(--raised);border-radius:3px;padding:3px 8px;}
-.claim{background:var(--surface);border:1px solid var(--line);border-radius:8px;
-  padding:20px 22px;margin:34px 0;}
-.claim h2{font-family:var(--head);font-size:13px;letter-spacing:-.01em;
-  color:var(--fg-muted);font-weight:600;margin:0 0 8px;}
-.claim p{margin:0;color:var(--fg-2);font-size:15px;line-height:1.65;}
-.ev{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:30px 0;
-  background:var(--surface);}
-.ev-h{display:flex;align-items:center;gap:9px;padding:11px 16px;
-  border-bottom:1px solid var(--line);font-family:var(--head);font-size:13px;
-  font-weight:600;color:var(--fg-muted);}
+  background:var(--raised);border-radius:var(--r-sm);padding:3px 8px;}
+/* The claim is the one thing the page asserts, so it is the one tinted object:
+   a turquoise wash with a keyline down the left. Turquoise because fuchsia's
+   four jobs are spent and the page should keep exactly one signal colour. */
+.claim{background:rgba(64,224,208,.045);border:1px solid rgba(64,224,208,.19);
+  border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
+  box-shadow:inset 2px 0 0 rgba(64,224,208,.78),inset 0 1px 0 rgba(255,255,255,.06),
+    0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
+.claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
+  color:var(--turquoise);font-weight:600;margin:0 0 10px;opacity:.85;}
+.claim p{margin:0;color:var(--fg);font-size:18px;line-height:1.55;letter-spacing:-.005em;
+  max-width:62ch;}
+/* Evidence is quoted, not framed: no fill and no border, a keyline down the
+   left the way a pull quote is set. It is the one thing on the page nobody
+   else in developer documentation has, and it should not look like a card. */
+.ev{margin:0 0 40px;padding-left:18px;border-left:2px solid rgba(64,224,208,.42);}
+.ev-h{display:flex;align-items:center;gap:9px;padding:0 0 12px;
+  font-family:var(--head);font-size:13px;font-weight:600;color:var(--fg-2);}
 .ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--turquoise);flex:none;}
-.ev-b{padding:18px 16px;}
-.ev cite{display:block;margin-top:14px;font-style:normal;font-size:12px;color:var(--fg-subtle);}
+.ev-b{padding:0;}
+.ev cite{display:block;margin-top:16px;font-style:normal;font-size:12px;color:var(--fg-subtle);}
 .tr{font-family:var(--mono);font-size:12px;line-height:1.8;}
-.tr .l{display:grid;grid-template-columns:56px 1fr;gap:12px;}
-.tr .w{color:var(--fg-subtle);text-align:right;}
+.tr .l{display:grid;grid-template-columns:52px 1fr;gap:14px;padding:1px 0;}
+.tr .w{color:var(--fg-subtle);text-align:right;border-right:1px solid var(--line);
+  padding-right:13px;margin-right:-1px;}
 .tr .w.ai{color:var(--turquoise);}
-.tr .sys{color:var(--fg-subtle);padding:7px 10px;margin:8px 0;display:block;
-  font-size:11px;background:var(--raised);border-radius:4px;}
+/* the annotations are the editor speaking, not the call */
+.tr .sys{color:var(--fg-muted);padding:9px 13px;margin:11px 0 11px 66px;display:block;
+  font-size:11px;line-height:1.65;background:var(--surface);border-radius:var(--r-sm);}
 .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px;}
 .acts .n{font-size:12px;color:var(--fg-subtle);flex:1 1 16rem;}
 .btn:disabled{background:var(--raised);border-color:var(--line);color:var(--fg-subtle);
   cursor:not-allowed;}
 .sec{margin:34px 0;}
 .sec h2{font-size:19px;margin:0 0 10px;}
+.rels h2{font-size:13.5px;font-weight:600;color:var(--fg-2);}
+/* An argument section opens on a rule: a separator between two blocks, which
+   is what this project's separators are. Not a line trailing out of a heading. */
+.sec.arg{margin:0 0 40px;padding-top:18px;border-top:1px solid var(--line);}
+.sec.arg h2{font-size:21px;display:block;margin:0 0 14px;}
+/* procedure sections are quieter and tighter: type alone separates them */
+.sec.proc{margin:24px 0 0;}
+.sec.proc h2{font-size:13.5px;font-weight:600;color:var(--fg-2);margin:0 0 9px;
+  display:block;}
 .sec p{margin:0 0 12px;color:var(--fg-muted);font-size:15px;line-height:1.7;max-width:66ch;}
+.sec.proc p{font-size:14px;color:var(--fg-subtle);}
 .sec p em{font-style:italic;color:var(--fg-2);}
-.steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--surface);
-  border:1px solid var(--line);border-radius:8px;padding:16px 18px;line-height:1.9;
-  overflow-x:auto;}
-.cw{margin:34px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);}
+.steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--well);
+  border:none;border-left:2px solid rgba(64,224,208,.48);border-radius:0 var(--r-md) var(--r-md) 0;
+  padding:13px 16px;line-height:1.9;overflow-x:auto;}
+.steps .cl{display:block;padding-left:20px;text-indent:-20px;}
+.steps .cl::before{content:"$";color:var(--fg-subtle);display:inline-block;width:20px;
+  text-indent:0;}
+.cw{margin:0;border:1px solid var(--line-2);border-radius:var(--r-lg);overflow:hidden;
+  background:#131316;box-shadow:var(--lip),0 1px 2px rgba(0,0,0,.35),
+    0 8px 20px -16px rgba(0,0,0,.65);}
 .cwh{display:flex;align-items:stretch;justify-content:space-between;gap:12px;
-  border-bottom:1px solid var(--line);background:var(--raised);padding:0 6px 0 0;}
+  background:#131316;padding:0 6px 0 0;}
 .cwr{display:flex;align-items:center;gap:12px;}
 .cwr .fn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);}
 .copy{font-family:var(--body);font-size:11.5px;color:var(--fg-muted);background:transparent;
@@ -200,9 +252,10 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   border-bottom:2px solid transparent;}
 .stab:hover{color:var(--fg);}
 .stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);}
-pre.src{margin:0;background:var(--surface);color:var(--fg-2);padding:18px;overflow:auto;
-  border:1px solid var(--line);border-radius:8px;font-family:var(--mono);
-  font-size:12px;line-height:1.8;overflow-x:auto;}
+pre.src{margin:0;background:var(--well);color:var(--fg-2);padding:18px 18px 20px;
+  overscroll-behavior:contain;
+  border:none;border-top:1px solid var(--well-line);box-shadow:var(--sunk);
+  font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
 pre.src .c,pre.src .c1,pre.src .cm,pre.src .cs,pre.src .ch{color:var(--fg-subtle);font-style:italic;}
 pre.src .k,pre.src .kn,pre.src .kd,pre.src .kr,pre.src .kt,pre.src .kc,pre.src .ow{color:var(--fg);font-weight:500;}
@@ -213,12 +266,15 @@ pre.src .nt{color:var(--fg);}
 pre.src .mi,pre.src .mf,pre.src .mh,pre.src .m{color:var(--fg-2);}
 pre.src .nb,pre.src .bp,pre.src .nn{color:var(--fg-2);}
 pre.src .o,pre.src .p,pre.src .punctuation{color:var(--fg-muted);}
-pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);padding:14px 16px;
-  border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:12px;
-  line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;}  /* illustrative: wrap, never scroll */
-.rels{border-top:1px solid var(--line-2);padding-top:24px;}
+/* illustrative code inside prose: quieter than a command, quieter than the
+   artifact, and it wraps rather than scrolls */
+pre.mdcode{margin:10px 0 14px;background:rgba(255,255,255,.025);color:var(--fg-muted);
+  padding:13px 16px;border:none;border-left:1px solid var(--line);border-radius:0;
+  font-family:var(--mono);font-size:12px;line-height:1.6;white-space:pre-wrap;
+  overflow-wrap:anywhere;}
+.rels{border-top:1px solid var(--line-2);padding-top:24px;margin-top:56px;}
 .rels .rel{border-top:1px solid var(--line);padding:12px 0 14px;}
-@media (min-width:1080px){.rels{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 40px;}
+@media (min-width:1080px){.rels{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0 28px;}
   .rels h2{grid-column:1/-1;}}
 .rels .rel h3{font-size:13px;font-weight:600;color:var(--fg-2);margin:0 0 8px;}
 .rels .rel p{margin:0;color:var(--fg-2);font-size:14px;}
@@ -273,7 +329,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .bgrid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
   border-radius:8px;overflow:hidden;margin:20px 0 4px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
-.buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;
+.buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;scroll-margin-top:86px;
   background:var(--page);padding:17px 19px 18px;color:inherit;
   box-shadow:inset 2px 0 0 var(--fuchsia),inset 0 0 0 1px var(--line-2);
   transition:background 140ms ease;}
@@ -435,9 +491,23 @@ def esc(s):
     return html.escape(str(s), quote=True)
 
 
+def smart_typography(t):
+    """Curly quotes and a real ellipsis in prose. Backtick spans are code and
+    are left exactly as the author wrote them."""
+    parts = t.split("`")
+    for i in range(0, len(parts), 2):  # even segments are outside code
+        seg = parts[i].replace("...", "\u2026")
+        seg = re.sub(r'(?<![A-Za-z0-9])"', "\u201c", seg)
+        seg = seg.replace('"', "\u201d")
+        seg = re.sub(r"(?<![A-Za-z0-9])'", "\u2018", seg)
+        seg = seg.replace("'", "\u2019")
+        parts[i] = seg
+    return "`".join(parts)
+
+
 def md_inline(t):
-    t = esc(t)
-    t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+    t = esc(smart_typography(t))
+    t = re.sub(r"`([^`]+)`", r'<code translate="no">\1</code>', t)
     t = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", t)
     return t
 
@@ -489,7 +559,7 @@ PRE_MARK = "\x00pre:"
 def blocks_html(blocks):
     """Paragraph strings become <p>; fenced code (PRE_MARK-prefixed) becomes <pre>."""
     return "".join(
-        '<pre class="mdcode">%s</pre>' % b[len(PRE_MARK):] if b.startswith(PRE_MARK)
+        '<pre class="mdcode" translate="no">%s</pre>' % b[len(PRE_MARK):] if b.startswith(PRE_MARK)
         else "<p>%s</p>" % b
         for b in blocks
     )
@@ -584,13 +654,19 @@ def load():
 def page(title, body, favicon_title=None):
     return (
         '<meta charset="utf-8">\n'
+        # without this every page renders at 980px on a phone and zooms out,
+        # so none of the responsive CSS applies on a real device
+        '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
         "<title>" + esc(title) + "</title>\n"
-        '<meta name="theme-color" content="#141416">\n'
+        '<meta name="theme-color" content="#0f0f12">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
         "family=Instrument+Sans:wght@400;500;600;700&family=Lexend:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&"
         'display=swap">\n'
-        "<style>" + CSS + "</style>\n" + body
+        "<style>" + CSS + "</style>\n"
+        '<a class="skip" href="#main">Skip to content</a>\n'
+        '<div id="main">' + body + "</div>"
     )
 
 
@@ -752,7 +828,7 @@ def build_index(recipes, body_only=False):
 
         sections.append(
             '<details class="cat"><summary class="cat-h">'
-            '<span class="ct2">%s</span><span class="n">%d</span>'
+            '<h2 class="ct2">%s</h2><span class="n">%d</span>'
             '<span class="tgs">%s</span></summary>'
             '<div class="catbody">%s%s</div></details>'
             % (esc(c["label"]), len(items), tabs,
@@ -823,25 +899,26 @@ def build_detail(r, body_only=False):
     claim = demo_paras[0] if demo_paras else esc(r.get("summary", ""))
 
     out = [
-        '<div class="wrap"><div class="detail">',
+        '<div class="wrap"><div class="detail%s">' % ("" if surfaces else " solo"),
         '<p class="back"><a href="../index.html" data-home>&larr; all recipes</a></p>',
         '<div class="kicker">%s</div>' % esc(CAT_LABEL.get(r.get("category"), "")),
         '<div class="dh"><h1>%s</h1>' % esc(r["title"]),
     ]
     if r.get("alias"):
-        out.append('<div class="tech">%s</div>' % esc(r["alias"]))
+        out.append('<div class="tech" translate="no">%s</div>' % esc(r["alias"]))
     out.append('<p class="sub">%s</p>' % esc(r.get("summary", "")))
     # nothing internal on a public page
     meta = "".join(
         '<span class="b">%s</span>' % esc(x) for x in r.get("capabilities", [])[:4]
     )
-    out.append('<div class="meta">%s</div></div>' % meta)
+    out.append('<div class="meta">%s</div></div><div class="drule"></div>' % meta)
     out.append('<div class="dgrid"><div class="dmain">')
+    grid_open = len(out) - 1
     out.append('<div class="claim"><h2>The claim</h2><p>%s</p></div>' % claim)
 
     if ehtml:
         out.append(
-            '<div class="ev"><div class="ev-h"><span class="dot"></span>'
+            '<div class="ev"><div class="ev-h"><span class="dot" aria-hidden="true"></span>'
             "Evidence &middot; %s</div><div class=\"ev-b\">%s" % (esc(spec["label"]), ehtml)
         )
         if edata.get("caption"):
@@ -856,11 +933,11 @@ def build_detail(r, body_only=False):
 
     rest = [b for b in demo_blocks if b != claim]
     if rest:
-        out.append('<div class="sec"><h2>Why it holds</h2>%s</div>' % blocks_html(rest))
+        out.append('<div class="sec arg"><h2>Why it holds</h2>%s</div>' % blocks_html(rest))
 
     for h in ("How it works", "Limitations"):
         if h in sections:
-            out.append('<div class="sec"><h2>%s</h2>%s</div>' % (esc(h), blocks_html(sections[h])))
+            out.append('<div class="sec arg"><h2>%s</h2>%s</div>' % (esc(h), blocks_html(sections[h])))
 
     code_html = ""
     if surfaces:
@@ -878,17 +955,18 @@ def build_detail(r, body_only=False):
             body = highlight_code(code, sv.get("lexer")) if code else esc(
                 "# not written yet - recipes/%s/%s/%s" % (r["slug"], x, sv.get("entry", "?")))
             hid = "" if i == 0 else " hidden"
-            panes.append('<pre class="src" data-pane="%d"%s><code>%s</code></pre>' % (i, hid, body))
+            panes.append('<pre class="src" data-pane="%d"%s translate="no"><code>%s</code></pre>'
+                         % (i, hid, body))
             names.append('<span class="fn" data-pane="%d"%s>%s/%s</span>'
                          % (i, hid, esc(x), esc(sv.get("entry", ""))))
         code_html = (
             '<div class="cw"><div class="cwh"><div class="stabs" role="tablist">%s</div>'
-            '<div class="cwr">%s<button type="button" class="copy">Copy</button></div></div>%s</div>'
+            '<div class="cwr">%s<button type="button" class="copy" aria-live="polite">Copy</button></div></div>%s</div>'
             % (tabs, "".join(names), "".join(panes))
         )
 
         if "Run it" in sections:
-            out.append('<div class="sec"><h2>Run it</h2>%s</div>' % blocks_html(sections["Run it"]))
+            code_html += '<div class="sec proc"><h2>Run it</h2>%s</div>' % blocks_html(sections["Run it"])
         else:
             sv = V["surfaces"].get(surfaces[0], {})
             run = ["git clone &hellip; &amp;&amp; cd %s/%s" % (esc(r["slug"]), esc(surfaces[0])),
@@ -897,18 +975,16 @@ def build_detail(r, body_only=False):
                 run.append(esc(sv["install"]))
             if sv.get("run"):
                 run.append(esc(sv["run"]))
-            out.append(
-                '<div class="sec"><h2>Run it</h2><div class="steps">%s</div></div>'
-                % "<br>".join(run)
+            code_html += (
+                '<div class="sec proc"><h2>Run it</h2><div class="steps">%s</div></div>'
+                % "".join('<span class="cl">%s</span>' % x for x in run)
             )
         if "Verify it" in sections:
-            out.append('<div class="sec"><h2>Verify it</h2>%s</div>' % blocks_html(sections["Verify it"]))
+            code_html += '<div class="sec proc"><h2>Verify it</h2>%s</div>' % blocks_html(sections["Verify it"])
 
     if "What to change first" in sections:
-        out.append('<div class="sec"><h2>What to change first</h2>%s</div>'
+        out.append('<div class="sec proc"><h2>What to change first</h2>%s</div>'
                    % blocks_html(sections["What to change first"]))
-    out.append('</div><aside class="dside">%s</aside></div>' % code_html)
-
     def link(slug):
         return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))
 
@@ -935,6 +1011,12 @@ def build_detail(r, body_only=False):
         )
     if rels:
         out.append('<div class="sec rels"><h2>Where this sits</h2>%s</div>' % "".join(rels))
+    # the reading column closes here; the aside holds the code and what to do with it
+    if code_html:
+        out.append('</div><aside class="dside">%s</aside></div>' % code_html)
+    else:
+        out[grid_open] = '<div class="dgrid solo"><div class="dmain">'
+        out.append('</div></div>')
     repo = r.get("repo") or "#"
     out.append(
         '<div class="dfoot"><a href="%s">View the repository</a>'

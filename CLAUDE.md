@@ -290,6 +290,62 @@ Retiring a folder is a deliberate `git rm`.
   *Run it* replaces the generated steps when present, *Verify it* renders after
   the code. Look at `site/r/<slug>.html` through `python -m http.server` and
   `playwright-cli` before calling a change done.
+## Recipe page design (pass of 2026-08-25)
+
+The page is **an argument with an exhibit**: a claim, the evidence it is true,
+and the code that does it. Depth carries the hierarchy, so the design spends no
+new colour and fuchsia keeps its four jobs. **One depth channel per element,
+never reused** — this is the rule, because flatness is caused by the count of
+identical frames, not by their quality (7 boxes once shared one background,
+one border value and zero shadows; 7 headings were byte-identical).
+
+| element | treatment | why |
+|---|---|---|
+| the claim | turquoise wash 4.5% / border 19% / `inset 2px 0 0` keyline + a top-lit plate | the one thing the page asserts, and the only tinted object |
+| the transcript | **not a box**: no fill, no border, an 18px turquoise keyline, mono | evidence is quoted, not framed; it is the asset no other developer docs have |
+| the code | a window: `#131316` chrome over a `#0a0a0c` well, `--line-2` border, restrained lift | the artifact |
+| commands | a terminal: well fill, turquoise keyline, no card | you type into it |
+| illustrative code in prose | 2.5% white, hairline left rule, no radius, muted | quieter than both |
+| relationships | border-top only | navigation, lowest weight |
+
+- **Borders are a ladder**: `--line` .11 inside a panel, `--line-2` .17 around
+  one, `--line-3` .24 for an edge being pointed at. 8% white on this ground is
+  below the threshold where a border reads as a border — one weak channel looks
+  like a failed attempt. Radius is a scale too: `--r-lg` 10 / `--r-md` 6 /
+  `--r-sm` 3, never one value for a 700px window and a 24px chip.
+- **Turquoise ranks by strength**: the claim's keyline is full, evidence .42,
+  commands .48. The signal colour ranks things rather than merely marking them.
+- **Two heading tiers** matching the two kinds of section: argument sections
+  (Why it holds / How it works / Limitations) open on a `border-top` and run
+  21px; procedure sections (Run it / Verify it / What to change first) are
+  13.5px and quiet. **A rule that trails out of a heading, and little square
+  bullet markers, are the generated-design tell** — sol named both; a
+  structural `border-top` says the same thing and is the house separator.
+- Layout: *Run it* and *Verify it* sit under the code they belong to; *Where
+  this sits* closes the reading column so it ends on a terminus. A page with no
+  code (a build) is **one centred 900px column**, never a 2fr strip against an
+  empty 3fr.
+- Research: `docs/enum/design-research.md` (~30 dark dev-doc sites, values read
+  from served CSS). Review: `docs/DESIGN_REVIEW_2026-08-25.md`. Two research
+  recommendations were refused: a *fuchsia* claim wash (fuchsia's four jobs are
+  spent) and a sticky section index (all sticky is banned after one covered
+  three sections).
+
+## Web Interface Guidelines
+
+Vercel's guidelines (the `web-design-guidelines` skill, fetched live) are part
+of the QC gate for anything that changes markup. The audit of 2026-08-25 found
+one thing worth more than the rest: **the site had no `<meta name="viewport">`
+at all**, so every page rendered at 980px on a phone and none of the responsive
+CSS ever applied — invisible for weeks because the artifact wrapper injects its
+own viewport tag and nobody opened the site on a phone. Also fixed: `theme-color`
+did not match the page, no skip link, no `translate="no"` on code and
+identifiers (Chrome auto-translate garbles them), the Copy result was not
+announced, decorative dots were not `aria-hidden`, the index skipped h2,
+`fonts.gstatic.com` was not preconnected, `#q` used `outline:none`, focused
+cards could sit under the sticky filter strip, 113 cards had no
+`content-visibility`, and prose carried straight quotes and `...`.
+
 - **The recipe page uses the index's 1180px frame, not a 760px reading
   column.** A centred 760px column left 60% of a 1920px screen empty (Eric,
   2026-08-25). From 1080px up it is two columns — claim, evidence and prose on
