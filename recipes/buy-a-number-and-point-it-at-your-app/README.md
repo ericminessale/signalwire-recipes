@@ -6,9 +6,9 @@
 
 ## What this demonstrates
 
-Numbers are a REST resource. Three calls take you from nothing to a number that
-dials your code: search inventory (by area code, region, city, or a digit
-pattern), purchase, and set the call handler to a SWML URL. No Dashboard step,
+Numbers are a REST resource. Three calls take you from nothing to a number that dials your code. Search inventory
+by area code, region, city or digit pattern; purchase the number; set its call handler
+to a SWML URL. No Dashboard step,
 so it can run inside your own onboarding flow.
 
 ## How it works
@@ -46,10 +46,13 @@ python app.py buy +14155550123 https://<your-host>/ivr
 python verify.py
 ```
 
-With the HTTP layer replaced by a recorder, `provision()` must make exactly
-three requests in order (GET search, POST purchase, PUT update), each checked
-against `tools/openapi/rest.json` for path, method, documented fields and
-required fields, and the URL the number is pointed at must be the one passed in.
+With the HTTP layer replaced by a recorder, `provision()` must make exactly three
+requests in order:
+
+- `GET` search, then `POST` purchase, then `PUT` update
+- each checked against `tools/openapi/rest.json` for path, method, documented
+  fields and required fields
+- the URL the number is pointed at is the one passed in
 
 ## What to change first
 

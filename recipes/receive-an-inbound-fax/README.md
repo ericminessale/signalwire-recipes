@@ -24,9 +24,9 @@ The Flask route at `/fax-received` stores the document URL and page count when
 normal file: OCR it, extract fields with a model, file it. The Telnyx
 "fax-to-structured-data" stems are this recipe plus a parser.
 
-Fax media URLs can be protected so they require API auth to fetch (Dashboard →
-Media URL protection); the Compatibility API offers the same receive as
-`<Receive action=...>`, and inbound fax history is in `GET /api/fax/logs`.
+Fax media URLs can be protected so they require API auth to fetch (Dashboard → Media
+URL protection). The Compatibility API offers the same receive as `<Receive
+action=...>`, and inbound fax history is in `GET /api/fax/logs`.
 
 ## Run it
 

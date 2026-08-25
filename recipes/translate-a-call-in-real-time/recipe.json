@@ -35,5 +35,8 @@
       "features Live Translate (no update action; stop + restart to change pair)",
       "demo (none)"
     ]
-  }
+  },
+  "featured": true,
+  "feature_line": "Two people, two languages, one call.",
+  "feature_rank": 1
 }

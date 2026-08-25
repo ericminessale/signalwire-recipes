@@ -10,9 +10,9 @@ A complete phone menu is one SWML document: `prompt` collects a digit, `switch`
 branches on it, and each branch is a named section. Nothing here needs a server:
 host the YAML as a SWML Script in the Dashboard and point a number at it.
 
-The Python surface builds the identical document with `SWMLService`, so the
-destinations can come from the environment and every verb is validated against
-the SWML schema before it is served.
+The Python surface builds the identical document with `SWMLService`. Destinations come
+from the environment, and every verb is validated against the SWML schema before it is
+served.
 
 ## How it works
 
@@ -55,12 +55,14 @@ Point a phone number's SWML webhook at `https://<your-host>/ivr`.
 python verify.py
 ```
 
-Both surfaces are validated against the SDK's bundled SWML schema; the verifier
-asserts one digit is collected, every case transfers to a section that exists,
-and the default branch re-prompts.
+Both surfaces are validated against the SDK's bundled SWML schema. The verifier
+asserts:
+
+- one digit is collected
+- every case transfers to a section that exists
+- the default branch re-prompts
 
 ## What to change first
 
-Add a fourth option that transfers to a SIP address instead of a number, or
-replace `prompt`'s digit collection with speech (`speech_hints`) and branch on
-what the caller says. See `collect-speech-input-and-branch`.
+Add a fourth option that transfers to a SIP address instead of a number.
+Alternatively, collect speech with `speech_hints` and branch on what the caller says. See `collect-speech-input-and-branch`.

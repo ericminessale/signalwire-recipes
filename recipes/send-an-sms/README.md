@@ -4,9 +4,9 @@
 
 ## What this demonstrates
 
-Sending a message is trivial. Handling the outcome is the part tutorials skip - a
-queued message is not a delivered one, and carrier rejections arrive later on a
-status webhook rather than in the API response.
+Sending a message is trivial. Handling the outcome is the part tutorials skip. A queued message is not a delivered
+one, and carrier rejections arrive later on a status webhook rather than in the API
+response.
 
 ## How it works
 
@@ -45,10 +45,10 @@ No network, no account:
 python verify.py
 ```
 
-It swaps the REST client's HTTP layer for a recorder and checks the POST path
-and fields against `tools/openapi/compat.json`, then drives the status webhook
-with duplicate and non-terminal callbacks and asserts the side effect fires
-exactly once per terminal status.
+It swaps the REST client's HTTP layer for a recorder, then checks the POST path and
+fields against `tools/openapi/compat.json`. It drives the status webhook with
+duplicate and non-terminal callbacks, and asserts the side effect fires exactly once
+per terminal status.
 
 ## Limitations
 

@@ -55,9 +55,9 @@ No network, no account:
 python verify.py
 ```
 
-It renders the SWML, asserts the per-step `functions` lists, runs each tool
-handler and asserts the JSON keys the platform receives (`set_global_data`,
-`SWML` + `transfer`) rather than the SDK method names that produced them.
+It renders the SWML and asserts the per-step `functions` lists. It then runs each tool
+handler and asserts the JSON keys the platform receives (`set_global_data`, `SWML` +
+`transfer`), never the SDK method names that produced them.
 
 ## Limitations
 

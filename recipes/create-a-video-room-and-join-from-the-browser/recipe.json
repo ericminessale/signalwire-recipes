@@ -43,5 +43,8 @@
   "related": [
     "get-a-webrtc-token-with-restricted-dial-targets"
   ],
-  "next": []
+  "next": [],
+  "featured": true,
+  "feature_line": "Video in one REST call and twenty lines of browser code.",
+  "feature_rank": 6
 }

@@ -15,7 +15,7 @@ platform's; the boundary is the tag; the code is thirty lines.
 
 What this does *not* prove: that the model will never answer from its own
 knowledge. Search evidence cannot enforce a behavioural guarantee; the prompt
-asks for it and the tool makes it easy. Structural constraints on what the
+asks for it and the tool makes it the path of least resistance. Structural constraints on what the
 model can *do* are the governance recipes (`scope-tools-per-step`,
 `require-verification-before-unlocking-tools`).
 
@@ -54,11 +54,14 @@ Alternatives with the same shape: the SDK's `datasphere` skill (webhook) or
 python verify.py
 ```
 
-It replaces the REST client's HTTP layer with a recorder, runs the tool, and
-asserts one POST to `/api/datasphere/documents/search` whose body is a
-documented search request carrying exactly the corpus tags (checked against
-`tools/openapi/rest.json`), that the response text is the returned passages,
-and that an empty result says so.
+It replaces the REST client's HTTP layer with a recorder and runs the tool. The
+verifier then asserts:
+
+- one POST to `/api/datasphere/documents/search`
+- a body that is a documented search request carrying exactly the corpus tags,
+  checked against `tools/openapi/rest.json`
+- the response text is the returned passages
+- an empty result says so
 
 ## What to change first
 

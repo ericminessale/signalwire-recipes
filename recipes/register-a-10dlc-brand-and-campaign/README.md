@@ -26,11 +26,15 @@ campaign = client.registry.brands.create_campaign(brand["id"], sms_use_case="ACC
 order    = client.registry.campaigns.create_order(campaign["id"], phone_numbers=[...], status_callback_url=STATUS_URL)
 ```
 
-The field lists come from the Campaign Registry reference (brand: legal entity,
-EIN, vertical, contacts; campaign: use case, a 40+ character description, two
-to five 20+ character samples, the opt-in/opt-out/help messages and keywords,
-and the content flags). Numbers can be assigned within about a day of campaign
-approval; brand *edits* after submission go through Support.
+The field lists come from the Campaign Registry reference:
+
+- **brand**: legal entity, EIN, vertical, contacts
+- **campaign**: use case, a 40+ character description, two to five 20+
+  character samples, the opt-in/opt-out/help messages and keywords, and the
+  content flags
+
+Numbers can be assigned within about a day of campaign approval; brand *edits* after
+submission go through Support.
 
 What this does not cover: toll-free numbers use a verification form instead of
 10DLC, and short codes go through sales. See
@@ -56,11 +60,15 @@ in the Dashboard before running this against a real project.
 python verify.py
 ```
 
-With the HTTP layer recorded, `register()` must make exactly three documented
-requests in order, the campaign under the returned brand id and the order under
-the returned campaign id with our numbers and callback; brand and campaign
-fields are checked against the documented reference lists (the OpenAPI spec
-publishes no body schema for them), and the webhook records state by resource id.
+With the HTTP layer recorded, `register()` must make exactly three documented requests
+in order. The verifier asserts:
+
+- the campaign is created under the returned brand id
+- the order is created under the returned campaign id, with our numbers and
+  callback
+- brand and campaign fields match the documented reference lists (the OpenAPI
+  spec publishes no body schema for them)
+- the webhook records state by resource id
 
 ## What to change first
 

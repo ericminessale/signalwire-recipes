@@ -6,12 +6,11 @@
 
 ## What this demonstrates
 
-Bring-your-own-PBX is two resources, both created over REST. **Inbound** (PBX →
-SignalWire): a *Domain Application* is a SIP domain, `<identifier>.dapp.signalwire.com`,
-that accepts INVITEs from the IP addresses you list and runs a SWML document
-for each call. **Outbound** (SignalWire → PBX): a *SIP Gateway* is a Fabric
-resource with an address (`/private/<name>`) that any SWML can `connect` to;
-SignalWire delivers the call to the PBX's SIP URI. Neither side needs SIP
+Bring-your-own-PBX is two resources, both created over REST. **Inbound** (PBX → SignalWire): a *Domain Application* is a SIP domain,
+`<identifier>.dapp.signalwire.com`. It accepts INVITEs from the IP addresses you list
+and runs a SWML document for each call. **Outbound** (SignalWire → PBX): a *SIP Gateway* is a Fabric resource with an address
+(`/private/<name>`) that any SWML can `connect` to. SignalWire delivers the call to
+the PBX's SIP URI. Neither side needs SIP
 registration or credentials: the PBX trusts by IP, SignalWire trusts by IP.
 
 ## How it works
@@ -27,9 +26,10 @@ client.fabric.sip_gateways.create(name="acme-pbx-gateway", uri="sip:pbx.example.
                                   encryption="optional", ciphers=[...], codecs=[...])
 ```
 
-The SWML the Domain Application runs bridges the incoming call onward
-(`connect: { to: "${call.to}" }`, the PSTN number the PBX dialled); the SWML
-a PSTN number runs to reach the PBX is `connect: { to: "/private/acme-pbx-gateway" }`.
+The Domain Application bridges the incoming call with `connect`, using `${call.to}` as
+the destination. That value is the PSTN number the PBX dialled. In the other
+direction, the SWML a PSTN number runs to reach the PBX is `connect: { to:
+"/private/acme-pbx-gateway" }`.
 Put an `ai` verb in either document and the PBX has an AI agent behind an
 extension.
 
@@ -59,11 +59,13 @@ address (the `to_pbx` section of `swml/agent.yaml`).
 python verify.py
 ```
 
-With the HTTP layer recorded, setup must make exactly the two documented
-requests with the documented required fields (checked against
-`tools/openapi/rest.json`), IP auth enabled with our PBX addresses and our SWML
-URL as the handler; both SWML documents validate and connect in the right
-direction.
+With the HTTP layer recorded, setup must make exactly the two documented requests,
+with the documented required fields checked against `tools/openapi/rest.json`. The
+verifier also asserts:
+
+- IP auth is enabled with our PBX addresses
+- our SWML URL is the handler
+- both SWML documents validate and connect in the right direction
 
 ## What to change first
 

@@ -60,9 +60,9 @@ number at `https://<your-host>/agent`.
 python verify.py
 ```
 
-All three documents validate against the SWML schema; the verifier asserts the
-queue name, a `wait_url`, a bounded `wait_time`, the fall-through after
-`enter_queue`, and that the agent document connects to `queue:support`.
+All three documents validate against the SWML schema. The verifier asserts the queue
+name, a `wait_url`, a bounded `wait_time`, the fall-through after `enter_queue`, and
+that the agent document connects to `queue:support`.
 
 ## What to change first
 

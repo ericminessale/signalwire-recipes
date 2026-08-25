@@ -79,7 +79,10 @@
         "docs swml/guides/toggle-functions",
         "demo pathfinder tools.py:260,385 toggle_functions gating a tool",
         "verified 2026-08-25: recipes/require-verification-before-unlocking-tools/verify.py"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "Tools that do not exist until the caller proves who they are.",
+      "feature_rank": 2
     },
     {
       "slug": "scope-tools-per-step",
@@ -107,7 +110,10 @@
         "recipes/scope-tools-per-step/python/app.py renders SWML with functions per step",
         "demo testbot nav suite",
         "phase 2: transfer_to_human emits a bare connect action (not in the documented SWAIG action list) - switch to FunctionResult.connect(); unrelated to the scoping claim"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "The model cannot call a tool that is not on the table.",
+      "feature_rank": 5
     },
     {
       "slug": "hide-fields-from-the-model",
@@ -431,7 +437,10 @@
       "evidence": [
         "sdk ai_config_mixin.py:521 enable_mcp_server",
         "sdk mcp_server_mixin.py:60-142"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "Give Claude a phone number.",
+      "feature_rank": 3
     },
     {
       "slug": "write-a-reusable-agent-skill",
@@ -1488,7 +1497,10 @@
         "docs apis/rest/calls/call-commands (calling.live_transcribe)",
         "docs apis/rest/webhooks (Transcript status callback)",
         "verified 2026-08-25: recipes/start-live-transcription/verify.py"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "Both sides of a live call, transcribed as it happens.",
+      "feature_rank": 4
     },
     {
       "slug": "translate-a-call-in-real-time",
@@ -1519,7 +1531,10 @@
         "docs swml/reference/calling/live-translate",
         "features Live Translate (no update action; stop + restart to change pair)",
         "demo (none)"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "Two people, two languages, one call.",
+      "feature_rank": 1
     },
     {
       "slug": "listen-to-a-live-call",
@@ -2586,7 +2601,10 @@
         "docs browser-sdk/guides/screen-sharing",
         "verified 2026-08-25: recipes/create-a-video-room-and-join-from-the-browser/verify.py",
         "resolved: v4 path is a Fabric conference_rooms resource dialled at /public/<name> with a guest SAT; the documented create body requires enable_room_previews"
-      ]
+      ],
+      "featured": true,
+      "feature_line": "Video in one REST call and twenty lines of browser code.",
+      "feature_rank": 6
     },
     {
       "slug": "add-a-phone-caller-to-a-video-room",

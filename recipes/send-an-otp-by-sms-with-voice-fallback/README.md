@@ -7,10 +7,9 @@
 ## What this demonstrates
 
 One-time codes are a platform service, not something you generate, store,
-expire and rate-limit yourself. `POST /mfa/sms` creates and delivers a code and
-returns a request id; `POST /mfa/call` does the same by reading it out on a
-phone call, the fallback for landlines and users whose SMS does not arrive;
-`POST /mfa/{id}/verify` checks what the user typed. Your application holds only
+expire and rate-limit yourself. `POST /mfa/sms` creates and delivers a code, returning a request id. If SMS does not
+arrive, or the user is on a landline, `POST /mfa/call` reads the code out on a phone
+call instead. `POST /mfa/{id}/verify` checks what the user typed. Your application holds only
 the request id.
 
 ## How it works
@@ -46,11 +45,10 @@ curl -X POST localhost:8080/otp/verify -H 'content-type: application/json' -d '{
 python verify.py
 ```
 
-With the HTTP layer recorded, the three routes must make exactly the
-documented MFA requests with documented, required-complete bodies (checked
-against `tools/openapi/rest.json`), the voice fallback must carry the same
-parameters as the SMS send, and the application source must contain no code
-generation of its own.
+With the HTTP layer recorded, the verifier checks the three documented MFA requests
+and their required bodies against `tools/openapi/rest.json`. It also confirms that the
+voice fallback carries the same parameters as the SMS send, and that the application
+generates no codes of its own.
 
 ## What to change first
 

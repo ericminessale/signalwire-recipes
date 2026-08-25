@@ -18,31 +18,40 @@ RECIPES = ROOT / "recipes"
 MAX_LINE = 90          # the code pane holds 91 characters at 1280px
 REQUIRED_SECTIONS = ("What this demonstrates", "How it works", "Run it",
                      "Verify it", "What to change first")
-# Prose tells. Written English on this site does not use these.
+# Prose rules. The SignalWire writing guide is the authority (Knowledge MCP:
+# get_writing_guide); every entry either quotes it or is a tell that survived a
+# review here. A recipe README is a Diataxis "how-to guide", so second person is
+# correct and the no-addressing-the-reader rule does not apply to it.
 AI_TELLS = (
-    (r"—", "em dash: use a comma, a colon, or two sentences"),
+    # --- verbatim rules from the writing guide ---
+    ("\u2014|(?<![-\\w])--(?![-\\w])",
+     "em dash or --: rewrite with a comma, colon, period, semicolon or parentheses"),
+    (r"\b(just|simply|easy|easily|straightforward)\b",
+     "dismissive language: it adds no information and dismisses difficulty"),
+    (r"\b(honest|honestly|transparent|candid)\b|\bto be clear\b|\bthe truth is\b",
+     "claims the virtue instead of demonstrating it; 'honest' is a reliable tell"),
+    (r"\b(foo|bar|baz|qux)\b", "placeholder name: use a real-world scenario"),
+    (r"\bplease\b", "procedural steps are imperatives, not requests"),
+    (r"\bas (mentioned|described|noted) (above|earlier)\b|\bthe previous section\b|\bsee above\b",
+     "a section must stand alone: retrieval delivers it without its neighbours"),
+    # --- tells that survived a review in this repo ---
     (r"\bdelve\b", "delve"),
     (r"\bleverage\b", "leverage: use 'use'"),
     (r"\bseamless(ly)?\b", "seamless"),
     (r"\brobust\b", "robust"),
     (r"\bcutting[- ]edge\b", "cutting-edge"),
-    (r"\bit'?s worth noting\b", "it's worth noting: just say it"),
+    (r"\bit'?s worth noting\b", "it's worth noting: say the thing"),
     (r"\bin today'?s\b", "in today's ..."),
     (r"\bunlock(s|ing)? the power\b", "unlock the power"),
     (r"\bdive (in|into)\b", "dive in"),
-    (r"\bthat said,", "that said"),
-    (r"\bmoreover\b", "moreover"),
-    (r"\bfurthermore\b", "furthermore"),
-    (r"\bin conclusion\b", "in conclusion"),
+    (r"\bmoreover\b|\bfurthermore\b|\bin conclusion\b", "connective filler"),
     (r"\bnot only .{1,40}\bbut also\b", "not only ... but also"),
     (r"\bisn'?t just\b|\bis not just\b", "X isn't just Y"),
     (r"\bwhether you'?re\b", "whether you're a ... or a ..."),
-    (r"\bwe'?ll explore\b", "we'll explore"),
-    (r"\blet'?s (dive|explore|take a look)\b", "let's ..."),
+    (r"\bwe'?ll explore\b|\blet'?s (dive|explore|take a look)\b", "tour-guide framing"),
     (r"\bgame[- ]chang(er|ing)\b", "game-changer"),
-    (r":\s*$", None),  # placeholder, filtered below
 )
-AI_TELLS = tuple((p, m) for p, m in AI_TELLS if m)
+MAX_SENTENCE = 26   # writing guide: keep sentences under 26 words
 
 
 def code_files(d):
@@ -117,7 +126,17 @@ def check(d, fail):
     for pat, msg in AI_TELLS:
         for m in re.finditer(pat, prose, re.I):
             line = prose[:m.start()].count("\n") + 1
-            fail(slug, f"README.md:~{line}", f"reads as generated: {msg}")
+            fail(slug, f"README.md:~{line}", msg)
+    body = re.sub(r"^[#>\-*|].*$", "", prose, flags=re.M)   # skip headings, lists, tables
+    # A paragraph break ends a sentence even without a full stop, or a lead-in
+    # like "Three requests in dependency order:" merges with the paragraph that
+    # follows its code block and is counted as one 46-word run-on.
+    for sent in re.split(r"(?<=[.!?])\s+|\n\s*\n", body):
+        n = len(re.findall(r"[A-Za-z0-9'\u2019]+", sent))
+        if n > MAX_SENTENCE:
+            at = prose.find(sent[:40])
+            ln = prose[:at].count("\n") + 1 if at > 0 else 0
+            fail(slug, f"README.md:~{ln}", f"{n}-word sentence; the guide caps them at {MAX_SENTENCE}")
     if not (d / ".env.example").exists():
         fail(slug, ".env.example", "missing")
 

@@ -54,9 +54,9 @@ Point a phone number's SWML webhook at `https://<your-host>/record`.
 python verify.py
 ```
 
-Both surfaces validate against the SWML schema; the verifier asserts
-`record_call` precedes `connect`, records both directions in stereo, names a
-`status_url`, and that the webhook stores a URL only for a finished recording.
+Both surfaces validate against the SWML schema. The verifier asserts `record_call`
+precedes `connect`, records both directions in stereo and names a `status_url`, and
+that the webhook stores a URL only for a finished recording.
 
 ## What to change first
 

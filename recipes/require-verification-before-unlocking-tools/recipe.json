@@ -47,5 +47,8 @@
   ],
   "next": [
     "send-an-otp-by-sms-with-voice-fallback"
-  ]
+  ],
+  "featured": true,
+  "feature_line": "Tools that do not exist until the caller proves who they are.",
+  "feature_rank": 2
 }

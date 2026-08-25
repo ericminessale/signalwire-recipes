@@ -6,11 +6,10 @@
 
 ## What this demonstrates
 
-`live_transcribe` is a call-level verb, independent of any AI agent. Started
-before `connect`, it transcribes both legs of the bridged conversation and
-POSTs events to your webhook as they happen: partials when `live_events` is
-on, finals per utterance with the leg they came from, and an AI-written
-summary when `ai_summary` is on and the session ends. Stopping (`action:
+`live_transcribe` is a call-level verb, independent of any AI agent. Started before `connect`, it transcribes both legs of the bridged conversation. It
+POSTs partial events while `live_events` is on, and a final event per utterance
+carrying the leg it came from. When the session ends, `ai_summary` adds an AI-written
+summary. Stopping (`action:
 stop`) and summarising on demand (`action: summarize`) are the same verb.
 
 ## How it works
@@ -34,9 +33,9 @@ the summary, and drops partials, where a caption display would render them
 instead. The same session can be started on a live call over REST
 (`calling.live_transcribe`) or from RELAY.
 
-Two things to know: a call has one transcriber, so `live_transcribe` cannot run
-alongside `ai_sidecar`; and for a whole-call transcript delivered once at the
-end rather than a stream, use `transcribe-a-call-in-the-background`.
+A call has one transcriber, so `live_transcribe` cannot run alongside `ai_sidecar`.
+For a whole-call transcript delivered once at the end rather than a stream, use
+`transcribe-a-call-in-the-background`.
 
 ## Run it
 
@@ -59,13 +58,11 @@ Point a phone number's SWML webhook at `https://<your-host>/transcribe`.
 python verify.py
 ```
 
-Both surfaces validate against the SWML schema; the verifier asserts
-`live_transcribe` precedes `connect` with `live_events`, `ai_summary` and both
-directions on, and that the webhook keeps finals and the summary and drops
-partials.
+Both surfaces validate against the SWML schema. The verifier asserts `live_transcribe`
+precedes `connect` with `live_events`, `ai_summary` and both directions on, and that
+the webhook keeps finals and the summary while dropping partials.
 
 ## What to change first
 
-Push the finals to a browser over WebSocket for live captions (the #21 "latency-
-honest front end"), or feed them to `classify-sentiment`-style logic to raise a
-supervisor alert mid-call.
+Push the finals to a browser over WebSocket for live captions. Alternatively, feed
+them to `classify-sentiment`-style logic to raise a supervisor alert mid-call.

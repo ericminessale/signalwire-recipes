@@ -162,7 +162,28 @@ brand cheatsheet's abstractions and not invented:
 - labels are sentence-case sans, **not uppercase mono** — weight does hierarchy
 - horizontal separators are `border-top` on the card, so a rule stops where the
   cards stop. A `border-bottom` scheme draws a full-width line over cells that
-  do not exist. **`.bsec` is the one deliberate exception**: it separates
+  do not exist.
+
+### Index layout (decided 2026-08-25)
+
+- **Builds sit at the bottom of a category, not the top.** A category is read
+  for its recipes; a build is where they end up assembled, so it belongs after
+  them. Its separating rule is therefore a `border-top` on `.bsec`, opening the
+  block rather than closing it.
+- **A featured band sits above the first category**, carrying the standout
+  capabilities by their one-line claim ("Two people, two languages, one call.")
+  rather than their slug. It is driven entirely by data: `featured`,
+  `feature_line` and `feature_rank` on the inventory row, synced to
+  `recipe.json` by `scaffold.py`. Adding one is an inventory edit, never a
+  generator edit.
+- **The band is a front door, not a result.** Any search or category chip
+  replaces it. With the unbuilt hidden, its planned cards go and the band stays.
+- **Featured cards are `.fcard`, never `.card`.** They duplicate recipes that
+  also appear below, so the moment they answer to `.card` the chip counts, the
+  category counts and `tools/qc.py`'s own toggle check all inflate by six.
+  `tools/qc.py` asserts `.fcard.card` is empty.
+- The band **borrows no fuchsia**. That colour already has its four jobs; the
+  band earns its place with depth (`--plate`, `--lip`, `--lift`). **`.bsec` is the one deliberate exception**: it separates
   two blocks rather than two cells, so full width is the point.
 
 ## Working method
@@ -185,7 +206,20 @@ brand cheatsheet's abstractions and not invented:
 - **Anchor deletions.** Cleanup regexes have twice eaten more than intended —
   the content readers (twice) and a nested CSS rule.
 - **Heredocs eat backslashes.** For any patch containing them, write a script
-  file and run it.
+  file and run it. This rule was broken twice in one session after being
+  written down: a `\\n` inside a quoted heredoc reached the file as a real
+  newline and left `tools/qc.py` and `tools/lint_recipes.py` unparseable. If a
+  patch string contains a backslash, it goes in a file. No exceptions.
+- **Give codex a diff, not a tree.** Pointed at the working directory, one
+  review spent its entire budget enumerating
+  `recipes/create-a-video-room-and-join-from-the-browser/typescript/node_modules`
+  and returned no verdict at all. Write `git diff` to a file, name the file in
+  the brief, and say explicitly which directories not to open (`node_modules/`,
+  `site/`, `.playwright-cli/`).
+- **Round-trip a JSON file with the same formatting it had.** Rewriting
+  `docs/enum/inventory.json` with `indent=1` and default `ensure_ascii` turned a
+  24-line change into a 7,090-line diff and silently escaped a `§` to
+  `\\u00a7`. It is `indent=2`, `ensure_ascii=False`, trailing newline.
 
 ## Review loop
 
@@ -290,6 +324,17 @@ platform does the thing, and an answer engine deciding whether to cite us.
   noting / dive in / not only X but also / whether you're / game-changer and
   the rest. An em dash is a comma, a colon, parentheses, or a full stop; pick
   one. The list grows the first time a tell survives review.
+- **Sentences stay under 26 words.** The SignalWire writing guide's cap, and
+  the lint counts them. The fix is almost never a comma: a verifier's
+  comma-chain of assertions wants to be a short lead plus a bulleted list, and
+  a prose run-on wants to be two sentences. 39 sentences were rewritten the day
+  the rule went in.
+- **The authority is the SignalWire writing guide**, fetched from the Knowledge
+  MCP (`get_writing_guide`), not a list I assembled from taste. It is where the
+  em-dash ban, the dismissive-language ban (just / simply / easy /
+  straightforward) and "do not claim the virtue, demonstrate it" (honest,
+  transparent, candid) come from. Re-read it before a wave; fold anything new
+  into the lint rather than into a reviewer's head.
 - Every claim in the prose is either proven by `verify.py` or attributed to a
   cited doc. No third category.
 

@@ -64,10 +64,12 @@ Set the number's message handler to `https://<your-host>/sms`.
 python verify.py
 ```
 
-It drives the webhook with the documented payload and asserts the returned
-document is a `reply` whose body follows the keyword, that a media-only MMS
-records the attachment URL, that STOP is recorded, and that the YAML switch
-covers the same keywords.
+It drives the webhook with the documented payload and asserts:
+
+- the returned document is a `reply` whose body follows the keyword
+- a media-only MMS records the attachment URL
+- STOP is recorded
+- the YAML switch covers the same keywords
 
 ## What to change first
 

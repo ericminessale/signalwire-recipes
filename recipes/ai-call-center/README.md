@@ -10,8 +10,8 @@ tools, and hands to a human queue with the context intact; supervisors can liste
 whisper, or take over; callers who will not wait get a callback that remembers why
 they called.
 
-It exists because a directory of single-idea recipes leaves one question open -
-whether the patterns compose. This is the answer to that question.
+It exists because a directory of single-idea recipes leaves one question open: whether
+the patterns compose. This is the answer to that question.
 
 ## How it works
 

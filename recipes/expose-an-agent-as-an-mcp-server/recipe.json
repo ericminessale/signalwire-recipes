@@ -31,5 +31,8 @@
       "sdk ai_config_mixin.py:521 enable_mcp_server",
       "sdk mcp_server_mixin.py:60-142"
     ]
-  }
+  },
+  "featured": true,
+  "feature_line": "Give Claude a phone number.",
+  "feature_rank": 3
 }

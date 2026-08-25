@@ -7,9 +7,8 @@
 ## What this demonstrates
 
 A video room is a Fabric *Conference Room* resource: one REST call creates it
-and gives it an address, `/public/<name>`. A participant needs no account:
-your server mints a Guest token pinned to that one address, and the browser
-dials it with audio and video using the Browser SDK v4. SignalWire's video is an
+and gives it an address, `/public/<name>`. A participant needs no account, because your server mints a Guest token pinned to that
+one address. The browser uses the Browser SDK v4 to dial it with audio and video. SignalWire's video is an
 MCU, so each participant receives one mixed stream; layouts and screen share are
 call-level controls.
 
@@ -61,12 +60,15 @@ python verify.py
 ```
 
 With the HTTP layer recorded, the two routes must make the documented
-`conference_rooms` and `guests/tokens` requests (checked against
-`tools/openapi/rest.json`, including the required `enable_room_previews`), the
-token's `allowed_addresses` must be exactly the room's address, the project
-token must not appear in the response, and the TypeScript client must connect
-and dial with the documented calls. When `typescript/node_modules` is present
-the client is also type-checked with `tsc`.
+`conference_rooms` and `guests/tokens` requests, checked against
+`tools/openapi/rest.json`. The verifier also asserts:
+
+- the required `enable_room_previews` is present
+- the token's `allowed_addresses` is exactly the room's address
+- the project token never appears in the response
+- the TypeScript client connects and dials with the documented calls
+
+When `typescript/node_modules` is present the client is also type-checked with `tsc`.
 
 ## What to change first
 

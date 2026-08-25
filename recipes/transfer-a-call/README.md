@@ -59,9 +59,9 @@ Point a phone number's SWML webhook at `https://<your-host>/transfer`.
 python verify.py
 ```
 
-Both surfaces validate against the SWML schema; the verifier asserts `connect`
-is followed by a return path, that `PERMANENT=true` adds
-`transfer_after_bridge`, and that the SIP variant carries the custom headers.
+Both surfaces validate against the SWML schema. The verifier asserts `connect` is
+followed by a return path, that `PERMANENT=true` adds `transfer_after_bridge`, and
+that the SIP variant carries the custom headers.
 
 ## What to change first
 

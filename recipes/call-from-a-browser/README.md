@@ -7,10 +7,10 @@
 ## What this demonstrates
 
 WebRTC calling needs two things a static page cannot hold: a credential and a
-destination. A small server mints a Subscriber Access Token for the signed-in
-user (`POST /api/fabric/subscribers/tokens`); the Browser SDK v4 connects with
-it and dials a phone number, or a Fabric address such as `/public/support`,
-that lands on a SWML script, an AI agent or another subscriber. The project API
+destination. A small server mints a Subscriber Access Token for the signed-in user (`POST
+/api/fabric/subscribers/tokens`). The Browser SDK v4 connects with that token and
+dials a phone number, or a Fabric address such as `/public/support`. A Fabric address
+can land on a SWML script, an AI agent or another subscriber. The project API
 token never leaves the server.
 
 ## How it works
@@ -33,9 +33,8 @@ call.state$.subscribe((state) => status.textContent = state);
 ```
 
 A Subscriber Access Token identifies one user and can also *receive* calls
-after `client.register()`. See `receive-calls-in-the-browser`. For an anonymous
-visitor who should reach exactly one destination, mint a Guest token instead
-(`get-a-webrtc-token-with-restricted-dial-targets`); for a button with no
+after `client.register()`. See `receive-calls-in-the-browser`. For an anonymous visitor who should reach exactly one destination, mint a Guest token
+instead (`get-a-webrtc-token-with-restricted-dial-targets`). For a button with no
 backend at all, use the embeddable widget (`embed-a-call-widget-with-no-backend`).
 Tokens expire; the companion `refresh_token` is how a long session rolls over.
 
@@ -57,12 +56,15 @@ Open the page with `?to=+15551234567` to dial a phone number instead.
 python verify.py
 ```
 
-With the HTTP layer recorded, `/token` must make one documented POST to
-`/api/fabric/subscribers/tokens` with the required `reference` (checked against
-`tools/openapi/rest.json`) and return only the minted token; the TypeScript
-client must fetch its token from the server, connect, and dial with the
-documented v4 calls. When `typescript/node_modules` is present the client is
-also type-checked with `tsc`.
+With the HTTP layer recorded, the verifier asserts both halves:
+
+- `/token` makes one documented POST to `/api/fabric/subscribers/tokens` with
+  the required `reference`, checked against `tools/openapi/rest.json`
+- that route returns only the minted token
+- the TypeScript client fetches its token from the server, connects, and dials
+  with the documented v4 calls
+
+When `typescript/node_modules` is present the client is also type-checked with `tsc`.
 
 ## What to change first
 

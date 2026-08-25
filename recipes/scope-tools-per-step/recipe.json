@@ -43,5 +43,8 @@
   ],
   "next": [
     "hide-fields-from-the-model"
-  ]
+  ],
+  "featured": true,
+  "feature_line": "The model cannot call a tool that is not on the table.",
+  "feature_rank": 5
 }

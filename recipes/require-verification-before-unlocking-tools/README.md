@@ -8,10 +8,9 @@
 
 The model cannot call a tool that is not active. `get_balance` and
 `list_recent_transactions` are declared with `active: false`, so at the start of
-the call they are not in the model's world: not discouraged, absent. The only
-thing that turns them on is a `toggle_functions` action emitted by the
-`verify_pin` handler, and the handler emits it only when the PIN matches the
-caller's record. A prompt that says "verify before discussing the account" is a
+the call they are not in the model's world: not discouraged, absent. The only thing that turns them on is a `toggle_functions` action emitted by the
+`verify_pin` handler. The handler emits it only when the PIN matches the caller's
+record. A prompt that says "verify before discussing the account" is a
 request; this is a constraint.
 
 ## How it works
@@ -61,10 +60,13 @@ system of record.
 python verify.py
 ```
 
-It renders the SWML and asserts the account tools are `active: false`, runs the
-handler with a wrong PIN (no action), the right PIN (a `toggle_functions`
-action activating exactly the account tools), and the right PIN from an
-unknown number (no action).
+It renders the SWML and asserts the account tools are `active: false`. It then runs
+the handler three ways:
+
+- a wrong PIN produces no action
+- the right PIN produces a `toggle_functions` action activating exactly the
+  account tools
+- the right PIN from an unknown number produces no action
 
 ## What to change first
 

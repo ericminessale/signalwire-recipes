@@ -47,5 +47,8 @@
   ],
   "next": [
     "extract-structured-data-after-a-call"
-  ]
+  ],
+  "featured": true,
+  "feature_line": "Both sides of a live call, transcribed as it happens.",
+  "feature_rank": 4
 }

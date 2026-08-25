@@ -118,7 +118,16 @@ def planning_fields(row):
         out["kind"] = "build"
     elif row.get("task_group"):
         out["subcategory"] = row["task_group"]
+    # only a featured recipe carries the featured fields; the other manifests
+    # should not each hold three dead keys
+    if row.get("featured"):
+        out["featured"] = True
+        out["feature_line"] = row.get("feature_line", "")
+        out["feature_rank"] = row.get("feature_rank", 99)
     return out
+
+
+FEATURE_KEYS = ("featured", "feature_line", "feature_rank")
 
 
 def fresh_manifest(row):
@@ -151,6 +160,9 @@ def main():
             m.update(planning_fields(row))
             if "kind" in m and row["kind"] != "build":
                 m.pop("kind", None)
+            if not row.get("featured"):
+                for k in FEATURE_KEYS:
+                    m.pop(k, None)
             manifest.write_text(json.dumps(m, indent=2) + "\n", encoding="utf-8")
             synced += 1
             continue

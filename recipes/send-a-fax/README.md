@@ -42,10 +42,10 @@ python -c "import app; print(app.send('+1555...', 'https://<public-url>/document
 python verify.py
 ```
 
-With the HTTP layer recorded, `send()` must make one documented POST with the
-required `To`, `From`, `MediaUrl` and a `StatusCallback` (checked against
-`tools/openapi/compat.json`), and the status webhook must record only final
-statuses, with page count or error code.
+With the HTTP layer recorded, `send()` must make one documented POST with the required
+`To`, `From`, `MediaUrl` and a `StatusCallback`, checked against
+`tools/openapi/compat.json`. The status webhook must record only final statuses, with
+page count or error code.
 
 ## What to change first
 

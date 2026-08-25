@@ -335,9 +335,10 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   transition:background 140ms ease;}
 .buildcard:hover{background:var(--surface);}
 .buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
-/* the builds block closes with a neutral rule that hands off to the recipes
-   below. full-width is deliberate: it separates two blocks, not two cells */
-.bsec{border-bottom:1px solid var(--line-2);margin-bottom:4px;padding-bottom:26px;}
+/* builds sit under the recipes they are assembled from, so the neutral rule
+   opens the block rather than closing it. full-width is deliberate: it
+   separates two blocks, not two cells */
+.bsec{border-top:1px solid var(--line-2);margin-top:34px;padding-top:6px;}
 .buildcard.planned{cursor:default;box-shadow:none;}
 .buildcard.planned:hover{background:var(--page);}
 .buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
@@ -396,6 +397,31 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
   border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
+/* featured: a raised plate above the categories. It borrows no fuchsia -
+   that colour already has its four jobs - and earns its place with depth */
+.feat{margin:34px 0 44px;}
+.feath{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
+  letter-spacing:-.01em;margin:0 0 14px;display:flex;align-items:baseline;gap:9px;}
+.feath::after{content:"";flex:1;height:1px;background:var(--line);}
+.fgrid{display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fill,minmax(400px,1fr));}
+.fcard{display:flex;flex-direction:column;justify-content:space-between;gap:18px;
+  min-height:118px;padding:18px 20px 16px;color:inherit;
+  background:var(--plate);border:1px solid var(--line-2);border-radius:var(--r-lg);
+  box-shadow:var(--lip),var(--lift);
+  transition:border-color 140ms ease,transform 140ms ease;}
+.fcard:hover{border-color:var(--line-3);transform:translateY(-1px);}
+.fcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.fcard .fl{font-family:var(--head);font-weight:600;font-size:19px;
+  letter-spacing:-.03em;line-height:1.22;color:var(--fg);text-wrap:balance;}
+.fcard .fm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.fcard .fn{font-family:var(--mono);font-size:11px;color:var(--fg-muted);}
+.fcard .fc{font-size:11.5px;color:var(--fg-subtle);margin-left:auto;}
+.fcard.planned{cursor:default;background:var(--surface);box-shadow:none;
+  border-color:var(--line);}
+.fcard.planned:hover{transform:none;border-color:var(--line);}
+.fcard.planned .fl{color:var(--fg-muted);}
+@media (max-width:700px){.fgrid{grid-template-columns:1fr;}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 """
 
@@ -455,6 +481,13 @@ function apply(){
       .filter(c=>f==='kind:build'?(c.dataset.kind==='build'&&c.dataset.proj!=='1')
                                  :(c.dataset.kind==='recipe'&&c.dataset.cat.split(' ').includes(f))).length;
   });
+  const feat=document.querySelector('.feat');
+  if(feat){
+    const fc=[...feat.querySelectorAll('.fcard')];
+    fc.forEach(c=>{c.hidden=hideUnbuilt&&c.classList.contains('planned');});
+    // the band is a front door, not a result: a search or a chip replaces it
+    feat.hidden=!!(t||on.length)||fc.every(c=>c.hidden);
+  }
   allChip.setAttribute('aria-pressed',on.length?'false':'true');
   const none=document.getElementById('none'); if(none)none.hidden=n>0;
   const u=new URL(location.href);
@@ -799,6 +832,36 @@ def build_index(recipes, body_only=False):
             % len(builds)
         )
 
+    feat_items = sorted(
+        (r for r in recipes if r.get("featured") and r.get("feature_line")),
+        key=lambda r: (r.get("feature_rank", 99), r["slug"]),
+    )
+
+    def fcard(r):
+        planned = r.get("_planned")
+        return (
+            '<a class="fcard%s"%s data-slug="%s" data-hay="%s"%s>'
+            '<span class="fl">%s</span>'
+            '<span class="fm"><span class="fn">%s</span>'
+            '<span class="fc">%s</span></span></a>'
+            % (" planned" if planned else "",
+               "" if planned else ' href="r/%s.html"' % esc(r["slug"]),
+               esc(r["slug"]), esc(hay(r)),
+               ' aria-disabled="true"' if planned else "",
+               esc(r["feature_line"]), esc(r["title"]),
+               esc("planned" if planned else
+                   cat_label.get(r.get("category"), r.get("category", ""))))
+        )
+
+    featured = ""
+    if feat_items:
+        featured = (
+            '<section class="feat" id="feat">'
+            '<h2 class="feath">Featured</h2>'
+            '<div class="fgrid">%s</div></section>'
+            % "".join(fcard(r) for r in feat_items)
+        )
+
     sections = []
     for c in V["categories"]:
         items = [r for r in plain if r.get("category") == c["key"]]
@@ -832,10 +895,10 @@ def build_index(recipes, body_only=False):
             '<span class="tgs">%s</span></summary>'
             '<div class="catbody">%s%s</div></details>'
             % (esc(c["label"]), len(items), tabs,
+               blocks,
                ('<div class="bsec"><div class="bhead">Builds <span class="cn">%d</span></div>'
                 '<div class="bgrid">%s</div></div>'
-                % (len(cb), "".join(band(b, c["key"]) for b in cb))) if cb else "",
-               blocks)
+                % (len(cb), "".join(band(b, c["key"]) for b in cb))) if cb else "")
         )
 
     body = """<div class="wrap">
@@ -853,10 +916,11 @@ def build_index(recipes, body_only=False):
   %s
 </div>
 %s
+%s
 <p class="empty" id="none" hidden>Nothing matches that filter.</p>
 <p class="hint"><kbd>/</kbd> to search &middot; <kbd>Esc</kbd> to clear</p>
 </div>
-<script>%s</script>""" % (chips, "".join(sections), JS)
+<script>%s</script>""" % (chips, featured, "".join(sections), JS)
     return body if body_only else page("SignalWire Recipes", body)
 
 
@@ -1179,6 +1243,9 @@ def build_preview(recipes):
                     "capabilities": row.get("capabilities", []), "surfaces": [],
                     "kind": "build" if row["kind"] == "build" else "recipe",
                     "tier": "launch" if row.get("launch") else "next",
+                    "featured": bool(row.get("featured")),
+                    "feature_line": row.get("feature_line", ""),
+                    "feature_rank": row.get("feature_rank", 99),
                     "_surfaces_on_disk": [], "_planned": "planned",
                 })
         _TITLES.update({r["slug"]: r["title"] for r in live})

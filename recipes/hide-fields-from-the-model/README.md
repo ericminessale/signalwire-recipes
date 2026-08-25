@@ -42,9 +42,9 @@ No network, no account:
 python verify.py
 ```
 
-It runs the tool handler as the platform would and asserts the response
-contains every exposed field and none of the hidden ones, then renders the
-SWML and asserts the prompt does not mention a hidden field.
+It runs the tool handler as the platform would, and asserts the response contains
+every exposed field and none of the hidden ones. It then renders the SWML and asserts
+the prompt does not mention a hidden field.
 
 ## Limitations
 
