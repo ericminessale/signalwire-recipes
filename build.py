@@ -49,6 +49,9 @@ CSS = """
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+/* author display rules (.card{display:flex}) beat the UA's [hidden]; the
+   filters and the unbuilt toggle set the attribute, so it must always win */
+[hidden]{display:none!important;}
 button,a,summary{touch-action:manipulation;}
 body{margin:0;background:var(--page);color:var(--fg);font-family:var(--body);
   font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
@@ -130,13 +133,21 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   border-radius:3px;padding:1px 5px;font-size:11px;}
 
 /* ---- recipe page ---- */
-.detail{padding:64px 0 0;max-width:760px;margin-inline:auto;}
-@media (max-width:900px){.detail{padding-inline:clamp(16px,5vw,48px);}}
+.detail{padding:56px 0 0;}
+/* two columns from 1080px: reading on the left, the code it describes on the
+   right and kept in view; below that, one column that fills the frame */
+.dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 56px;align-items:start;margin-top:8px;}
+@media (min-width:1080px){
+  .dgrid{grid-template-columns:minmax(0,9fr) minmax(0,11fr);}
+  .dside .cw{position:sticky;top:14px;margin-top:34px;}
+  .dside pre.src{max-height:calc(100vh - 150px);}
+}
+.dh{max-width:60ch;}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fuchsia);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
 .tech{font-family:var(--mono);font-size:12px;color:var(--turquoise);margin-top:12px;}
-.sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:64ch;}
+.sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
 .b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
   background:var(--raised);border-radius:3px;padding:3px 8px;}
@@ -165,7 +176,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   cursor:not-allowed;}
 .sec{margin:34px 0;}
 .sec h2{font-size:19px;margin:0 0 10px;}
-.sec p{margin:0 0 12px;color:var(--fg-muted);font-size:15px;line-height:1.7;max-width:70ch;}
+.sec p{margin:0 0 12px;color:var(--fg-muted);font-size:15px;line-height:1.7;max-width:66ch;}
 .sec p em{font-style:italic;color:var(--fg-2);}
 .steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--surface);
   border:1px solid var(--line);border-radius:8px;padding:16px 18px;line-height:1.9;
@@ -177,14 +188,17 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   border-bottom:2px solid transparent;}
 .stab:hover{color:var(--fg);}
 .stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);}
-pre.src{margin:6px 0 0;background:var(--surface);color:var(--fg-2);padding:18px;
+pre.src{margin:6px 0 0;background:var(--surface);color:var(--fg-2);padding:18px;overflow:auto;
   border:1px solid var(--line);border-radius:8px;font-family:var(--mono);
   font-size:12px;line-height:1.8;overflow-x:auto;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
 pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);padding:14px 16px;
   border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:12px;
   line-height:1.55;overflow-x:auto;}
+.rels{border-top:1px solid var(--line-2);padding-top:24px;}
 .rels .rel{border-top:1px solid var(--line);padding:12px 0 14px;}
+@media (min-width:1080px){.rels{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 40px;}
+  .rels h2{grid-column:1/-1;}}
 .rels .rel h3{font-size:13px;font-weight:600;color:var(--fg-2);margin:0 0 8px;}
 .rels .rel p{margin:0;color:var(--fg-2);font-size:14px;}
 a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--raised);
@@ -774,6 +788,7 @@ def build_detail(r, body_only=False):
         '<span class="b">%s</span>' % esc(x) for x in r.get("capabilities", [])[:4]
     )
     out.append('<div class="meta">%s</div></div>' % meta)
+    out.append('<div class="dgrid"><div class="dmain">')
     out.append('<div class="claim"><h2>The claim</h2><p>%s</p></div>' % claim)
 
     if ehtml:
@@ -798,6 +813,7 @@ def build_detail(r, body_only=False):
     for h in ("How it works", "Limitations"):
         if h in sections:
             out.append('<div class="sec"><h2>%s</h2>%s</div>' % (esc(h), blocks_html(sections[h])))
+    out.append('</div><aside class="dside">')
 
     if surfaces:
         tabs = "".join(
@@ -840,6 +856,7 @@ def build_detail(r, body_only=False):
     if "What to change first" in sections:
         out.append('<div class="sec"><h2>What to change first</h2>%s</div>'
                    % blocks_html(sections["What to change first"]))
+    out.append('</aside></div>')
 
     def link(slug):
         return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))

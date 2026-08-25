@@ -290,6 +290,18 @@ Retiring a folder is a deliberate `git rm`.
   *Run it* replaces the generated steps when present, *Verify it* renders after
   the code. Look at `site/r/<slug>.html` through `python -m http.server` and
   `playwright-cli` before calling a change done.
+- **The recipe page uses the index's 1180px frame, not a 760px reading
+  column.** A centred 760px column left 60% of a 1920px screen empty (Eric,
+  2026-08-25). From 1080px up it is two columns — claim, evidence and prose on
+  the left; the code panes sticky on the right with Run it / Verify it / What to
+  change first under them — so the prose sits beside the code it describes.
+  Below 1080px it is one column filling the frame. Header and *Where this sits*
+  span the frame. **Check every layout change at 1920, 1280 and 820** — the
+  artifact pane is ~800px and Eric's monitor is 4K; a render that looks right
+  at 1280 alone proves nothing.
+- `[hidden]{display:none!important}` is in the reset because author `display`
+  rules on `.card` beat the UA's `[hidden]`; the filters and the unbuilt toggle
+  set the attribute and were hiding nothing. Counting attributes is not looking.
 
 ## Open work
 
