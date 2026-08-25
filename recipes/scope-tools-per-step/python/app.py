@@ -2,46 +2,87 @@
 
 Each step declares exactly which functions exist while it is active. A tool the
 step does not list is not withheld from the model - it is not presented at all.
+
+Written against signalwire-sdk 3.0.1.
 """
 import os
 
-from signalwire_agents import AgentBase
+from signalwire import AgentBase
+from signalwire.core.function_result import FunctionResult
 
 
 class IntakeAgent(AgentBase):
     def __init__(self):
         super().__init__(name="intake", route="/intake")
 
+        self.prompt_add_section(
+            "Role",
+            "You take a caller's name, then find out why they are calling, "
+            "then route them. Follow the current step and nothing else.",
+        )
+
         contexts = self.define_contexts()
         flow = contexts.add_context("default")
 
-        # Step one: the only thing that exists here is save_name.
+        # Step one: save_name is the only function that exists here.
         flow.add_step("collect_name") \
-            .add_section("Goal", "Ask for the caller's full name.") \
+            .add_section("Current Task", "Ask for the caller's full name.") \
+            .set_step_criteria("The caller has given a name.") \
             .set_functions(["save_name"]) \
             .set_valid_steps(["collect_reason"])
 
         # Step two: transferring becomes possible only now.
         flow.add_step("collect_reason") \
-            .add_section("Goal", "Ask why they are calling, then route them.") \
+            .add_section("Current Task",
+                         "Ask why they are calling, then route them.") \
+            .set_step_criteria("The caller has explained why they called.") \
             .set_functions(["save_reason", "transfer_to_human"]) \
-            .set_valid_steps(["done"])
+            .set_valid_steps(["collect_reason"])
 
-    @AgentBase.tool(description="Record the caller's name")
+    @AgentBase.tool(
+        name="save_name",
+        description="Record the caller's name",
+        parameters={
+            "name": {
+                "type": "string",
+                "description": "The caller's full name",
+            }
+        },
+    )
     def save_name(self, args, raw_data):
         name = (args.get("name") or "").strip()
         if not name:
-            return self.result("I did not catch that - could you repeat your name?")
-        # The handler advances the step, so ordering does not rely on the model.
-        return self.result(f"Thank you {name}.").swml_change_step("collect_reason")
+            return FunctionResult("I did not catch that - could you repeat it?")
+        result = FunctionResult(f"Thank you {name}.")
+        # Carry it forward without routing it back through the model.
+        result.add_action("set_global_data", {"caller_name": name})
+        return result
 
-    @AgentBase.tool(description="Record why the caller is calling")
+    @AgentBase.tool(
+        name="save_reason",
+        description="Record why the caller is calling",
+        parameters={
+            "reason": {
+                "type": "string",
+                "description": "Why the caller is calling, in their words",
+            }
+        },
+    )
     def save_reason(self, args, raw_data):
-        return self.result("Got it.")
+        reason = (args.get("reason") or "").strip()
+        result = FunctionResult("Got it.")
+        result.add_action("set_global_data", {"intake_reason": reason})
+        return result
 
-    @AgentBase.tool(description="Connect the caller to a human agent")
+    @AgentBase.tool(
+        name="transfer_to_human",
+        description="Connect the caller to a human agent",
+        parameters={},
+    )
     def transfer_to_human(self, args, raw_data):
-        return self.result("Connecting you now.").connect("/private/support-queue")
+        result = FunctionResult("Connecting you now.")
+        result.add_action("connect", {"to": os.environ["SUPPORT_ADDRESS"]})
+        return result
 
 
 if __name__ == "__main__":
