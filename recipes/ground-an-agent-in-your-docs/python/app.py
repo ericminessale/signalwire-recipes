@@ -39,8 +39,9 @@ class DocsAgent(AgentBase):
 
     @AgentBase.tool(
         name="search_docs",
-        description="Search the product documentation for passages relevant to a question",
-        parameters={"query": {"type": "string", "description": "What the caller wants to know"}},
+        description="Search the product documentation for passages on a question",
+        parameters={"query": {"type": "string",
+                              "description": "What the caller wants to know"}},
     )
     def search_docs(self, args, raw_data):
         query = (args.get("query") or "").strip()
@@ -48,8 +49,9 @@ class DocsAgent(AgentBase):
             return FunctionResult("I need a question to search for.")
         passages = search(self.client, query)
         if not passages:
-            return FunctionResult("No relevant documentation was found for that question.")
-        return FunctionResult("Relevant documentation:\n\n" + "\n\n".join(f"- {p}" for p in passages))
+            return FunctionResult("No relevant documentation was found for that.")
+        body = "\n\n".join(f"- {p}" for p in passages)
+        return FunctionResult("Relevant documentation:\n\n" + body)
 
 
 if __name__ == "__main__":

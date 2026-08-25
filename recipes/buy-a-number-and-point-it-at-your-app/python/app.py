@@ -14,7 +14,8 @@ import sys
 
 from signalwire.rest import RestClient
 
-client = RestClient()  # SIGNALWIRE_PROJECT_ID / SIGNALWIRE_API_TOKEN / SIGNALWIRE_SPACE from env
+# reads SIGNALWIRE_PROJECT_ID / SIGNALWIRE_API_TOKEN / SIGNALWIRE_SPACE from the env
+client = RestClient()
 
 
 def find(areacode=None, contains=None, number_type="local", max_results=5):

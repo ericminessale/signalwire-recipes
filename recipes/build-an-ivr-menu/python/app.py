@@ -27,12 +27,14 @@ def build(service=None):
 
     service.add_verb("answer", {})
     service.add_verb("prompt", {
-        "play": "say:Thanks for calling. Press 1 for sales, 2 for support, or 3 for opening hours.",
+        "play": "say:Thanks for calling. Press 1 for sales, 2 for support, "
+                "or 3 for opening hours.",
         "max_digits": 1,
         "digit_timeout": 6,
         "initial_timeout": 8,
     })
-    cases = {digit: [{"transfer": {"dest": section}}] for digit, (section, _, _) in MENU.items()}
+    cases = {digit: [{"transfer": {"dest": section}}]
+             for digit, (section, _, _) in MENU.items()}
     cases["3"] = [{"transfer": {"dest": "hours"}}]
     service.add_verb("switch", {
         "variable": "prompt_value",

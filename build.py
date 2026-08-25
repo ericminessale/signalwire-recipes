@@ -142,12 +142,13 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 56px;align-items:start;margin-top:8px;}
 @media (min-width:1080px){
   .dgrid{grid-template-columns:minmax(0,2fr) minmax(0,3fr);}  /* code gets the larger share */
-  .dside .cw{position:sticky;top:14px;margin-top:34px;}
+  .dside{position:sticky;top:14px;}          /* code only: nothing beneath it to cover */
+  .dside .cw{margin-top:34px;}
   .dside pre.src{max-height:calc(100vh - 150px);}
 }
 .dh{max-width:60ch;}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
-.back a:hover{color:var(--fuchsia);}
+.back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
 .tech{font-family:var(--mono);font-size:12px;color:var(--turquoise);margin-top:12px;}
 .sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
@@ -223,7 +224,7 @@ pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);paddin
 .rels .rel p{margin:0;color:var(--fg-2);font-size:14px;}
 a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--raised);
   border-radius:4px;padding:5px 10px;}
-a.cx:hover{color:var(--fuchsia);}
+a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turquoise);}
@@ -243,8 +244,8 @@ a.cx:hover{color:var(--fuchsia);}
 .pvtog .sw i{position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;
   background:var(--fg-2);transition:transform 140ms ease;}
 .pvtog[aria-pressed="true"]{color:var(--fg);border-color:var(--fg-subtle);}
-.pvtog[aria-pressed="true"] .sw{background:var(--fuchsia);}
-.pvtog[aria-pressed="true"] .sw i{transform:translateX(9px);background:#fff;}
+.pvtog[aria-pressed="true"] .sw{background:var(--fg-2);}
+.pvtog[aria-pressed="true"] .sw i{transform:translateX(9px);background:var(--page);}
 [data-view][hidden]{display:none;}
 
 /* collapsed category still shows its shape: name, count, task groups */
@@ -256,7 +257,7 @@ summary.cat-h::-webkit-details-marker{display:none;}
 summary.cat-h::before{content:"+";font-family:var(--mono);font-size:13px;
   color:var(--fg-subtle);width:12px;}
 details.cat[open]>summary.cat-h::before{content:"-";}
-summary.cat-h:hover .ct2{color:var(--fuchsia);}
+summary.cat-h:hover .ct2{color:var(--fg-2);}
 summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
 .ct2{font-family:var(--head);font-weight:600;font-size:23px;letter-spacing:-.03em;}
 .cat-h .n{font-family:var(--mono);font-size:11.5px;color:var(--fg-subtle);}
@@ -382,8 +383,11 @@ function apply(){
     const shown=[...g.querySelectorAll('.card')].filter(c=>!c.hidden).length;
     const cn=g.querySelector('.cat-h .n'); if(cn)cn.textContent=shown;
     g.querySelectorAll('.tgroup').forEach(tg=>{
-      const c2=tg.querySelector('.tgh .cn');
-      if(c2)c2.textContent=[...tg.querySelectorAll('.card')].filter(c=>!c.hidden).length;
+      const k=[...tg.querySelectorAll('.card')].filter(c=>!c.hidden).length;
+      const c2=tg.querySelector('.tgh .cn'); if(c2)c2.textContent=k;
+      // the strip in the category header mirrors the group beneath it
+      const strip=g.querySelector('.tgs .tg[data-g="'+tg.dataset.g+'"]');
+      if(strip){strip.hidden=k===0;const c3=strip.querySelector('.cn');if(c3)c3.textContent=k;}
     });
     const bh=g.querySelector('.bhead .cn'),bg2=g.querySelector('.bgrid');
     if(bh&&bg2)bh.textContent=[...bg2.querySelectorAll('.buildcard')].filter(c=>!c.hidden).length;
@@ -406,7 +410,7 @@ q.addEventListener('input',apply);
 if(tog)tog.addEventListener('click',()=>{
   const was=tog.getAttribute('aria-pressed')==='true';
   tog.setAttribute('aria-pressed',was?'false':'true');
-  tog.textContent=was?'Hide the unbuilt':'Show the unbuilt';
+  const lab=tog.querySelector('.pvl'); if(lab)lab.textContent=was?'Hide the unbuilt':'Show the unbuilt';
   apply();
 });
 chips.forEach(c=>c.addEventListener('click',()=>{
@@ -733,15 +737,15 @@ def build_index(recipes, body_only=False):
         ordered = sorted(groups.items(), key=lambda kv: (-len(kv[1]), kv[0]))
 
         tabs = "".join(
-            '<span class="tg">%s <span class="cn">%d</span></span>'
-            % (esc(subs.get(k, {}).get("label", k)), len(v))
+            '<span class="tg" data-g="%s">%s <span class="cn">%d</span></span>'
+            % (esc(k), esc(subs.get(k, {}).get("label", k)), len(v))
             for k, v in ordered
         )
 
         blocks = "".join(
-            '<div class="tgroup"><h3 class="tgh">%s <span class="cn">%d</span></h3>'
+            '<div class="tgroup" data-g="%s"><h3 class="tgh">%s <span class="cn">%d</span></h3>'
             '<div class="grid">%s</div></div>'
-            % (esc(subs.get(k, {}).get("label", k)), len(v),
+            % (esc(k), esc(subs.get(k, {}).get("label", k)), len(v),
                "".join(card(r) for r in sorted(v, key=rank)))
             for k, v in ordered
         )
@@ -857,8 +861,8 @@ def build_detail(r, body_only=False):
     for h in ("How it works", "Limitations"):
         if h in sections:
             out.append('<div class="sec"><h2>%s</h2>%s</div>' % (esc(h), blocks_html(sections[h])))
-    out.append('</div><aside class="dside">')
 
+    code_html = ""
     if surfaces:
         tabs = "".join(
             '<button type="button" role="tab" class="stab" data-pane="%d" aria-selected="%s">'
@@ -877,7 +881,7 @@ def build_detail(r, body_only=False):
             panes.append('<pre class="src" data-pane="%d"%s><code>%s</code></pre>' % (i, hid, body))
             names.append('<span class="fn" data-pane="%d"%s>%s/%s</span>'
                          % (i, hid, esc(x), esc(sv.get("entry", ""))))
-        out.append(
+        code_html = (
             '<div class="cw"><div class="cwh"><div class="stabs" role="tablist">%s</div>'
             '<div class="cwr">%s<button type="button" class="copy">Copy</button></div></div>%s</div>'
             % (tabs, "".join(names), "".join(panes))
@@ -903,7 +907,7 @@ def build_detail(r, body_only=False):
     if "What to change first" in sections:
         out.append('<div class="sec"><h2>What to change first</h2>%s</div>'
                    % blocks_html(sections["What to change first"]))
-    out.append('</aside></div>')
+    out.append('</div><aside class="dside">%s</aside></div>' % code_html)
 
     def link(slug):
         return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))
@@ -936,7 +940,8 @@ def build_detail(r, body_only=False):
         '<div class="dfoot"><a href="%s">View the repository</a>'
         '<a href="#">Report an issue</a></div></div></div>' % esc(repo)
     )
-    out.append("<script>%s</script>" % DETAIL_JS)
+    if not body_only:
+        out.append("<script>%s</script>" % DETAIL_JS)
     body = "".join(out)
     return body if body_only else page(
         r["title"] + " - SignalWire Recipes", body
@@ -1025,6 +1030,7 @@ var views = document.querySelectorAll('[data-view]');
 var lastY = 0;  // returning to a 121-item index at the top loses your place
 var banner = document.querySelector('.pvbanner');
 function show(id){
+  if (!document.querySelector('[data-view="' + id + '"]')) id = 'index';  // unknown hash: never a blank page
   views.forEach(function(v){ v.hidden = (v.dataset.view !== id); });
   if (banner) banner.hidden = (id !== 'index');  // a preview notice, not part of a recipe page
   if (id === 'index'){
@@ -1051,7 +1057,8 @@ window.addEventListener('hashchange', function(){
   show(location.hash ? location.hash.slice(1) : 'index');
 });
 document.addEventListener('keydown', function(e){
-  if (e.key === 'Escape') show('index');
+  var onDetail = document.querySelector('[data-view]:not([hidden])');
+  if (e.key === 'Escape' && onDetail && onDetail.dataset.view !== 'index') show('index');
 });
 show(location.hash ? location.hash.slice(1) : 'index');
 """
@@ -1105,7 +1112,7 @@ def build_preview(recipes):
         "runnable; the rest are planned and shown greyed."
         "</span>"
         '<button type="button" class="pvtog" id="pvtog" aria-pressed="false">'
-        '<span class="sw"><i></i></span>Hide the unbuilt</button>'
+        '<span class="sw"><i></i></span><span class="pvl">Hide the unbuilt</span></button>'
         "</div></div>" % (len(written), len(live)),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
@@ -1116,7 +1123,7 @@ def build_preview(recipes):
             '<div data-view="%s" hidden>%s</div>'
             % (esc(r["slug"]), build_detail(r, body_only=True))
         )
-    body = "".join(parts) + "<script>%s</script>" % PREVIEW_JS
+    body = "".join(parts) + "<script>%s</script><script>%s</script>" % (DETAIL_JS, PREVIEW_JS)
     html_doc = page("SignalWire Recipes - preview", body)
     return html_doc.replace("</style>", PREVIEW_CSS + "</style>", 1)
 

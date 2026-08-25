@@ -48,7 +48,8 @@ class IntakeAgent(ContextCarryingAgent):
         reason = (args.get("reason") or "").strip()
         if not name or not reason:
             return FunctionResult("I still need your name and the reason for your call.")
-        result = FunctionResult(f"Thanks {name}, connecting you to billing.", post_process=True)
+        result = FunctionResult(f"Thanks {name}, connecting you to billing.",
+                                post_process=True)
         # Written into the call's global_data from the handler - the model does
         # not relay it, and the transfer URL carries none of it.
         result.update_global_data(
@@ -62,7 +63,8 @@ class IntakeAgent(ContextCarryingAgent):
         result.action.append({
             "SWML": {
                 "version": "1.0.0",
-                "sections": {"main": [{"transfer": {"dest": f"{PUBLIC_URL}/billing-specialist"}}]},
+                "sections": {"main": [
+                    {"transfer": {"dest": f"{PUBLIC_URL}/billing-specialist"}}]},
             },
             "transfer": "true",
         })

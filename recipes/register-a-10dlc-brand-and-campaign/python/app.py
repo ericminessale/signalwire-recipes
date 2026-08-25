@@ -37,13 +37,16 @@ BRAND = {
 CAMPAIGN = {
     "name": "Order notifications",
     "sms_use_case": "ACCOUNT_NOTIFICATION",
-    "description": "Transactional order confirmations and pickup-ready notices for customers who ordered online.",
+    "description": ("Transactional order confirmations and pickup-ready notices "
+                    "for customers who ordered online."),
     "sample1": "Acme Coffee: your order #4821 is confirmed. Reply STOP to opt out.",
     "sample2": "Acme Coffee: order #4821 is ready for pickup at 1 Bean St.",
     "message_flow": "Customers opt in at checkout by ticking 'text me order updates'.",
-    "opt_in_message": "You are subscribed to Acme Coffee order updates. Reply STOP to opt out, HELP for help.",
+    "opt_in_message": ("You are subscribed to Acme Coffee order updates. "
+                       "Reply STOP to opt out, HELP for help."),
     "opt_out_message": "You have been unsubscribed from Acme Coffee updates.",
-    "help_message": "Acme Coffee order updates. Email support@acme.example for help. Reply STOP to opt out.",
+    "help_message": ("Acme Coffee order updates. Email support@acme.example for help. "
+                     "Reply STOP to opt out."),
     "embedded_link": False,
     "embedded_phone": False,
     "age_gated_content": False,
@@ -69,7 +72,8 @@ states = {}
 def status():
     """Carrier review outcomes arrive here: brand, campaign and order state changes."""
     p = request.get_json(silent=True) or request.form.to_dict()
-    states[p.get("id")] = {"type": p.get("type") or p.get("object"), "state": p.get("state")}
+    states[p.get("id")] = {"type": p.get("type") or p.get("object"),
+                           "state": p.get("state")}
     return "", 204
 
 

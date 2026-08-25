@@ -64,7 +64,8 @@ def transcript():
     call_id = e.get("call_id", "unknown")
     if kind == "final":
         transcripts.setdefault(call_id, []).append(
-            {"who": e.get("direction") or e.get("channel", "?"), "text": e.get("text") or e.get("transcript")})
+            {"who": e.get("direction") or e.get("channel", "?"),
+             "text": e.get("text") or e.get("transcript")})
     elif kind == "summary":
         summaries[call_id] = e.get("summary") or e.get("text")
     else:

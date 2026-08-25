@@ -12,7 +12,10 @@ async function joinRoom(rootElement: HTMLElement): Promise<void> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ room: ROOM }),
   });
-  const { token, destination } = (await res.json()) as { token: string; destination: string };
+  const { token, destination } = (await res.json()) as {
+    token: string;
+    destination: string;
+  };
 
   const client = new SignalWire(new StaticCredentialProvider({ token }));
   await client.connect();
@@ -20,7 +23,7 @@ async function joinRoom(rootElement: HTMLElement): Promise<void> {
   // destination is "/public/<room>"; audio + video makes this a video join.
   const call = await client.dial(destination, { audio: true, video: true });
 
-  // Render the mixed room stream (SignalWire video is an MCU: one stream per participant).
+  // Render the mixed room stream (an MCU: one stream per participant).
   const video = document.createElement("video");
   video.autoplay = true;
   video.playsInline = true;
@@ -42,4 +45,6 @@ async function joinRoom(rootElement: HTMLElement): Promise<void> {
   });
 }
 
-joinRoom(document.getElementById("room")!).catch((err) => console.error("join failed", err));
+joinRoom(document.getElementById("room")!).catch((err) =>
+  console.error("join failed", err),
+);

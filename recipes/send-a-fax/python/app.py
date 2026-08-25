@@ -38,7 +38,8 @@ def fax_status():
     f = request.form
     sid, status = f.get("FaxSid"), f.get("FaxStatus")
     if status in FINAL:
-        outcomes[sid] = {"status": status, "pages": f.get("NumPages"), "error": f.get("ErrorCode")}
+        outcomes[sid] = {"status": status, "pages": f.get("NumPages"),
+                         "error": f.get("ErrorCode")}
     return "", 204
 
 

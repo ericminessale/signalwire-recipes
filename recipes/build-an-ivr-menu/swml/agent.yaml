@@ -6,7 +6,9 @@ sections:
   main:
     - answer: {}
     - prompt:
-        play: "say:Thanks for calling. Press 1 for sales, 2 for support, or 3 for opening hours."
+        play: >-
+          say:Thanks for calling. Press 1 for sales, 2 for support,
+          or 3 for opening hours.
         max_digits: 1
         digit_timeout: 6
         initial_timeout: 8

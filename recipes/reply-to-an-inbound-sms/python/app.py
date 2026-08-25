@@ -31,7 +31,8 @@ def reply_for(message):
     sender = message.get("from")
     for m in message.get("media") or []:
         # MMS attachments arrive as URLs; download them from here.
-        received_media.append({"from": sender, "url": m["url"], "content_type": m["content_type"]})
+        received_media.append(
+            {"from": sender, "url": m["url"], "content_type": m["content_type"]})
     if body == "stop":
         # SignalWire does not manage STOP for you (see handle-opt-outs-yourself).
         opted_out.add(sender)

@@ -9,7 +9,7 @@ Written against signalwire-sdk 3.0.1. The typed RestClient wraps SIP Gateways
 (fabric.sip_gateways) but not Domain Applications, so that call goes through
 the same authenticated HTTP layer by path.
 
-    python app.py setup        # create both resources, print the SIP domain and gateway address
+    python app.py setup   # create both resources; print the SIP domain and gateway
 """
 import os
 import sys
@@ -22,7 +22,8 @@ client = RestClient()
 PBX_IPS = os.getenv("PBX_IPS", "203.0.113.10,203.0.113.11").split(",")
 PBX_SIP_URI = os.getenv("PBX_SIP_URI", "sip:pbx.example.com:5060")
 PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-host.example.com")
-IDENTIFIER = os.getenv("DOMAIN_IDENTIFIER", "acme-pbx")   # becomes <identifier>.dapp.signalwire.com
+# the SIP domain becomes <IDENTIFIER>.dapp.signalwire.com
+IDENTIFIER = os.getenv("DOMAIN_IDENTIFIER", "acme-pbx")
 GATEWAY_NAME = os.getenv("GATEWAY_NAME", "acme-pbx-gateway")
 
 
@@ -77,7 +78,8 @@ if __name__ == "__main__":
     if sys.argv[1:] == ["setup"]:
         dapp = create_domain_application()
         gw = create_sip_gateway()
-        print("PBX should send INVITEs to:", dapp.get("domain") or f"{IDENTIFIER}.dapp.signalwire.com")
+        domain = dapp.get("domain") or f"{IDENTIFIER}.dapp.signalwire.com"
+        print("PBX should send INVITEs to:", domain)
         print("SWML can connect to the PBX at:", f"/private/{GATEWAY_NAME}", gw.get("id"))
     else:
         build_from_pbx().serve(port=int(os.getenv("PORT", "8080")))

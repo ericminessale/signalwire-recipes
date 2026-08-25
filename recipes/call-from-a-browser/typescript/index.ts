@@ -13,7 +13,10 @@ async function placeCall(status: HTMLElement): Promise<void> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ user: "demo-user", to: TO }),
   });
-  const { token, destination } = (await res.json()) as { token: string; destination: string };
+  const { token, destination } = (await res.json()) as {
+    token: string;
+    destination: string;
+  };
 
   const client = new SignalWire(new StaticCredentialProvider({ token }));
   await client.connect();
@@ -39,4 +42,6 @@ async function placeCall(status: HTMLElement): Promise<void> {
   });
 }
 
-placeCall(document.getElementById("status")!).catch((err) => console.error("call failed", err));
+placeCall(document.getElementById("status")!).catch((err) =>
+  console.error("call failed", err),
+);

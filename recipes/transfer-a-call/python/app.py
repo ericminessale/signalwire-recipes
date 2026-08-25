@@ -26,7 +26,8 @@ def build(service=None):
         connect["transfer_after_bridge"] = "true"
     service.add_verb("connect", connect)
     # Reached only when the bridge ends and the transfer was not permanent.
-    service.add_verb("play", {"url": "say:The other party has left the call. Thank you for calling."})
+    service.add_verb("play", {
+        "url": "say:The other party has left the call. Thank you for calling."})
     service.add_verb("hangup", {})
 
     # Variant: a SIP destination with custom headers on the INVITE.

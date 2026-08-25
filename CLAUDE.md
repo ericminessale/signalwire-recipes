@@ -321,10 +321,40 @@ Retiring a folder is a deliberate `git rm`.
   and was let through). At 1560 the pane is 860px and fits the longest recipe
   line (114ch) at 1920 with no scrollbar; below 1244px the viewport decides. The
   recipe page splits 2fr/3fr, code on the larger side. **Recipe code lines stay
-  at or under 100 characters** — at 1280 the pane is ~96ch and longer lines
-  scroll. README fenced code (`pre.mdcode`) is illustrative and wraps; it never
+  at or under 90 characters** — at 1280 the pane holds 91 (sol measured it; a
+  100-character rule left one overflow, a 92 rule was one too permissive).
+  `tools/qc.py`'s overflow check is the authority, not the count.
+  README fenced code (`pre.mdcode`) is illustrative and wraps; it never
   scrolls. A scrollbar at the bottom of a code block is a layout bug, not a
-  code-block feature: measure `scrollWidth > clientWidth` at 1920 and 1280.
+  code-block feature.
+- **A sticky element must have nothing below it in its own column.** The code
+  block was made sticky with *Run it / Verify it / What to change first* beneath
+  it; scrolled down, it painted over all three and they could not be read
+  (Eric, 2026-08-25). Those sections live in the reading column; the aside is
+  the code alone.
+
+## QC gate — before any publish or commit that touches build.py
+
+1. `python build.py && python check_extensible.py && python verify.py`
+2. `python build.py --preview --all && python tools/qc.py` — the render QC:
+   overflow, sticky overlap at six scroll offsets, card click and back with
+   exactly one view visible, the unbuilt toggle by *painted* count with its
+   switch element surviving and the category-header strips following, tab
+   switching by pane *text*, banner placement — at 2560, 1920, 1280×720 (a
+   laptop) and 820. It refuses on any failure. Every check in it is a bug that
+   shipped because someone looked at a screenshot of the top of a page, or at
+   an attribute, instead of using the page. `docs/UI_REVIEW_2026-08-25.md` is
+   the first codex pass over this; it found two P1s the QC and the author both
+   missed (the toggle deleting its own knob, stale header counts) and named the
+   QC's blind spots, all now fixed or covered. Two of its fuchsia findings were
+   *not* taken: `::selection` and focus outlines stay fuchsia as system
+   affordances, and the hero eyebrow is Eric's design; hover states and the
+   toggle's on-state went neutral.
+3. **codex review of the diff** (`docs/_sol_brief_ui_<date>.md` → `codex exec`,
+   answer saved under `docs/`) for anything that changes what a reader sees.
+   Two sessions in one day published UI that was broken on first click; a
+   second pair of eyes is not optional for the artifact Eric shows his boss.
+4. Only then republish the artifact.
 
 ## Open work
 

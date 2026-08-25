@@ -18,7 +18,8 @@ from signalwire import SWMLService
 
 PUBLIC_URL = os.getenv("PUBLIC_URL", "https://your-host.example.com")
 QUEUE = os.getenv("QUEUE_NAME", "support")
-HOLD_MUSIC = os.getenv("HOLD_MUSIC_URL", "https://cdn.signalwire.com/default-music/welcome.mp3")
+HOLD_MUSIC = os.getenv("HOLD_MUSIC_URL",
+                       "https://cdn.signalwire.com/default-music/welcome.mp3")
 MAX_WAIT_SECONDS = int(os.getenv("MAX_WAIT_SECONDS", "600"))
 
 app = Flask(__name__)
@@ -28,7 +29,8 @@ def build_caller(service=None):
     service = service or SWMLService(name="queue-caller", route="/caller")
     service.reset_document()
     service.add_verb("answer", {})
-    service.add_verb("play", {"url": "say:All of our agents are busy. Please stay on the line."})
+    service.add_verb("play", {
+        "url": "say:All of our agents are busy. Please stay on the line."})
     service.add_verb("enter_queue", {
         "queue_name": QUEUE,
         "wait_url": f"{PUBLIC_URL}/wait",

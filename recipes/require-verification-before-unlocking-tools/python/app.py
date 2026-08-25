@@ -15,7 +15,8 @@ ACCOUNT_TOOLS = ["get_balance", "list_recent_transactions"]
 
 # Your system of record. Keyed by phone number for the demo.
 CUSTOMERS = {
-    "+15551234567": {"pin": "4242", "balance": "1,204.18", "recent": ["-42.10 grocery", "-9.99 streaming"]},
+    "+15551234567": {"pin": "4242", "balance": "1,204.18",
+                     "recent": ["-42.10 grocery", "-9.99 streaming"]},
 }
 
 
@@ -55,7 +56,9 @@ class BankAgent(AgentBase):
     )
     def get_balance(self, args, raw_data):
         c = CUSTOMERS.get((raw_data or {}).get("caller_id_num", ""))
-        return FunctionResult(f"The balance is {c['balance']} dollars." if c else "No account found.")
+        if not c:
+            return FunctionResult("No account found.")
+        return FunctionResult(f"The balance is {c['balance']} dollars.")
 
     @AgentBase.tool(
         name="list_recent_transactions",
