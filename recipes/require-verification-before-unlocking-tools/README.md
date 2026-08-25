@@ -50,7 +50,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/bank`. The demo
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/bank`, using the credentials from your `.env`. The demo
 customer is `+15551234567` with PIN `4242`; replace `CUSTOMERS` with your
 system of record.
 

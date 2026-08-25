@@ -496,6 +496,15 @@ cards could sit under the sticky filter strip, 113 cards had no
    while pinning `python-dotenv`** - the README said `cp .env.example .env` and
    the app never read it, so every credentialed recipe failed from a clean
    clone. The verifiers missed it because they set the environment in-process.
+   The same shape recurred with **basic auth**: an `AgentBase` serves its SWML
+   behind it, and with no `SWML_BASIC_AUTH_USER` / `SWML_BASIC_AUTH_PASSWORD`
+   the SDK invents a password that exists only in the running process, so the
+   number's webhook 401s and the password changes on restart. The SDK prints
+   the warning on startup; it was read and not acted on. Seven recipes shipped
+   that way before sol caught it. The lint now refuses an `AgentBase` recipe
+   whose `.env.example` omits them, and `verifylib.assert_basic_auth_from_env()`
+   asserts the credentials came from the environment rather than being
+   generated.
 2. `python build.py --preview --all && python tools/qc.py` — the render QC:
    overflow, sticky overlap at six scroll offsets, card click and back with
    exactly one view visible, the unbuilt toggle by *painted* count with its

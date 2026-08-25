@@ -137,8 +137,23 @@ def check(d, fail):
             at = prose.find(sent[:40])
             ln = prose[:at].count("\n") + 1 if at > 0 else 0
             fail(slug, f"README.md:~{ln}", f"{n}-word sentence; the guide caps them at {MAX_SENTENCE}")
-    if not (d / ".env.example").exists():
+    env_example = d / ".env.example"
+    if not env_example.exists():
         fail(slug, ".env.example", "missing")
+    else:
+        # An AgentBase serves its SWML behind basic auth. With nothing in the
+        # environment the SDK invents a password that exists only in the
+        # running process: the webhook 401s and it changes on every restart.
+        app_py = d / "python" / "app.py"
+        if app_py.exists() and app_py.stat().st_size:
+            src = app_py.read_text(encoding="utf-8")
+            serves_agent = "AgentBase" in src and ".serve(" in src
+            declared = env_example.read_text(encoding="utf-8")
+            if serves_agent and "SWML_BASIC_AUTH_PASSWORD" not in declared:
+                fail(slug, ".env.example",
+                     "serves an AgentBase but never sets SWML_BASIC_AUTH_USER / "
+                     "SWML_BASIC_AUTH_PASSWORD; the SDK then generates a password "
+                     "that lives only in the process and the webhook gets a 401")
 
 
 def main(argv):

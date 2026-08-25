@@ -32,7 +32,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/account`.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/account`, using the credentials from your `.env`.
 
 ## Verify it
 

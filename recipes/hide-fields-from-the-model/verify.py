@@ -9,13 +9,22 @@ receives - contains every exposed field and none of the hidden ones. Then render
 the SWML and assert the tool is declared and the prompt carries no field names.
 """
 import json
+import os
 import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "python"))
+sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.parent / "tools"))
+
+import verifylib as V  # noqa: E402
 
 import signalwire  # noqa: E402
 from app import EXPOSED, AccountAgent, load_customer  # noqa: E402
+
+# what a reader's .env supplies; without it the SDK generates a password that
+# exists only in this process and the number's webhook gets a 401
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
 
 HIDDEN = {"risk_score", "margin_pct", "internal_notes", "card_last_four", "last_name"}
 
@@ -23,6 +32,7 @@ HIDDEN = {"risk_score", "margin_pct", "internal_notes", "card_last_four", "last_
 def main():
     print(f"sdk {signalwire.__version__} at {signalwire.__file__}")
     agent = AccountAgent()
+    V.assert_basic_auth_from_env(agent)
 
     raw = {"call_id": "c1", "caller_id_num": "+15551234567"}
     r = agent._execute_swaig_function("get_account", {}, call_id="c1", raw_data=raw)
