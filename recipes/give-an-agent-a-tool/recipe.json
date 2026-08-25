@@ -12,8 +12,7 @@
     "tool-calling"
   ],
   "surfaces": [
-    "python",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "talk",
@@ -22,7 +21,7 @@
   "subcategory": "tools",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "t:ai-voice-agent-with-function-calling",
@@ -34,7 +33,8 @@
       "sdk tool_mixin.py:26,175,187",
       "docs swml/reference/calling/ai/swaig/functions",
       "demo example",
-      "demo workshop 01 define_tool"
+      "demo workshop 01 define_tool",
+      "verified 2026-08-25: recipes/give-an-agent-a-tool/verify.py"
     ]
   }
 }

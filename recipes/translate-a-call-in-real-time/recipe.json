@@ -22,7 +22,7 @@
   "subcategory": "other",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "sol gap #5",
@@ -33,7 +33,8 @@
     "evidence": [
       "docs swml/reference/calling/live-translate",
       "features Live Translate (no update action; stop + restart to change pair)",
-      "demo (none)"
+      "demo (none)",
+      "verified 2026-08-25: recipes/translate-a-call-in-real-time/verify.py"
     ]
   },
   "featured": true,

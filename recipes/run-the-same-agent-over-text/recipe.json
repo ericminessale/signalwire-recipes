@@ -23,8 +23,8 @@
   "tier": "next",
   "subcategory": "other",
   "plan": {
-    "kind": "recipe",
-    "status": "stub",
+    "kind": "hold",
+    "status": "hold",
     "lens": "messaging",
     "folds": [
       "#26",
@@ -36,7 +36,8 @@
     "evidence": [
       "docs apis/rest/ai-chat/chat-methods (JSON-RPC, chat scope)",
       "docs platform/ai/quickstart (Python AI Chat client)",
-      "NEEDS VERIFICATION: the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages"
+      "NEEDS VERIFICATION: the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages",
+      "HOLD 2026-08-25: chat-mode AI kernel is unreleased (Knowledge MCP get_doc(mary): listed under 'Unreleased but functioning' and on the two-quarter roadmap). Do not write against the AI Chat API until it ships."
     ]
   }
 }

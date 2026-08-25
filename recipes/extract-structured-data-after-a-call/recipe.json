@@ -22,7 +22,7 @@
   "subcategory": "tools",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#24 (canonical: transcript-based post-call analysis)",
@@ -34,7 +34,8 @@
       "sdk agent_base.py:421 on_summary",
       "docs apis/rest/webhooks/ai-post-prompt-callback",
       "demo postpromptviewer",
-      "demo postpromptviewer lib/parser.js (the payload contains SWML, transcript, SWAIG calls, timings, recording URL)"
+      "demo postpromptviewer lib/parser.js (the payload contains SWML, transcript, SWAIG calls, timings, recording URL)",
+      "verified 2026-08-25: recipes/extract-structured-data-after-a-call/verify.py"
     ]
   }
 }

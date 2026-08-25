@@ -21,7 +21,7 @@
   "subcategory": "governance",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#18 (drive-thru: menu constraints and stock-outs enforced in code)",
@@ -30,7 +30,8 @@
     ],
     "evidence": [
       "sdk function_result.py:301 swml_change_step",
-      "sdk contexts.py:252 set_valid_steps"
+      "sdk contexts.py:252 set_valid_steps",
+      "verified 2026-08-25: recipes/enforce-state-transitions-in-a-tool-handler/verify.py"
     ]
   }
 }

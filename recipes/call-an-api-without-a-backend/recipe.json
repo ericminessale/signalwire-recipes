@@ -23,7 +23,7 @@
   "subcategory": "tools",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#5",
@@ -33,7 +33,8 @@
       "sdk data_map.py:204 webhook, :327 output",
       "docs swml/reference/calling/ai/swaig/functions/data-map",
       "sdk skills/weather_api/skill.py",
-      "demo workshop examples/01-ai-agent/python/agent.py:94-118 DataMap"
+      "demo workshop examples/01-ai-agent/python/agent.py:94-118 DataMap",
+      "verified 2026-08-25: recipes/call-an-api-without-a-backend/verify.py"
     ]
   }
 }

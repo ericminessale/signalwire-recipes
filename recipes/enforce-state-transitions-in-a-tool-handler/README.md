@@ -1,33 +1,91 @@
 # Enforce state transitions in a tool handler
 
-> Your code decides what happens next, so the model cannot strand or misroute the caller.
+> Your code decides what happens next, so the model cannot strand or misroute
+> the caller.
 
-**Technical:** `handler-forced transitions`
-**Scenario:** When step instructions alone are not enough
+**Scenario:** a bicycle shop booking repair drop-offs
 
 ## What this demonstrates
 
-_TODO: the pattern, in two sentences. This is the part that carries the argument._
+The caller cannot reach scheduling until a bike the shop actually services has
+been recorded. The rule lives in the tool handler, which reads collected state
+instead of asking the model whether it collected anything.
 
-## Prerequisites
+`valid_steps` constrains the model. It does not constrain your webhook, so the
+handler is the last authority on the transition and the only place the rule can
+be enforced.
 
-- A SignalWire account and API token
-- A phone number on that account
+## How it works
 
-## Setup
+Two things move the conversation, and only one of them is clamped.
 
-```bash
-cp .env.example .env    # add your credentials
+The model's path is the `next_step` tool, bounded by `valid_steps` on the
+current step. The other path is a handler emitting a step change, and the SDK is
+explicit that this bypasses the clamp. Anything the handler emits happens.
+
+So the handler checks first:
+
+```python
+def start_scheduling(self, args, raw_data):
+    recorded = (raw_data or {}).get("global_data", {}).get("bike_type")
+    if recorded not in SERVICEABLE:
+        return FunctionResult(
+            "NOT_READY: no serviceable bike has been recorded yet. Ask "
+            "what kind of bike it is and call record_bike first."
+        )
+    return FunctionResult(...).swml_change_step("schedule")
 ```
+
+The model may call `start_scheduling` whenever it likes, including on the first
+turn. What it cannot do is make the check pass. `SERVICEABLE` is a set in code,
+not a line in the prompt, so a caller who insists cannot widen it.
+
+The refusal is prescriptive. It names the state that is missing and the tool
+that fills it, so the model's next turn is a question rather than an apology.
+
+One naming trap: `swml_change_step()` is the SDK method, and the key the
+platform receives is `change_step`. Assert the key.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python_
+```bash
+cd python
+pip install -r requirements.txt
+python app.py
+```
+
+Point a phone number's SWML webhook at `https://<your-host>/booking`.
+
+## Verify it
+
+No network, no account:
+
+```bash
+python verify.py
+```
+
+It renders the SWML and runs the handlers, asserting:
+
+- `identify_bike` exposes two tools and clamps the model to `schedule`
+- an unserviceable bike is refused and writes no state
+- a serviceable one is normalised and written as `set_global_data`
+- `start_scheduling` is refused with no state, and refused again when the state
+  is present but unserviceable
+- with real state it emits `{"change_step": "schedule"}`, and the SDK method
+  name appears nowhere in the payload
+
+## Limitations
+
+This governs one transition. A flow with several gates wants the check factored
+out, because a rule copied into four handlers is a rule that will disagree with
+itself.
+
+Reading `global_data` from `raw_data` trusts the platform's own state, not the
+model's account of it. That is the point, but it means the value has to have
+been written by a handler.
 
 ## What to change first
 
-_TODO_
-
-## Related
-
-_TODO_
+Delete the `recorded not in SERVICEABLE` check and keep the prompt instruction.
+The transition becomes advisory, which is the failure this recipe exists to
+prevent.

@@ -11,7 +11,6 @@
   "capabilities": [],
   "surfaces": [
     "python",
-    "typescript",
     "swml"
   ],
   "governed": false,
@@ -21,7 +20,7 @@
   "subcategory": "call-control",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:text-to-speech-phone-call"
@@ -29,7 +28,8 @@
     "evidence": [
       "docs swml/reference/calling/answer, play",
       "docs compatibility-api/cxml/reference/voice (Say)",
-      "sdk relay/call.py:478 answer"
+      "sdk relay/call.py:478 answer",
+      "verified 2026-08-25: recipes/answer-an-inbound-call/verify.py"
     ]
   }
 }

@@ -1,0 +1,81 @@
+"""Prove the claim without a network.
+
+Claim: the handler, not the model, decides whether a transition is legal, and an
+illegal request is refused with a reason.
+
+Proof: the rendered SWML shows the step graph the model sees. Running the
+handlers shows the same tool call producing a transition or a refusal purely
+from collected state, and the transition arrives under the JSON key the platform
+reads, `change_step`, not the SDK method name that produced it.
+"""
+import json
+import pathlib
+import sys
+
+HERE = pathlib.Path(__file__).parent
+sys.path.insert(0, str(HERE.parent.parent / "tools"))
+sys.path.insert(0, str(HERE / "python"))
+
+import verifylib as V  # noqa: E402
+
+
+def actions(result):
+    return result.get("action", [])
+
+
+def main():
+    V.sdk_banner()
+    from app import SERVICEABLE, BookingAgent
+
+    agent = BookingAgent()
+    doc = json.loads(agent._render_swml())
+    V.validate_swml(doc)
+    ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
+    steps = {s["name"]: s for s in ai["prompt"]["contexts"]["default"]["steps"]}
+
+    # The model's constrained path.
+    assert steps["identify_bike"]["valid_steps"] == ["schedule"], steps
+    assert steps["identify_bike"]["functions"] == ["record_bike",
+                                                   "start_scheduling"], steps
+    assert steps["schedule"]["functions"] == ["confirm_slot"], steps
+
+    # An unserviceable bike is refused and writes nothing.
+    r = agent._execute_swaig_function("record_bike", {"bike_type": "unicycle"},
+                                      call_id="c1")
+    assert r["response"].startswith("UNSUPPORTED"), r
+    assert not actions(r), r
+
+    # A serviceable one is recorded by code, under the platform's key.
+    r = agent._execute_swaig_function("record_bike", {"bike_type": " Gravel "},
+                                      call_id="c1")
+    assert actions(r) == [{"set_global_data": {"bike_type": "gravel"}}], r
+
+    # The model asks to move on before anything was recorded. Refused.
+    r = agent._execute_swaig_function("start_scheduling", {}, call_id="c1",
+                                      raw_data={"global_data": {}})
+    assert r["response"].startswith("NOT_READY"), r
+    assert not actions(r), r
+
+    # Refused again when the state is present but not serviceable, so the
+    # check is on the value and not merely on the key existing.
+    r = agent._execute_swaig_function(
+        "start_scheduling", {}, call_id="c1",
+        raw_data={"global_data": {"bike_type": "unicycle"}})
+    assert r["response"].startswith("NOT_READY"), r
+    assert not actions(r), r
+
+    # With real state, the transition is emitted.
+    r = agent._execute_swaig_function(
+        "start_scheduling", {}, call_id="c1",
+        raw_data={"global_data": {"bike_type": "gravel"}})
+    # swml_change_step() is the SDK method; change_step is what is sent.
+    assert actions(r) == [{"change_step": "schedule"}], r
+    assert "swml_change_step" not in json.dumps(r), r
+
+    print(f"ok: valid_steps={steps['identify_bike']['valid_steps']} clamps the "
+          f"model; the handler refuses start_scheduling until one of "
+          f"{sorted(SERVICEABLE)} is recorded, then emits change_step")
+
+
+if __name__ == "__main__":
+    main()

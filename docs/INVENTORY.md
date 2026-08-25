@@ -4,9 +4,9 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**121 rows.** By kind: recipe 103 · build 8 · guide 4 · tool 2 · hold 4.  
-By status: verified 20 · written 4 · stub 33 · proposed 60 · hold 4.  
-Recipes per public category: AI Agents 37 · Voice 45 · Messaging 12 · MFA 1 · Video 6 · Fax 2.  
+**121 rows.** By kind: recipe 101 · build 8 · guide 4 · tool 2 · hold 6.  
+By status: verified 26 · written 4 · stub 25 · proposed 60 · hold 6.  
+Recipes per public category: AI Agents 37 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
 Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 8.
 
@@ -123,12 +123,13 @@ The tool returns an allowlisted projection, so withheld fields are absent from t
 
 The handler, not the model, decides whether a transition is legal; an illegal request is refused with a reason the model can relay.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Governance** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Governance** · lens AI Agents & Automation
 - interfaces: agents-sdk · capabilities: governance
 - folds: #18 (drive-thru: menu constraints and stock-outs enforced in code); #11 (policy-limit pattern, neutral scenario); t:ai-subscription-cancel-save-retention-agent
 - evidence:
   - sdk function_result.py:301 swml_change_step
   - sdk contexts.py:252 set_valid_steps
+  - verified 2026-08-25: recipes/enforce-state-transitions-in-a-tool-handler/verify.py
 
 ### `walk-a-caller-through-ordered-steps`
 
@@ -251,7 +252,7 @@ The agent collects, confirms, and then commits once through a single tool; nothi
 
 When the call ends, the post-prompt returns typed JSON about the conversation to your webhook; the payload carries the transcript it was drawn from.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
 - interfaces: agents-sdk · capabilities: post-prompt, observability
 - folds: #24 (canonical: transcript-based post-call analysis); t:call-recording-ai-summarizer; t:ai-call-center-quality-scorer
 - evidence:
@@ -260,12 +261,13 @@ When the call ends, the post-prompt returns typed JSON about the conversation to
   - docs apis/rest/webhooks/ai-post-prompt-callback
   - demo postpromptviewer
   - demo postpromptviewer lib/parser.js (the payload contains SWML, transcript, SWAIG calls, timings, recording URL)
+  - verified 2026-08-25: recipes/extract-structured-data-after-a-call/verify.py
 
 ### `give-an-agent-a-tool`
 
 A Python function with a JSON-schema signature becomes something the model can call mid-call.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
 - interfaces: agents-sdk, swml · capabilities: tool-calling
 - folds: t:ai-voice-agent-with-function-calling; t:ai-assistant-multi-tool; t:agent-with-tool-calling; scenario: a silent sentiment-reporting tool (c:classify-sentiment-from-a-transcript; FEATURES Sentiment reporting)
 - evidence:
@@ -273,6 +275,7 @@ A Python function with a JSON-schema signature becomes something the model can c
   - docs swml/reference/calling/ai/swaig/functions
   - demo example
   - demo workshop 01 define_tool
+  - verified 2026-08-25: recipes/give-an-agent-a-tool/verify.py
 
 ### `cover-tool-latency-with-fillers`
 
@@ -290,7 +293,7 @@ While a slow tool runs, the caller hears a per-language filler or a wait file in
 
 A DataMap tool calls a third-party API from SignalWire's side and templates the response; you run no server.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
 - interfaces: agents-sdk, swml, hosted · capabilities: datamap, serverless
 - folds: #5; t:ecommerce-order-status-bot
 - evidence:
@@ -298,6 +301,7 @@ A DataMap tool calls a third-party API from SignalWire's side and templates the 
   - docs swml/reference/calling/ai/swaig/functions/data-map
   - sdk skills/weather_api/skill.py
   - demo workshop examples/01-ai-agent/python/agent.py:94-118 DataMap
+  - verified 2026-08-25: recipes/call-an-api-without-a-backend/verify.py
 
 ### `call-an-mcp-server-from-a-live-call`
 
@@ -512,13 +516,14 @@ On a video call the agent shows idle, listening and talking video loops that swi
 
 A number rings your URL, your response answers it, plays TTS and hangs up.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
 - interfaces: swml, cxml, relay · capabilities: —
 - folds: t:text-to-speech-phone-call
 - evidence:
   - docs swml/reference/calling/answer, play
   - docs compatibility-api/cxml/reference/voice (Say)
   - sdk relay/call.py:478 answer
+  - verified 2026-08-25: recipes/answer-an-inbound-call/verify.py
 
 ### `place-an-outbound-call`
 
@@ -1016,13 +1021,14 @@ The agent enqueues the caller; the dequeue webhook carries the call_id, and the 
 
 Two people speaking different languages hear each other translated, with a chosen voice per direction.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Other** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Other** · lens Voice & Call Control
 - interfaces: swml, rest, relay · capabilities: translation
 - folds: sol gap #5; t:ai-real-time-translation-bridge; t:three-way-ai-interpreter; t:webrtc-ai-interpreter-live-calls
 - evidence:
   - docs swml/reference/calling/live-translate
   - features Live Translate (no update action; stop + restart to change pair)
   - demo (none)
+  - verified 2026-08-25: recipes/translate-a-call-in-real-time/verify.py
 
 ### `buy-a-number-and-point-it-at-your-app` **·launch**
 
@@ -1062,7 +1068,7 @@ A TwiML application using the supported cXML subset runs on SignalWire by changi
   - platform-docs D.4: VirtualAgent deprecated; no unsupported-TwiML page found
   - NEEDS VERIFICATION: a compatibility smoke matrix over the 18 documented verbs before this can launch; VirtualAgent is deprecated and no unsupported-TwiML page exists
 
-## Messaging — 12 recipes
+## Messaging — 10 recipes
 
 #### Routing & queueing
 
@@ -1183,29 +1189,6 @@ An inbound message hits your handler and a reply goes back on the same number, w
   - docs compatibility-api/cxml/reference/messaging (Message)
   - docs apis/rest/webhooks (SWML inbound message webhook)
   - verified 2026-08-25: recipes/reply-to-an-inbound-sms/verify.py
-
-### `run-the-same-agent-over-text`
-
-The agent that answers calls answers text through the AI Chat API; an inbound SMS handler bridges messages to it.
-
-- kind **recipe** · status **stub** · category **Messaging** (messaging, ai-agents) · task group **Other** · lens Messaging & Realtime Chat
-- interfaces: rest, agents-sdk · capabilities: chat, sms
-- folds: #26; t:chat-with-ai-assistant; t:sms-chatbot-with-conversation-memory; t:omnichannel-ai-receptionist; web chat is put-an-agent-in-a-web-chat-widget (#27); same API from the browser
-- evidence:
-  - docs apis/rest/ai-chat/chat-methods (JSON-RPC, chat scope)
-  - docs platform/ai/quickstart (Python AI Chat client)
-  - NEEDS VERIFICATION: the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages
-
-### `put-an-agent-in-a-web-chat-widget`
-
-A page embeds a chat box that talks to the same agent over the AI Chat API.
-
-- kind **recipe** · status **stub** · category **Messaging** (messaging, ai-agents) · task group **Other** · lens Messaging & Realtime Chat
-- interfaces: rest, browser-sdk · capabilities: chat
-- folds: #27
-- evidence:
-  - docs apis/rest/ai-chat/chat-methods
-  - NEEDS VERIFICATION: browser-side auth to the AI Chat API (a token proxy is likely required)
 
 ### `send-text-and-read-conversation-history-in-the-browser`
 
@@ -1503,7 +1486,7 @@ Turn latency is measured from end-of-speech to first audio, with the method publ
   - demo testbot catalog.py (107 capabilities / 16 suites; README says 99 - stale)
   - demo testbot README: update_global_data -> set_global_data, set_metadata -> set_meta_data, swml_change_step -> change_step, play_background_file -> playback_bg
 
-## Holds — 4
+## Holds — 6
 
 ### `run-an-ai-sidecar-on-a-live-call`
 
@@ -1534,6 +1517,31 @@ Card digits are captured by the platform's pay verb and tokenised; the model rec
   - demo utility agent.py:754-775 pay()
   - demo testbot stripe_pay.py - Stripe test-mode payment_connector; pay.connector_isolation asserted live
   - HOLD: security review - a test-mode connector exists (testbot); the remaining blocker is the PCI statement and review of what the connector receives
+
+### `run-the-same-agent-over-text`
+
+The agent that answers calls answers text through the AI Chat API; an inbound SMS handler bridges messages to it.
+
+- kind **hold** · status **hold** · category **Messaging** (messaging, ai-agents) · task group **Other** · lens Messaging & Realtime Chat
+- interfaces: rest, agents-sdk · capabilities: chat, sms
+- folds: #26; t:chat-with-ai-assistant; t:sms-chatbot-with-conversation-memory; t:omnichannel-ai-receptionist; web chat is put-an-agent-in-a-web-chat-widget (#27); same API from the browser
+- evidence:
+  - docs apis/rest/ai-chat/chat-methods (JSON-RPC, chat scope)
+  - docs platform/ai/quickstart (Python AI Chat client)
+  - NEEDS VERIFICATION: the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages
+  - HOLD 2026-08-25: chat-mode AI kernel is unreleased (Knowledge MCP get_doc(mary): listed under 'Unreleased but functioning' and on the two-quarter roadmap). Do not write against the AI Chat API until it ships.
+
+### `put-an-agent-in-a-web-chat-widget`
+
+A page embeds a chat box that talks to the same agent over the AI Chat API.
+
+- kind **hold** · status **hold** · category **Messaging** (messaging, ai-agents) · task group **Other** · lens Messaging & Realtime Chat
+- interfaces: rest, browser-sdk · capabilities: chat
+- folds: #27
+- evidence:
+  - docs apis/rest/ai-chat/chat-methods
+  - NEEDS VERIFICATION: browser-side auth to the AI Chat API (a token proxy is likely required)
+  - HOLD 2026-08-25: chat-mode AI kernel is unreleased (Knowledge MCP get_doc(mary): listed under 'Unreleased but functioning' and on the two-quarter roadmap). Do not write against the AI Chat API until it ships.
 
 ### `send-a-whatsapp-template-message`
 
