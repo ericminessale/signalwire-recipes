@@ -4,7 +4,7 @@
   "alias": "transcript classifier",
   "summary": "Score the conversation in your own code and escalate on a threshold.",
   "scenario": "Catching a call going wrong",
-  "category": "observe",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -18,5 +18,6 @@
   "governed": true,
   "demo": "observe",
   "provenance": "new",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "observe"
 }

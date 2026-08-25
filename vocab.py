@@ -59,6 +59,13 @@ def evidence():
     return _load_dir("evidence", ["label", "renderer"])
 
 
+def subcategories():
+    d = VOCAB / "subcategories"
+    if not d.is_dir():
+        return {}
+    return _load_dir("subcategories", ["label"])
+
+
 def demo_modes():
     return _load_dir("demo-modes", ["label", "copy"])
 
@@ -88,6 +95,7 @@ def load():
     ev = evidence()
     rend = renderers()
     modes = demo_modes()
+    subs = subcategories()
 
     # every declared evidence type must have a discovered renderer
     for k, v in ev.items():
@@ -105,6 +113,7 @@ def load():
         "surface_abbr": {k: v["abbr"] for k, v in surf.items()},
         "evidence": ev,
         "renderers": rend,
+        "subcategories": subs,
         "demo_modes": modes,
         "demo_copy": {k: m["copy"] for k, m in modes.items()},
     }

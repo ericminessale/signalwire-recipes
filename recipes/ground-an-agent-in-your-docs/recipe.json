@@ -4,7 +4,7 @@
   "alias": "vector search over a local index",
   "summary": "Answers that come from your content rather than the model's memory.",
   "scenario": "A docs hotline that does not invent features",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": true,
   "demo": "talk",
   "provenance": "rewrite",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "knowledge"
 }

@@ -4,7 +4,7 @@
   "alias": "mcp_gateway skill",
   "summary": "Reach tools on an existing MCP server from inside a conversation.",
   "scenario": "Booking a meeting by phone",
-  "category": "integrations",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "tools"
 }

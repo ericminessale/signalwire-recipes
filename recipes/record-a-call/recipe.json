@@ -4,7 +4,7 @@
   "alias": "record + completion callback",
   "summary": "Start a recording and pick it up from the completion webhook.",
   "scenario": "Keeping the tape",
-  "category": "call-control",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -20,5 +20,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

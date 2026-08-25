@@ -4,7 +4,7 @@
   "alias": "join_conference coach=",
   "summary": "One-way audio that only the agent's leg can hear.",
   "scenario": "Coaching without the caller knowing",
-  "category": "observe",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "observe"
 }

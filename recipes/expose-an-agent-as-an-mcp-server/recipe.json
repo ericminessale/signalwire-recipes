@@ -4,7 +4,7 @@
   "alias": "agent as provider",
   "summary": "Let another AI call your voice agent's tools directly.",
   "scenario": "Give Claude a phone number",
-  "category": "integrations",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "none",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "tools"
 }

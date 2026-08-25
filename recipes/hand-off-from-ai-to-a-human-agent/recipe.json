@@ -4,7 +4,7 @@
   "alias": "queue handoff with intake",
   "summary": "Put the caller in a queue and hand the human everything the AI already collected.",
   "scenario": "The hybrid contact centre pattern",
-  "category": "handoff",
+  "category": "voice",
   "products": [
     "voice",
     "ai-agents"
@@ -19,5 +19,6 @@
   "governed": true,
   "demo": "observe",
   "provenance": "rewrite",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "handoff"
 }

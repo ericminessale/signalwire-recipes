@@ -4,7 +4,7 @@
   "alias": "answer + play",
   "summary": "Accept an incoming call, greet the caller, and hang up cleanly.",
   "scenario": "The hello-world of telephony",
-  "category": "foundations",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -20,5 +20,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "call-control"
 }

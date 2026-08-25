@@ -1,0 +1,27 @@
+{
+  "slug": "sms-support-desk",
+  "title": "SMS Support Desk",
+  "alias": "two-way texting with follow-up",
+  "summary": "Inbound texts routed to the right queue, answered by the same agent logic as the phone line, with delivery handled properly.",
+  "scenario": "Support over text without a second codebase",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "sms",
+    "chat"
+  ],
+  "composes": [
+    "reply-to-an-inbound-sms",
+    "run-the-same-agent-over-text",
+    "send-an-sms"
+  ],
+  "kind": "build",
+  "surfaces": [],
+  "governed": true,
+  "demo": "observe",
+  "provenance": "new",
+  "tier": "next",
+  "repo": "https://github.com/ericminessale/signalwire-recipes"
+}

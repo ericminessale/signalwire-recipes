@@ -4,7 +4,7 @@
   "alias": "capability module",
   "summary": "Package a capability once and load it into any agent with one line.",
   "scenario": "Stop copying the same tool between projects",
-  "category": "integrations",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "tools"
 }

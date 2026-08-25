@@ -4,7 +4,7 @@
   "alias": "handler-forced transitions",
   "summary": "Your code decides what happens next, so the model cannot strand or misroute the caller.",
   "scenario": "When step instructions alone are not enough",
-  "category": "governance",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": true,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "governance"
 }

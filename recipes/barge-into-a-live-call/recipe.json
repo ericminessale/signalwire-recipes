@@ -4,7 +4,7 @@
   "alias": "silent-entry full participant",
   "summary": "Join an in-progress call with full audio, and leave without tearing it down.",
   "scenario": "Supervisor takeover",
-  "category": "observe",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "observe"
 }

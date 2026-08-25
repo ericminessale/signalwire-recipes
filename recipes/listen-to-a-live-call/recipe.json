@@ -4,7 +4,7 @@
   "alias": "tap to a browser",
   "summary": "Attach to a call in progress and hear both sides without joining it.",
   "scenario": "Silent monitoring",
-  "category": "observe",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "rewrite",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "observe"
 }

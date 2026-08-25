@@ -20,5 +20,6 @@
   "governed": false,
   "demo": "text",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "other"
 }

@@ -1,97 +1,1109 @@
 [
-  {"slug":"answer-an-inbound-call","title":"Answer an inbound call","alias":"answer + play","summary":"Accept an incoming call, greet the caller, and hang up cleanly.","scenario":"The hello-world of telephony","category":"foundations","products":["voice"],"capabilities":["answer","tts"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"talk","provenance":"new","tier":"launch"},
-
-  {"slug":"place-an-outbound-call","title":"Place an outbound call","alias":"dial + call lifecycle","summary":"Dial a number from your own code and follow the call through to completion.","scenario":"Notification and reminder calls","category":"foundations","products":["voice"],"capabilities":["dial"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"none","provenance":"new","tier":"launch"},
-
-  {"slug":"build-an-ivr-menu","title":"Build an IVR menu","alias":"DTMF collect + branch","summary":"Play a menu, collect keypad input, and route the caller to the right place.","scenario":"Press 1 for sales","category":"foundations","products":["voice"],"capabilities":["dtmf","tts"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"talk","provenance":"new","tier":"launch"},
-
-  {"slug":"collect-speech-input-and-branch","title":"Collect speech input and branch on it","alias":"prompt + speech recognition","summary":"Ask an open question, recognise the answer, and take a different path for each.","scenario":"Natural-language routing without a full agent","category":"foundations","products":["voice"],"capabilities":["stt","tts"],"surfaces":["python","swml"],"governed":false,"demo":"talk","provenance":"new","tier":"launch"},
-
-  {"slug":"verify-a-webhook-signature","title":"Verify a webhook signature","alias":"signature check + idempotency","summary":"Reject forged webhooks and make your handler safe to call twice with the same event.","scenario":"The thing every tutorial skips","category":"foundations","products":["voice","messaging"],"capabilities":["webhooks","security"],"surfaces":["python","typescript"],"governed":false,"demo":"none","provenance":"new","tier":"launch"},
-
-  {"slug":"handle-call-status-callbacks","title":"Handle call status callbacks and failures","alias":"status events + failure states","summary":"React to ringing, answered, busy, no-answer and failed without guessing at state.","scenario":"Knowing what actually happened to a call","category":"foundations","products":["voice"],"capabilities":["webhooks"],"surfaces":["python","typescript"],"governed":false,"demo":"none","provenance":"new","tier":"next"},
-
-  {"slug":"detect-an-answering-machine","title":"Detect an answering machine","alias":"AMD","summary":"Tell a human from a voicemail greeting before you start talking.","scenario":"Outbound dialing that does not leave half a message","category":"foundations","products":["voice"],"capabilities":["amd"],"surfaces":["python"],"governed":false,"demo":"none","provenance":"extract","tier":"next"},
-
-  {"slug":"send-dtmf-to-an-external-ivr","title":"Send DTMF to someone else's IVR","alias":"send_digits","summary":"Drive another company's phone tree from your own code.","scenario":"Reaching a human at a carrier","category":"foundations","products":["voice"],"capabilities":["dtmf"],"surfaces":["python","swml"],"governed":false,"demo":"none","provenance":"new","tier":"next"},
-
-  {"slug":"bridge-a-call-to-sip","title":"Bridge a call to a SIP endpoint","alias":"connect to SIP","summary":"Send a PSTN call to a SIP address and back again.","scenario":"Putting a cloud number in front of existing gear","category":"foundations","products":["sip","voice"],"capabilities":["sip"],"surfaces":["python","swml"],"governed":false,"demo":"none","provenance":"new","tier":"next"},
-
-  {"slug":"get-a-webrtc-token-with-restricted-dial-targets","title":"Issue a browser calling token that cannot dial anywhere","alias":"scoped WebRTC token","summary":"Mint a short-lived browser token and restrict what it is allowed to call.","scenario":"Click-to-call without handing out your account","category":"foundations","products":["voice"],"capabilities":["webrtc","security"],"surfaces":["typescript","python"],"governed":true,"demo":"none","provenance":"new","tier":"next"},
-
-  {"slug":"record-a-call","title":"Record a call","alias":"record + completion callback","summary":"Start a recording and pick it up from the completion webhook.","scenario":"Keeping the tape","category":"call-control","products":["voice"],"capabilities":["recording","webhooks"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"talk","provenance":"extract","tier":"next"},
-
-  {"slug":"get-recording-consent-before-recording","title":"Get recording consent before recording","alias":"disclosure gate","summary":"Speak the disclosure and capture the answer before any audio is written to disk.","scenario":"Two-party-consent jurisdictions","category":"governance","products":["voice"],"capabilities":["recording","compliance"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"narrow","tier":"next"},
-
-  {"slug":"transfer-a-call","title":"Transfer a call","alias":"connect / transfer action","summary":"Move a live caller to another number or address.","scenario":"The simplest handoff there is","category":"call-control","products":["voice"],"capabilities":["transfer"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"talk","provenance":"extract","tier":"next"},
-
-  {"slug":"build-a-conference-call","title":"Build a conference call","alias":"join_conference + member control","summary":"Put several legs in one room and control each member independently.","scenario":"Three-way calls and bridging","category":"call-control","products":["voice"],"capabilities":["conference"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"ai-to-ai","provenance":"extract","tier":"next"},
-
-  {"slug":"play-hold-music","title":"Play hold music on a parked leg","alias":"hold_music","summary":"Park a caller and cycle audio at them until something changes.","scenario":"Waiting without silence","category":"call-control","products":["voice"],"capabilities":["hold"],"surfaces":["python","swml"],"governed":false,"demo":"talk","provenance":"narrow","tier":"next"},
-
-  {"slug":"call-from-a-browser","title":"Call from a browser","alias":"WebRTC leg","summary":"Place a call from a web page into the same flow a phone reaches.","scenario":"Support widget on a website","category":"call-control","products":["voice"],"capabilities":["webrtc"],"surfaces":["typescript"],"governed":false,"demo":"talk","provenance":"demos","tier":"next"},
-
-  {"slug":"route-a-call-to-an-ai-agent","title":"Route a call to an AI agent","alias":"agent as dial target","summary":"Point a phone number at an agent and let it answer.","scenario":"The first voice AI call you will make","category":"agent-basics","products":["ai-agents","voice"],"capabilities":["agent"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"talk","provenance":"demos","tier":"launch"},
-
-  {"slug":"give-an-agent-a-tool","title":"Give an agent a tool","alias":"tool calling into your backend","summary":"Let the model call your function, and decide what it gets back.","scenario":"Looking something up mid-conversation","category":"agent-basics","products":["ai-agents"],"capabilities":["tool-calling"],"surfaces":["python","typescript"],"governed":false,"demo":"talk","provenance":"demos","tier":"launch"},
-
-  {"slug":"run-an-agent-from-one-yaml-file","title":"Run an agent from one YAML file","alias":"declarative markup, no SDK","summary":"A complete working agent with nothing installed and no server of your own.","scenario":"For teams that are not a Python shop","category":"agent-basics","products":["ai-agents"],"capabilities":["declarative"],"surfaces":["swml"],"governed":false,"demo":"talk","provenance":"new","tier":"launch"},
-
-  {"slug":"call-an-api-without-a-backend","title":"Call an API without running a backend","alias":"declarative REST integration","summary":"Wire an agent to a REST endpoint with no webhook server in the middle.","scenario":"Package tracking, weather, stock quotes","category":"agent-basics","products":["ai-agents"],"capabilities":["datamap"],"surfaces":["python","swml"],"governed":false,"demo":"talk","provenance":"new","tier":"next"},
-
-  {"slug":"ground-an-agent-in-your-docs","title":"Ground an agent in your own documents","alias":"vector search over a local index","summary":"Answers that come from your content rather than the model's memory.","scenario":"A docs hotline that does not invent features","category":"agent-basics","products":["ai-agents"],"capabilities":["rag"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"rewrite","tier":"next"},
-
-  {"slug":"extract-structured-data-after-a-call","title":"Extract structured data after a call","alias":"post_prompt","summary":"Get typed fields out of a finished conversation instead of parsing a transcript.","scenario":"Dispositions and CRM writeback","category":"agent-basics","products":["ai-agents"],"capabilities":["post-prompt"],"surfaces":["python"],"governed":false,"demo":"talk","provenance":"extract","tier":"next"},
-
-  {"slug":"switch-language-mid-call","title":"Switch language mid-call","alias":"language change in one session","summary":"Change the conversation language, with a voice that suits it.","scenario":"Bilingual support lines","category":"agent-basics","products":["ai-agents"],"capabilities":["multilingual"],"surfaces":["python","swml"],"governed":false,"demo":"talk","provenance":"narrow","tier":"next"},
-
-  {"slug":"start-live-transcription","title":"Start live transcription and consume the webhook","alias":"live_transcribe","summary":"Turn on transcription for a call and receive the text as it is spoken.","scenario":"Feeding a transcript to your own system","category":"observe","products":["voice"],"capabilities":["stt","webhooks"],"surfaces":["python","typescript"],"governed":false,"demo":"observe","provenance":"rewrite","tier":"next"},
-
-  {"slug":"scope-tools-per-step","title":"Scope an agent's tools per step","alias":"set_functions per step","summary":"At each point in the conversation the model can only see the tools you allowed there.","scenario":"An agent that structurally cannot go off-script","category":"governance","products":["ai-agents"],"capabilities":["tool-calling","governance"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"extract","tier":"launch"},
-
-  {"slug":"hide-fields-from-the-model","title":"Hide fields from the model","alias":"server-side projection","summary":"Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.","scenario":"Risk flags and pricing the caller must not hear","category":"governance","products":["ai-agents"],"capabilities":["governance"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"extract","tier":"launch"},
-
-  {"slug":"enforce-state-transitions-in-a-tool-handler","title":"Enforce state transitions in a tool handler","alias":"handler-forced transitions","summary":"Your code decides what happens next, so the model cannot strand or misroute the caller.","scenario":"When step instructions alone are not enough","category":"governance","products":["ai-agents"],"capabilities":["governance"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"extract","tier":"next"},
-
-  {"slug":"require-verification-before-unlocking-tools","title":"Require verification before unlocking tools","alias":"conditional tool exposure","summary":"The account tools do not exist in the model's world until a handler says the caller passed.","scenario":"Balance and account enquiries","category":"governance","products":["ai-agents"],"capabilities":["governance","tool-calling"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"new","tier":"next"},
-
-  {"slug":"force-a-disclosure-before-the-call-proceeds","title":"Force a disclosure before the call proceeds","alias":"compliance as a state machine","summary":"No path forward exists until the required words have been spoken and consent captured.","scenario":"Regulated intake","category":"governance","products":["ai-agents"],"capabilities":["governance","compliance"],"surfaces":["python"],"governed":true,"demo":"talk","provenance":"new","tier":"next"},
-
-  {"slug":"transfer-a-call-without-losing-context","title":"Transfer a call without losing context","alias":"global_data across the handoff","summary":"State and identity travel with the call, so the next leg already knows who this is.","scenario":"The thing that breaks on every other platform","category":"handoff","products":["ai-agents","voice"],"capabilities":["transfer","governance"],"surfaces":["python"],"governed":true,"demo":"ai-to-ai","provenance":"extract","tier":"launch"},
-
-  {"slug":"brief-the-human-before-the-bridge-completes","title":"Brief the human before the bridge completes","alias":"screened handoff","summary":"Compose a bounded summary, play it to the agent, then join the caller.","scenario":"No more \"can you repeat all that\"","category":"handoff","products":["voice"],"capabilities":["conference","transfer"],"surfaces":["python"],"governed":false,"demo":"observe","provenance":"extract","tier":"next"},
-
-  {"slug":"whisper-to-an-agent-mid-call","title":"Whisper to an agent mid-call","alias":"join_conference coach=","summary":"One-way audio that only the agent's leg can hear.","scenario":"Coaching without the caller knowing","category":"observe","products":["voice"],"capabilities":["conference","coach"],"surfaces":["python"],"governed":false,"demo":"observe","provenance":"extract","tier":"next"},
-
-  {"slug":"barge-into-a-live-call","title":"Barge into a live call","alias":"silent-entry full participant","summary":"Join an in-progress call with full audio, and leave without tearing it down.","scenario":"Supervisor takeover","category":"observe","products":["voice"],"capabilities":["conference","barge"],"surfaces":["python"],"governed":false,"demo":"observe","provenance":"extract","tier":"next"},
-
-  {"slug":"call-an-mcp-server-from-a-live-call","title":"Call an MCP server from a live call","alias":"mcp_gateway skill","summary":"Reach tools on an existing MCP server from inside a conversation.","scenario":"Booking a meeting by phone","category":"integrations","products":["ai-agents"],"capabilities":["mcp","tool-calling"],"surfaces":["python"],"governed":false,"demo":"talk","provenance":"extract","tier":"next"},
-
-  {"slug":"expose-an-agent-as-an-mcp-server","title":"Expose an agent as an MCP server","alias":"agent as provider","summary":"Let another AI call your voice agent's tools directly.","scenario":"Give Claude a phone number","category":"integrations","products":["ai-agents"],"capabilities":["mcp"],"surfaces":["python"],"governed":false,"demo":"none","provenance":"new","tier":"next"},
-
-  {"slug":"send-an-sms","title":"Send an SMS","alias":"messages.create","summary":"The three-line version, plus what to do when it fails.","scenario":"Where every messaging project starts","category":"messaging","products":["messaging"],"capabilities":["sms"],"surfaces":["python","typescript","swml"],"governed":false,"demo":"none","provenance":"new","tier":"launch"},
-
-  {"slug":"reply-to-an-inbound-sms","title":"Reply to an inbound SMS","alias":"inbound webhook + threaded reply","summary":"Receive a text and answer it in the same thread.","scenario":"Two-way texting","category":"messaging","products":["messaging"],"capabilities":["sms","webhooks"],"surfaces":["python","typescript"],"governed":false,"demo":"text","provenance":"new","tier":"launch"},
-
-  {"slug":"run-the-same-agent-over-text","title":"Run the same agent over text","alias":"chat transport","summary":"One agent definition answering by SMS as well as by voice.","scenario":"Channel parity without a second build","category":"messaging","products":["messaging","ai-agents"],"capabilities":["chat","sms"],"surfaces":["python","typescript"],"governed":false,"demo":"text","provenance":"new","tier":"next"},
-
-  {"slug":"put-an-agent-in-a-web-chat-widget","title":"Put an agent in a web chat widget","alias":"browser chat transport","summary":"Drop the same agent into a chat box on any page.","scenario":"Support chat that shares the phone agent's logic","category":"messaging","products":["messaging","ai-agents"],"capabilities":["chat"],"surfaces":["typescript"],"governed":false,"demo":"text","provenance":"new","tier":"next"},
-
-  {"slug":"measure-voice-ai-latency","title":"Measure voice AI latency","alias":"latency_checker","summary":"Full round-trip turn latency measured off a stereo recording, not a vendor median.","scenario":"Proving a number instead of claiming one","category":"integrations","products":["ai-agents"],"capabilities":["observability"],"surfaces":["python"],"governed":false,"demo":"observe","provenance":"demos","tier":"next"},
-
-  {"slug":"write-a-reusable-agent-skill","title":"Write a reusable agent skill","alias":"capability module","summary":"Package a capability once and load it into any agent with one line.","scenario":"Stop copying the same tool between projects","category":"integrations","products":["ai-agents"],"capabilities":["skills"],"surfaces":["python"],"governed":false,"demo":"talk","provenance":"new","tier":"later"},
-
-  {"slug":"listen-to-a-live-call","title":"Listen to a live call","alias":"tap to a browser","summary":"Attach to a call in progress and hear both sides without joining it.","scenario":"Silent monitoring","category":"observe","products":["voice"],"capabilities":["tap","media-streaming"],"surfaces":["python","typescript"],"governed":false,"demo":"observe","provenance":"rewrite","tier":"later"},
-
-  {"slug":"get-a-live-transcript-of-a-call","title":"Get a live transcript of a call","alias":"transcript stream consumer","summary":"Receive, order and render the text of a call as it happens.","scenario":"Live captions and compliance monitoring","category":"observe","products":["voice"],"capabilities":["stt"],"surfaces":["python","typescript"],"governed":false,"demo":"observe","provenance":"rewrite","tier":"later"},
-
-  {"slug":"classify-sentiment-from-a-transcript","title":"Classify sentiment from a transcript","alias":"transcript classifier","summary":"Score the conversation in your own code and escalate on a threshold.","scenario":"Catching a call going wrong","category":"observe","products":["ai-agents"],"capabilities":["stt","inference"],"surfaces":["python"],"governed":true,"demo":"observe","provenance":"new","tier":"later"},
-
-  {"slug":"hand-off-from-ai-to-a-human-agent","title":"Hand off from AI to a human agent","alias":"queue handoff with intake","summary":"Put the caller in a queue and hand the human everything the AI already collected.","scenario":"The hybrid contact centre pattern","category":"handoff","products":["voice","ai-agents"],"capabilities":["queue","transfer"],"surfaces":["python"],"governed":true,"demo":"observe","provenance":"rewrite","tier":"later"},
-
-  {"slug":"offer-a-callback-instead-of-a-hold","title":"Offer a callback instead of a hold","alias":"callback queue","summary":"Take the number, drop the call, and ring back with the context intact.","scenario":"Queues that do not waste the caller's time","category":"handoff","products":["voice"],"capabilities":["queue"],"surfaces":["python"],"governed":false,"demo":"talk","provenance":"rewrite","tier":"later"},
-
-  {"slug":"translate-a-call-in-real-time","title":"Translate a call in real time","alias":"live_translate","summary":"Each side speaks their own language on one bridge.","scenario":"Support without a language-matched agent","category":"handoff","products":["voice"],"capabilities":["live-translate"],"surfaces":["python","swml"],"governed":false,"demo":"ai-to-ai","provenance":"narrow","tier":"later"},
-
-  {"slug":"take-a-payment-without-the-model-seeing-the-card","title":"Take a payment without the model seeing the card","alias":"payment isolation","summary":"Collect card details on a recorded call with the digits never entering the prompt.","scenario":"Bill payment by phone","category":"governance","products":["voice"],"capabilities":["payment","compliance"],"surfaces":["python"],"governed":true,"demo":"none","provenance":"blocked","tier":"later"}
+  {
+    "slug": "answer-an-inbound-call",
+    "title": "Answer an inbound call",
+    "alias": "answer + play",
+    "summary": "Accept an incoming call, greet the caller, and hang up cleanly.",
+    "scenario": "The hello-world of telephony",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "answer",
+      "tts"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "launch",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "place-an-outbound-call",
+    "title": "Place an outbound call",
+    "alias": "dial + call lifecycle",
+    "summary": "Dial a number from your own code and follow the call through to completion.",
+    "scenario": "Notification and reminder calls",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "dial"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "launch",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "build-an-ivr-menu",
+    "title": "Build an IVR menu",
+    "alias": "DTMF collect + branch",
+    "summary": "Play a menu, collect keypad input, and route the caller to the right place.",
+    "scenario": "Press 1 for sales",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "dtmf",
+      "tts"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "launch",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "collect-speech-input-and-branch",
+    "title": "Collect speech input and branch on it",
+    "alias": "prompt + speech recognition",
+    "summary": "Ask an open question, recognise the answer, and take a different path for each.",
+    "scenario": "Natural-language routing without a full agent",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "stt",
+      "tts"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "launch",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "verify-a-webhook-signature",
+    "title": "Verify a webhook signature",
+    "alias": "signature check + idempotency",
+    "summary": "Reject forged webhooks and make your handler safe to call twice with the same event.",
+    "scenario": "The thing every tutorial skips",
+    "category": "voice",
+    "products": [
+      "voice",
+      "messaging"
+    ],
+    "capabilities": [
+      "webhooks",
+      "security"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "launch"
+  },
+  {
+    "slug": "handle-call-status-callbacks",
+    "title": "Handle call status callbacks and failures",
+    "alias": "status events + failure states",
+    "summary": "React to ringing, answered, busy, no-answer and failed without guessing at state.",
+    "scenario": "Knowing what actually happened to a call",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "webhooks"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "next"
+  },
+  {
+    "slug": "detect-an-answering-machine",
+    "title": "Detect an answering machine",
+    "alias": "AMD",
+    "summary": "Tell a human from a voicemail greeting before you start talking.",
+    "scenario": "Outbound dialing that does not leave half a message",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "amd"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "send-dtmf-to-an-external-ivr",
+    "title": "Send DTMF to someone else's IVR",
+    "alias": "send_digits",
+    "summary": "Drive another company's phone tree from your own code.",
+    "scenario": "Reaching a human at a carrier",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "dtmf"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "bridge-a-call-to-sip",
+    "title": "Bridge a call to a SIP endpoint",
+    "alias": "connect to SIP",
+    "summary": "Send a PSTN call to a SIP address and back again.",
+    "scenario": "Putting a cloud number in front of existing gear",
+    "category": "sip",
+    "products": [
+      "sip",
+      "voice"
+    ],
+    "capabilities": [
+      "sip"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "get-a-webrtc-token-with-restricted-dial-targets",
+    "title": "Issue a browser calling token that cannot dial anywhere",
+    "alias": "scoped WebRTC token",
+    "summary": "Mint a short-lived browser token and restrict what it is allowed to call.",
+    "scenario": "Click-to-call without handing out your account",
+    "category": "webrtc",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "webrtc",
+      "security"
+    ],
+    "surfaces": [
+      "typescript",
+      "python"
+    ],
+    "governed": true,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "record-a-call",
+    "title": "Record a call",
+    "alias": "record + completion callback",
+    "summary": "Start a recording and pick it up from the completion webhook.",
+    "scenario": "Keeping the tape",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "recording",
+      "webhooks"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "get-recording-consent-before-recording",
+    "title": "Get recording consent before recording",
+    "alias": "disclosure gate",
+    "summary": "Speak the disclosure and capture the answer before any audio is written to disk.",
+    "scenario": "Two-party-consent jurisdictions",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "recording",
+      "compliance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "narrow",
+    "tier": "next",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "transfer-a-call",
+    "title": "Transfer a call",
+    "alias": "connect / transfer action",
+    "summary": "Move a live caller to another number or address.",
+    "scenario": "The simplest handoff there is",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "transfer"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "handoff"
+  },
+  {
+    "slug": "build-a-conference-call",
+    "title": "Build a conference call",
+    "alias": "join_conference + member control",
+    "summary": "Put several legs in one room and control each member independently.",
+    "scenario": "Three-way calls and bridging",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "conference"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "ai-to-ai",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "play-hold-music",
+    "title": "Play hold music on a parked leg",
+    "alias": "hold_music",
+    "summary": "Park a caller and cycle audio at them until something changes.",
+    "scenario": "Waiting without silence",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "hold"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "narrow",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "call-from-a-browser",
+    "title": "Call from a browser",
+    "alias": "WebRTC leg",
+    "summary": "Place a call from a web page into the same flow a phone reaches.",
+    "scenario": "Support widget on a website",
+    "category": "webrtc",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "webrtc"
+    ],
+    "surfaces": [
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "demos",
+    "tier": "next",
+    "subcategory": "call-control"
+  },
+  {
+    "slug": "route-a-call-to-an-ai-agent",
+    "title": "Route a call to an AI agent",
+    "alias": "agent as dial target",
+    "summary": "Point a phone number at an agent and let it answer.",
+    "scenario": "The first voice AI call you will make",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents",
+      "voice"
+    ],
+    "capabilities": [
+      "agent"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "demos",
+    "tier": "launch"
+  },
+  {
+    "slug": "give-an-agent-a-tool",
+    "title": "Give an agent a tool",
+    "alias": "tool calling into your backend",
+    "summary": "Let the model call your function, and decide what it gets back.",
+    "scenario": "Looking something up mid-conversation",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "tool-calling"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "demos",
+    "tier": "launch",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "run-an-agent-from-one-yaml-file",
+    "title": "Run an agent from one YAML file",
+    "alias": "declarative markup, no SDK",
+    "summary": "A complete working agent with nothing installed and no server of your own.",
+    "scenario": "For teams that are not a Python shop",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "declarative"
+    ],
+    "surfaces": [
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "launch"
+  },
+  {
+    "slug": "call-an-api-without-a-backend",
+    "title": "Call an API without running a backend",
+    "alias": "declarative REST integration",
+    "summary": "Wire an agent to a REST endpoint with no webhook server in the middle.",
+    "scenario": "Package tracking, weather, stock quotes",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "datamap"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "ground-an-agent-in-your-docs",
+    "title": "Ground an agent in your own documents",
+    "alias": "vector search over a local index",
+    "summary": "Answers that come from your content rather than the model's memory.",
+    "scenario": "A docs hotline that does not invent features",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "rag"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "rewrite",
+    "tier": "next",
+    "subcategory": "knowledge"
+  },
+  {
+    "slug": "extract-structured-data-after-a-call",
+    "title": "Extract structured data after a call",
+    "alias": "post_prompt",
+    "summary": "Get typed fields out of a finished conversation instead of parsing a transcript.",
+    "scenario": "Dispositions and CRM writeback",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "post-prompt"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "switch-language-mid-call",
+    "title": "Switch language mid-call",
+    "alias": "language change in one session",
+    "summary": "Change the conversation language, with a voice that suits it.",
+    "scenario": "Bilingual support lines",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "multilingual"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "narrow",
+    "tier": "next"
+  },
+  {
+    "slug": "start-live-transcription",
+    "title": "Start live transcription and consume the webhook",
+    "alias": "live_transcribe",
+    "summary": "Turn on transcription for a call and receive the text as it is spoken.",
+    "scenario": "Feeding a transcript to your own system",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "stt",
+      "webhooks"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "rewrite",
+    "tier": "next",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "scope-tools-per-step",
+    "title": "Scope an agent's tools per step",
+    "alias": "set_functions per step",
+    "summary": "At each point in the conversation the model can only see the tools you allowed there.",
+    "scenario": "An agent that structurally cannot go off-script",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "tool-calling",
+      "governance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "launch",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "hide-fields-from-the-model",
+    "title": "Hide fields from the model",
+    "alias": "server-side projection",
+    "summary": "Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.",
+    "scenario": "Risk flags and pricing the caller must not hear",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "governance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "launch",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "enforce-state-transitions-in-a-tool-handler",
+    "title": "Enforce state transitions in a tool handler",
+    "alias": "handler-forced transitions",
+    "summary": "Your code decides what happens next, so the model cannot strand or misroute the caller.",
+    "scenario": "When step instructions alone are not enough",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "governance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "require-verification-before-unlocking-tools",
+    "title": "Require verification before unlocking tools",
+    "alias": "conditional tool exposure",
+    "summary": "The account tools do not exist in the model's world until a handler says the caller passed.",
+    "scenario": "Balance and account enquiries",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "governance",
+      "tool-calling"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "force-a-disclosure-before-the-call-proceeds",
+    "title": "Force a disclosure before the call proceeds",
+    "alias": "compliance as a state machine",
+    "summary": "No path forward exists until the required words have been spoken and consent captured.",
+    "scenario": "Regulated intake",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "governance",
+      "compliance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "transfer-a-call-without-losing-context",
+    "title": "Transfer a call without losing context",
+    "alias": "global_data across the handoff",
+    "summary": "State and identity travel with the call, so the next leg already knows who this is.",
+    "scenario": "The thing that breaks on every other platform",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents",
+      "voice"
+    ],
+    "capabilities": [
+      "transfer",
+      "governance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "ai-to-ai",
+    "provenance": "extract",
+    "tier": "launch",
+    "subcategory": "governance"
+  },
+  {
+    "slug": "brief-the-human-before-the-bridge-completes",
+    "title": "Brief the human before the bridge completes",
+    "alias": "screened handoff",
+    "summary": "Compose a bounded summary, play it to the agent, then join the caller.",
+    "scenario": "No more \"can you repeat all that\"",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "conference",
+      "transfer"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "handoff"
+  },
+  {
+    "slug": "whisper-to-an-agent-mid-call",
+    "title": "Whisper to an agent mid-call",
+    "alias": "join_conference coach=",
+    "summary": "One-way audio that only the agent's leg can hear.",
+    "scenario": "Coaching without the caller knowing",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "conference",
+      "coach"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "barge-into-a-live-call",
+    "title": "Barge into a live call",
+    "alias": "silent-entry full participant",
+    "summary": "Join an in-progress call with full audio, and leave without tearing it down.",
+    "scenario": "Supervisor takeover",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "conference",
+      "barge"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "call-an-mcp-server-from-a-live-call",
+    "title": "Call an MCP server from a live call",
+    "alias": "mcp_gateway skill",
+    "summary": "Reach tools on an existing MCP server from inside a conversation.",
+    "scenario": "Booking a meeting by phone",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "mcp",
+      "tool-calling"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "extract",
+    "tier": "next",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "expose-an-agent-as-an-mcp-server",
+    "title": "Expose an agent as an MCP server",
+    "alias": "agent as provider",
+    "summary": "Let another AI call your voice agent's tools directly.",
+    "scenario": "Give Claude a phone number",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "mcp"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "next",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "send-an-sms",
+    "title": "Send an SMS",
+    "alias": "messages.create",
+    "summary": "The three-line version, plus what to do when it fails.",
+    "scenario": "Where every messaging project starts",
+    "category": "messaging",
+    "products": [
+      "messaging"
+    ],
+    "capabilities": [
+      "sms"
+    ],
+    "surfaces": [
+      "python",
+      "typescript",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "none",
+    "provenance": "new",
+    "tier": "launch"
+  },
+  {
+    "slug": "reply-to-an-inbound-sms",
+    "title": "Reply to an inbound SMS",
+    "alias": "inbound webhook + threaded reply",
+    "summary": "Receive a text and answer it in the same thread.",
+    "scenario": "Two-way texting",
+    "category": "messaging",
+    "products": [
+      "messaging"
+    ],
+    "capabilities": [
+      "sms",
+      "webhooks"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "text",
+    "provenance": "new",
+    "tier": "launch"
+  },
+  {
+    "slug": "run-the-same-agent-over-text",
+    "title": "Run the same agent over text",
+    "alias": "chat transport",
+    "summary": "One agent definition answering by SMS as well as by voice.",
+    "scenario": "Channel parity without a second build",
+    "category": "messaging",
+    "products": [
+      "messaging",
+      "ai-agents"
+    ],
+    "capabilities": [
+      "chat",
+      "sms"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "text",
+    "provenance": "new",
+    "tier": "next"
+  },
+  {
+    "slug": "put-an-agent-in-a-web-chat-widget",
+    "title": "Put an agent in a web chat widget",
+    "alias": "browser chat transport",
+    "summary": "Drop the same agent into a chat box on any page.",
+    "scenario": "Support chat that shares the phone agent's logic",
+    "category": "messaging",
+    "products": [
+      "messaging",
+      "ai-agents"
+    ],
+    "capabilities": [
+      "chat"
+    ],
+    "surfaces": [
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "text",
+    "provenance": "new",
+    "tier": "next"
+  },
+  {
+    "slug": "measure-voice-ai-latency",
+    "title": "Measure voice AI latency",
+    "alias": "latency_checker",
+    "summary": "Full round-trip turn latency measured off a stereo recording, not a vendor median.",
+    "scenario": "Proving a number instead of claiming one",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "observability"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "demos",
+    "tier": "next",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "write-a-reusable-agent-skill",
+    "title": "Write a reusable agent skill",
+    "alias": "capability module",
+    "summary": "Package a capability once and load it into any agent with one line.",
+    "scenario": "Stop copying the same tool between projects",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "skills"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "new",
+    "tier": "later",
+    "subcategory": "tools"
+  },
+  {
+    "slug": "listen-to-a-live-call",
+    "title": "Listen to a live call",
+    "alias": "tap to a browser",
+    "summary": "Attach to a call in progress and hear both sides without joining it.",
+    "scenario": "Silent monitoring",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "tap",
+      "media-streaming"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "rewrite",
+    "tier": "later",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "get-a-live-transcript-of-a-call",
+    "title": "Get a live transcript of a call",
+    "alias": "transcript stream consumer",
+    "summary": "Receive, order and render the text of a call as it happens.",
+    "scenario": "Live captions and compliance monitoring",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "stt"
+    ],
+    "surfaces": [
+      "python",
+      "typescript"
+    ],
+    "governed": false,
+    "demo": "observe",
+    "provenance": "rewrite",
+    "tier": "later",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "classify-sentiment-from-a-transcript",
+    "title": "Classify sentiment from a transcript",
+    "alias": "transcript classifier",
+    "summary": "Score the conversation in your own code and escalate on a threshold.",
+    "scenario": "Catching a call going wrong",
+    "category": "ai-agents",
+    "products": [
+      "ai-agents"
+    ],
+    "capabilities": [
+      "stt",
+      "inference"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "observe",
+    "provenance": "new",
+    "tier": "later",
+    "subcategory": "observe"
+  },
+  {
+    "slug": "hand-off-from-ai-to-a-human-agent",
+    "title": "Hand off from AI to a human agent",
+    "alias": "queue handoff with intake",
+    "summary": "Put the caller in a queue and hand the human everything the AI already collected.",
+    "scenario": "The hybrid contact centre pattern",
+    "category": "voice",
+    "products": [
+      "voice",
+      "ai-agents"
+    ],
+    "capabilities": [
+      "queue",
+      "transfer"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "observe",
+    "provenance": "rewrite",
+    "tier": "later",
+    "subcategory": "handoff"
+  },
+  {
+    "slug": "offer-a-callback-instead-of-a-hold",
+    "title": "Offer a callback instead of a hold",
+    "alias": "callback queue",
+    "summary": "Take the number, drop the call, and ring back with the context intact.",
+    "scenario": "Queues that do not waste the caller's time",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "queue"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": false,
+    "demo": "talk",
+    "provenance": "rewrite",
+    "tier": "later",
+    "subcategory": "routing"
+  },
+  {
+    "slug": "translate-a-call-in-real-time",
+    "title": "Translate a call in real time",
+    "alias": "live_translate",
+    "summary": "Each side speaks their own language on one bridge.",
+    "scenario": "Support without a language-matched agent",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "live-translate"
+    ],
+    "surfaces": [
+      "python",
+      "swml"
+    ],
+    "governed": false,
+    "demo": "ai-to-ai",
+    "provenance": "narrow",
+    "tier": "later"
+  },
+  {
+    "slug": "take-a-payment-without-the-model-seeing-the-card",
+    "title": "Take a payment without the model seeing the card",
+    "alias": "payment isolation",
+    "summary": "Collect card details on a recorded call with the digits never entering the prompt.",
+    "scenario": "Bill payment by phone",
+    "category": "voice",
+    "products": [
+      "voice"
+    ],
+    "capabilities": [
+      "payment",
+      "compliance"
+    ],
+    "surfaces": [
+      "python"
+    ],
+    "governed": true,
+    "demo": "none",
+    "provenance": "blocked",
+    "tier": "later",
+    "subcategory": "governance"
+  }
 ]

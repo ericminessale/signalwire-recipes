@@ -4,7 +4,7 @@
   "alias": "payment isolation",
   "summary": "Collect card details on a recorded call with the digits never entering the prompt.",
   "scenario": "Bill payment by phone",
-  "category": "governance",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": true,
   "demo": "none",
   "provenance": "blocked",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "governance"
 }

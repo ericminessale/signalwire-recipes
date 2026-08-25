@@ -4,7 +4,7 @@
   "alias": "global_data across the handoff",
   "summary": "State and identity travel with the call, so the next leg already knows who this is.",
   "scenario": "The thing that breaks on every other platform",
-  "category": "handoff",
+  "category": "ai-agents",
   "products": [
     "ai-agents",
     "voice"
@@ -19,5 +19,6 @@
   "governed": true,
   "demo": "ai-to-ai",
   "provenance": "extract",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "governance"
 }

@@ -4,7 +4,7 @@
   "alias": "connect / transfer action",
   "summary": "Move a live caller to another number or address.",
   "scenario": "The simplest handoff there is",
-  "category": "call-control",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "handoff"
 }

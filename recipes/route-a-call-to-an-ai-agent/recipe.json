@@ -4,7 +4,7 @@
   "alias": "agent as dial target",
   "summary": "Point a phone number at an agent and let it answer.",
   "scenario": "The first voice AI call you will make",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents",
     "voice"
@@ -20,5 +20,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "demos",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "other"
 }

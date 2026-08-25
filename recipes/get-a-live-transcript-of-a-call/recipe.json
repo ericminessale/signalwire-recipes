@@ -4,7 +4,7 @@
   "alias": "transcript stream consumer",
   "summary": "Receive, order and render the text of a call as it happens.",
   "scenario": "Live captions and compliance monitoring",
-  "category": "observe",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "rewrite",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "observe"
 }

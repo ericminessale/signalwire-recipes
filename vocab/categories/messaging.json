@@ -1,1 +1,5 @@
-{"label":"Messaging & chat","order":70,"blurb":"Text, on the same agent."}
+{
+  "label": "Messaging",
+  "order": 30,
+  "blurb": "SMS, MMS, and chat on the same agent."
+}

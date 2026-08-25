@@ -4,7 +4,7 @@
   "alias": "hold_music",
   "summary": "Park a caller and cycle audio at them until something changes.",
   "scenario": "Waiting without silence",
-  "category": "call-control",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "narrow",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

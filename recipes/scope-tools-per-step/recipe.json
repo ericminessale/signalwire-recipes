@@ -4,7 +4,7 @@
   "alias": "set_functions per step",
   "summary": "At each point in the conversation the model can only see the tools you allowed there.",
   "scenario": "An agent that structurally cannot go off-script",
-  "category": "governance",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -18,5 +18,6 @@
   "governed": true,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "governance"
 }

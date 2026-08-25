@@ -4,7 +4,7 @@
   "alias": "disclosure gate",
   "summary": "Speak the disclosure and capture the answer before any audio is written to disk.",
   "scenario": "Two-party-consent jurisdictions",
-  "category": "governance",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": true,
   "demo": "talk",
   "provenance": "narrow",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "governance"
 }

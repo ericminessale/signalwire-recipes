@@ -4,7 +4,7 @@
   "alias": "server-side projection",
   "summary": "Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.",
   "scenario": "Risk flags and pricing the caller must not hear",
-  "category": "governance",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": true,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "governance"
 }

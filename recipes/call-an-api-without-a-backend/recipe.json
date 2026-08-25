@@ -4,7 +4,7 @@
   "alias": "declarative REST integration",
   "summary": "Wire an agent to a REST endpoint with no webhook server in the middle.",
   "scenario": "Package tracking, weather, stock quotes",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "tools"
 }

@@ -4,7 +4,7 @@
   "alias": "scoped WebRTC token",
   "summary": "Mint a short-lived browser token and restrict what it is allowed to call.",
   "scenario": "Click-to-call without handing out your account",
-  "category": "foundations",
+  "category": "webrtc",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": true,
   "demo": "none",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

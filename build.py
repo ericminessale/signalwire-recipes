@@ -32,358 +32,308 @@ TIER_ORDER = {"launch": 0, "next": 1, "later": 2}
 
 CSS = """
 :root{
-  --ground:#F5F7F9; --surface:#FFFFFF; --surface-2:#EAEEF2; --surface-3:#E1E7ED;
-  --ink:#121821; --ink-2:#37414E; --muted:#5B6573; --faint:#8A94A1;
-  --rule:#D4DAE2; --rule-soft:#E5EAEF;
-  --accent:#0B5FBF; --accent-soft:#E2ECF9;
-  --gov:#7A3E9D; --gov-soft:#F0E7F7;
-  --launch:#12664A; --launch-soft:#DFEFE8;
-  --next:#8A5A10; --next-soft:#F5EEDC;
-  --later:#5B6573; --later-soft:#E8EBEF;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
-  --sans:Archivo,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+  --page:#0f0f12;
+  --surface:#16161a;
+  --raised:#1c1c21;
+  --fg:#f4f4f6;
+  --fg-2:#c9c9d0;
+  --fg-muted:#8b8b96;
+  --fg-subtle:#63636e;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --fuchsia:#F72A72;
+  --turquoise:#40E0D0;
+  --head:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
+  --body:Lexend,ui-sans-serif,system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --ground:#0C1219; --surface:#141C25; --surface-2:#1C2531; --surface-3:#243040;
-    --ink:#E6EBF1; --ink-2:#C0C9D5; --muted:#8F9BA9; --faint:#6A7684;
-    --rule:#293441; --rule-soft:#202935;
-    --accent:#5AA3EE; --accent-soft:#16263A;
-    --gov:#C4A0E4; --gov-soft:#241A31;
-    --launch:#5CC69C; --launch-soft:#12281E;
-    --next:#DCAB5A; --next-soft:#292011;
-    --later:#8F9BA9; --later-soft:#252E3A;
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#0C1219; --surface:#141C25; --surface-2:#1C2531; --surface-3:#243040;
-  --ink:#E6EBF1; --ink-2:#C0C9D5; --muted:#8F9BA9; --faint:#6A7684;
-  --rule:#293441; --rule-soft:#202935;
-  --accent:#5AA3EE; --accent-soft:#16263A;
-  --gov:#C4A0E4; --gov-soft:#241A31;
-  --launch:#5CC69C; --launch-soft:#12281E;
-  --next:#DCAB5A; --next-soft:#292011;
-  --later:#8F9BA9; --later-soft:#252E3A;
-}
-*{box-sizing:border-box;}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
-  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;}
-.wrap{max-width:74rem;margin:0 auto;padding:0 clamp(1rem,4vw,2.5rem) 5rem;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+button,a,summary{touch-action:manipulation;}
+body{margin:0;background:var(--page);color:var(--fg);font-family:var(--body);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:rgba(247,42,114,.32);color:#fff;}
 a{color:inherit;text-decoration:none;}
-code,.mono{font-family:var(--mono);}
+code,.mono{font-family:var(--mono);font-feature-settings:'tnum','zero';}
+h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
+  line-height:1.1;margin:0;color:var(--fg);text-wrap:balance;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px 120px;}
 
-header.top{padding:clamp(2rem,6vw,3.5rem) 0 1.25rem;}
-.kicker{font-family:var(--mono);font-size:.6875rem;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--faint);}
-h1{font-size:clamp(1.75rem,4.5vw,2.5rem);font-weight:700;letter-spacing:-.022em;
-  margin:.6rem 0 0;line-height:1.05;}
-.sub{color:var(--ink-2);margin:.7rem 0 0;max-width:none;font-size:1rem;}
-.counts{display:flex;flex-wrap:wrap;gap:.4rem .5rem;margin-top:1.25rem;}
+/* hero, centred like the site's section heads */
+.hero{padding:76px 0 0;text-align:center;}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--fuchsia);display:inline-flex;align-items:center;
+  gap:10px;}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--fuchsia);}
+.hero h1{font-size:clamp(38px,5.4vw,64px);margin:20px auto 0;max-width:17ch;}
+.hero p{color:var(--fg-muted);font-size:16px;line-height:1.65;max-width:60ch;
+  margin:18px auto 0;}
+.cta{display:flex;gap:12px;justify-content:center;margin:28px 0 0;}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);
+  font-size:13px;font-weight:500;padding:9px 20px;border-radius:4px;
+  background:var(--fuchsia);color:#fff;border:1px solid var(--fuchsia);cursor:pointer;}
+.btn:hover{background:#ff3f81;border-color:#ff3f81;}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line-2);}
+.btn.ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.24);}
+.btn:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
 
-.controls{position:sticky;top:0;z-index:5;background:var(--ground);
-  padding:.85rem 0 .7rem;border-bottom:1px solid var(--rule);
-  display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;}
-#q{flex:1 1 15rem;min-width:11rem;background:var(--surface);color:var(--ink);
-  border:1px solid var(--rule);border-radius:3px;padding:.42rem .6rem;
-  font-family:var(--mono);font-size:.8125rem;}
-#q:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
-.chip{font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;padding:.34rem .55rem;
-  border:1px solid var(--rule);border-radius:3px;background:var(--surface);
-  color:var(--muted);cursor:pointer;}
-.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);}
-.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+/* sticky filter strip */
+.controls{position:sticky;top:0;z-index:50;background:var(--page);
+  border-bottom:1px solid var(--line);margin-top:58px;padding:14px 0;
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#q{flex:1 1 15rem;min-width:11rem;background:var(--surface);color:var(--fg);
+  border:1px solid var(--line-2);border-radius:4px;padding:8px 12px;
+  font-family:var(--mono);font-size:12px;}
+#q::placeholder{color:var(--fg-subtle);}
+#q:focus-visible{outline:none;border-color:var(--fuchsia);}
+.chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:4px;
+  border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
+.chip:hover{color:var(--fg);}
+.chip[aria-pressed="true"]{color:var(--fg);background:var(--raised);
+  border-color:var(--line-2);}
+.chip:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 
-.grouphead{font-family:var(--mono);font-size:.6875rem;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--faint);padding:1.6rem 0 .5rem;}
-.rows{display:flex;flex-direction:column;gap:1px;background:var(--rule-soft);
-  border:1px solid var(--rule);border-radius:3px;overflow:hidden;}
-.row{display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;align-items:start;
-  background:var(--surface);padding:.7rem .85rem;cursor:pointer;border-left:2px solid transparent;}
-.row:hover{background:var(--surface-2);}
-.row.sel{border-left-color:var(--accent);background:var(--surface-2);}
-.row .name{font-weight:600;font-size:.9375rem;letter-spacing:-.005em;}
-.row .slug{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:.15rem;}
-.row .sum{color:var(--ink-2);font-size:.84rem;margin-top:.3rem;max-width:70ch;}
-.row .right{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:flex-end;align-items:center;}
-.b{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;
-  padding:.18rem .36rem;border-radius:2px;white-space:nowrap;
-  background:var(--surface-3);color:var(--muted);}
-.b.gov{background:var(--gov-soft);color:var(--gov);}
-.b.launch{background:var(--launch-soft);color:var(--launch);}
-.b.next{background:var(--next-soft);color:var(--next);}
-.b.later{background:var(--later-soft);color:var(--later);}
-.surf{font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap;}
-.empty{padding:2rem .85rem;color:var(--muted);background:var(--surface);font-size:.9rem;}
-.hint{margin-top:1.1rem;font-family:var(--mono);font-size:.7rem;color:var(--faint);}
-kbd{font-family:var(--mono);background:var(--surface-2);border:1px solid var(--rule);
-  border-radius:2px;padding:.05rem .25rem;font-size:.95em;}
+/* category section */
+.cat-h .n{font-family:var(--mono);font-size:12px;color:var(--fg-subtle);}
 
-.detail{padding:clamp(2rem,6vw,3rem) 0 0;max-width:52rem;margin-inline:auto;}
-.detail .sub,.detail .claim p,.detail .sec p{max-width:none;}
-.back{font-family:var(--mono);font-size:.72rem;color:var(--muted);}
-.detail h1{font-size:clamp(1.5rem,4vw,2.1rem);}
-.alias{font-family:var(--mono);font-size:.8rem;color:var(--accent);margin-top:.5rem;}
-.meta{display:flex;flex-wrap:wrap;gap:.35rem;margin:1.1rem 0 0;}
-.panel{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-  padding:1.1rem 1.2rem;margin:1.4rem 0;}
-.panel h2{font-size:.98rem;font-weight:600;margin:0 0 .5rem;}
-.panel p{margin:0;color:var(--ink-2);font-size:.9rem;}
-.demoslot{background:var(--accent-soft);border:1px dashed var(--accent);border-radius:3px;
-  padding:1.4rem 1.2rem;margin:1.4rem 0;text-align:center;}
-.demoslot .lab{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--accent);}
-.demoslot p{margin:.5rem 0 0;color:var(--ink-2);font-size:.88rem;}
-.tabs{display:flex;gap:.3rem;margin:1.4rem 0 0;flex-wrap:wrap;}
-.tab{font-family:var(--mono);font-size:.72rem;padding:.35rem .6rem;border:1px solid var(--rule);
-  border-bottom:none;border-radius:3px 3px 0 0;background:var(--surface-2);color:var(--muted);}
-.tab.on{background:var(--surface);color:var(--accent);border-color:var(--rule);}
-.codebox{background:var(--surface);border:1px solid var(--rule);border-radius:0 3px 3px 3px;
-  padding:1rem;font-family:var(--mono);font-size:.78rem;color:var(--muted);overflow-x:auto;}
+/* the build row: a wide band, one per category */
 
-/* --- recipe page --- */
-.dh{padding:0 0 .2rem;}
-.dh h1{font-size:clamp(1.5rem,4vw,2.15rem);}
-.tech{font-family:var(--mono);font-size:.8rem;color:var(--accent);margin-top:.4rem;}
-.claim{background:var(--accent-soft);border-left:3px solid var(--accent);
-  padding:.9rem 1.1rem;margin:1.5rem 0;border-radius:0 3px 3px 0;}
-.claim h2{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--accent);margin:0 0 .35rem;}
-.claim p{margin:0;color:var(--ink-2);font-size:.95rem;max-width:64ch;}
-.ev{border:1px solid var(--rule);border-radius:3px;overflow:hidden;margin:1.5rem 0;}
-.ev-h{display:flex;align-items:center;gap:.5rem;padding:.55rem .85rem;
-  background:var(--surface-2);border-bottom:1px solid var(--rule-soft);
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);}
-.ev-h .dot{width:.45rem;height:.45rem;border-radius:50%;background:var(--launch);flex:none;}
-.ev-b{padding:1rem .9rem;background:var(--surface);}
-.ev cite{display:block;margin-top:.7rem;font-style:normal;font-size:.78rem;color:var(--faint);}
-.tr{font-family:var(--mono);font-size:.755rem;line-height:1.7;}
-.tr .l{display:grid;grid-template-columns:3.9rem 1fr;gap:.65rem;}
-.tr .w{color:var(--faint);text-align:right;}
-.tr .w.ai{color:var(--accent);}
-.tr .sys{background:var(--next-soft);color:var(--next);padding:.32rem .5rem;
-  border-radius:2px;margin:.4rem 0;display:block;font-size:.71rem;}
-.acts{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.9rem;}
-.btn{font-family:var(--sans);font-weight:600;font-size:.85rem;background:var(--ink);
-  color:var(--ground);padding:.5rem 1rem;border-radius:4px;border:none;cursor:pointer;}
-.btn:hover{opacity:.88;}
-.btn:active{transform:scale(.985);}
-.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
-.acts .n{font-size:.76rem;color:var(--muted);flex:1 1 16rem;line-height:1.45;}
-.sec{margin:1.6rem 0;}
-.sec h2{font-size:1rem;font-weight:600;margin:0 0 .45rem;}
-.sec p{margin:0 0 .7rem;color:var(--ink-2);font-size:.95rem;max-width:66ch;}
-.sec p em{font-style:italic;color:var(--ink);}
-.steps{font-family:var(--mono);font-size:.755rem;color:var(--ink-2);
-  background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:3px;
-  padding:.75rem .9rem;line-height:1.85;overflow-x:auto;}
-.cw{margin:1.6rem 0;}
-.stabs{display:flex;gap:.22rem;}
-.stab{font-family:var(--mono);font-size:.7rem;padding:.34rem .62rem;
-  border:1px solid var(--rule);border-bottom:none;border-radius:3px 3px 0 0;
-  background:var(--surface-2);color:var(--muted);}
-.stab[aria-selected="true"]{background:#0F1720;color:#fff;border-color:#0F1720;}
-pre.src{margin:0;background:#0F1720;color:#D9E1EA;padding:.95rem;
-  border-radius:0 3px 3px 3px;font-family:var(--mono);font-size:.755rem;
-  line-height:1.65;overflow-x:auto;}
-.dfoot{border-top:1px solid var(--rule);margin-top:2rem;padding-top:1rem;
-  display:flex;gap:1.1rem;flex-wrap:wrap;font-family:var(--mono);font-size:.73rem;}
-.dfoot a{color:var(--accent);}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+/* recipe grid: denser, four up */
+.grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:8px;overflow:hidden;
+  grid-template-columns:repeat(auto-fill,minmax(258px,1fr));}
+.card{display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--page);
+  padding:17px 19px 18px;color:inherit;transition:background 140ms ease;}
+.card:hover{background:var(--surface);}
+.card:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
+.card .ct{font-family:var(--head);font-weight:600;font-size:14.5px;line-height:1.3;
+  letter-spacing:-.015em;}
+.card .cs{font-family:var(--mono);font-size:10.5px;color:var(--turquoise);
+  line-height:1.4;overflow-wrap:anywhere;}
+.card .cd{font-size:12.5px;color:var(--fg-muted);line-height:1.55;flex:1;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card .cf{display:flex;gap:8px;align-items:center;margin-top:2px;}
+.card .cf .sp{flex:1;}
+.sublab{font-size:11px;color:var(--fg-subtle);}
+.surf{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
+
+.empty{padding:48px 0;color:var(--fg-muted);text-align:center;}
+.hint{margin-top:44px;font-family:var(--mono);font-size:11px;color:var(--fg-subtle);
+  text-align:center;}
+kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line);
+  border-radius:3px;padding:1px 5px;font-size:11px;}
+
+/* ---- recipe page ---- */
+.detail{padding:64px 0 0;max-width:760px;margin-inline:auto;}
+.back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
+.back a:hover{color:var(--fuchsia);}
+.dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
+.tech{font-family:var(--mono);font-size:12px;color:var(--turquoise);margin-top:12px;}
+.sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:64ch;}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
+.b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
+  background:var(--raised);border-radius:3px;padding:3px 8px;}
+.claim{background:var(--surface);border:1px solid var(--line);border-radius:8px;
+  padding:20px 22px;margin:34px 0;}
+.claim h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fuchsia);font-weight:500;margin:0 0 8px;}
+.claim p{margin:0;color:var(--fg-2);font-size:15px;line-height:1.65;}
+.ev{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:30px 0;
+  background:var(--surface);}
+.ev-h{display:flex;align-items:center;gap:9px;padding:11px 16px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--fg-subtle);}
+.ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--turquoise);flex:none;}
+.ev-b{padding:18px 16px;}
+.ev cite{display:block;margin-top:14px;font-style:normal;font-size:12px;color:var(--fg-subtle);}
+.tr{font-family:var(--mono);font-size:12px;line-height:1.8;}
+.tr .l{display:grid;grid-template-columns:56px 1fr;gap:12px;}
+.tr .w{color:var(--fg-subtle);text-align:right;}
+.tr .w.ai{color:var(--turquoise);}
+.tr .sys{color:var(--fg-subtle);padding:7px 10px;margin:8px 0;display:block;
+  font-size:11px;background:var(--raised);border-radius:4px;}
+.acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px;}
+.acts .n{font-size:12px;color:var(--fg-subtle);flex:1 1 16rem;}
+.btn:disabled{background:var(--raised);border-color:var(--line);color:var(--fg-subtle);
+  cursor:not-allowed;}
+.sec{margin:34px 0;}
+.sec h2{font-size:19px;margin:0 0 10px;}
+.sec p{margin:0 0 12px;color:var(--fg-muted);font-size:15px;line-height:1.7;max-width:70ch;}
+.sec p em{font-style:italic;color:var(--fg-2);}
+.steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--surface);
+  border:1px solid var(--line);border-radius:8px;padding:16px 18px;line-height:1.9;
+  overflow-x:auto;}
+.cw{margin:34px 0;}
+.stabs{display:flex;gap:2px;}
+.stab{font-family:var(--mono);font-size:11px;padding:8px 13px;border:none;
+  background:transparent;color:var(--fg-subtle);cursor:pointer;
+  border-bottom:2px solid transparent;}
+.stab:hover{color:var(--fg);}
+.stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);}
+pre.src{margin:6px 0 0;background:var(--surface);color:var(--fg-2);padding:18px;
+  border:1px solid var(--line);border-radius:8px;font-family:var(--mono);
+  font-size:12px;line-height:1.8;overflow-x:auto;}
+.cxlist{display:flex;flex-wrap:wrap;gap:6px;}
+a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--raised);
+  border-radius:4px;padding:5px 10px;}
+a.cx:hover{color:var(--fuchsia);}
+.dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
+  gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
+.dfoot a{color:var(--fuchsia);}
+.pvbanner{max-width:1180px;margin:0 auto;padding:18px 32px 0;}
+.pvbanner div{border:1px solid var(--line);background:var(--surface);border-radius:8px;
+  padding:11px 15px;font-size:12.5px;color:var(--fg-muted);}
+.pvbanner b{color:var(--fuchsia);font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;font-weight:500;}
+[data-view][hidden]{display:none;}
+
+/* collapsed category still shows its shape: name, count, task groups */
+details.cat{border-bottom:1px solid var(--line);}
+details.cat[open]{padding-bottom:34px;}
+summary.cat-h{list-style:none;cursor:pointer;display:flex;align-items:baseline;
+  gap:14px;padding:22px 0;flex-wrap:wrap;}
+summary.cat-h::-webkit-details-marker{display:none;}
+summary.cat-h::before{content:"+";font-family:var(--mono);font-size:13px;
+  color:var(--fg-subtle);width:12px;}
+details.cat[open]>summary.cat-h::before{content:"-";}
+summary.cat-h:hover .ct2{color:var(--fuchsia);}
+summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
+.ct2{font-family:var(--head);font-weight:600;font-size:23px;letter-spacing:-.03em;}
+.cat-h .n{font-family:var(--mono);font-size:11.5px;color:var(--fg-subtle);}
+.tgs{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.tg{font-size:12px;color:var(--fg-subtle);}
+.tg .cn,.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
+.catbody{padding-top:4px;}
+.tgroup{margin-top:22px;}
+.tgh{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--fg-muted);
+  letter-spacing:0;margin:0 0 10px;}
+
+/* a build card spans two recipe columns, so two sit in one recipe row */
+.bgrid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:8px;overflow:hidden;margin:20px 0 4px;
+  grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
+.buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;
+  background:var(--page);padding:17px 19px 18px;color:inherit;
+  box-shadow:inset 2px 0 0 var(--fuchsia);transition:background 140ms ease;}
+.buildcard:hover{background:var(--surface);}
+.buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
+.buildcard .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--fg-subtle);}
+.buildcard .bt{font-family:var(--head);font-weight:600;font-size:16px;
+  letter-spacing:-.02em;line-height:1.25;}
+.buildcard .bs{font-size:12.5px;color:var(--fg-muted);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.buildcard .parts{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.buildcard .part{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);background:var(--raised);border-radius:3px;padding:2px 6px;}
+.buildcard .part.more{color:var(--fg-muted);}
+.buildcard .also{color:var(--fg-subtle);margin-left:7px;text-transform:none;
+  letter-spacing:0;}
+.chip.kind[aria-pressed="true"]{color:var(--fuchsia);border-color:rgba(247,42,114,.35);}
+
+/* brand lockup */
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);
+  font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;
+  color:var(--fg-muted);}
+.eyebrow::before{content:none;}
+.eyebrow .mk{width:15px;height:auto;display:block;}
+
+/* task groups: enough contrast and air to separate on first glance */
+.tgroup{margin-top:38px;}
+.tgroup:first-child{margin-top:22px;}
+.tgh{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
+  letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:baseline;gap:9px;}
+.tgh .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);font-weight:400;}
+.tgh::after{content:"";flex:1;height:1px;background:var(--line);}
+
+/* separators live on the cards, so an unfilled cell is just background */
+.grid,.bgrid{gap:0;background:transparent;border:none;
+  border-left:1px solid var(--line);border-radius:0;}
+.card,.buildcard{border-top:1px solid var(--line);
+  border-right:1px solid var(--line);background:transparent;}
+.card:hover,.buildcard:hover{background:var(--surface);}
+
+/* lockup: official mark carries the wordmark */
+.eyebrow{display:inline-flex;align-items:center;gap:11px;}
+.eyebrow .lg{height:25px;width:auto;display:block;}
+.eyebrow .dot{width:4px;height:4px;border-radius:50%;background:var(--fg-subtle);}
+.eyebrow{font-family:var(--head);font-weight:600;font-size:20px;
+  letter-spacing:-.02em;color:var(--fg-2);}
+
+/* the grid declares itself; the cards no longer repeat it */
+.bhead{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
+  letter-spacing:-.01em;margin:22px 0 12px;display:flex;align-items:baseline;gap:9px;}
+.bhead::after{content:"";flex:1;height:1px;background:var(--line);}
+.bhead .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);font-weight:400;}
+
+/* the Builds filter is a different kind of thing */
+.chip.kind{margin-left:14px;position:relative;border-color:var(--line);}
+.chip.kind::before{content:"";position:absolute;left:-8px;top:50%;
+  transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
+.chip.kind[aria-pressed="true"]{color:var(--fuchsia);
+  border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 """
 
 JS = """
-const rows=[...document.querySelectorAll('.row')];
+const items=[...document.querySelectorAll('.card,.buildcard')];
+const cats=[...document.querySelectorAll('details.cat')];
 const q=document.getElementById('q');
 const chips=[...document.querySelectorAll('.chip')];
-let sel=-1;
-function active(){return rows.filter(r=>r.style.display!=='none');}
+const allChip=chips.find(c=>c.dataset.f==='all');
+function active(){return chips.filter(c=>c.getAttribute('aria-pressed')==='true'
+  &&c.dataset.f!=='all').map(c=>c.dataset.f);}
 function apply(){
   const t=q.value.trim().toLowerCase();
-  const on=chips.filter(c=>c.getAttribute('aria-pressed')==='true').map(c=>c.dataset.f);
-  rows.forEach(r=>{
-    const hay=r.dataset.hay;
-    const okT=!t||hay.includes(t);
-    const okF=!on.length||on.every(f=>r.dataset.facets.split(' ').includes(f));
-    r.style.display=(okT&&okF)?'':'none';
+  const on=active();
+  const kinds=on.filter(f=>f.startsWith('kind:')).map(f=>f.slice(5));
+  const cs=on.filter(f=>!f.startsWith('kind:'));
+  let n=0;
+  items.forEach(c=>{
+    const okT=!t||c.dataset.hay.includes(t);
+    const okC=!cs.length||cs.some(f=>c.dataset.cat.split(' ').includes(f));
+    let okK=!kinds.length||kinds.includes(c.dataset.kind);
+    if(kinds.includes('build')&&c.dataset.proj==='1')okK=false;
+    c.hidden=!(okT&&okC&&okK); if(!c.hidden)n++;
   });
-  document.querySelectorAll('.grp').forEach(g=>{
-    const any=[...g.querySelectorAll('.row')].some(r=>r.style.display!=='none');
-    g.style.display=any?'':'none';
+  cats.forEach(g=>{
+    const vis=[...g.querySelectorAll('.card,.buildcard')].filter(c=>!c.hidden);
+    g.hidden=vis.length===0;
+    g.querySelectorAll('.tgroup').forEach(tg=>{
+      tg.hidden=![...tg.querySelectorAll('.card')].some(c=>!c.hidden);
+    });
+    const bg=g.querySelector('.bgrid'),bh=g.querySelector('.bhead');
+    const anyB=bg&&[...bg.querySelectorAll('.buildcard')].some(c=>!c.hidden);
+    if(bg)bg.hidden=!anyB; if(bh)bh.hidden=!anyB;
+    if(t||on.length)g.open=true;
   });
-  const n=active().length;
-  document.getElementById('shown').textContent=n+' shown';
-  document.getElementById('none').style.display=n?'none':'';
-  sel=-1;rows.forEach(r=>r.classList.remove('sel'));
+  allChip.setAttribute('aria-pressed',on.length?'false':'true');
+  const none=document.getElementById('none'); if(none)none.hidden=n>0;
+  const u=new URL(location.href);
+  t?u.searchParams.set('q',t):u.searchParams.delete('q');
+  on.length?u.searchParams.set('c',on.join(',')):u.searchParams.delete('c');
+  history.replaceState(null,'',u);
 }
 q.addEventListener('input',apply);
 chips.forEach(c=>c.addEventListener('click',()=>{
-  c.setAttribute('aria-pressed',c.getAttribute('aria-pressed')==='true'?'false':'true');apply();
+  const was=c.getAttribute('aria-pressed')==='true';
+  chips.forEach(o=>o.setAttribute('aria-pressed','false'));
+  // clicking All, or clicking the already-active filter, returns to everything
+  if(c.dataset.f!=='all'&&!was)c.setAttribute('aria-pressed','true');
+  apply();
 }));
-rows.forEach(r=>r.addEventListener('click',()=>{location.href=r.dataset.href;}));
 document.addEventListener('keydown',e=>{
-  if(e.key==='/'&&document.activeElement!==q){e.preventDefault();q.focus();return;}
-  if(e.key==='Escape'&&document.activeElement===q){q.value='';apply();q.blur();return;}
-  const a=active();if(!a.length)return;
-  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-    e.preventDefault();
-    rows.forEach(r=>r.classList.remove('sel'));
-    const cur=a.findIndex(r=>r===rows[sel]);
-    let i=cur+(e.key==='ArrowDown'?1:-1);
-    if(i<0)i=0;if(i>=a.length)i=a.length-1;
-    sel=rows.indexOf(a[i]);a[i].classList.add('sel');
-    a[i].scrollIntoView({block:'nearest'});
-  }
-  if(e.key==='Enter'&&sel>=0){location.href=rows[sel].dataset.href;}
+  if(e.key==='/'&&document.activeElement!==q){e.preventDefault();q.focus();}
+  else if(e.key==='Escape'&&document.activeElement===q){q.value='';apply();q.blur();}
 });
-apply();
+(function(){const u=new URL(location.href);const t=u.searchParams.get('q');if(t)q.value=t;
+ const c=(u.searchParams.get('c')||'').split(',').filter(Boolean);
+ chips.forEach(x=>x.setAttribute('aria-pressed',c.includes(x.dataset.f)?'true':'false'));
+ apply();})();
 """
 
 
 def esc(s):
     return html.escape(str(s), quote=True)
-
-
-def load():
-    out = []
-    errors = []
-    for m in sorted(RECIPES.glob("*/recipe.json")):
-        r = json.loads(m.read_text(encoding="utf-8"))
-        if m.parent.name != r.get("slug"):
-            print(f"  ! slug/dirname mismatch: {m.parent.name} vs {r.get('slug')}")
-        for e in vocab.validate_recipe(r, V, where=m.parent.name):
-            print(f"  ! {e}")
-            errors.append(e)
-        r["_surfaces_on_disk"] = sorted(
-            p.name for p in m.parent.iterdir() if p.is_dir()
-        )
-        out.append(r)
-    if errors:
-        raise SystemExit(
-            f"{len(errors)} vocabulary error(s) - build refused. "
-            "Unknown values are errors, never silently skipped."
-        )
-    return out
-
-
-def page(title, body, favicon_title=None):
-    return (
-        "<title>" + esc(title) + "</title>\n"
-        '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-        "family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&"
-        'display=swap">\n'
-        "<style>" + CSS + "</style>\n" + body
-    )
-
-
-def badges(r):
-    """Public metadata only. Tier and provenance are internal planning state."""
-    out = []
-    if r.get("governed"):
-        out.append('<span class="b gov">governed</span>')
-    if r.get("difficulty"):
-        out.append('<span class="b">%s</span>' % esc(r["difficulty"]))
-    return "".join(out)
-
-
-def written_surfaces(r):
-    """Only surfaces with code actually on disk. Never advertise an empty one."""
-    d = RECIPES / r["slug"]
-    return [
-        x for x in r.get("surfaces", [])
-        if isinstance(x, str) and read_code(d, x, V)
-    ]
-
-
-
-def build_index(recipes, body_only=False):
-    n = len(recipes)
-    launch = sum(1 for r in recipes if r.get("tier") == "launch")
-    gov = sum(1 for r in recipes if r.get("governed"))
-
-    chips = []
-    for key, label in CATEGORIES:
-        if any(r.get("category") == key for r in recipes):
-            chips.append(
-                f'<button class="chip" data-f="cat:{key}" aria-pressed="false">{esc(label)}</button>'
-            )
-    chips.append(
-        '<button class="chip" data-f="gov" aria-pressed="false">governed</button>'
-    )
-
-    groups = []
-    for key, label in CATEGORIES:
-        items = [r for r in recipes if r.get("category") == key]
-        if not items:
-            continue
-        items.sort(key=lambda r: (TIER_ORDER.get(r.get("tier"), 9), r["slug"]))
-        rows = []
-        for r in items:
-            facets = [f"cat:{r.get('category')}"]
-            if r.get("tier") == "launch":
-                facets.append("launch")
-            if r.get("governed"):
-                facets.append("gov")
-            hay = " ".join(
-                [
-                    r["slug"],
-                    r["title"],
-                    r.get("alias", ""),
-                    r.get("summary", ""),
-                    r.get("scenario", ""),
-                    " ".join(r.get("capabilities", [])),
-                    " ".join(r.get("surfaces", [])),
-                ]
-            ).lower()
-            surf = " ".join(
-                SURFACE_ABBR.get(s, s) for s in written_surfaces(r)
-            )
-            rows.append(
-                f'<div class="row" tabindex="-1" data-href="r/{esc(r["slug"])}.html" '
-                f'data-hay="{esc(hay)}" data-facets="{esc(" ".join(facets))}">'
-                f'<div><div class="name">{esc(r["title"])}</div>'
-                f'<div class="slug">{esc(r["slug"])}'
-                + (
-                    f' &middot; <span style="color:var(--accent)">{esc(r["alias"])}</span>'
-                    if r.get("alias")
-                    else ""
-                )
-                + "</div>"
-                f'<div class="sum">{esc(r.get("summary",""))}</div></div>'
-                f'<div class="right">{badges(r)}<span class="surf">{esc(surf)}</span></div>'
-                "</div>"
-            )
-        groups.append(
-            f'<div class="grp"><div class="grouphead">{esc(label)} '
-            f"&mdash; {len(items)}</div>"
-            f'<div class="rows">{"".join(rows)}</div></div>'
-        )
-
-    body = f"""<div class="wrap">
-<header class="top">
-  <div class="kicker">SignalWire &middot; recipes</div>
-  <h1>Recipes</h1>
-  <p class="sub">Every recipe is one folder in one repository. This page is generated from
-  those folders &mdash; adding a recipe adds a row here, with no edit to this page.</p>
-  <div class="counts">
-    <span class="b">{n} recipes</span>
-    <span class="b gov">{gov} governed</span>
-    <span class="b" id="shown">{n} shown</span>
-  </div>
-</header>
-<div class="controls">
-  <input id="q" type="search" placeholder="filter&hellip;  (press / )" aria-label="Filter recipes">
-  {''.join(chips)}
-</div>
-{''.join(groups)}
-<div class="empty" id="none" style="display:none">Nothing matches that filter.</div>
-<p class="hint"><kbd>/</kbd> search &middot; <kbd>&uarr;</kbd><kbd>&darr;</kbd> move &middot;
-<kbd>Enter</kbd> open &middot; <kbd>Esc</kbd> clear</p>
-</div>
-<script>{JS}</script>"""
-    return body if body_only else page("SignalWire Recipes", body)
-
 
 
 def md_inline(t):
@@ -437,6 +387,233 @@ def read_evidence(d, V):
     return None, None, None
 
 
+def load():
+    out = []
+    errors = []
+    for m in sorted(RECIPES.glob("*/recipe.json")):
+        r = json.loads(m.read_text(encoding="utf-8"))
+        if m.parent.name != r.get("slug"):
+            print(f"  ! slug/dirname mismatch: {m.parent.name} vs {r.get('slug')}")
+        for e in vocab.validate_recipe(r, V, where=m.parent.name):
+            print(f"  ! {e}")
+            errors.append(e)
+        r["_surfaces_on_disk"] = sorted(
+            p.name for p in m.parent.iterdir() if p.is_dir()
+        )
+        out.append(r)
+    slugs = {r.get("slug") for r in out}
+    for r in out:
+        for c in r.get("composes", []):
+            if c not in slugs:
+                errors.append(
+                    "%s: dangling composition edge -> %s "
+                    "(no such recipe)" % (r["slug"], c)
+                )
+        if r.get("kind") != "build" and not r.get("subcategory"):
+            errors.append(
+                "%s: no task group - navigation cannot rest on "
+                "optional metadata" % r["slug"]
+            )
+    if errors:
+        for e in errors:
+            print(f"  ! {e}")
+        raise SystemExit(
+            f"{len(errors)} validation error(s) - build refused. "
+            "Unknown values are errors, never silently skipped."
+        )
+    return out
+
+
+def page(title, body, favicon_title=None):
+    return (
+        '<meta charset="utf-8">\n'
+        "<title>" + esc(title) + "</title>\n"
+        '<meta name="theme-color" content="#141416">\n'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+        "family=Instrument+Sans:wght@400;500;600;700&family=Lexend:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&"
+        'display=swap">\n'
+        "<style>" + CSS + "</style>\n" + body
+    )
+
+
+def badges(r):
+    """Public pages carry no internal metadata. Kept as a hook for real facets."""
+    return ""
+
+
+
+def written_surfaces(r):
+    """Only surfaces with code actually on disk. Never advertise an empty one."""
+    d = RECIPES / r["slug"]
+    return [
+        x for x in r.get("surfaces", [])
+        if isinstance(x, str) and read_code(d, x, V)
+    ]
+
+
+
+def used_in(recipes):
+    """slug -> [builds that compose it]. Computed, so it cannot go stale."""
+    out = {}
+    for b in recipes:
+        if b.get("kind") != "build":
+            continue
+        for slug in b.get("composes", []):
+            out.setdefault(slug, []).append(b)
+    return out
+
+
+def build_index(recipes, body_only=False):
+    subs = V.get("subcategories", {})
+    cat_of = {r["slug"]: r.get("category") for r in recipes}
+    cat_label = {c["key"]: c["label"] for c in V["categories"]}
+
+    builds = [r for r in recipes if r.get("kind") == "build"]
+    plain = [r for r in recipes if r.get("kind") != "build"]
+
+    def touches(b):
+        """Every category this build's composition reaches. Association, not
+        ownership - a build that spans two categories appears in both."""
+        out = {cat_of.get(x) for x in b.get("composes", []) if cat_of.get(x)}
+        out.add(b.get("category"))
+        return {c for c in out if c}
+
+    by_cat = {}
+    for b in builds:
+        for c in touches(b):
+            by_cat.setdefault(c, []).append(b)
+
+    # foundational -> common -> advanced -> alphabetical
+    RANK = {"starter": 0, "intermediate": 1, "advanced": 2}
+
+    def rank(r):
+        return (RANK.get(r.get("difficulty"), 1), r["slug"])
+
+    def hay(r):
+        return " ".join([r["slug"], r["title"], r.get("alias", ""),
+                         r.get("summary", ""), r.get("scenario", ""),
+                         " ".join(r.get("capabilities", []))]).lower()
+
+    def band(b, ctx=None):
+        """ctx names the category we are projecting into, when not its home."""
+        home = ctx is None or ctx == b.get("category")
+        others = sorted(touches(b) - {ctx}) if ctx else []
+        also = ""
+        if others and not home:
+            also = ('<span class="also">also in %s</span>'
+                    % esc(", ".join(cat_label.get(o, o) for o in others)))
+        parts = "".join('<span class="part">%s</span>' % esc(x)
+                        for x in b.get("composes", [])[:3])
+        more = len(b.get("composes", [])) - 3
+        if more > 0:
+            parts += '<span class="part more">+%d</span>' % more
+        return (
+            '<a class="buildcard" href="#%s" data-kind="build" data-proj="%d" '
+            'data-cat="%s" data-hay="%s">'
+            '%s'
+            '<span class="bt">%s</span><span class="bs">%s</span>'
+            '<span class="parts">%s</span></a>'
+            % (esc(b["slug"]), 0 if home else 1,
+               " ".join(sorted(touches(b))), esc(hay(b)),
+               ('<span class="lab">%s</span>' % also) if also else "",
+               esc(b["title"]), esc(b.get("summary", "")), parts)
+        )
+
+
+    def card(r):
+        surf = " ".join(SURFACE_ABBR.get(x, x) for x in written_surfaces(r))
+        return (
+            '<a class="card" data-kind="recipe" href="#%s" data-cat="%s" data-hay="%s">'
+            '<span class="ct">%s</span><span class="cs">%s</span>'
+            '<span class="cd">%s</span>'
+            '<span class="cf"><span class="sp"></span><span class="surf">%s</span></span>'
+            "</a>"
+            % (esc(r["slug"]), esc(r["category"]), esc(hay(r)), esc(r["title"]),
+               esc(r.get("alias") or r["slug"]), esc(r.get("summary", "")), esc(surf))
+        )
+
+    chips = ('<button type="button" class="chip" data-f="all" aria-pressed="true">All</button>'
+    ) + "".join(
+        '<button type="button" class="chip" data-f="%s" aria-pressed="false">%s '
+        '<span class="cn">%d</span></button>'
+        % (c["key"], esc(c["label"]),
+           sum(1 for r in plain if r.get("category") == c["key"]))
+        for c in V["categories"]
+        if any(r.get("category") == c["key"] for r in plain)
+    )
+    if builds:
+        chips += (
+            '<button type="button" class="chip kind" data-f="kind:build" '
+            'aria-pressed="false">Builds <span class="cn">%d</span></button>'
+            % len(builds)
+        )
+
+    sections = []
+    for c in V["categories"]:
+        items = [r for r in plain if r.get("category") == c["key"]]
+        cb = by_cat.get(c["key"], [])
+        if not items and not cb:
+            continue
+
+        # task groups, ordered by size so the biggest neighbourhood leads
+        groups = {}
+        for r in items:
+            groups.setdefault(r.get("subcategory", "other"), []).append(r)
+        ordered = sorted(groups.items(), key=lambda kv: (-len(kv[1]), kv[0]))
+
+        tabs = "".join(
+            '<span class="tg">%s <span class="cn">%d</span></span>'
+            % (esc(subs.get(k, {}).get("label", k)), len(v))
+            for k, v in ordered
+        )
+
+        blocks = "".join(
+            '<div class="tgroup"><h3 class="tgh">%s <span class="cn">%d</span></h3>'
+            '<div class="grid">%s</div></div>'
+            % (esc(subs.get(k, {}).get("label", k)), len(v),
+               "".join(card(r) for r in sorted(v, key=rank)))
+            for k, v in ordered
+        )
+
+        sections.append(
+            '<details class="cat"><summary class="cat-h">'
+            '<span class="ct2">%s</span><span class="n">%d</span>'
+            '<span class="tgs">%s</span></summary>'
+            '<div class="catbody">%s%s</div></details>'
+            % (esc(c["label"]), len(items), tabs,
+               ('<div class="bhead">Builds <span class="cn">%d</span></div>'
+                '<div class="bgrid">%s</div>'
+                % (len(cb), "".join(band(b, c["key"]) for b in cb))) if cb else "",
+               blocks)
+        )
+
+    body = """<div class="wrap">
+<header class="hero">
+  <p class="eyebrow"><svg class="lg" viewBox="0 0 3804 825" aria-label="SignalWire"><path fill="#044ef4" d="M18.93 247.67C126.99 139.86 194.19 72.93 244.29 22.79Q254.73 12.33 268.2 6.71C284.47-.09 303.67 1.72 319.64 8.86C340.08 18.02 352.21 38.14 355.3 59.78c2.35 16.46-2.27 31.84-12.15 44.99q-2.9 3.86-10.63 11.66C258.58 191.04 180.32 268.66 109.87 337.87C88.91 358.47 58.5 363.09 32.96 348.7 10.51 336.04-.28 312.08.43 286.94.84 272.18 8.63 257.94 18.93 247.67Z"/><path fill="#f72a72" d="M665.26 449.81a.38.38 0 0 1-.33.61q-5.28-.39-9.67-.42c-21.47-.15-39.61 7.25-55.81 20.72q-4.62 3.84-14.06 13.94-14.09 15.07-32.69 32.81a.68.67 46.5 0 1-.96-.03q-.01-.02-2.83-2.79Q519.79 486.07 386.1 351.94q-9.76-9.79-12.89-14c-14.21-19.16-16.05-41.29-7.18-63.16q10.26-25.32 35.72-34.76c18.5-6.86 39.07-6.38 56.23 4.06q5.49 3.34 18.82 16.62Q619.85 403.22 662.07 445.95q.86.88 3.19 3.86Z"/><path fill="#f72a72" d="M52.59 370.92q3.38-.04 10.99-.25c16.25-.44 31.01-4.43 44.34-13.44q7.74-5.23 19.06-17.17 4.85-5.12 36.52-37.15a.55.55 0 0 1 .71-.06q2.76 2.01 9.24 8.48 94.27 94.2 160.71 160.72 7.6 7.6 11.85 14.08c11.97 18.22 13.81 40.35 4.98 60.87q-9.39 22.76-31.9 32.22c-18.98 7.97-40.82 8.52-58.7-2.18q-5.47-3.27-17.87-15.65Q128.29 448.23 52.34 371.53a.36.36 0 0 1 .25-.61Z"/><path fill="#044ef4" d="M510.7 577.7q45.26-44.89 96.59-95.41c25.64-25.23 63.88-24.74 90.15-.56q18.78 17.28 18.84 43.01c.04 18.39-5.51 35.18-18.57 48.22Q563.93 706.56 471.73 798.23q-11.12 11.05-26.46 16.48c-38.94 13.8-80.08-14.59-83.94-54.69c-1.87-19.32 5.41-38.1 19.11-52.09Q415.71 671.9 510.7 577.7Z"/><path fill="#fff" d="M960.39 446.64c3.15 5.6 6.52 12.5 10.1 17.7c23.44 34.02 62.95 51.01 103.48 44.09 19.88-3.39 39.82-12.72 49.83-30.59q7.03-12.55 7.43-29 .53-21.78-13.99-37.62-7.2-7.86-23.38-16.91c-25.46-14.23-49.86-24.54-79.55-37.12-11.8-5-27.46-12.12-37.54-17.96q-17.7-10.26-28.74-22.23-20.05-21.74-25.06-51.22c-6.98-41.03 2.74-83.4 34.13-112.11c20.59-18.84 46.37-28.85 74.15-32.68 51.58-7.1 96.22 9.63 133.51 44.51q6.12 5.72 10.94 12.38a.64.63 50.8 0 1-.08.84l-46.34 42.35a.75.75 0 0 1-1.08-.06c-26.9-31.1-60.5-45.81-101.75-34.37-33.86 9.39-49.63 46.92-30.45 76.9c8.7 13.61 25.7 24.03 40.76 31.46 34.23 16.88 68.78 27.65 97.48 43.48c25.61 14.13 46.5 35.09 56.58 62.64 18.14 49.58 7.48 104.38-33.28 139.58c-21.62 18.68-48.41 29.13-76.98 32.4-41.14 4.72-81.88-1.28-116.65-23.25q-25.06-15.83-45.67-42.18c-5.89-7.53-11.51-17.8-16.2-25.76a.36.36 0 0 1 .12-.49l57.23-35.04a.72.71-30.2 0 1 1 .26Z"/><circle fill="#fff" cx="1281.63" cy="159.44" r="40.07"/><circle fill="#fff" cx="3203.24" cy="159.48" r="40.08"/><rect fill="#fff" x="2411.92" y="125.9" width="64" height="442.06" rx=".62"/><path fill="#fff" d="M3000.98 568a.61.59-81.4 0 1-.57.43h-75.36a.36.36 0 0 1-.35-.27l-99.38-356.08a1.48 1.48 0 0 0-2.85 0l-98.14 355.79a.44.44 0 0 1-.42.32h-75.44a.58.58 0 0 1-.56-.42L2516.73 126.49a.43.43 0 0 1 .41-.56h71.1a.82.81 81.9 0 1 .78.59l97.69 332.36a1.25 1.25 0 0 0 2.4-.02l94.25-332.59a.5.5 0 0 1 .48-.37h79.88a.77.77 0 0 1 .74.56l95.09 331.47a1.54 1.54 0 0 0 2.96.01l97.45-331.57a.66.66 0 0 1 .63-.47h70.79a.31.31 0 0 1 .3.4L3000.98 568Z"/><path fill="#fff" d="M1923.39 567.55q-.11-78.78-.03-182.53 .01-7.92-2.97-18.43c-5.86-20.62-21.62-34.85-42.8-38.33-34.61-5.7-65.04 14.17-70.31 49.65q-.71 4.78-.74 16.72-.14 69.6-.04 172.72a.58.58 0 0 1-.58.58h-63.86a.34.34 0 0 1-.34-.34V274.34a.47.47 0 0 1 .47-.47h63.67a.41.4-90 0 1 .4.41v21.29a.44.44 0 0 0 .68.36q11.25-7.6 15.34-10.37 12.85-8.69 28.78-13.93c33.51-11.05 69.24-2.55 97.25 18.31c27.03 20.12 39.97 49.98 40.44 83.31.78 54.7.61 104.95.34 190.01q-.01 1.03-.55 4.47a.66.65-85.3 0 1-.64.55h-63.78a.73.73 0 0 1-.73-.73Z"/><path fill="#fff" d="M3779.14 492.97a.68.68 0 0 1 .37.9c-24.13 56.01-86.6 84.75-145.08 80.76-37.88-2.59-73.01-15.76-100.4-42.07c-44.27-42.51-57.25-106.7-37.05-163.87 14.31-40.53 43.73-72.12 83.22-88.95c33.03-14.07 72.3-16.17 106.68-7.08 70.37 18.59 116.11 87.8 108.25 159.68a.53.53 0 0 1-.53.47h-237.15a.61.59-86.1 0 0-.59.53c-1.35 10.6 1.42 22.1 6.15 31.34q17.33 33.95 51.37 46.34c44 16.01 83.15-5.05 110.45-39.08a.73.72-59.8 0 1 .84-.23l53.47 21.26ZM3722 381.39c-7.73-35.69-45.03-56.53-79.02-56.44c-36.03.1-68.65 21.71-80.38 56.19a.52.51 9.3 0 0 .49.68h158.56a.36.35-6.4 0 0 .35-.43Z"/><path fill="#fff" d="M1612.18 540.9a.23.23 0 0 0-.37-.14c-50.69 40.47-117.4 44.93-172.95 12.9q-30.88-17.81-49.37-47.1c-40.34-63.92-31.02-150.48 25.96-201.44 37.26-33.33 91.07-45.62 139.09-32.27q32.81 9.12 58.75 31.31a.35.34 20.2 0 0 .57-.26v-29.33a.54.54 0 0 1 .54-.54h65.35a.56.56 0 0 1 .56.56q.12 193.45-.08 293.13-.06 28-11.2 56.1c-17.72 44.7-55.44 78.55-101.92 91.23-69.03 18.82-149.45-9.14-188.28-70.38a.84.83-37.1 0 1 .15-1.06l43.99-38.91a.53.53 0 0 1 .8.12c21.22 33.44 53.61 55.69 93.93 56.71 21.03.53 39.7-5.27 56.94-17.11c21.06-14.46 34.12-35.32 37.88-60.47q3.13-20.95-.34-43.06ZM1613.83 420.99a91.72 91.72 0 0 0-91.72-91.72 91.72 91.72 0 0 0-91.72 91.72a91.72 91.72 0 0 0 91.72 91.72 91.72 91.72 0 0 0 91.72-91.72Z"/><path fill="#fff" d="M2283.91 567.65v-34.67a.33.33 0 0 0-.56-.23c-26.5 26.86-60.21 42.26-98.35 42.05-37.01-.21-70.66-11.91-98.08-37.21c-57.54-53.08-67.12-140.42-24-205.45 8.61-13 19.19-24.83 31.95-34.38c43.12-32.26 101.65-40.32 150.69-16.35q20.53 10.04 37.26 25.86a.34.34 0 0 0 .57-.25v-32.4a.59.58 0 0 1 .59-.58h64.85a.74.74 0 0 1 .74.74v292.91a.59.59 0 0 1-.59.59h-64.43a.64.63 0 0 1-.64-.63ZM2101.79 418.15a91.85 91.67-178.2 0 0 88.92 94.51 91.85 91.67-178.2 0 0 94.69-88.74a91.85 91.67-178.2 0 0-88.93-94.51 91.85 91.67-178.2 0 0-94.68 88.74Z"/><path fill="#fff" d="M3364.06 316.07a.25.25 0 0 0 .46.14q5.41-7.82 10.03-14.15c20.14-27.58 52.15-40.62 85.63-31q2.89.83 5.73 2.54a.41.41 0 0 1 .2.35v56.88a.51.51 0 0 1-.53.51c-9.19-.28-21-1.01-29.26-.73c-38.7 1.28-64.56 29.5-70.45 66.84q-1.12 7.06-1.24 21.19c-.31 35.17-.24 74.64-.15 148.75a.61.61 0 0 1-.61.61h-63.97a.25.25 0 0 1-.25-.25V274.38a.48.47 0 0 1 .48-.47h63.28a.65.65 0 0 1 .65.65v41.51Z"/><rect fill="#fff" x="1249.36" y="273.86" width="64.6" height="294.26" rx=".42"/><rect fill="#fff" x="3171.11" y="273.94" width="64.7" height="294.22" rx=".66"/></svg><span class="dot"></span>Recipes</p>
+  <h1>Working code for every part of a call</h1>
+  <p>Clone a folder, add your credentials, and it runs. Most are under two hundred
+  lines. The builds show what they look like assembled.</p>
+  <div class="cta"><button type="button" class="btn">Browse the repository</button>
+  <button type="button" class="btn ghost">Read the docs</button></div>
+</header>
+<div class="controls">
+  <input id="q" type="search" name="q" autocomplete="off" spellcheck="false"
+    placeholder="filter by name, capability, or language&hellip;" aria-label="Filter recipes">
+  %s
+</div>
+%s
+<p class="empty" id="none" hidden>Nothing matches that filter.</p>
+<p class="hint"><kbd>/</kbd> to search &middot; <kbd>Esc</kbd> to clear</p>
+</div>
+<script>%s</script>""" % (chips, "".join(sections), JS)
+    return body if body_only else page("SignalWire Recipes", body)
+
+
+
+_USED_IN = {}
+
+
 def build_detail(r, body_only=False):
     d = RECIPES / r["slug"]
     sections = read_sections(d)
@@ -458,14 +635,9 @@ def build_detail(r, body_only=False):
     if r.get("alias"):
         out.append('<div class="tech">%s</div>' % esc(r["alias"]))
     out.append('<p class="sub">%s</p>' % esc(r.get("summary", "")))
-    # public metadata only - tier and provenance are internal planning state
-    meta = ""
-    if r.get("governed"):
-        meta += '<span class="b gov">governed</span>'
-    if r.get("difficulty"):
-        meta += '<span class="b">%s</span>' % esc(r["difficulty"])
-    meta += "".join(
-        '<span class="b">%s</span>' % esc(x) for x in r.get("products", [])
+    # nothing internal on a public page
+    meta = "".join(
+        '<span class="b">%s</span>' % esc(x) for x in r.get("capabilities", [])[:4]
     )
     out.append('<div class="meta">%s</div></div>' % meta)
     out.append('<div class="claim"><h2>The claim</h2><p>%s</p></div>' % claim)
@@ -479,7 +651,7 @@ def build_detail(r, body_only=False):
             out.append("<cite>%s</cite>" % esc(edata["caption"]))
         if modeinfo.get("interactive"):
             out.append(
-                '<div class="acts"><button class="btn">%s</button>'
+                '<div class="acts"><button type="button" class="btn" disabled>%s</button>'
                 '<span class="n">%s Runtime not built yet.</span></div>'
                 % (esc(modeinfo["label"]), esc(modeinfo.get("copy", "")))
             )
@@ -500,7 +672,8 @@ def build_detail(r, body_only=False):
 
     if surfaces:
         tabs = "".join(
-            '<span class="stab" aria-selected="%s">%s</span>'
+            '<button type="button" role="tab" class="stab" aria-selected="%s">'
+            '%s</button>'
             % ("true" if i == 0 else "false", esc(V["surfaces"][x]["label"]))
             for i, x in enumerate(surfaces)
             if x in V["surfaces"]
@@ -515,7 +688,8 @@ def build_detail(r, body_only=False):
                    V["surfaces"].get(surfaces[0], {}).get("entry", "?"))
             )
         out.append(
-            '<div class="cw"><div class="stabs">%s</div><pre class="src">%s</pre></div>'
+            '<div class="cw"><div class="stabs" role="tablist">%s</div>'
+            '<pre class="src">%s</pre></div>'
             % (tabs, body)
         )
 
@@ -537,9 +711,25 @@ def build_detail(r, body_only=False):
             % "".join("<p>%s</p>" % x for x in sections["What to change first"])
         )
 
+    if r.get("kind") == "build" and r.get("composes"):
+        links = "".join(
+            '<a class="cx" href="#%s">%s</a>' % (esc(x), esc(x))
+            for x in r["composes"]
+        )
+        out.append(
+            '<div class="sec"><h2>Recipes this composes</h2>'
+            '<div class="cxlist">%s</div></div>' % links
+        )
+    for b in _USED_IN.get(r["slug"], []):
+        out.append(
+            '<div class="sec"><h2>Seen in production</h2><p>This pattern is one of '
+            '%d recipes composed by <a class="cx" href="#%s">%s</a>.</p></div>'
+            % (len(b.get("composes", [])), esc(b["slug"]), esc(b["title"]))
+        )
+    repo = r.get("repo") or "#"
     out.append(
-        '<div class="dfoot"><a href="#">View folder on GitHub</a>'
-        '<a href="#">Report an issue</a></div></div></div>'
+        '<div class="dfoot"><a href="%s">View the repository</a>'
+        '<a href="#">Report an issue</a></div></div></div>' % esc(repo)
     )
     body = "".join(out)
     return body if body_only else page(
@@ -607,13 +797,16 @@ def build_sitemap(recipes):
 
 
 def has_content(r):
-    """A recipe is showable when someone has actually written it."""
+    """Showable when someone has actually written it."""
     d = RECIPES / r["slug"]
     readme = d / "README.md"
     if not readme.exists() or "_TODO" in readme.read_text(encoding="utf-8"):
         return False
     if not read_sections(d).get("What this demonstrates"):
         return False
+    if r.get("kind") == "build":
+        # a build is an application; its artefact is the repo, not a code file
+        return bool(r.get("repo") and r.get("composes"))
     for surface in r.get("surfaces", []):
         if isinstance(surface, str) and read_code(d, surface, V):
             return True
@@ -640,19 +833,14 @@ document.addEventListener('keydown', function(e){
 show(location.hash ? location.hash.slice(1) : 'index');
 """
 
-PREVIEW_CSS = """
-.pvbanner{max-width:74rem;margin:0 auto;padding:1rem clamp(1rem,4vw,2.5rem) 0;}
-.pvbanner div{border:1px solid var(--accent);background:var(--accent-soft);
-  border-radius:3px;padding:.7rem .95rem;font-size:.85rem;color:var(--ink-2);}
-.pvbanner b{color:var(--accent);font-family:var(--mono);font-size:.7rem;
-  letter-spacing:.09em;text-transform:uppercase;}
-[data-view][hidden]{display:none;}
-"""
+PREVIEW_CSS = ""
 
 
 def build_preview(recipes):
     """One file, index plus every showable recipe, navigable without a server."""
-    live = [r for r in recipes if has_content(r)]
+    live = recipes if "--all" in sys.argv else [
+        r for r in recipes if has_content(r)
+    ]
     if not live:
         raise SystemExit("no recipe has content yet - nothing to preview")
 
@@ -679,11 +867,15 @@ def main():
         print("no recipes/ dir — run scaffold.py first")
         return 1
     recipes = load()
+    global _USED_IN
+    _USED_IN = used_in(recipes)
     if "--preview" in sys.argv:
         SITE.mkdir(parents=True, exist_ok=True)
         out = SITE / "preview.html"
         out.write_text(build_preview(recipes), encoding="utf-8")
-        live = [r for r in recipes if has_content(r)]
+        live = recipes if "--all" in sys.argv else [
+            r for r in recipes if has_content(r)
+        ]
         print(
             f"preview: {len(live)} of {len(recipes)} recipes have content "
             f"-> {out.name} ({out.stat().st_size // 1024} KB)"

@@ -103,6 +103,7 @@ def guard_synthetic():
                     "category": "zz-synthetic",
                     "products": ["voice"],
                     "capabilities": ["ci"],
+                    "subcategory": "other",
                     "surfaces": ["zzlang"],
                     "governed": False,
                     "demo": "none",

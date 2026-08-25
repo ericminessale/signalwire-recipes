@@ -1,0 +1,29 @@
+{
+  "slug": "governed-intake-agent",
+  "title": "Governed Intake Agent",
+  "alias": "code-enforced conversation",
+  "summary": "An intake agent that cannot skip a step, cannot see fields it should not, and cannot transfer before it has what it needs.",
+  "scenario": "Intake that survives a risk review",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance",
+    "tool-calling"
+  ],
+  "composes": [
+    "scope-tools-per-step",
+    "hide-fields-from-the-model",
+    "enforce-state-transitions-in-a-tool-handler",
+    "require-verification-before-unlocking-tools",
+    "extract-structured-data-after-a-call"
+  ],
+  "kind": "build",
+  "surfaces": [],
+  "governed": true,
+  "demo": "observe",
+  "provenance": "new",
+  "tier": "next",
+  "repo": "https://github.com/ericminessale/signalwire-recipes"
+}

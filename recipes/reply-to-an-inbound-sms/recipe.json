@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "text",
   "provenance": "new",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "other"
 }

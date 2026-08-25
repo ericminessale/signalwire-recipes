@@ -1,0 +1,14 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html",      "x": 0,    "y": 0, "w": 1280, "h": 900, "title": "A · Atmosphere" },
+    { "file": "Editorial.dc.html", "x": 1400, "y": 0, "w": 1280, "h": 900, "title": "B · Editorial" },
+    { "file": "Console.dc.html",   "x": 2800, "y": 0, "w": 1280, "h": 900, "title": "C · Console" }
+  ],
+  "annotations": [
+    { "id": "brief", "x": 0, "y": -190, "w": 620,
+      "text": "Three directions for the recipes index. Same content in each so the comparison is about direction, not detail.\n\nA - Atmosphere: depth and light. Brand gradient ground, the bracket mark as an oversized watermark, a glow behind the featured build. Life comes from the background.\n\nB - Editorial: light ground, one enormous headline, hairline rules. Life comes from scale contrast and whitespace. The only one that is not dark.\n\nC - Console: a left rail gives the page a spine. Life comes from composition and density - closest to the call center, but with real structure." },
+    { "id": "tradeoffs", "x": 700, "y": -190, "w": 560,
+      "text": "Tradeoffs:\n\nA is the most striking and the least like a reference doc - the gradient may fight a docs shell it gets embedded in.\n\nB has the most presence per pixel and reads as marketing rather than developer surface. It is also light, which breaks from the call center.\n\nC scales best to 49 recipes and sits closest to the product you already have, but is the least distinctive of the three." }
+  ],
+  "launch": { "view": "canvas" }
+}

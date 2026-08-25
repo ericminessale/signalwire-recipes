@@ -1,0 +1,7 @@
+{
+  "label": "Build",
+  "plural": "Builds",
+  "order": 20,
+  "blurb": "A working application that composes several recipes.",
+  "featured": true
+}

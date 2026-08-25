@@ -4,7 +4,7 @@
   "alias": "declarative markup, no SDK",
   "summary": "A complete working agent with nothing installed and no server of your own.",
   "scenario": "For teams that are not a Python shop",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "other"
 }

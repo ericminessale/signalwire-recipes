@@ -4,7 +4,7 @@
   "alias": "live_transcribe",
   "summary": "Turn on transcription for a call and receive the text as it is spoken.",
   "scenario": "Feeding a transcript to your own system",
-  "category": "observe",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "rewrite",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "observe"
 }

@@ -4,7 +4,7 @@
   "alias": "connect to SIP",
   "summary": "Send a PSTN call to a SIP address and back again.",
   "scenario": "Putting a cloud number in front of existing gear",
-  "category": "foundations",
+  "category": "sip",
   "products": [
     "sip",
     "voice"
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "none",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

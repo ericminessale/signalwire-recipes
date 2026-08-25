@@ -4,7 +4,7 @@
   "alias": "language change in one session",
   "summary": "Change the conversation language, with a voice that suits it.",
   "scenario": "Bilingual support lines",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "narrow",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "other"
 }

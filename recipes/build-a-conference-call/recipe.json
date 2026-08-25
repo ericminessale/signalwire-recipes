@@ -4,7 +4,7 @@
   "alias": "join_conference + member control",
   "summary": "Put several legs in one room and control each member independently.",
   "scenario": "Three-way calls and bridging",
-  "category": "call-control",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "ai-to-ai",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

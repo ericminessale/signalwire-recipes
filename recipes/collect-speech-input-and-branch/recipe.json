@@ -4,7 +4,7 @@
   "alias": "prompt + speech recognition",
   "summary": "Ask an open question, recognise the answer, and take a different path for each.",
   "scenario": "Natural-language routing without a full agent",
-  "category": "foundations",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -19,5 +19,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "observe"
 }

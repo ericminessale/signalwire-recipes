@@ -1,0 +1,26 @@
+{
+  "slug": "browser-call-widget",
+  "title": "Browser Call Widget",
+  "alias": "click-to-call, scoped",
+  "summary": "A call button for your own site: short-lived tokens that can only reach your support address, and nothing else.",
+  "scenario": "Support widget you can put on a public page",
+  "category": "webrtc",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "webrtc",
+    "security"
+  ],
+  "composes": [
+    "call-from-a-browser",
+    "get-a-webrtc-token-with-restricted-dial-targets"
+  ],
+  "kind": "build",
+  "surfaces": [],
+  "governed": true,
+  "demo": "observe",
+  "provenance": "new",
+  "tier": "next",
+  "repo": "https://github.com/ericminessale/signalwire-recipes"
+}

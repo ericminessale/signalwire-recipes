@@ -4,7 +4,7 @@
   "alias": "WebRTC leg",
   "summary": "Place a call from a web page into the same flow a phone reaches.",
   "scenario": "Support widget on a website",
-  "category": "call-control",
+  "category": "webrtc",
   "products": [
     "voice"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "demos",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

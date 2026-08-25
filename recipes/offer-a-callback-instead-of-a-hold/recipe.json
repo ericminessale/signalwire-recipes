@@ -4,7 +4,7 @@
   "alias": "callback queue",
   "summary": "Take the number, drop the call, and ring back with the context intact.",
   "scenario": "Queues that do not waste the caller's time",
-  "category": "handoff",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "rewrite",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "routing"
 }

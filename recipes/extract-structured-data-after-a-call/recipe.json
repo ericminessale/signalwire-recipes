@@ -4,7 +4,7 @@
   "alias": "post_prompt",
   "summary": "Get typed fields out of a finished conversation instead of parsing a transcript.",
   "scenario": "Dispositions and CRM writeback",
-  "category": "agent-basics",
+  "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "tools"
 }

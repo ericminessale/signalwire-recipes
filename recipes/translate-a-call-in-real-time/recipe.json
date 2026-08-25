@@ -4,7 +4,7 @@
   "alias": "live_translate",
   "summary": "Each side speaks their own language on one bridge.",
   "scenario": "Support without a language-matched agent",
-  "category": "handoff",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "ai-to-ai",
   "provenance": "narrow",
-  "tier": "later"
+  "tier": "later",
+  "subcategory": "other"
 }

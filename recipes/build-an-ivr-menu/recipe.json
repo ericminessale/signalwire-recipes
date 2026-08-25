@@ -4,7 +4,7 @@
   "alias": "DTMF collect + branch",
   "summary": "Play a menu, collect keypad input, and route the caller to the right place.",
   "scenario": "Press 1 for sales",
-  "category": "foundations",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -20,5 +20,6 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch"
+  "tier": "launch",
+  "subcategory": "call-control"
 }

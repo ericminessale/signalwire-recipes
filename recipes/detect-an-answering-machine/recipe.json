@@ -4,7 +4,7 @@
   "alias": "AMD",
   "summary": "Tell a human from a voicemail greeting before you start talking.",
   "scenario": "Outbound dialing that does not leave half a message",
-  "category": "foundations",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -17,5 +17,6 @@
   "governed": false,
   "demo": "none",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "call-control"
 }

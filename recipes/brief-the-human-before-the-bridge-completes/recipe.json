@@ -4,7 +4,7 @@
   "alias": "screened handoff",
   "summary": "Compose a bounded summary, play it to the agent, then join the caller.",
   "scenario": "No more \"can you repeat all that\"",
-  "category": "handoff",
+  "category": "voice",
   "products": [
     "voice"
   ],
@@ -18,5 +18,6 @@
   "governed": false,
   "demo": "observe",
   "provenance": "extract",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "handoff"
 }

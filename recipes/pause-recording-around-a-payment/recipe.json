@@ -4,12 +4,20 @@
   "alias": "recording pause / resume",
   "summary": "Stop the tape before the caller reads a card number and start it again after.",
   "scenario": "PCI-safe payment on a recorded line",
-  "category": "governance",
-  "products": ["voice"],
-  "capabilities": ["recording", "compliance"],
-  "surfaces": ["python"],
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "recording",
+    "compliance"
+  ],
+  "surfaces": [
+    "python"
+  ],
   "governed": true,
   "demo": "none",
   "provenance": "new",
-  "tier": "next"
+  "tier": "next",
+  "subcategory": "governance"
 }
