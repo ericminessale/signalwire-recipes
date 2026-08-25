@@ -135,14 +135,14 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   background:var(--raised);border-radius:3px;padding:3px 8px;}
 .claim{background:var(--surface);border:1px solid var(--line);border-radius:8px;
   padding:20px 22px;margin:34px 0;}
-.claim h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--fuchsia);font-weight:500;margin:0 0 8px;}
+.claim h2{font-family:var(--head);font-size:13px;letter-spacing:-.01em;
+  color:var(--fg-muted);font-weight:600;margin:0 0 8px;}
 .claim p{margin:0;color:var(--fg-2);font-size:15px;line-height:1.65;}
 .ev{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:30px 0;
   background:var(--surface);}
 .ev-h{display:flex;align-items:center;gap:9px;padding:11px 16px;
-  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--fg-subtle);}
+  border-bottom:1px solid var(--line);font-family:var(--head);font-size:13px;
+  font-weight:600;color:var(--fg-muted);}
 .ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--turquoise);flex:none;}
 .ev-b{padding:18px 16px;}
 .ev cite{display:block;margin-top:14px;font-style:normal;font-size:12px;color:var(--fg-subtle);}
@@ -174,12 +174,18 @@ pre.src{margin:6px 0 0;background:var(--surface);color:var(--fg-2);padding:18px;
   border:1px solid var(--line);border-radius:8px;font-family:var(--mono);
   font-size:12px;line-height:1.8;overflow-x:auto;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
+pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);padding:14px 16px;
+  border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:12px;
+  line-height:1.55;overflow-x:auto;}
+.rels .rel{border-top:1px solid var(--line);padding:12px 0 14px;}
+.rels .rel h3{font-size:13px;font-weight:600;color:var(--fg-2);margin:0 0 8px;}
+.rels .rel p{margin:0;color:var(--fg-2);font-size:14px;}
 a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--raised);
   border-radius:4px;padding:5px 10px;}
 a.cx:hover{color:var(--fuchsia);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
-.dfoot a{color:var(--fuchsia);}
+.dfoot a{color:var(--turquoise);}
 .pvbanner{max-width:1180px;margin:0 auto;padding:18px 32px 0;}
 .pvbanner div{border:1px solid var(--line);background:var(--surface);border-radius:8px;
   padding:11px 15px;font-size:12.5px;color:var(--fg-muted);}
@@ -353,8 +359,26 @@ def read_sections(d):
     def flush():
         if cur is None:
             return
-        paras = [x.strip() for x in "\n".join(buf).split("\n\n")]
-        out[cur] = [md_inline(" ".join(x.split())) for x in paras if x.strip()]
+        blocks, text, code, lang = [], [], None, ""
+
+        def end_text():
+            for para in "\n".join(text).split("\n\n"):
+                if para.strip():
+                    blocks.append(md_inline(" ".join(para.split())))
+            text.clear()
+
+        for line in buf:
+            if line.startswith("```"):
+                if code is None:
+                    end_text()
+                    code, lang = [], line[3:].strip()
+                else:
+                    blocks.append(PRE_MARK + esc("\n".join(code)))
+                    code = None
+                continue
+            (code if code is not None else text).append(line)
+        end_text()
+        out[cur] = blocks
 
     for line in f.read_text(encoding="utf-8").splitlines():
         if line.startswith("## "):
@@ -364,6 +388,22 @@ def read_sections(d):
             buf.append(line)
     flush()
     return out
+
+
+PRE_MARK = "\x00pre:"
+
+
+def blocks_html(blocks):
+    """Paragraph strings become <p>; fenced code (PRE_MARK-prefixed) becomes <pre>."""
+    return "".join(
+        '<pre class="mdcode">%s</pre>' % b[len(PRE_MARK):] if b.startswith(PRE_MARK)
+        else "<p>%s</p>" % b
+        for b in blocks
+    )
+
+
+def prose(blocks):
+    return [b for b in blocks if not b.startswith(PRE_MARK)]
 
 
 def read_code(d, surface, V):
@@ -414,6 +454,15 @@ def load():
                 "%s: no task group - navigation cannot rest on "
                 "optional metadata" % r["slug"]
             )
+        # typed relationships are authored edges; a dangling or self edge is a lie
+        for key in ("prerequisites", "related", "next"):
+            for c in r.get(key, []):
+                if c not in slugs:
+                    errors.append(
+                        "%s: dangling %s edge -> %s (no such recipe)" % (r["slug"], key, c)
+                    )
+                elif c == r["slug"]:
+                    errors.append("%s: %s edge points at itself" % (r["slug"], key))
     if errors:
         for e in errors:
             print(f"  ! {e}")
@@ -458,6 +507,10 @@ def used_in(recipes):
     out = {}
     for b in recipes:
         if b.get("kind") != "build":
+            continue
+        if not b.get("repo"):
+            # a build with no repository is a stub; a public page must not
+            # claim a pattern is "seen in" something that does not exist yet
             continue
         for slug in b.get("composes", []):
             out.setdefault(slug, []).append(b)
@@ -612,6 +665,18 @@ def build_index(recipes, body_only=False):
 
 
 _USED_IN = {}
+_TITLES = {}
+
+DETAIL_JS = """
+document.querySelectorAll('.stabs').forEach(function(bar){
+  var cw=bar.parentNode;
+  bar.addEventListener('click',function(e){
+    var t=e.target.closest('.stab'); if(!t) return;
+    bar.querySelectorAll('.stab').forEach(function(b){b.setAttribute('aria-selected',b===t?'true':'false');});
+    cw.querySelectorAll('pre.src').forEach(function(p){p.hidden=p.dataset.pane!==t.dataset.pane;});
+  });
+});
+""".strip()
 
 
 def build_detail(r, body_only=False):
@@ -623,7 +688,8 @@ def build_detail(r, body_only=False):
     spec, edata, ehtml = read_evidence(d, V)
     modeinfo = V["demo_modes"].get(r.get("demo", "none"), {})
 
-    demo_paras = sections.get("What this demonstrates", [])
+    demo_blocks = sections.get("What this demonstrates", [])
+    demo_paras = prose(demo_blocks)
     claim = demo_paras[0] if demo_paras else esc(r.get("summary", ""))
 
     out = [
@@ -645,7 +711,7 @@ def build_detail(r, body_only=False):
     if ehtml:
         out.append(
             '<div class="ev"><div class="ev-h"><span class="dot"></span>'
-            "evidence &middot; %s</div><div class=\"ev-b\">%s" % (esc(spec["label"]), ehtml)
+            "Evidence &middot; %s</div><div class=\"ev-b\">%s" % (esc(spec["label"]), ehtml)
         )
         if edata.get("caption"):
             out.append("<cite>%s</cite>" % esc(edata["caption"]))
@@ -657,80 +723,88 @@ def build_detail(r, body_only=False):
             )
         out.append("</div></div>")
 
-    if len(demo_paras) > 1:
-        out.append(
-            '<div class="sec"><h2>Why it holds</h2>%s</div>'
-            % "".join("<p>%s</p>" % x for x in demo_paras[1:])
-        )
+    rest = [b for b in demo_blocks if b != claim]
+    if rest:
+        out.append('<div class="sec"><h2>Why it holds</h2>%s</div>' % blocks_html(rest))
 
     for h in ("How it works", "Limitations"):
         if h in sections:
-            out.append(
-                '<div class="sec"><h2>%s</h2>%s</div>'
-                % (esc(h), "".join("<p>%s</p>" % x for x in sections[h]))
-            )
+            out.append('<div class="sec"><h2>%s</h2>%s</div>' % (esc(h), blocks_html(sections[h])))
 
     if surfaces:
         tabs = "".join(
-            '<button type="button" role="tab" class="stab" aria-selected="%s">'
+            '<button type="button" role="tab" class="stab" data-pane="%d" aria-selected="%s">'
             '%s</button>'
-            % ("true" if i == 0 else "false", esc(V["surfaces"][x]["label"]))
+            % (i, "true" if i == 0 else "false", esc(V["surfaces"][x]["label"]))
             for i, x in enumerate(surfaces)
             if x in V["surfaces"]
         )
-        code = read_code(d, surfaces[0], V)
-        if code:
-            body = esc(code)
-        else:
-            body = esc(
+        panes = []
+        for i, x in enumerate(surfaces):
+            code = read_code(d, x, V)
+            body = esc(code) if code else esc(
                 "# not written yet - recipes/%s/%s/%s"
-                % (r["slug"], surfaces[0],
-                   V["surfaces"].get(surfaces[0], {}).get("entry", "?"))
-            )
+                % (r["slug"], x, V["surfaces"].get(x, {}).get("entry", "?")))
+            panes.append('<pre class="src" data-pane="%d"%s>%s</pre>'
+                         % (i, "" if i == 0 else " hidden", body))
         out.append(
-            '<div class="cw"><div class="stabs" role="tablist">%s</div>'
-            '<pre class="src">%s</pre></div>'
-            % (tabs, body)
+            '<div class="cw"><div class="stabs" role="tablist">%s</div>%s</div>'
+            % (tabs, "".join(panes))
         )
 
-        sv = V["surfaces"].get(surfaces[0], {})
-        run = ["git clone &hellip; &amp;&amp; cd %s/%s" % (esc(r["slug"]), esc(surfaces[0])),
-               "cp .env.example .env"]
-        if sv.get("install"):
-            run.append(esc(sv["install"]))
-        if sv.get("run"):
-            run.append(esc(sv["run"]))
-        out.append(
-            '<div class="sec"><h2>Run it</h2><div class="steps">%s</div></div>'
-            % "<br>".join(run)
-        )
+        if "Run it" in sections:
+            out.append('<div class="sec"><h2>Run it</h2>%s</div>' % blocks_html(sections["Run it"]))
+        else:
+            sv = V["surfaces"].get(surfaces[0], {})
+            run = ["git clone &hellip; &amp;&amp; cd %s/%s" % (esc(r["slug"]), esc(surfaces[0])),
+                   "cp .env.example .env"]
+            if sv.get("install"):
+                run.append(esc(sv["install"]))
+            if sv.get("run"):
+                run.append(esc(sv["run"]))
+            out.append(
+                '<div class="sec"><h2>Run it</h2><div class="steps">%s</div></div>'
+                % "<br>".join(run)
+            )
+        if "Verify it" in sections:
+            out.append('<div class="sec"><h2>Verify it</h2>%s</div>' % blocks_html(sections["Verify it"]))
 
     if "What to change first" in sections:
-        out.append(
-            '<div class="sec"><h2>What to change first</h2>%s</div>'
-            % "".join("<p>%s</p>" % x for x in sections["What to change first"])
-        )
+        out.append('<div class="sec"><h2>What to change first</h2>%s</div>'
+                   % blocks_html(sections["What to change first"]))
 
+    def link(slug):
+        return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))
+
+    # Typed relationships: authored forward edges (recipe -> prerequisite,
+    # sibling, next) and the build edges in both directions. One block, so the
+    # reader sees where the recipe sits in one glance.
+    rels = []
+    for key, title in (("prerequisites", "Before this"), ("related", "Related"), ("next", "Next")):
+        targets = [x for x in r.get(key, []) if x in _TITLES]
+        if targets:
+            rels.append(
+                '<div class="rel"><h3>%s</h3><div class="cxlist">%s</div></div>'
+                % (title, "".join(link(x) for x in targets))
+            )
     if r.get("kind") == "build" and r.get("composes"):
-        links = "".join(
-            '<a class="cx" href="#%s">%s</a>' % (esc(x), esc(x))
-            for x in r["composes"]
-        )
-        out.append(
-            '<div class="sec"><h2>Recipes this composes</h2>'
-            '<div class="cxlist">%s</div></div>' % links
+        rels.append(
+            '<div class="rel"><h3>Recipes this composes</h3><div class="cxlist">%s</div></div>'
+            % "".join(link(x) for x in r["composes"])
         )
     for b in _USED_IN.get(r["slug"], []):
-        out.append(
-            '<div class="sec"><h2>Seen in production</h2><p>This pattern is one of '
-            '%d recipes composed by <a class="cx" href="#%s">%s</a>.</p></div>'
-            % (len(b.get("composes", [])), esc(b["slug"]), esc(b["title"]))
+        rels.append(
+            '<div class="rel"><h3>Seen in a build</h3><p>One of %d recipes composed by %s.</p></div>'
+            % (len(b.get("composes", [])), link(b["slug"]))
         )
+    if rels:
+        out.append('<div class="sec rels"><h2>Where this sits</h2>%s</div>' % "".join(rels))
     repo = r.get("repo") or "#"
     out.append(
         '<div class="dfoot"><a href="%s">View the repository</a>'
         '<a href="#">Report an issue</a></div></div></div>' % esc(repo)
     )
+    out.append("<script>%s</script>" % DETAIL_JS)
     body = "".join(out)
     return body if body_only else page(
         r["title"] + " - SignalWire Recipes", body
@@ -750,13 +824,14 @@ def build_md(r):
         f"- **Products:** {', '.join(r.get('products', []))}",
         f"- **Capabilities:** {', '.join(r.get('capabilities', []))}",
         f"- **Surfaces:** {', '.join(r.get('surfaces', []))}",
-        f"- **Governed:** {'yes' if r.get('governed') else 'no'}",
-        f"- **Tier:** {r.get('tier','')}",
-        f"- **Provenance:** {r.get('provenance','')}",
-        "",
-        f"Canonical: {BASE}/{r['slug']}",
-        "",
     ]
+    # typed relationships, as links a crawler or a model can follow
+    for key, title in (("prerequisites", "Prerequisites"), ("related", "Related"),
+                       ("next", "Next"), ("composes", "Composes")):
+        if r.get(key):
+            lines.append(f"- **{title}:** " + ", ".join(
+                f"[{_TITLES.get(x, x)}]({BASE}/{x})" for x in r[key]))
+    lines += ["", f"Canonical: {BASE}/{r['slug']}", ""]
     return "\n".join(lines)
 
 
@@ -867,8 +942,9 @@ def main():
         print("no recipes/ dir — run scaffold.py first")
         return 1
     recipes = load()
-    global _USED_IN
+    global _USED_IN, _TITLES
     _USED_IN = used_in(recipes)
+    _TITLES = {r["slug"]: r["title"] for r in recipes}
     if "--preview" in sys.argv:
         SITE.mkdir(parents=True, exist_ok=True)
         out = SITE / "preview.html"

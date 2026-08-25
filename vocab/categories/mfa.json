@@ -1,0 +1,5 @@
+{
+  "label": "MFA",
+  "order": 40,
+  "blurb": "One-time codes over SMS or voice, verified by the platform."
+}

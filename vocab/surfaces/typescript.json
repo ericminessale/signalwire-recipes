@@ -1,1 +1,12 @@
-{"label":"TypeScript","abbr":"ts","entry":"index.ts","deps":"package.json","install":"npm ci","run":"npm start","verify":"npx tsc --noEmit"}
+{
+  "label": "TypeScript",
+  "abbr": "ts",
+  "entry": "index.ts",
+  "deps": "package.json",
+  "install": "npm ci",
+  "run": "npm start",
+  "verify": "npx tsc --noEmit",
+  "interfaces": [
+    "browser-sdk"
+  ]
+}

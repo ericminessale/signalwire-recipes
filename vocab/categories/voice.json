@@ -1,5 +1,5 @@
 {
   "label": "Voice",
   "order": 20,
-  "blurb": "Call control, routing, recording, conferencing."
+  "blurb": "Call control, routing, recording, conferencing, SIP, and calling from the browser."
 }

@@ -9,3 +9,6 @@ node_modules/
 
 # seeded design canvas (rebuild with seed-canvas.mjs)
 design/signalwire-recipes-directions.html
+
+# codex review session logs (answers are saved to docs/*_REVIEW_*.md)
+docs/_sol_*.log

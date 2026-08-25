@@ -25,11 +25,24 @@ CLAUDE.md.
 The Agents SDK (3.0.1) is vendored next door and is importable:
 
 ```bash
-PYTHONPATH="../AI Call Center/signalwire-call-center/ai-agents/signalwire-sdk/signalwire"
+PYTHONPATH="/c/Projects/SignalWire/AI Call Center/signalwire-call-center/ai-agents/signalwire-sdk/signalwire"
 ```
 
+**Use the absolute path and print `signalwire.__version__, signalwire.__file__`
+at the top of every verification run.** This machine has `signalwire-sdk
+3.3.0.dev107` in site-packages; a relative `PYTHONPATH` silently falls back to
+it after any `cd`, and one "verified against 3.0.1" run was not (2026-08-25).
+The published version developers will `pip install` is 3.0.2.
+
 The import is `from signalwire import AgentBase` — **not** `signalwire_agents`,
-which is the 0.1.x name and appears in several stale docs.
+which is the 0.1.x/1.0.x name; it has no alias in 3.0.1 and seven of the 22
+`signalwire-demos` repos still use it (listed in `docs/enum/demos.md` §1) — do
+not quote those. The SDK's full surface, with file:line for every claim and an
+explicit ABSENT list, is `docs/enum/sdk-surface.md`; §11 there is how to render
+SWML and invoke a tool without a network (`agent._render_swml()`,
+`agent._execute_swaig_function()`). The JSON key the platform receives is often
+not the SDK method name (`update_global_data` → `set_global_data`,
+`swml_change_step` → `change_step`) — assert the key, not the method.
 
 ## What this is NOT
 
@@ -55,10 +68,24 @@ collapses the distinction and the card contract then serves neither well.
 
 ## Taxonomy
 
-- **Categories are SignalWire product lines**: AI Agents, Voice, Messaging,
-  Browser & Video, SIP. They mirror what the company sells. Never invent a
-  parallel axis (an earlier pedagogical taxonomy — "governance", "handoff" as
+- **Categories are SignalWire product lines**: the six the pricing page sells
+  verbatim — **AI Agents, Voice, Messaging, MFA, Video, Fax** (decided
+  2026-08-25 after sol's round-5 review; evidence `docs/enum/platform-docs.md`
+  §A.1). SIP and the Browser SDK are *interfaces*, not product lines: SIP
+  recipes live under Voice with `sip`/`byoc` capability tags; browser-only
+  voice recipes live under Voice with `browser-sdk` as an interface tag. The
+  earlier five (with "Browser & Video" and "SIP") are superseded;
+  `vocab/categories/` still carries them until the phase-2 reseed. Never invent
+  a parallel axis (an earlier pedagogical taxonomy — "governance", "handoff" as
   categories — was wrong and is gone).
+- **The seven planning sections are a lens, not a public axis.** AI Agents &
+  Automation · Voice & Call Control · Messaging & Realtime Chat · Video &
+  WebRTC · Numbers, Identity & Trust · SIP, PBX & Migration · Fax exist as the
+  `lens` column of the inventory and nowhere on the site.
+- **Slugs name the mechanism, scenarios are tags.** The slug is the developer's
+  search query (`require-verification-before-unlocking-tools`); "bank",
+  "drive-thru", "movie showtimes" go in `scenario` and tags, never in the slug.
+  One recipe per testable platform claim; a scenario is never a row.
 - **Category is derived** from the recipe's declared `products`, not chosen
   independently.
 - **Task groups** (`subcategory`) are a required field and the second level:
@@ -139,22 +166,102 @@ Plans and output go to **sol via the codex CLI** before they are trusted:
 Redirect stdin or it hangs waiting on it. Write the brief to a file and point at
 the path rather than inlining it.
 
-Three reviews are preserved in `docs/`. Each one killed something real:
+Write the brief to `docs/_sol_brief_<topic>.md`, log to `docs/_sol_<topic>.log`
+(codex echoes every file it reads into the log — the answer is after the last
+`codex` marker line, before `tokens used`), and save the answer verbatim as
+`docs/<KIND>_REVIEW_<date>.md`.
+
+Six reviews are preserved in `docs/`. Each one killed something real:
 extraction estimates that were 2.4x optimistic, an architecture whose central
-claim was unprotected, and an IA that presented a growing graph as one ordered
-list.
+claim was unprotected, an IA that presented a growing graph as one ordered
+list, a blocked list that was stale, and (round 5) five backlog items mapped to
+the wrong mechanism plus a five-category taxonomy that contradicted this file's
+own rule.
+
+## The list (state as of 2026-08-25)
+
+- `docs/enum/inventory.json` is the single source for the proposed list;
+  `docs/enum/render_inventory.py` renders `docs/INVENTORY.md` and **refuses**
+  on a duplicate slug, a bad category/task group, a build with a task group, a
+  row without evidence, or a backlog ID (#1–#34) that is missing or appears in
+  two rows. Edit the JSON, re-render; never edit `INVENTORY.md`.
+- `docs/PROPOSED_LIST.md` is the narrative: principle, kinds, taxonomy
+  decision, the 34-item verdict (22 Recipe · 6 Merge · 3 Kill · 2 Hold · 1
+  Tool), the coverage record, the launch set (19).
+- Enumeration outputs live in `docs/enum/` (SDK surface, platform docs, demos,
+  Telnyx stems). Marketing's backlog is verbatim in `docs/MARKETING_BACKLOG.md`
+  — a resource, not a build order.
+- Corpus reality (end of 2026-08-25): 55 folders (51 recipes, 4 builds), the
+  20 launch-set recipes written and verified (`python verify.py` → 20/20), 34
+  recipe folders still stubs, 3 builds without a repo. Six categories in
+  `vocab/categories/`. The four recipes the previous session had written were
+  all wrong against 3.0.1 (`signalwire_agents`, `self.result_data`,
+  `signalwire.rest.Client`, a bare `connect` action); all four were rewritten.
+
+## Authoring protocol (established 2026-08-25 from 20 recipes taken end-to-end)
+
+A recipe folder is done when **`python verify.py <slug>` passes**, not when it
+compiles. The folder contains:
+
+- `recipe.json` — metadata; `plan` holds the planning state (never rendered).
+- `README.md` with these `##` sections: *What this demonstrates* (first
+  paragraph is the claim the page shows), *How it works* (the mechanism with
+  the JSON/YAML the platform receives), *Run it*, *Verify it*, *Limitations*,
+  *What to change first*. Fenced code blocks render as code.
+- one directory per declared surface (`python/app.py` + `requirements.txt`
+  pinning `signalwire-sdk>=3.0.1`; `swml/agent.yaml`; `typescript/index.ts` +
+  `package.json` + `tsconfig.json` + committed `package-lock.json`). Declare
+  only surfaces that are written — an empty entry file renders as a lie.
+- `verify.py` — proves the claim offline in the artifact the platform receives.
+  Helpers in `tools/verifylib.py`: `validate_swml()` (SDK schema),
+  `Recorder` + `record_everything()` (swap the REST client's HTTP layer),
+  `assert_documented(kind, method, path, body, params)` (path, documented
+  fields and required fields against `tools/openapi/{rest,compat}.json`),
+  `load_yaml`, `verb_names`, `first`. Agents: `agent._render_swml()` and
+  `agent._execute_swaig_function()`. **Assert the JSON keys the platform
+  receives, never the SDK method names** (`update_global_data` →
+  `set_global_data`; `execute_swml(transfer=True)` puts the flag inside the
+  document — build the documented sibling `"transfer": "true"` by hand).
+  TypeScript is type-checked against the installed `@signalwire/js` when
+  `typescript/node_modules` exists; that caught three wrong member names.
+- `python verify.py` at the root runs every recipe's verifier with the SDK
+  path resolved absolutely (`SIGNALWIRE_SDK_PATH` overrides).
+
+`scaffold.py` seeds folders from `docs/enum/inventory.json` (launch rows by
+default, `--all` for everything) and syncs planning fields; it never deletes.
+Retiring a folder is a deliberate `git rm`.
+
+## Typed relationships and the detail page (decided 2026-08-25)
+
+- Three **authored** forward edges on a recipe: `prerequisites` (run these
+  first), `related` (siblings), `next` (where to go after). Builds keep
+  `composes`. Reverse edges are computed: recipe→build ("Seen in a build") only
+  from builds that have a `repo`. Dangling or self edges refuse the build.
+  Never generate neighbour lists — Telnyx's alphabetical "related" is the
+  anti-pattern.
+- They render as one block, **Where this sits**, at the end of the detail page,
+  and as link lines in the `.md` for answer engines.
+- Detail page rules from the visual pass: labels are sentence-case sans
+  (`The claim`, `Evidence · …`), footer links turquoise, fenced README code in
+  `pre.mdcode`, every written surface in its own pane with working tabs, README
+  *Run it* replaces the generated steps when present, *Verify it* renders after
+  the code. Look at `site/r/<slug>.html` through `python -m http.server` and
+  `playwright-cli` before calling a change done.
 
 ## Open work
 
-- **Protocol for authoring a new recipe** — to be established from one recipe
-  taken genuinely end-to-end, not written in advance.
-- **Typed relationships** (`prerequisites`, `related`, `next`) are specified here
-  but not implemented. Recipe→build, recipe→prerequisite and build→composed
-  navigation should be designed once, together.
-- The **detail page** has not had the visual pass the index has.
+- 34 launch-adjacent stubs still have folders with empty entry files (they
+  render as "not written yet"); the 60 `proposed` inventory rows have no
+  folder. Write them through the protocol above, launch set first
+  (`docs/INVENTORY.md`).
+- Three stub builds (`voice-support-line`, `sms-support-desk`,
+  `governed-intake-agent`) need repositories or retirement; `ai-call-center`'s
+  `composes` must be re-verified against its code.
+- The nine NEEDS VERIFICATION rows in `docs/INVENTORY.md`.
 - **Chat is absent from the corpus** and is the cheapest path to an interactive
   demo: text in, text out, no WebRTC, no PSTN, no media stack. Voice
   interactivity needs a runtime service and belongs behind it.
-- The seed list needs an enumeration pass (SDK surface, FEATURES.md, the 22
-  demos in `signalwire-demos`, Telnyx's stems as a coverage checklist) rather
-  than a recall pass.
+- The enumeration pass is done (`docs/enum/`); the remaining coverage debt is
+  the nine NEEDS VERIFICATION rows listed at the end of `docs/INVENTORY.md`.
+  sol round 6 (`docs/LIST_REVIEW_2026-08-25_round6.md`) cleared the list for
+  phase 2.

@@ -1,0 +1,5 @@
+{
+  "label": "Fax",
+  "order": 60,
+  "blurb": "Send and receive fax with status webhooks."
+}
