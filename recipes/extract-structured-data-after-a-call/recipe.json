@@ -9,7 +9,8 @@
     "ai-agents"
   ],
   "capabilities": [
-    "post-prompt"
+    "post-prompt",
+    "observability"
   ],
   "surfaces": [
     "python"
@@ -18,5 +19,22 @@
   "demo": "talk",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#24 (canonical: transcript-based post-call analysis)",
+      "t:call-recording-ai-summarizer",
+      "t:ai-call-center-quality-scorer"
+    ],
+    "evidence": [
+      "sdk prompt_mixin.py:202 set_post_prompt",
+      "sdk agent_base.py:421 on_summary",
+      "docs apis/rest/webhooks/ai-post-prompt-callback",
+      "demo postpromptviewer",
+      "demo postpromptviewer lib/parser.js (the payload contains SWML, transcript, SWAIG calls, timings, recording URL)"
+    ]
+  }
 }

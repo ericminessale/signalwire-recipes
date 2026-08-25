@@ -1,0 +1,49 @@
+{
+  "slug": "register-a-10dlc-brand-and-campaign",
+  "title": "Register a 10DLC brand and campaign",
+  "alias": "",
+  "summary": "A brand and campaign are registered over REST, numbers are assigned to the campaign, and the status webhook reports carrier approval.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "10dlc",
+    "compliance"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "messaging",
+    "folds": [
+      "t:long-code-sms",
+      "t:sms-marketing-campaign (registration half)"
+    ],
+    "evidence": [
+      "docs platform/messaging/campaign-registry/registration",
+      "docs apis/rest/campaign-registry/brands/create-brand",
+      "docs apis/rest/webhooks/ten-dlc-status-callback",
+      "sdk rest/namespaces/registry.py",
+      "platform-docs: brand edits need Support; toll-free verification is a form",
+      "verified 2026-08-25: recipes/register-a-10dlc-brand-and-campaign/verify.py"
+    ]
+  },
+  "subcategory": "governance",
+  "prerequisites": [
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "send-an-sms"
+  ],
+  "next": [
+    "send-an-sms"
+  ]
+}

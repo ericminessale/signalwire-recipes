@@ -10,8 +10,8 @@
     "messaging"
   ],
   "capabilities": [
-    "webhooks",
-    "security"
+    "security",
+    "webhooks"
   ],
   "surfaces": [
     "python",
@@ -20,6 +20,19 @@
   "governed": false,
   "demo": "none",
   "provenance": "new",
-  "tier": "launch",
-  "subcategory": "other"
+  "tier": "next",
+  "subcategory": "governance",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:receive-sms-webhook (signature part)",
+      "variant: SWAIG signature request"
+    ],
+    "evidence": [
+      "docs swml/guides/webhook-security (HMAC)",
+      "docs apis/rest/webhooks/swaig-signature-request"
+    ]
+  }
 }

@@ -4,12 +4,12 @@
   "alias": "scoped WebRTC token",
   "summary": "Mint a short-lived browser token and restrict what it is allowed to call.",
   "scenario": "Click-to-call without handing out your account",
-  "category": "webrtc",
+  "category": "voice",
   "products": [
     "voice"
   ],
   "capabilities": [
-    "webrtc",
+    "tokens",
     "security"
   ],
   "surfaces": [
@@ -20,5 +20,16 @@
   "demo": "none",
   "provenance": "new",
   "tier": "next",
-  "subcategory": "call-control"
+  "subcategory": "governance",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "video",
+    "folds": [],
+    "evidence": [
+      "docs apis/rest/subscribers/tokens (guest token allowed_addresses <= 10)",
+      "sdk rest/namespaces/fabric.py create_guest_token",
+      "demo afterhours app.py:866 client.fabric.tokens.create_guest_token"
+    ]
+  }
 }

@@ -9,16 +9,42 @@
     "messaging"
   ],
   "capabilities": [
-    "sms",
-    "webhooks"
+    "sms"
   ],
   "surfaces": [
     "python",
-    "typescript"
+    "swml"
   ],
   "governed": false,
   "demo": "text",
   "provenance": "new",
   "tier": "launch",
-  "subcategory": "other"
+  "subcategory": "other",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "messaging",
+    "folds": [
+      "t:receive-sms-webhook",
+      "t:receive-mms-webhook",
+      "t:sms-auto-reply-bot",
+      "t:sms-keyword-auto-responder",
+      "t:two-way-sms-chat"
+    ],
+    "evidence": [
+      "docs swml/reference/messaging (reply, switch)",
+      "docs compatibility-api/cxml/reference/messaging (Message)",
+      "docs apis/rest/webhooks (SWML inbound message webhook)",
+      "verified 2026-08-25: recipes/reply-to-an-inbound-sms/verify.py"
+    ]
+  },
+  "prerequisites": [
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "send-an-sms"
+  ],
+  "next": [
+    "run-the-same-agent-over-text"
+  ]
 }

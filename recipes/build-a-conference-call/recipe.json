@@ -20,5 +20,18 @@
   "demo": "ai-to-ai",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:build-conference-calling",
+      "scenario t:conference-live-poll-dtmf (DTMF polling is not evidenced; scenario only)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/join-conference",
+      "docs compatibility-api/rest (Conferences, Participants)"
+    ]
+  }
 }

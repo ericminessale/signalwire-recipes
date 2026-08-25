@@ -18,5 +18,19 @@
   "demo": "talk",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#18 (drive-thru: menu constraints and stock-outs enforced in code)",
+      "#11 (policy-limit pattern, neutral scenario)",
+      "t:ai-subscription-cancel-save-retention-agent"
+    ],
+    "evidence": [
+      "sdk function_result.py:301 swml_change_step",
+      "sdk contexts.py:252 set_valid_steps"
+    ]
+  }
 }

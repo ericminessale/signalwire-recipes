@@ -9,7 +9,8 @@
     "voice"
   ],
   "capabilities": [
-    "webhooks"
+    "webhooks",
+    "observability"
   ],
   "surfaces": [
     "python",
@@ -19,5 +20,15 @@
   "demo": "none",
   "provenance": "new",
   "tier": "next",
-  "subcategory": "other"
+  "subcategory": "observe",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [],
+    "evidence": [
+      "docs apis/rest/webhooks (SWML inbound call webhook, status callbacks)",
+      "compat Calls StatusCallbackEvent"
+    ]
+  }
 }

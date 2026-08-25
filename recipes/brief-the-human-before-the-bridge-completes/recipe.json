@@ -9,8 +9,8 @@
     "voice"
   ],
   "capabilities": [
-    "conference",
-    "transfer"
+    "transfer",
+    "conference"
   ],
   "surfaces": [
     "python"
@@ -19,5 +19,20 @@
   "demo": "observe",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "handoff"
+  "subcategory": "handoff",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "#9",
+      "t:warm-transfer",
+      "t:warm-transfer-ai-briefing",
+      "t:call-whisper-screen-pop"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/connect (confirm)",
+      "features pre-join TTS whisper"
+    ]
+  }
 }

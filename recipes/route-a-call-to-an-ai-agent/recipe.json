@@ -10,7 +10,7 @@
     "voice"
   ],
   "capabilities": [
-    "agent"
+    "call-fabric"
   ],
   "surfaces": [
     "python",
@@ -20,6 +20,20 @@
   "governed": false,
   "demo": "talk",
   "provenance": "demos",
-  "tier": "launch",
-  "subcategory": "other"
+  "tier": "next",
+  "subcategory": "routing",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "t:route-phone-calls-to-ai-agent",
+      "t:build-voice-ai-agent"
+    ],
+    "evidence": [
+      "features Phone number management (swml_webhook resource)",
+      "docs apis/rest/swml-webhook/create-swml-webhook",
+      "sdk rest/namespaces/fabric.py assign_phone_route"
+    ]
+  }
 }

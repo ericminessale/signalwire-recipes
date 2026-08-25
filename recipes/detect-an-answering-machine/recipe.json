@@ -18,5 +18,18 @@
   "demo": "none",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:texml-voicemail-drop"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/detect-machine (detect_message_end)",
+      "compat Calls MachineDetection/AsyncAmd",
+      "features AMD shipped 2026-06-09"
+    ]
+  }
 }

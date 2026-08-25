@@ -1,0 +1,47 @@
+{
+  "slug": "create-a-video-room-and-join-from-the-browser",
+  "title": "Create a video room and join from the browser",
+  "alias": "",
+  "summary": "A room is created over REST, a token is minted per participant, and the browser joins with layouts and screen share.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video"
+  ],
+  "capabilities": [
+    "video"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "video",
+    "folds": [
+      "t:video-room-ai-meeting-moderator",
+      "t:video-room-ai-moderator"
+    ],
+    "evidence": [
+      "docs apis/rest/video/rooms/create-room",
+      "docs apis/rest/video/room-tokens/create-room-token",
+      "docs browser-sdk/guides/migrate-from-v3 (dial /public/<room>)",
+      "docs browser-sdk/guides/screen-sharing",
+      "verified 2026-08-25: recipes/create-a-video-room-and-join-from-the-browser/verify.py",
+      "resolved: v4 path is a Fabric conference_rooms resource dialled at /public/<name> with a guest SAT; the documented create body requires enable_room_previews"
+    ]
+  },
+  "subcategory": "call-control",
+  "prerequisites": [
+    "call-from-a-browser"
+  ],
+  "related": [
+    "get-a-webrtc-token-with-restricted-dial-targets"
+  ],
+  "next": []
+}

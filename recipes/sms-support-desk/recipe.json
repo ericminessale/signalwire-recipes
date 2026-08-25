@@ -6,11 +6,13 @@
   "scenario": "Support over text without a second codebase",
   "category": "messaging",
   "products": [
-    "messaging"
+    "messaging",
+    "ai-agents"
   ],
   "capabilities": [
     "sms",
-    "chat"
+    "chat",
+    "opt-out"
   ],
   "composes": [
     "reply-to-an-inbound-sms",
@@ -23,5 +25,18 @@
   "demo": "observe",
   "provenance": "new",
   "tier": "next",
-  "repo": "https://github.com/ericminessale/signalwire-recipes"
+  "repo": "",
+  "plan": {
+    "kind": "build",
+    "status": "stub",
+    "lens": "messaging",
+    "folds": [
+      "c:sms-support-desk (stub, no repo)",
+      "t:sms-conversation-threading",
+      "t:hotel-guest-services"
+    ],
+    "evidence": [
+      "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+    ]
+  }
 }

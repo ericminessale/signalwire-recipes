@@ -1,0 +1,48 @@
+{
+  "slug": "send-an-otp-by-sms-with-voice-fallback",
+  "title": "Send an OTP by SMS, with voice fallback",
+  "alias": "",
+  "summary": "The MFA API sends a code by SMS, re-sends it by voice call if asked, and verifies it; you store no codes.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "mfa",
+  "products": [
+    "mfa",
+    "messaging",
+    "voice"
+  ],
+  "capabilities": [
+    "mfa",
+    "identity"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "numbers-identity",
+    "folds": [
+      "sol correction: Verify -> MFA/OTP",
+      "t:sms-two-factor-auth",
+      "t:verify-phone-number-otp-flow",
+      "t:voice-verified-identity-2fa"
+    ],
+    "evidence": [
+      "docs apis/rest/multi-factor-authentication/request-mfa-sms (and request-mfa-call, verify)",
+      "sdk rest/namespaces/mfa.py",
+      "verified 2026-08-25: recipes/send-an-otp-by-sms-with-voice-fallback/verify.py (requests checked against tools/openapi)"
+    ]
+  },
+  "subcategory": "other",
+  "prerequisites": [],
+  "related": [
+    "send-an-sms"
+  ],
+  "next": [
+    "require-verification-before-unlocking-tools"
+  ]
+}

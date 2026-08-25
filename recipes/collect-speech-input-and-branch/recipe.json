@@ -9,8 +9,7 @@
     "voice"
   ],
   "capabilities": [
-    "stt",
-    "tts"
+    "stt"
   ],
   "surfaces": [
     "python",
@@ -19,6 +18,18 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch",
-  "subcategory": "observe"
+  "tier": "next",
+  "subcategory": "routing",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:ai-powered-ivr-replacement"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/prompt (speech_engine, speech_hints)",
+      "docs compatibility-api/cxml/reference/voice (Gather input=speech)"
+    ]
+  }
 }

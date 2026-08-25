@@ -8,10 +8,7 @@
   "products": [
     "voice"
   ],
-  "capabilities": [
-    "answer",
-    "tts"
-  ],
+  "capabilities": [],
   "surfaces": [
     "python",
     "typescript",
@@ -20,6 +17,19 @@
   "governed": false,
   "demo": "talk",
   "provenance": "new",
-  "tier": "launch",
-  "subcategory": "call-control"
+  "tier": "next",
+  "subcategory": "call-control",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:text-to-speech-phone-call"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/answer, play",
+      "docs compatibility-api/cxml/reference/voice (Say)",
+      "sdk relay/call.py:478 answer"
+    ]
+  }
 }

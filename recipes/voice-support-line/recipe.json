@@ -9,13 +9,13 @@
     "voice"
   ],
   "capabilities": [
-    "dtmf",
     "queue",
-    "recording"
+    "recording",
+    "dtmf"
   ],
   "composes": [
     "build-an-ivr-menu",
-    "play-hold-music",
+    "queue-a-call-until-an-agent-is-free",
     "offer-a-callback-instead-of-a-hold",
     "record-a-call",
     "handle-call-status-callbacks"
@@ -26,5 +26,16 @@
   "demo": "observe",
   "provenance": "new",
   "tier": "next",
-  "repo": "https://github.com/ericminessale/signalwire-recipes"
+  "repo": "",
+  "plan": {
+    "kind": "build",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "c:voice-support-line (stub, no repo)"
+    ],
+    "evidence": [
+      "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+    ]
+  }
 }

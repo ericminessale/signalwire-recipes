@@ -9,7 +9,7 @@
     "voice"
   ],
   "capabilities": [
-    "live-translate"
+    "translation"
   ],
   "surfaces": [
     "python",
@@ -18,6 +18,22 @@
   "governed": false,
   "demo": "ai-to-ai",
   "provenance": "narrow",
-  "tier": "later",
-  "subcategory": "other"
+  "tier": "next",
+  "subcategory": "other",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "sol gap #5",
+      "t:ai-real-time-translation-bridge",
+      "t:three-way-ai-interpreter",
+      "t:webrtc-ai-interpreter-live-calls"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/live-translate",
+      "features Live Translate (no update action; stop + restart to change pair)",
+      "demo (none)"
+    ]
+  }
 }

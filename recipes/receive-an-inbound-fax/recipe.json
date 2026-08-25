@@ -1,0 +1,49 @@
+{
+  "slug": "receive-an-inbound-fax",
+  "title": "Receive an inbound fax",
+  "alias": "",
+  "summary": "An inbound fax on a number is received to a URL and your webhook is told when it lands.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "fax",
+  "products": [
+    "fax"
+  ],
+  "capabilities": [
+    "fax"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "fax",
+    "folds": [
+      "launch #12 (split from send-and-receive-a-fax)",
+      "t:fax-to-ai-document-processor",
+      "t:fax-to-structured-data-pipeline"
+    ],
+    "evidence": [
+      "docs platform/fax",
+      "docs swml/reference/calling/receive-fax",
+      "docs compatibility-api/guides/callback-for-inbound-fax",
+      "platform-docs: no native /api/fax send endpoint",
+      "verified 2026-08-25: recipes/receive-an-inbound-fax/verify.py (requests checked against tools/openapi)"
+    ]
+  },
+  "subcategory": "call-control",
+  "prerequisites": [
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "send-a-fax"
+  ],
+  "next": [
+    "extract-structured-data-after-a-call"
+  ]
+}

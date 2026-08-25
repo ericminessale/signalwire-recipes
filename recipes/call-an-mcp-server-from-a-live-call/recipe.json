@@ -9,8 +9,7 @@
     "ai-agents"
   ],
   "capabilities": [
-    "mcp",
-    "tool-calling"
+    "mcp"
   ],
   "surfaces": [
     "python"
@@ -19,5 +18,21 @@
   "demo": "talk",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#28",
+      "variant: SDK mcp_gateway skill for stdio servers"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/ai/swaig (mcp_servers)",
+      "sdk ai_config_mixin.py:493 add_mcp_server",
+      "sdk skills/mcp_gateway/skill.py:22",
+      "features External Tools",
+      "demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)"
+    ]
+  }
 }

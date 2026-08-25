@@ -9,8 +9,7 @@
     "voice"
   ],
   "capabilities": [
-    "conference",
-    "barge"
+    "conference"
   ],
   "surfaces": [
     "python"
@@ -19,5 +18,17 @@
   "demo": "observe",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "../Barge Demo exists in the workspace"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/join-conference (muted, end_on_exit)",
+      "features Barge"
+    ]
+  }
 }

@@ -19,6 +19,22 @@
   "governed": true,
   "demo": "observe",
   "provenance": "rewrite",
-  "tier": "later",
-  "subcategory": "handoff"
+  "tier": "next",
+  "subcategory": "handoff",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:ai-after-hours-emergency-triage",
+      "t:after-hours-nurse-triage"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/enter-queue",
+      "docs apis/rest/queue-members/retrieve-next-queue-member",
+      "features enter_queue + two-leg bridge",
+      "demo housecall trenton.py:928 swml_transfer(dest=AGENT_PHONE) (legacy SDK)",
+      "NEEDS VERIFICATION: the notes transport - which webhook/payload the dequeuing side receives, and where the agent's notes are keyed (global_data via post_prompt vs. your own store)"
+    ]
+  }
 }

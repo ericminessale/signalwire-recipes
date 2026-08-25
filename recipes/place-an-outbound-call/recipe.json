@@ -9,7 +9,7 @@
     "voice"
   ],
   "capabilities": [
-    "dial"
+    "outbound"
   ],
   "surfaces": [
     "python",
@@ -19,6 +19,20 @@
   "governed": false,
   "demo": "none",
   "provenance": "new",
-  "tier": "launch",
-  "subcategory": "call-control"
+  "tier": "next",
+  "subcategory": "call-control",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:make-outbound-phone-call",
+      "t:fraud-alert-verification"
+    ],
+    "evidence": [
+      "docs apis/rest/calls/call-commands (dial)",
+      "sdk relay/client.py:343 dial",
+      "compat Calls create"
+    ]
+  }
 }

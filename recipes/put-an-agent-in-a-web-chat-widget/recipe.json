@@ -19,5 +19,17 @@
   "demo": "text",
   "provenance": "new",
   "tier": "next",
-  "subcategory": "other"
+  "subcategory": "other",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "messaging",
+    "folds": [
+      "#27"
+    ],
+    "evidence": [
+      "docs apis/rest/ai-chat/chat-methods",
+      "NEEDS VERIFICATION: browser-side auth to the AI Chat API (a token proxy is likely required)"
+    ]
+  }
 }

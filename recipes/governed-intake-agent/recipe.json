@@ -9,8 +9,7 @@
     "ai-agents"
   ],
   "capabilities": [
-    "governance",
-    "tool-calling"
+    "governance"
   ],
   "composes": [
     "scope-tools-per-step",
@@ -25,5 +24,18 @@
   "demo": "observe",
   "provenance": "new",
   "tier": "next",
-  "repo": "https://github.com/ericminessale/signalwire-recipes"
+  "repo": "",
+  "plan": {
+    "kind": "build",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "c:governed-intake-agent (stub, no repo)",
+      "t:insurance-claims-intake",
+      "t:law-firm-client-intake"
+    ],
+    "evidence": [
+      "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+    ]
+  }
 }

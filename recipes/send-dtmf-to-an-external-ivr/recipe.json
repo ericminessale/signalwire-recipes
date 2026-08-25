@@ -19,5 +19,19 @@
   "demo": "none",
   "provenance": "new",
   "tier": "next",
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:outbound-hold-agent"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/send-digits",
+      "demo pathfinder",
+      "features DTMF keypad",
+      "demo pathfinder tools.py:110-114,265-273 execute_swml -> send_digits with w/W pacing; model classifies, code picks the digit"
+    ]
+  }
 }

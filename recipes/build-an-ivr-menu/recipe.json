@@ -9,17 +9,39 @@
     "voice"
   ],
   "capabilities": [
-    "dtmf",
-    "tts"
+    "dtmf"
   ],
   "surfaces": [
     "python",
-    "typescript",
     "swml"
   ],
   "governed": false,
   "demo": "talk",
   "provenance": "new",
   "tier": "launch",
-  "subcategory": "call-control"
+  "subcategory": "routing",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "voice",
+    "folds": [
+      "t:build-ivr-phone-menu",
+      "t:ai-powered-ivr-replacement (see collect-speech-input-and-branch)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/prompt, switch",
+      "docs compatibility-api/cxml/reference/voice (Gather)",
+      "verified 2026-08-25: recipes/build-an-ivr-menu/verify.py (schema-validated SWML, both surfaces)"
+    ]
+  },
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "collect-speech-input-and-branch"
+  ],
+  "next": [
+    "queue-a-call-until-an-agent-is-free",
+    "transfer-a-call"
+  ]
 }

@@ -1,0 +1,48 @@
+{
+  "slug": "buy-a-number-and-point-it-at-your-app",
+  "title": "Buy a number and point it at your app",
+  "alias": "",
+  "summary": "Search by area code or pattern, purchase, and assign the number's call and message handlers, all over REST.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "numbers",
+    "call-fabric"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "numbers-identity",
+    "folds": [
+      "t:number-search-and-purchase-api",
+      "t:smart-number-geo-assignment",
+      "t:merge-employee-onboarding"
+    ],
+    "evidence": [
+      "docs apis/rest/phone-numbers/search-available-phone-numbers (areacode, region, starts_with)",
+      "docs apis/rest/phone-numbers (purchase, update, assign phone route)",
+      "sdk rest/namespaces/phone_numbers.py",
+      "verified 2026-08-25: recipes/buy-a-number-and-point-it-at-your-app/verify.py (requests checked against tools/openapi)"
+    ]
+  },
+  "subcategory": "other",
+  "prerequisites": [],
+  "related": [
+    "verify-a-webhook-signature"
+  ],
+  "next": [
+    "answer-an-inbound-call",
+    "send-an-sms"
+  ]
+}

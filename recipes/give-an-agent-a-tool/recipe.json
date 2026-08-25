@@ -18,6 +18,23 @@
   "governed": false,
   "demo": "talk",
   "provenance": "demos",
-  "tier": "launch",
-  "subcategory": "tools"
+  "tier": "next",
+  "subcategory": "tools",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "t:ai-voice-agent-with-function-calling",
+      "t:ai-assistant-multi-tool",
+      "t:agent-with-tool-calling",
+      "scenario: a silent sentiment-reporting tool (c:classify-sentiment-from-a-transcript; FEATURES Sentiment reporting)"
+    ],
+    "evidence": [
+      "sdk tool_mixin.py:26,175,187",
+      "docs swml/reference/calling/ai/swaig/functions",
+      "demo example",
+      "demo workshop 01 define_tool"
+    ]
+  }
 }

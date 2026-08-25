@@ -17,6 +17,30 @@
   "governed": true,
   "demo": "talk",
   "provenance": "extract",
-  "tier": "launch",
-  "subcategory": "governance"
+  "tier": "next",
+  "subcategory": "governance",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "ai",
+    "folds": [
+      "#30 (order status)",
+      "t:ai-billing-dispute-resolution-agent",
+      "sol had #30 -> #5; the backlog's own 'pattern it teaches' for #30 is this recipe's claim"
+    ],
+    "evidence": [
+      "sdk function_result.py:71 FunctionResult(response)",
+      "demo goair build_ai_summary() keeps the AI-facing slice under 1 KB",
+      "verified 2026-08-25: recipes/hide-fields-from-the-model/verify.py against sdk 3.0.1"
+    ]
+  },
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "scope-tools-per-step"
+  ],
+  "next": [
+    "require-verification-before-unlocking-tools"
+  ]
 }

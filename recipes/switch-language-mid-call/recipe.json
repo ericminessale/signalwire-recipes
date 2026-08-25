@@ -19,5 +19,21 @@
   "demo": "talk",
   "provenance": "narrow",
   "tier": "next",
-  "subcategory": "other"
+  "subcategory": "other",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#33",
+      "t:ai-multilingual-code-switching-agent",
+      "t:ai-language-learning-phone-tutor"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/ai/multilingual",
+      "sdk ai_config_mixin.py:75 add_language",
+      "features Multilingual support",
+      "demo ginospizza add_language(inworld voice) (legacy SDK)"
+    ]
+  }
 }

@@ -16,7 +16,8 @@
     "tap",
     "coach",
     "rag",
-    "governance"
+    "governance",
+    "translation"
   ],
   "surfaces": [],
   "repo": "https://github.com/ericminessale/ai-call-center",
@@ -35,5 +36,19 @@
   "governed": true,
   "demo": "observe",
   "provenance": "extract",
-  "tier": "launch"
+  "tier": "launch",
+  "plan": {
+    "kind": "build",
+    "status": "written",
+    "lens": "ai",
+    "folds": [
+      "t:full-stack-ai-contact-center"
+    ],
+    "evidence": [
+      "repo github.com/ericminessale/ai-call-center",
+      "features FEATURES.md",
+      "composes must be re-verified against code: FEATURES.md notes warm transfer is designed but not wired",
+      "sol round 5: 'transfers that keep context' removed from the public claim until the composition is verified (FEATURES.md: warm transfer designed, not wired)"
+    ]
+  }
 }

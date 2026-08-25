@@ -18,5 +18,18 @@
   "demo": "none",
   "provenance": "new",
   "tier": "next",
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#29",
+      "t:edge-mcp-server-deploy"
+    ],
+    "evidence": [
+      "sdk ai_config_mixin.py:521 enable_mcp_server",
+      "sdk mcp_server_mixin.py:60-142"
+    ]
+  }
 }

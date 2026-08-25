@@ -19,5 +19,18 @@
   "demo": "observe",
   "provenance": "extract",
   "tier": "next",
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "plan": {
+    "kind": "recipe",
+    "status": "stub",
+    "lens": "voice",
+    "folds": [
+      "t:call-whisper-monitoring"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/join-conference (coach)",
+      "features Whisper (coach member shape)",
+      "sdk function_result.py:1046 join_conference(coach=)"
+    ]
+  }
 }

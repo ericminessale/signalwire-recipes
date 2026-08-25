@@ -9,7 +9,8 @@
     "ai-agents"
   ],
   "capabilities": [
-    "observability"
+    "observability",
+    "benchmark"
   ],
   "surfaces": [
     "python"
@@ -18,5 +19,20 @@
   "demo": "observe",
   "provenance": "demos",
   "tier": "next",
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "plan": {
+    "kind": "tool",
+    "status": "stub",
+    "lens": "ai",
+    "folds": [
+      "#34",
+      "variant: audible_latency / audible_debug params",
+      "../latency_checker exists in the workspace"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/ai/params (audible_latency, debug_webhook_url)",
+      "demo testbot (107-capability conformance harness)",
+      "demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)"
+    ]
+  }
 }

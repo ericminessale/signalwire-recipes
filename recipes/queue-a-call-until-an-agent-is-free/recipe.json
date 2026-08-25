@@ -1,0 +1,52 @@
+{
+  "slug": "queue-a-call-until-an-agent-is-free",
+  "title": "Queue a call until an agent is free",
+  "alias": "",
+  "summary": "Callers wait in a named queue with hold audio and are bridged in order as agents connect to it.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "queue"
+  ],
+  "tier": "launch",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "voice",
+    "folds": [
+      "t:call-queue-with-hold-music",
+      "t:programmable-hold-experience",
+      "c:play-hold-music (fold as the wait_url half)",
+      "c:play-hold-music (folded entirely; t:hold-music; AI background_file variant noted on the AI params)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/enter-queue (wait_url, wait_time)",
+      "docs swml/reference/calling/connect (queue:name)",
+      "docs compatibility-api/cxml/reference/voice (Enqueue, Dial Queue)",
+      "docs apis/rest/queues/create-queue",
+      "docs swml/reference/calling/play (urls, loop)",
+      "verified 2026-08-25: recipes/queue-a-call-until-an-agent-is-free/verify.py (schema-validated SWML, both surfaces)"
+    ]
+  },
+  "subcategory": "routing",
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "offer-a-callback-instead-of-a-hold",
+    "hand-off-from-ai-to-a-human-agent"
+  ],
+  "next": [
+    "transfer-a-call"
+  ]
+}
