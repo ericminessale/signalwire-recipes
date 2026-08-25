@@ -1,33 +1,66 @@
 # Build an IVR menu
 
-> Play a menu, collect keypad input, and route the caller to the right place.
+> Press-1 menus branch to different sections without a line of server code.
 
-**Technical:** `DTMF collect + branch`
-**Scenario:** Press 1 for sales
+**Scenario:** a main line that routes to sales, support, or a recorded message
 
 ## What this demonstrates
 
-_TODO — the pattern, in two sentences. This is the part that carries the argument._
+A complete phone menu is one SWML document: `prompt` collects a digit, `switch`
+branches on it, and each branch is a named section. Nothing here needs a server
+— host the YAML as a SWML Script in the Dashboard and point a number at it.
 
-## Prerequisites
+The Python surface builds the identical document with `SWMLService`, so the
+destinations can come from the environment and every verb is validated against
+the SWML schema before it is served.
 
-- A SignalWire account and API token
-- A phone number on that account
+## How it works
 
-## Setup
-
-```bash
-cp .env.example .env    # add your credentials
+```yaml
+- prompt:
+    play: "say:Thanks for calling. Press 1 for sales, 2 for support, or 3 for opening hours."
+    max_digits: 1
+- switch:
+    variable: prompt_value
+    case:
+      "1": [ { transfer: { dest: sales } } ]
+      "2": [ { transfer: { dest: support } } ]
+      "3": [ { transfer: { dest: hours } } ]
+    default: [ { play: { url: "say:Sorry, I did not catch that." } }, { transfer: { dest: main } } ]
 ```
+
+`prompt` stores the digit in `prompt_value`. `switch` matches it and `transfer`
+jumps to a section of the same document. The `sales` and `support` sections
+`connect` to a phone number; `hours` plays a message and hangs up. An
+unrecognised key re-prompts by transferring back to `main`.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python, typescript, swml_
+Markup only: paste `swml/agent.yaml` into a new SWML Script in the Dashboard,
+assign a phone number to it, call the number.
+
+Python:
+
+```bash
+cd python
+pip install -r requirements.txt
+SALES_NUMBER=+1555... SUPPORT_NUMBER=+1555... python app.py
+```
+
+Point a phone number's SWML webhook at `https://<your-host>/ivr`.
+
+## Verify it
+
+```bash
+python verify.py
+```
+
+Both surfaces are validated against the SDK's bundled SWML schema; the verifier
+asserts one digit is collected, every case transfers to a section that exists,
+and the default branch re-prompts.
 
 ## What to change first
 
-_TODO_
-
-## Related
-
-_TODO_
+Add a fourth option that transfers to a SIP address instead of a number, or
+replace `prompt`'s digit collection with speech (`speech_hints`) and branch on
+what the caller says — see `collect-speech-input-and-branch`.

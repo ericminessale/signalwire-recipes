@@ -1,49 +1,56 @@
-"""Send an SMS, and handle the outcome properly."""
+"""Send an SMS, and treat the status callback as the truth.
+
+The send response says "queued" or "accepted". Delivery, undelivered and failed
+arrive later on the status callback - and a callback can arrive more than once,
+so the handler is idempotent on (sid, status).
+
+Written against signalwire-sdk 3.0.1 (the Compatibility Messages endpoint via
+RestClient.compat).
+"""
 import os
 
 from flask import Flask, request
-from signalwire.rest import Client
+from signalwire.rest import RestClient
 
 app = Flask(__name__)
-client = Client(
-    os.environ["SIGNALWIRE_PROJECT_ID"],
-    os.environ["SIGNALWIRE_API_TOKEN"],
-    signalwire_space_url=os.environ["SIGNALWIRE_SPACE"],
-)
+
+# RestClient reads SIGNALWIRE_PROJECT_ID / SIGNALWIRE_API_TOKEN / SIGNALWIRE_SPACE
+# from the environment when not passed explicitly.
+client = RestClient()
 
 TERMINAL = {"delivered", "undelivered", "failed"}
 seen = set()
 
 
 def send(to, body):
-    msg = client.messages.create(
-        from_=os.environ["SIGNALWIRE_PHONE_NUMBER"],
-        to=to,
-        body=body,
-        status_callback=os.environ["PUBLIC_URL"] + "/sms-status",
+    """Accepted is not delivered. Return the sid and wait for the callback."""
+    msg = client.compat.messages.create(
+        From=os.environ["SIGNALWIRE_PHONE_NUMBER"],
+        To=to,
+        Body=body,
+        StatusCallback=os.environ["PUBLIC_URL"] + "/sms-status",
     )
-    # "queued" or "accepted" here. Not delivered.
-    app.logger.info("accepted sid=%s status=%s", msg.sid, msg.status)
-    return msg.sid
+    app.logger.info("accepted sid=%s status=%s", msg.get("sid"), msg.get("status"))
+    return msg.get("sid")
 
 
 @app.post("/sms-status")
 def sms_status():
     sid = request.form.get("MessageSid")
     status = request.form.get("MessageStatus")
-    # Status callbacks can repeat. Make the handler idempotent.
+    # Callbacks can repeat. Same (sid, status) twice must do nothing twice.
     key = (sid, status)
     if key in seen:
         return "", 204
     seen.add(key)
     if status in TERMINAL:
-        app.logger.info(
-            "terminal sid=%s status=%s err=%s",
-            sid,
-            status,
-            request.form.get("ErrorCode"),
-        )
+        on_terminal(sid, status, request.form.get("ErrorCode"))
     return "", 204
+
+
+def on_terminal(sid, status, error_code):
+    """Runs exactly once per (sid, terminal status). Put your side effects here."""
+    app.logger.info("terminal sid=%s status=%s err=%s", sid, status, error_code)
 
 
 if __name__ == "__main__":

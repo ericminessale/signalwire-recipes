@@ -80,9 +80,12 @@ class IntakeAgent(AgentBase):
         parameters={},
     )
     def transfer_to_human(self, args, raw_data):
-        result = FunctionResult("Connecting you now.")
-        result.add_action("connect", {"to": os.environ["SUPPORT_ADDRESS"]})
-        return result
+        # connect() emits the documented shape: a SWML action carrying the
+        # connect verb, plus "transfer": "true" so the agent exits. A bare
+        # {"connect": ...} action is not in the platform's SWAIG action list.
+        return FunctionResult("Connecting you now.").connect(
+            os.environ["SUPPORT_ADDRESS"], final=True
+        )
 
 
 if __name__ == "__main__":

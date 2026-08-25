@@ -1,33 +1,69 @@
 # Transfer a call
 
-> Move a live caller to another number or address.
+> A live call is bridged to a number, SIP URI or Resource address, and optionally returns when the far end hangs up.
 
-**Technical:** `connect / transfer action`
-**Scenario:** The simplest handoff there is
+**Scenario:** a front desk that connects callers to a colleague and takes the call back if they hang up first
 
 ## What this demonstrates
 
-_TODO — the pattern, in two sentences. This is the part that carries the argument._
+`connect` is the transfer verb. Its `to` can be a phone number, a `sip:` URI or
+a Resource address such as `/public/support`. Execution pauses while the two
+legs are bridged; when the far end hangs up, the verbs *after* `connect` run —
+that is the return path, and it is where the caller can be offered something
+else. `transfer_after_bridge: "true"` makes the transfer permanent instead.
 
-## Prerequisites
+## How it works
 
-- A SignalWire account and API token
-- A phone number on that account
-
-## Setup
-
-```bash
-cp .env.example .env    # add your credentials
+```yaml
+- answer: {}
+- play: { url: "say:Please hold while I connect you." }
+- connect: { to: "+1555...", timeout: 20, ringback: ["ring:us"] }
+- play: { url: "say:The other party has left the call. Thank you for calling." }   # return path
+- hangup: {}
 ```
+
+The `sip` section is the SIP variant: the same `connect` with a `sip:` URI and
+`headers`, which SignalWire stamps onto the INVITE so your PBX can route on them.
+
+```yaml
+- connect:
+    to: "sip:support@pbx.example.com"
+    headers:
+      - { name: "X-Account-Id", value: "acct-1234" }
+```
+
+To try several destinations in order or ring them at once, replace `to` with
+`serial` or `parallel` — see `try-destinations-in-order`. To brief the person
+before the bridge completes, add `confirm` — see
+`brief-the-human-before-the-bridge-completes`.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python, typescript, swml_
+Markup only: paste `swml/agent.yaml` into a SWML Script, replace the
+destinations, assign a phone number.
+
+Python:
+
+```bash
+cd python
+pip install -r requirements.txt
+TRANSFER_TO=+1555... python app.py            # temporary: the call comes back
+PERMANENT=true TRANSFER_TO=+1555... python app.py
+```
+
+Point a phone number's SWML webhook at `https://<your-host>/transfer`.
+
+## Verify it
+
+```bash
+python verify.py
+```
+
+Both surfaces validate against the SWML schema; the verifier asserts `connect`
+is followed by a return path, that `PERMANENT=true` adds
+`transfer_after_bridge`, and that the SIP variant carries the custom headers.
 
 ## What to change first
 
-_TODO_
-
-## Related
-
-_TODO_
+Change `to` to a Resource address (`/public/<name>`) and route the call into a
+SWML script, an AI agent or a subscriber's browser instead of a phone.

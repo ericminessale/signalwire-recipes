@@ -13,8 +13,51 @@ CPaaS this is application code you write and maintain yourself.
 
 ## How it works
 
-Data written to the shared context during intake is still present after the
-transfer. The receiving agent reads it on its first turn.
+Two agents run on one `AgentServer`: `/intake` and `/billing-specialist`. Both set
+`params.persist_global_data = true` — the platform saves `global_data` to a
+channel variable when an AI session ends and restores it when the next AI
+session starts on the same call — and `params.transfer_summary = true` so the
+next agent also receives a summary of the conversation so far.
+
+The intake tool `route_caller` writes what it learned from the handler, not
+through the model:
+
+```json
+{"set_global_data": {"caller_name": "Dana Whitfield", "intake_reason": "...", "verified": true}}
+{"SWML": {"version": "1.0.0", "sections": {"main": [{"transfer": {"dest": "https://<host>/billing-specialist"}}]}}, "transfer": "true"}
+```
+
+The transfer URL carries none of the context. The billing agent's prompt reads
+it directly — `${global_data.caller_name}`, `${global_data.intake_reason}` — so
+its first turn already knows who is calling and why.
+
+One SDK note: `FunctionResult.execute_swml(..., transfer=True)` in 3.0.1 places
+the transfer flag *inside* the SWML document; the documented action shape (and
+what `FunctionResult.connect()` emits) is a sibling `"transfer": "true"`, so
+this recipe builds that action explicitly.
+
+## Run it
+
+```bash
+cd python
+pip install -r requirements.txt
+PUBLIC_URL=https://<your-host> python app.py
+```
+
+Point a phone number's SWML webhook at `https://<your-host>/intake`.
+
+## Verify it
+
+No network, no account:
+
+```bash
+python verify.py
+```
+
+It renders both agents' SWML and asserts `persist_global_data` on each, runs the
+intake tool and asserts the `set_global_data` action and the `SWML` + `transfer`
+action, checks that no collected value appears in the transfer URL, and asserts
+the billing prompt reads the same `global_data` keys.
 
 ## Limitations
 

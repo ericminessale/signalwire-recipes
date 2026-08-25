@@ -14,8 +14,37 @@ a caller who asks cleverly.
 
 ## How it works
 
-The tool handler loads the full record from your own system, then builds an explicit
-allowlist projection. Only the projection is returned to the model.
+`get_account` is a SWAIG tool with no parameters. The handler loads the full
+record from your own system, builds an explicit allowlist projection
+(`EXPOSED = ("first_name", "plan", "renewal_date", "open_tickets")`) and returns
+it as the tool's response text — `FunctionResult(json.dumps(projection))`. That
+response is the only thing the model receives; `risk_score`, `margin_pct`,
+`internal_notes` and `card_last_four` are never in the conversation.
+
+The prompt never names the hidden fields either. A prompt that says "do not
+mention the risk score" tells the model a risk score exists.
+
+## Run it
+
+```bash
+cd python
+pip install -r requirements.txt
+python app.py
+```
+
+Point a phone number's SWML webhook at `https://<your-host>/account`.
+
+## Verify it
+
+No network, no account:
+
+```bash
+python verify.py
+```
+
+It runs the tool handler as the platform would and asserts the response
+contains every exposed field and none of the hidden ones, then renders the
+SWML and asserts the prompt does not mention a hidden field.
 
 ## Limitations
 
