@@ -11,5 +11,6 @@
     "rest",
     "relay",
     "compat-sdk"
-  ]
+  ],
+  "lexer": "python"
 }

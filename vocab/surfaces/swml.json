@@ -8,5 +8,6 @@
   "verify": "python -c \"import yaml,sys;yaml.safe_load(open(sys.argv[1]))\" agent.yaml",
   "interfaces": [
     "swml"
-  ]
+  ],
+  "lexer": "yaml"
 }

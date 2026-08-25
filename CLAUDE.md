@@ -302,6 +302,19 @@ Retiring a folder is a deliberate `git rm`.
 - `[hidden]{display:none!important}` is in the reset because author `display`
   rules on `.card` beat the UA's `[hidden]`; the filters and the unbuilt toggle
   set the attribute and were hiding nothing. Counting attributes is not looking.
+- **The code block** is highlighted at build time with Pygments; the lexer name
+  is the `lexer` field of `vocab/surfaces/<x>.json` (python, typescript, yaml),
+  never a literal in the generator. Header: language tabs left, `surface/entry`
+  file name and a Copy button right; one `pre.src[data-pane]` per written
+  surface. The tab script finds panes with `bar.closest('.cw')` — a wrapper
+  inserted between the tabs and the panes once broke switching while the tab
+  label and file name still changed, so **a tab test asserts the visible pane's
+  text**, not the label. Palette is restrained: weight and the two greys do
+  most of it, strings in a desaturated turquoise, comments recede, no purple.
+  Copy uses the clipboard API and falls back to selecting the pane (the
+  artifact iframe may refuse the API).
+- The preview banner is a preview notice: shown on the index only, hidden on
+  every recipe page.
 
 ## Open work
 

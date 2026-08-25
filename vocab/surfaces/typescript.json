@@ -8,5 +8,6 @@
   "verify": "npx tsc --noEmit",
   "interfaces": [
     "browser-sdk"
-  ]
+  ],
+  "lexer": "typescript"
 }

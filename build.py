@@ -181,17 +181,34 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--surface);
   border:1px solid var(--line);border-radius:8px;padding:16px 18px;line-height:1.9;
   overflow-x:auto;}
-.cw{margin:34px 0;}
+.cw{margin:34px 0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);}
+.cwh{display:flex;align-items:stretch;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--line);background:var(--raised);padding:0 6px 0 0;}
+.cwr{display:flex;align-items:center;gap:12px;}
+.cwr .fn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);}
+.copy{font-family:var(--body);font-size:11.5px;color:var(--fg-muted);background:transparent;
+  border:1px solid var(--line-2);border-radius:4px;padding:4px 10px;cursor:pointer;}
+.copy:hover{color:var(--fg);border-color:var(--fg-subtle);}
+.copy:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .stabs{display:flex;gap:2px;}
 .stab{font-family:var(--mono);font-size:11px;padding:8px 13px;border:none;
   background:transparent;color:var(--fg-subtle);cursor:pointer;
   border-bottom:2px solid transparent;}
 .stab:hover{color:var(--fg);}
 .stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);}
-pre.src{margin:6px 0 0;background:var(--surface);color:var(--fg-2);padding:18px;overflow:auto;
+pre.src{margin:0;background:var(--surface);color:var(--fg-2);padding:18px;overflow:auto;
   border:1px solid var(--line);border-radius:8px;font-family:var(--mono);
   font-size:12px;line-height:1.8;overflow-x:auto;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
+pre.src .c,pre.src .c1,pre.src .cm,pre.src .cs,pre.src .ch{color:var(--fg-subtle);font-style:italic;}
+pre.src .k,pre.src .kn,pre.src .kd,pre.src .kr,pre.src .kt,pre.src .kc,pre.src .ow{color:var(--fg);font-weight:500;}
+pre.src .s,pre.src .s1,pre.src .s2,pre.src .sd,pre.src .sa,pre.src .se,pre.src .si,pre.src .sb,pre.src .sh,pre.src .sx,pre.src .l-Scalar-Plain{color:#8fd6cf;}
+pre.src .nf,pre.src .nc,pre.src .fm,pre.src .nx{color:var(--fg);}
+pre.src .nd,pre.src .na{color:var(--fg-muted);}
+pre.src .nt{color:var(--fg);}
+pre.src .mi,pre.src .mf,pre.src .mh,pre.src .m{color:var(--fg-2);}
+pre.src .nb,pre.src .bp,pre.src .nn{color:var(--fg-2);}
+pre.src .o,pre.src .p,pre.src .punctuation{color:var(--fg-muted);}
 pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);padding:14px 16px;
   border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:12px;
   line-height:1.55;overflow-x:auto;}
@@ -475,6 +492,21 @@ def prose(blocks):
     return [b for b in blocks if not b.startswith(PRE_MARK)]
 
 
+def highlight_code(code, lexer_name):
+    """Pygments at build time; the lexer comes from the surface's vocab entry.
+    Falls back to escaped text when Pygments or the lexer is unavailable."""
+    if not lexer_name:
+        return esc(code)
+    try:
+        from pygments import highlight
+        from pygments.formatters import HtmlFormatter
+        from pygments.lexers import get_lexer_by_name
+        return highlight(code, get_lexer_by_name(lexer_name, stripnl=False),
+                         HtmlFormatter(nowrap=True)).rstrip("\n")
+    except Exception:  # missing dependency or unknown lexer: never break the build
+        return esc(code)
+
+
 def read_code(d, surface, V):
     entry = V["surfaces"].get(surface, {}).get("entry")
     if not entry:
@@ -751,11 +783,20 @@ _TITLES = {}
 
 DETAIL_JS = """
 document.querySelectorAll('.stabs').forEach(function(bar){
-  var cw=bar.parentNode;
+  var cw=bar.closest('.cw');  // the tab bar sits inside the header, the panes beside it
   bar.addEventListener('click',function(e){
     var t=e.target.closest('.stab'); if(!t) return;
     bar.querySelectorAll('.stab').forEach(function(b){b.setAttribute('aria-selected',b===t?'true':'false');});
-    cw.querySelectorAll('pre.src').forEach(function(p){p.hidden=p.dataset.pane!==t.dataset.pane;});
+    cw.querySelectorAll('pre.src,.fn').forEach(function(p){p.hidden=p.dataset.pane!==t.dataset.pane;});
+  });
+});
+document.querySelectorAll('.cw .copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var pre=b.closest('.cw').querySelector('pre.src:not([hidden])'); if(!pre) return;
+    var text=pre.textContent, done=function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy';},1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){sel();});}
+    else{sel();}
+    function sel(){var r=document.createRange();r.selectNodeContents(pre);var g=getSelection();g.removeAllRanges();g.addRange(r);b.textContent='Selected';setTimeout(function(){b.textContent='Copy';},1400);}
   });
 });
 """.strip()
@@ -823,17 +864,20 @@ def build_detail(r, body_only=False):
             for i, x in enumerate(surfaces)
             if x in V["surfaces"]
         )
-        panes = []
+        panes, names = [], []
         for i, x in enumerate(surfaces):
+            sv = V["surfaces"].get(x, {})
             code = read_code(d, x, V)
-            body = esc(code) if code else esc(
-                "# not written yet - recipes/%s/%s/%s"
-                % (r["slug"], x, V["surfaces"].get(x, {}).get("entry", "?")))
-            panes.append('<pre class="src" data-pane="%d"%s>%s</pre>'
-                         % (i, "" if i == 0 else " hidden", body))
+            body = highlight_code(code, sv.get("lexer")) if code else esc(
+                "# not written yet - recipes/%s/%s/%s" % (r["slug"], x, sv.get("entry", "?")))
+            hid = "" if i == 0 else " hidden"
+            panes.append('<pre class="src" data-pane="%d"%s><code>%s</code></pre>' % (i, hid, body))
+            names.append('<span class="fn" data-pane="%d"%s>%s/%s</span>'
+                         % (i, hid, esc(x), esc(sv.get("entry", ""))))
         out.append(
-            '<div class="cw"><div class="stabs" role="tablist">%s</div>%s</div>'
-            % (tabs, "".join(panes))
+            '<div class="cw"><div class="cwh"><div class="stabs" role="tablist">%s</div>'
+            '<div class="cwr">%s<button type="button" class="copy">Copy</button></div></div>%s</div>'
+            % (tabs, "".join(names), "".join(panes))
         )
 
         if "Run it" in sections:
@@ -976,8 +1020,10 @@ def has_content(r):
 PREVIEW_JS = """
 var views = document.querySelectorAll('[data-view]');
 var lastY = 0;  // returning to a 121-item index at the top loses your place
+var banner = document.querySelector('.pvbanner');
 function show(id){
   views.forEach(function(v){ v.hidden = (v.dataset.view !== id); });
+  if (banner) banner.hidden = (id !== 'index');  // a preview notice, not part of a recipe page
   if (id === 'index'){
     history.replaceState(null, '', location.pathname);
     window.scrollTo(0, lastY);
