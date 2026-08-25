@@ -100,16 +100,6 @@ collapses the distinction and the card contract then serves neither well.
 
 1. `recipes/<slug>/recipe.json` is the only metadata source. No central registry.
 2. Never hand-edit anything under `site/`. Regenerate.
-3. **Cards carry a real `href` to `r/<slug>.html`** — never a bare `#slug`. The
-   public index has no router, so a fragment is a dead click, and it left all 55
-   detail pages with zero inbound links, which is fatal for audience #1. The
-   preview intercepts that href and swaps the inline `[data-view]`. Planned
-   cards get no `href` at all, so they are inert and unfocusable rather than
-   `aria-disabled` links.
-4. **Every selector the preview JS depends on is a contract.** Three had gone
-   stale against a DOM the generator no longer emits (`.row`, `[data-slug]`,
-   `[data-home]`) and every failure was silent — the hash changed, the view did
-   not. Click a card and click back before calling a card change done.
 3. Never write to an author-owned `README.md` from a build step.
 4. **One recipe, many surfaces** — language is a subdirectory and a tab, never a
    separate slug. Telnyx emitted `call-forwarding` seven times; that is how 36%
@@ -118,6 +108,18 @@ collapses the distinction and the card contract then serves neither well.
 6. Every recipe needs a real `summary` and a task group. Both are enforced.
 7. Public pages carry no internal metadata. `tier`, `provenance` and `governed`
    are planning state and must not render.
+8. **Cards carry a real `href` to `r/<slug>.html`** — never a bare `#slug`. The
+   public index has no router, so a fragment is a dead click, and it left all 55
+   detail pages with zero inbound links, which is fatal for audience #1. The
+   preview intercepts that href and swaps the inline `[data-view]`. Planned
+   cards get no `href` at all, so they are inert rather than `aria-disabled`.
+9. **Every selector the preview JS depends on is a contract.** Three had gone
+   stale against a DOM the generator no longer emits (`.row`, `[data-slug]`,
+   `[data-home]`) and every failure was silent — the hash changed, the view did
+   not. Click a card and click back at the render before calling a change done.
+10. **A toggle's knob is an element inside its track**, never a pseudo-element
+    pulled into place with negative margins — that landed the knob on the label
+    text in the artifact pane (2026-08-25).
 
 ## Validation (all of these refuse the build)
 
@@ -143,20 +145,17 @@ brand cheatsheet's abstractions and not invented:
 - Instrument Sans 600 at `-0.04em` / 1.1 for headings; Lexend body; JetBrains
   Mono for identifiers, with `tnum` and slashed zero
 - the official logo SVG carries the wordmark — never set the company name as type
-- **fuchsia `#F72A72` has exactly four jobs**: primary button, the
-  builds/recipes transition rule, active Builds chip, selected surface tab. If
-  you are reaching for it a fifth time, the answer is a neutral.
-- **The build rail is retired** (2026-08-25). A 2px fuchsia inset on every build
-  card read as "this card is special" when there was one build; at five per
-  category it read as arbitrary, and the planned cards' grey rails stacked into
-  a false container edge. The colour moved to where the eye needs help: `.bsec`
-  closes the builds block with an 84px fuchsia tick continuing as a neutral
-  rule, handing off to the first task group. The tick length echoes
-  `.eyebrow::before`. A full-width fuchsia rule was rendered and rejected —
-  repeated down six categories it stripes the page. Builds now lean on the
-  `Builds N` header and the `composes` chips to read as builds; if that proves
-  too weak, give the block a `--surface` ground rather than putting colour back
-  on the cards.
+- **fuchsia `#F72A72` has exactly four jobs**: primary button, build rail, active
+  Builds chip, selected surface tab. If you are reaching for it a fifth time,
+  the answer is a neutral.
+- **The build rail marks a build that exists.** A 2px fuchsia inset plus a
+  brighter cell edge (`--line-2`) on a live build card; a planned build (no
+  repository) gets neither, so in a mixed band the real one reads as real and
+  the rest read as placeholders. A parallel session retired the rail on all
+  builds on 2026-08-25 and moved the colour to a tick under the block; Eric
+  reversed that the same day — the cards went flat and AI Call Center looked
+  like its planned siblings. The rule under the builds block (`.bsec`) is
+  neutral, full width on purpose: it separates two blocks, not two cells.
 - turquoise for links and identifiers; no purple anywhere
 - no glows, no gradients, no texture — the call center disables its own grain and
   dot-grid deliberately

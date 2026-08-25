@@ -131,6 +131,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 
 /* ---- recipe page ---- */
 .detail{padding:64px 0 0;max-width:760px;margin-inline:auto;}
+@media (max-width:900px){.detail{padding-inline:clamp(16px,5vw,48px);}}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fuchsia);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
@@ -203,14 +204,13 @@ a.cx:hover{color:var(--fuchsia);}
   padding:5px 11px;display:inline-flex;align-items:center;gap:7px;}
 .pvtog:hover{border-color:var(--fg-subtle);}
 .pvtog:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
-.pvtog::before{content:"";width:22px;height:13px;border-radius:7px;flex:none;
-  background:var(--line-2);position:relative;transition:background 140ms ease;}
-.pvtog::after{content:"";width:9px;height:9px;border-radius:50%;flex:none;
-  background:var(--fg-2);margin-left:-30px;margin-right:19px;
-  transition:transform 140ms ease;}
-.pvtog[aria-pressed="true"]{color:var(--fg);border-color:rgba(247,42,114,.4);}
-.pvtog[aria-pressed="true"]::before{background:var(--fuchsia);}
-.pvtog[aria-pressed="true"]::after{transform:translateX(9px);background:#fff;}
+.pvtog .sw{position:relative;width:22px;height:13px;border-radius:7px;flex:none;
+  background:var(--line-2);transition:background 140ms ease;}
+.pvtog .sw i{position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;
+  background:var(--fg-2);transition:transform 140ms ease;}
+.pvtog[aria-pressed="true"]{color:var(--fg);border-color:var(--fg-subtle);}
+.pvtog[aria-pressed="true"] .sw{background:var(--fuchsia);}
+.pvtog[aria-pressed="true"] .sw i{transform:translateX(9px);background:#fff;}
 [data-view][hidden]{display:none;}
 
 /* collapsed category still shows its shape: name, count, task groups */
@@ -240,15 +240,14 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
 .buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;
   background:var(--page);padding:17px 19px 18px;color:inherit;
+  box-shadow:inset 2px 0 0 var(--fuchsia),inset 0 0 0 1px var(--line-2);
   transition:background 140ms ease;}
 .buildcard:hover{background:var(--surface);}
 .buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
-/* the builds block closes with a rule that hands off to the recipes below.
-   full-width is deliberate: it separates two blocks, it is not a cell edge */
-.bsec{border-bottom:1px solid var(--line);margin-bottom:4px;padding-bottom:26px;}
-.bsec::after{content:"";display:block;height:1px;margin-bottom:-1px;
-  position:relative;top:26px;width:84px;background:var(--fuchsia);}
-.buildcard.planned{cursor:default;}
+/* the builds block closes with a neutral rule that hands off to the recipes
+   below. full-width is deliberate: it separates two blocks, not two cells */
+.bsec{border-bottom:1px solid var(--line-2);margin-bottom:4px;padding-bottom:26px;}
+.buildcard.planned{cursor:default;box-shadow:none;}
 .buildcard.planned:hover{background:var(--page);}
 .buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
 .buildcard.planned .part.state{background:transparent;border:1px solid var(--line);color:var(--fg-subtle);}
@@ -1040,7 +1039,7 @@ def build_preview(recipes):
         "runnable; the rest are planned and shown greyed."
         "</span>"
         '<button type="button" class="pvtog" id="pvtog" aria-pressed="false">'
-        "Hide the unbuilt</button>"
+        '<span class="sw"><i></i></span>Hide the unbuilt</button>'
         "</div></div>" % (len(written), len(live)),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
