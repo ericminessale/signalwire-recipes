@@ -193,10 +193,24 @@ a.cx:hover{color:var(--fuchsia);}
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turquoise);}
 .pvbanner{max-width:1180px;margin:0 auto;padding:18px 32px 0;}
-.pvbanner div{border:1px solid var(--line);background:var(--surface);border-radius:8px;
-  padding:11px 15px;font-size:12.5px;color:var(--fg-muted);}
-.pvbanner b{color:var(--fuchsia);font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.14em;text-transform:uppercase;font-weight:500;}
+.pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:8px;
+  padding:11px 15px;font-size:12.5px;color:var(--fg-muted);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.pvbanner .pvt{flex:1;min-width:260px;}
+.pvbanner b{color:var(--fg-2);font-weight:500;font-variant-numeric:tabular-nums;}
+.pvtog{font-family:var(--body);font-size:12px;color:var(--fg-2);cursor:pointer;
+  background:var(--raised);border:1px solid var(--line-2);border-radius:6px;
+  padding:5px 11px;display:inline-flex;align-items:center;gap:7px;}
+.pvtog:hover{border-color:var(--fg-subtle);}
+.pvtog:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.pvtog::before{content:"";width:22px;height:13px;border-radius:7px;flex:none;
+  background:var(--line-2);position:relative;transition:background 140ms ease;}
+.pvtog::after{content:"";width:9px;height:9px;border-radius:50%;flex:none;
+  background:var(--fg-2);margin-left:-30px;margin-right:19px;
+  transition:transform 140ms ease;}
+.pvtog[aria-pressed="true"]{color:var(--fg);border-color:rgba(247,42,114,.4);}
+.pvtog[aria-pressed="true"]::before{background:var(--fuchsia);}
+.pvtog[aria-pressed="true"]::after{transform:translateX(9px);background:#fff;}
 [data-view][hidden]{display:none;}
 
 /* collapsed category still shows its shape: name, count, task groups */
@@ -226,11 +240,15 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
 .buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;
   background:var(--page);padding:17px 19px 18px;color:inherit;
-  box-shadow:inset 2px 0 0 var(--fuchsia);transition:background 140ms ease;}
+  transition:background 140ms ease;}
 .buildcard:hover{background:var(--surface);}
 .buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
-/* preview --all: a build with no repository is not a build yet - no rail */
-.buildcard.planned{box-shadow:inset 2px 0 0 var(--line-2);cursor:default;}
+/* the builds block closes with a rule that hands off to the recipes below.
+   full-width is deliberate: it separates two blocks, it is not a cell edge */
+.bsec{border-bottom:1px solid var(--line);margin-bottom:4px;padding-bottom:26px;}
+.bsec::after{content:"";display:block;height:1px;margin-bottom:-1px;
+  position:relative;top:26px;width:84px;background:var(--fuchsia);}
+.buildcard.planned{cursor:default;}
 .buildcard.planned:hover{background:var(--page);}
 .buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
 .buildcard.planned .part.state{background:transparent;border:1px solid var(--line);color:var(--fg-subtle);}
@@ -299,9 +317,11 @@ const chips=[...document.querySelectorAll('.chip')];
 const allChip=chips.find(c=>c.dataset.f==='all');
 function active(){return chips.filter(c=>c.getAttribute('aria-pressed')==='true'
   &&c.dataset.f!=='all').map(c=>c.dataset.f);}
+const tog=document.getElementById('pvtog');  // preview --all only
 function apply(){
   const t=q.value.trim().toLowerCase();
   const on=active();
+  const hideUnbuilt=!!tog&&tog.getAttribute('aria-pressed')==='true';
   const kinds=on.filter(f=>f.startsWith('kind:')).map(f=>f.slice(5));
   const cs=on.filter(f=>!f.startsWith('kind:'));
   let n=0;
@@ -310,7 +330,8 @@ function apply(){
     const okC=!cs.length||cs.some(f=>c.dataset.cat.split(' ').includes(f));
     let okK=!kinds.length||kinds.includes(c.dataset.kind);
     if(kinds.includes('build')&&c.dataset.proj==='1')okK=false;
-    c.hidden=!(okT&&okC&&okK); if(!c.hidden)n++;
+    const okB=!hideUnbuilt||!c.classList.contains('planned');
+    c.hidden=!(okT&&okC&&okK&&okB); if(!c.hidden)n++;
   });
   cats.forEach(g=>{
     const vis=[...g.querySelectorAll('.card,.buildcard')].filter(c=>!c.hidden);
@@ -318,10 +339,28 @@ function apply(){
     g.querySelectorAll('.tgroup').forEach(tg=>{
       tg.hidden=![...tg.querySelectorAll('.card')].some(c=>!c.hidden);
     });
-    const bg=g.querySelector('.bgrid'),bh=g.querySelector('.bhead');
+    const bs=g.querySelector('.bsec'),bg=g.querySelector('.bgrid');
     const anyB=bg&&[...bg.querySelectorAll('.buildcard')].some(c=>!c.hidden);
-    if(bg)bg.hidden=!anyB; if(bh)bh.hidden=!anyB;
+    if(bs)bs.hidden=!anyB;
     if(t||on.length)g.open=true;
+  });
+  // headings count what is actually on screen
+  cats.forEach(g=>{
+    const shown=[...g.querySelectorAll('.card')].filter(c=>!c.hidden).length;
+    const cn=g.querySelector('.cat-h .n'); if(cn)cn.textContent=shown;
+    g.querySelectorAll('.tgroup').forEach(tg=>{
+      const c2=tg.querySelector('.tgh .cn');
+      if(c2)c2.textContent=[...tg.querySelectorAll('.card')].filter(c=>!c.hidden).length;
+    });
+    const bh=g.querySelector('.bhead .cn'),bg2=g.querySelector('.bgrid');
+    if(bh&&bg2)bh.textContent=[...bg2.querySelectorAll('.buildcard')].filter(c=>!c.hidden).length;
+  });
+  chips.forEach(ch=>{
+    const cn=ch.querySelector('.cn'); if(!cn)return;
+    const f=ch.dataset.f;
+    cn.textContent=items.filter(c=>!c.classList.contains('planned')||!hideUnbuilt)
+      .filter(c=>f==='kind:build'?(c.dataset.kind==='build'&&c.dataset.proj!=='1')
+                                 :(c.dataset.kind==='recipe'&&c.dataset.cat.split(' ').includes(f))).length;
   });
   allChip.setAttribute('aria-pressed',on.length?'false':'true');
   const none=document.getElementById('none'); if(none)none.hidden=n>0;
@@ -331,6 +370,12 @@ function apply(){
   history.replaceState(null,'',u);
 }
 q.addEventListener('input',apply);
+if(tog)tog.addEventListener('click',()=>{
+  const was=tog.getAttribute('aria-pressed')==='true';
+  tog.setAttribute('aria-pressed',was?'false':'true');
+  tog.textContent=was?'Hide the unbuilt':'Show the unbuilt';
+  apply();
+});
 chips.forEach(c=>c.addEventListener('click',()=>{
   const was=c.getAttribute('aria-pressed')==='true';
   chips.forEach(o=>o.setAttribute('aria-pressed','false'));
@@ -577,12 +622,14 @@ def build_index(recipes, body_only=False):
             parts += '<span class="part state">%s</span>' % (
                 "no repository yet" if planned == "folder" else "planned")
         return (
-            '<a class="buildcard%s" href="#%s" data-kind="build" data-proj="%d" '
+            '<a class="buildcard%s"%s data-kind="build" data-slug="%s" data-proj="%d" '
             'data-cat="%s" data-hay="%s"%s>'
             '%s'
             '<span class="bt">%s</span><span class="bs">%s</span>'
             '<span class="parts">%s</span></a>'
-            % (" planned" if planned else "", esc(b["slug"]), 0 if home else 1,
+            % (" planned" if planned else "",
+               "" if planned else ' href="r/%s.html"' % esc(b["slug"]),
+               esc(b["slug"]), 0 if home else 1,
                " ".join(sorted(touches(b))), esc(hay(b)),
                ' aria-disabled="true"' if planned else "",
                ('<span class="lab">%s</span>' % also) if also else "",
@@ -596,12 +643,14 @@ def build_index(recipes, body_only=False):
         if planned:
             surf = "not written yet" if planned == "folder" else "planned"
         return (
-            '<a class="card%s" data-kind="recipe" href="#%s" data-cat="%s" data-hay="%s"%s>'
+            '<a class="card%s" data-kind="recipe"%s data-slug="%s" data-cat="%s" data-hay="%s"%s>'
             '<span class="ct">%s</span><span class="cs">%s</span>'
             '<span class="cd">%s</span>'
             '<span class="cf"><span class="sp"></span><span class="surf">%s</span></span>'
             "</a>"
-            % (" planned" if planned else "", esc(r["slug"]), esc(r["category"]), esc(hay(r)),
+            % (" planned" if planned else "",
+               "" if planned else ' href="r/%s.html"' % esc(r["slug"]),
+               esc(r["slug"]), esc(r["category"]), esc(hay(r)),
                ' aria-disabled="true"' if planned else "", esc(r["title"]),
                esc(r.get("alias") or r["slug"]), esc(r.get("summary", "")), esc(surf))
         )
@@ -655,8 +704,8 @@ def build_index(recipes, body_only=False):
             '<span class="tgs">%s</span></summary>'
             '<div class="catbody">%s%s</div></details>'
             % (esc(c["label"]), len(items), tabs,
-               ('<div class="bhead">Builds <span class="cn">%d</span></div>'
-                '<div class="bgrid">%s</div>'
+               ('<div class="bsec"><div class="bhead">Builds <span class="cn">%d</span></div>'
+                '<div class="bgrid">%s</div></div>'
                 % (len(cb), "".join(band(b, c["key"]) for b in cb))) if cb else "",
                blocks)
         )
@@ -714,7 +763,7 @@ def build_detail(r, body_only=False):
 
     out = [
         '<div class="wrap"><div class="detail">',
-        '<p class="back"><a href="../index.html">&larr; all recipes</a></p>',
+        '<p class="back"><a href="../index.html" data-home>&larr; all recipes</a></p>',
         '<div class="kicker">%s</div>' % esc(CAT_LABEL.get(r.get("category"), "")),
         '<div class="dh"><h1>%s</h1>' % esc(r["title"]),
     ]
@@ -910,17 +959,31 @@ def has_content(r):
 
 PREVIEW_JS = """
 var views = document.querySelectorAll('[data-view]');
+var lastY = 0;  // returning to a 121-item index at the top loses your place
 function show(id){
   views.forEach(function(v){ v.hidden = (v.dataset.view !== id); });
-  window.scrollTo(0, 0);
-  if (id !== 'index') history.replaceState(null, '', '#' + id);
-  else history.replaceState(null, '', location.pathname);
+  if (id === 'index'){
+    history.replaceState(null, '', location.pathname);
+    window.scrollTo(0, lastY);
+  } else {
+    history.replaceState(null, '', '#' + id);
+    window.scrollTo(0, 0);
+  }
 }
 document.addEventListener('click', function(e){
-  var row = e.target.closest('.row');
-  if (row && row.dataset.slug) { show(row.dataset.slug); return; }
+  // the cards carry a real href to r/<slug>.html; here the detail is inline
+  var card = e.target.closest('a.card, a.buildcard');
+  if (card && card.dataset.slug){
+    var slug = card.dataset.slug;  // slugs are [a-z0-9-]; safe in a selector
+    if (document.querySelector('[data-view="' + slug + '"]')){
+      e.preventDefault(); lastY = window.scrollY; show(slug); return;
+    }
+  }
   var back = e.target.closest('[data-home]');
   if (back) { e.preventDefault(); show('index'); }
+});
+window.addEventListener('hashchange', function(){
+  show(location.hash ? location.hash.slice(1) : 'index');
 });
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape') show('index');
@@ -972,11 +1035,13 @@ def build_preview(recipes):
 
     n_planned = sum(1 for r in live if r.get("_planned"))
     parts = [
-        '<div class="pvbanner"><div><b>Preview</b> &nbsp;'
-        "Generated by <code>build.py --preview</code>: %d written, %d not yet "
-        "(greyed). Click a written recipe; Esc returns. Interactive demos are "
-        "declared but their runtime is not built yet."
-        "</div></div>" % (len(written), n_planned),
+        '<div class="pvbanner"><div class="pvb"><span class="pvt">'
+        "Not every recipe is built yet. <b>%d</b> of <b>%d</b> are written and "
+        "runnable; the rest are planned and shown greyed."
+        "</span>"
+        '<button type="button" class="pvtog" id="pvtog" aria-pressed="false">'
+        "Hide the unbuilt</button>"
+        "</div></div>" % (len(written), len(live)),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
     for r in live:

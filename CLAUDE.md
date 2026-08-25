@@ -100,6 +100,16 @@ collapses the distinction and the card contract then serves neither well.
 
 1. `recipes/<slug>/recipe.json` is the only metadata source. No central registry.
 2. Never hand-edit anything under `site/`. Regenerate.
+3. **Cards carry a real `href` to `r/<slug>.html`** — never a bare `#slug`. The
+   public index has no router, so a fragment is a dead click, and it left all 55
+   detail pages with zero inbound links, which is fatal for audience #1. The
+   preview intercepts that href and swaps the inline `[data-view]`. Planned
+   cards get no `href` at all, so they are inert and unfocusable rather than
+   `aria-disabled` links.
+4. **Every selector the preview JS depends on is a contract.** Three had gone
+   stale against a DOM the generator no longer emits (`.row`, `[data-slug]`,
+   `[data-home]`) and every failure was silent — the hash changed, the view did
+   not. Click a card and click back before calling a card change done.
 3. Never write to an author-owned `README.md` from a build step.
 4. **One recipe, many surfaces** — language is a subdirectory and a tab, never a
    separate slug. Telnyx emitted `call-forwarding` seven times; that is how 36%
@@ -133,16 +143,28 @@ brand cheatsheet's abstractions and not invented:
 - Instrument Sans 600 at `-0.04em` / 1.1 for headings; Lexend body; JetBrains
   Mono for identifiers, with `tnum` and slashed zero
 - the official logo SVG carries the wordmark — never set the company name as type
-- **fuchsia `#F72A72` has exactly four jobs**: primary button, build rail, active
-  Builds chip, selected surface tab. If you are reaching for it a fifth time,
-  the answer is a neutral.
+- **fuchsia `#F72A72` has exactly four jobs**: primary button, the
+  builds/recipes transition rule, active Builds chip, selected surface tab. If
+  you are reaching for it a fifth time, the answer is a neutral.
+- **The build rail is retired** (2026-08-25). A 2px fuchsia inset on every build
+  card read as "this card is special" when there was one build; at five per
+  category it read as arbitrary, and the planned cards' grey rails stacked into
+  a false container edge. The colour moved to where the eye needs help: `.bsec`
+  closes the builds block with an 84px fuchsia tick continuing as a neutral
+  rule, handing off to the first task group. The tick length echoes
+  `.eyebrow::before`. A full-width fuchsia rule was rendered and rejected —
+  repeated down six categories it stripes the page. Builds now lean on the
+  `Builds N` header and the `composes` chips to read as builds; if that proves
+  too weak, give the block a `--surface` ground rather than putting colour back
+  on the cards.
 - turquoise for links and identifiers; no purple anywhere
 - no glows, no gradients, no texture — the call center disables its own grain and
   dot-grid deliberately
 - labels are sentence-case sans, **not uppercase mono** — weight does hierarchy
 - horizontal separators are `border-top` on the card, so a rule stops where the
   cards stop. A `border-bottom` scheme draws a full-width line over cells that
-  do not exist.
+  do not exist. **`.bsec` is the one deliberate exception**: it separates
+  two blocks rather than two cells, so full width is the point.
 
 ## Working method
 
@@ -152,6 +174,13 @@ brand cheatsheet's abstractions and not invented:
   selector, unstyled chips, orphaned rules.
 - **Design at real volume.** `python build.py --preview --all` renders every
   recipe. A layout that works at 5 items can be wrong at 55.
+- **Build public first, preview second.** `python build.py` does
+  `shutil.rmtree(site/)`, which deletes `site/preview.html`. Running preview
+  first and the public build second silently destroys the artifact you were
+  about to publish.
+- **Serve from the repo root, not from `site/`.** A server whose cwd is inside
+  `site/` holds a Windows lock on the directory, `rmtree` then fails, and it
+  surfaces as a bogus `check_extensible.py` failure.
 - **Verify replacements took.** `str.replace` fails silently; a "fixed" message
   proves nothing. Assert, then check the output.
 - **Anchor deletions.** Cleanup regexes have twice eaten more than intended —
