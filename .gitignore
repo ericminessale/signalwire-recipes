@@ -12,3 +12,6 @@ design/signalwire-recipes-directions.html
 
 # codex review session logs (answers are saved to docs/*_REVIEW_*.md)
 docs/_sol_*.log
+
+# playwright-cli session logs and snapshots
+.playwright-cli/
