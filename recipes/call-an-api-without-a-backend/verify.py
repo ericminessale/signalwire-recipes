@@ -1,7 +1,7 @@
 """Prove the claim without a network.
 
 Claim: a DataMap tool calls a third-party API from SignalWire's side and
-templates the response, so you run no server.
+templates the response, so no service of yours is in the tool path.
 
 Proof: the rendered SWML carries the request, the response template and the
 failure path inside the function definition, and the function has no `url` of
@@ -9,6 +9,7 @@ yours for the platform to call back to. The SDK refuses to run it locally,
 which is the claim stated from the other side.
 """
 import json
+import os
 import pathlib
 import sys
 
@@ -17,6 +18,11 @@ sys.path.insert(0, str(HERE.parent.parent / "tools"))
 sys.path.insert(0, str(HERE / "python"))
 
 import verifylib as V  # noqa: E402
+
+# what a reader's .env supplies; without it the SDK generates a password that
+# exists only in this process and the number's webhook gets a 401
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
 
 
 def tool_of(doc, label):
@@ -33,12 +39,16 @@ def main():
     from app import CatalogueAgent
 
     agent = CatalogueAgent()
+    V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     fn = tool_of(doc, "python")
 
-    # No backend: the platform is given a data_map, not a URL of ours.
+    # No tool callback: a normal SWAIG function carries web_hook_url for the
+    # platform to POST to. This one carries a data_map instead, so nothing of
+    # ours is called when the model uses it. ("url" is not the key a callback
+    # would arrive under, so asserting its absence proves nothing.)
     assert "data_map" in fn, fn
-    assert "url" not in fn, fn
+    assert "web_hook_url" not in fn, fn
     dm = fn["data_map"]
 
     # The request the platform will make, with the argument templated in.

@@ -5,16 +5,12 @@ own language and hears the other rendered by a TTS voice you pick per
 direction. The verb starts before `connect`, so the leg the bridge adds is
 inside the session.
 
-The Flask route below receives the translation events: partials while someone
-is still speaking (live_events), a final per utterance carrying the direction it
-came from, and a summary when the session ends (ai_summary).
-
 Written against signalwire-sdk 3.0.1 (SWMLService) and Flask.
 """
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from signalwire import SWMLService
 
 # the SDK does not read .env for you
@@ -42,6 +38,7 @@ def build(service=None):
         "to_voice": TO_VOICE,
         # both legs: without local-caller the agent is never translated
         "direction": ["remote-caller", "local-caller"],
+        # translation events are POSTed here while the call runs
         "webhook": f"{PUBLIC_URL}/translation",
         "live_events": True,
         "ai_summary": True,
@@ -55,39 +52,6 @@ def build(service=None):
 @app.route("/translate", methods=["GET", "POST"])
 def swml():
     return jsonify(build().get_document())
-
-
-turns = {}      # call_id -> [{"direction", "spoken", "heard"}]
-summaries = {}  # call_id -> text
-
-
-def classify(event):
-    """Return ('partial'|'final'|'summary'|'other', event)."""
-    if event.get("summary") or event.get("type") == "summary":
-        return "summary", event
-    if event.get("type") == "partial" or event.get("partial") is True:
-        return "partial", event
-    if event.get("translated") or event.get("text"):
-        return "final", event
-    return "other", event
-
-
-@app.post("/translation")
-def translation():
-    event = request.get_json(force=True, silent=True) or {}
-    kind, e = classify(event)
-    call_id = e.get("call_id", "unknown")
-    if kind == "final":
-        turns.setdefault(call_id, []).append({
-            "direction": e.get("direction", "?"),
-            "spoken": e.get("text"),
-            "heard": e.get("translated"),
-        })
-    elif kind == "summary":
-        summaries[call_id] = e.get("summary") or e.get("text")
-    else:
-        print("partial:", e.get("text"))
-    return "", 204
 
 
 if __name__ == "__main__":

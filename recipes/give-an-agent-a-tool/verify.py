@@ -9,6 +9,7 @@ handler returns a spoken answer for a known order and a typed NOT_FOUND state
 for an unknown one, with no invented delivery date.
 """
 import json
+import os
 import pathlib
 import sys
 
@@ -18,12 +19,18 @@ sys.path.insert(0, str(HERE / "python"))
 
 import verifylib as V  # noqa: E402
 
+# what a reader's .env supplies; without it the SDK generates a password that
+# exists only in this process and the number's webhook gets a 401
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
+
 
 def main():
     V.sdk_banner()
     from app import ORDERS, OrderAgent
 
     agent = OrderAgent()
+    V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]

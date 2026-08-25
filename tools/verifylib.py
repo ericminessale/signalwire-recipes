@@ -172,3 +172,25 @@ def assert_documented(kind, method, path, body=None, params=None):
             unknown = set(params) - documented
             assert not unknown, f"undocumented query param(s) for {template}: {sorted(unknown)}"
     return op
+
+
+def assert_basic_auth_from_env(agent):
+    """An AgentBase serves its SWML behind basic auth.
+
+    With no credentials in the environment the SDK generates a password that
+    exists only in the running process, so the number's webhook gets a 401 and
+    the password changes on every restart. The SDK says so on startup. Every
+    agent recipe asserts the credentials came from the environment instead.
+    """
+    user, password, source = agent.get_basic_auth_credentials(include_source=True)
+    # The SDK reports "generated" only for usernames shaped user_*, and it
+    # generates "signalwire", so an auto-generated password reports as
+    # "provided". Require "environment" rather than trusting the label.
+    assert source == "environment", (
+        f"basic auth did not come from the environment (source={source!r}); "
+        f"set SWML_BASIC_AUTH_USER and SWML_BASIC_AUTH_PASSWORD, or the SDK "
+        f"invents a password that exists only in this process and the "
+        f"number's webhook gets a 401"
+    )
+    assert user and password, (user, bool(password))
+    return user

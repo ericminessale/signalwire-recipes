@@ -11,6 +11,7 @@ call still happened, and a malformed field is not a reason to lose it.
 Written against signalwire-sdk 3.0.1.
 """
 import os
+import re
 
 from dotenv import load_dotenv
 from signalwire import AgentBase
@@ -56,6 +57,9 @@ class SupportAgent(AgentBase):
         filed.append({"call_id": call_id, **summary})
 
 
+E164 = re.compile(r"^\+[1-9]\d{1,14}$")
+
+
 def validate(summary):
     """Return None if the summary is usable, else why it is not."""
     if not isinstance(summary, dict):
@@ -63,12 +67,19 @@ def validate(summary):
     missing = [k for k in REQUIRED if k not in summary]
     if missing:
         return f"missing {', '.join(missing)}"
+    # The post-prompt asked for exactly these keys. An extra one is the model
+    # improvising, and improvised fields are how a schema drifts unnoticed.
+    extra = [k for k in summary if k not in REQUIRED]
+    if extra:
+        return f"unexpected {', '.join(sorted(extra))}"
     if summary["outcome"] not in OUTCOMES:
         return f"outcome {summary['outcome']!r} is not one of {OUTCOMES}"
+    if not isinstance(summary["reason"], str) or not summary["reason"].strip():
+        return "reason is empty"
     number = summary["callback_number"]
     if summary["outcome"] == "callback_requested" and not number:
         return "callback_requested with no callback_number"
-    if number is not None and not str(number).startswith("+"):
+    if number is not None and not E164.match(str(number)):
         return f"callback_number {number!r} is not E.164"
     return None
 

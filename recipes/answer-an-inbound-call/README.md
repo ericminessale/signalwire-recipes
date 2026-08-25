@@ -10,8 +10,7 @@ The smallest complete call. A number rings, SignalWire fetches a document from
 your URL, and the document answers the call, speaks a line and hangs up. Three
 verbs, no account state, no AI.
 
-Everything else on the platform starts here. A queue, an agent or a transfer is
-this document with more verbs in it.
+A queue, an agent or a transfer is this document with more verbs in it.
 
 ## How it works
 
@@ -28,8 +27,10 @@ sections:
     - hangup: {}
 ```
 
-The order is the whole recipe. Until `answer` runs the call is still ringing and there
-is no audio path. A greeting placed above it is spoken to nobody.
+`answer` decides when the call is picked up. It is not a prerequisite for audio:
+`play` carries `auto_answer`, true by default, so a document that opens with `play`
+answers the call on its way to speaking. Answering explicitly is worth the line
+because it puts the moment under your control.
 
 `play` speaks its `url` when the value starts with `say:`. Any other URL is a file to fetch and play instead. That is how you swap a synthesised
 voice for a recorded one, without touching the rest.
@@ -65,10 +66,10 @@ Both surfaces validate against the SDK's bundled SWML schema. The verifier
 asserts:
 
 - the verbs are exactly `answer`, `play`, `hangup`, in that order
-- `answer` precedes `play`, so the greeting has an audio path
-- `max_duration` is a positive integer within the platform's four hour ceiling
+- `answer` precedes `play`, so the call is answered explicitly
+- `max_duration` is set to a positive integer
 - the played URL is a `say:` string with something after the colon
-- the route SignalWire fetches returns the document rather than a page
+- a POST to the route, which is how SignalWire fetches it, returns the document
 
 ## Limitations
 
@@ -81,5 +82,5 @@ and `collect-speech-input-and-branch`.
 
 ## What to change first
 
-Move `play` above `answer` and call the number. The call connects, the greeting
-is gone, and you have met the most common first bug on the platform.
+Set `auto_answer: false` on the `play` and remove the `answer` above it. The greeting now plays as early media, before the call is answered. That is how you
+say something to a caller you are not yet billing for.

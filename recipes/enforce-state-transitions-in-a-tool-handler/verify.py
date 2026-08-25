@@ -9,6 +9,7 @@ from collected state, and the transition arrives under the JSON key the platform
 reads, `change_step`, not the SDK method name that produced it.
 """
 import json
+import os
 import pathlib
 import sys
 
@@ -17,6 +18,11 @@ sys.path.insert(0, str(HERE.parent.parent / "tools"))
 sys.path.insert(0, str(HERE / "python"))
 
 import verifylib as V  # noqa: E402
+
+# what a reader's .env supplies; without it the SDK generates a password that
+# exists only in this process and the number's webhook gets a 401
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
 
 
 def actions(result):
@@ -28,13 +34,17 @@ def main():
     from app import SERVICEABLE, BookingAgent
 
     agent = BookingAgent()
+    V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
     steps = {s["name"]: s for s in ai["prompt"]["contexts"]["default"]["steps"]}
 
-    # The model's constrained path.
-    assert steps["identify_bike"]["valid_steps"] == ["schedule"], steps
+    # The model has no native route out of the guarded step. Listing
+    # "schedule" in valid_steps would give it a next_step straight past the
+    # handler, so the guard has to be the only way forward.
+    assert steps["identify_bike"]["valid_steps"] == [], steps
+    assert "schedule" not in steps["identify_bike"]["valid_steps"], steps
     assert steps["identify_bike"]["functions"] == ["record_bike",
                                                    "start_scheduling"], steps
     assert steps["schedule"]["functions"] == ["confirm_slot"], steps
@@ -72,8 +82,8 @@ def main():
     assert actions(r) == [{"change_step": "schedule"}], r
     assert "swml_change_step" not in json.dumps(r), r
 
-    print(f"ok: valid_steps={steps['identify_bike']['valid_steps']} clamps the "
-          f"model; the handler refuses start_scheduling until one of "
+    print(f"ok: identify_bike has no valid_steps, so the handler is the only "
+          f"way forward; it refuses start_scheduling until one of "
           f"{sorted(SERVICEABLE)} is recorded, then emits change_step")
 
 

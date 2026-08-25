@@ -357,7 +357,7 @@
     },
     {
       "slug": "call-an-api-without-a-backend",
-      "claim": "A DataMap tool calls a third-party API from SignalWire's side and templates the response; you run no server.",
+      "claim": "A DataMap tool calls a third-party API from SignalWire's side and templates the response, so no service of yours is in the tool path.",
       "kind": "recipe",
       "status": "verified",
       "launch": false,

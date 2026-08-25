@@ -1,18 +1,19 @@
 # Call an API without a backend
 
-> The tool is data, so SignalWire makes the request and you deploy nothing.
+> SignalWire makes the API call, so no service of yours is in the tool path.
 
 **Scenario:** an independent bookshop confirming titles by ISBN
 
 ## What this demonstrates
 
-A tool that reaches a third-party API, with no service of yours in the path.
-The HTTP request, the response template and the failure path are fields in the
-document SignalWire runs. There is no handler, no callback URL and nothing to
-keep online.
+A tool that reaches a third-party API with no service of yours in the tool path. The
+HTTP request, the response template and the failure path are fields in the document
+SignalWire runs, so there is no handler and no callback URL.
 
-A normal tool gives the platform a URL to call back to. A DataMap tool gives it
-the request to make instead.
+A normal tool gives the platform a URL to call back to. A DataMap tool gives it the
+request to make instead. The document itself still has to be served from somewhere.
+The Python surface below hosts it, and the SWML surface can be pasted into a hosted
+SWML Script so nothing of yours runs at all.
 
 ## How it works
 
@@ -40,10 +41,11 @@ means failure even though the request returned 200.
 ```bash
 cd python
 pip install -r requirements.txt
+cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/catalogue`. Open
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/catalogue`, using the credentials you set. Without them the request is refused. Open
 Library needs no key, so it works as written.
 
 ## Verify it

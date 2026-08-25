@@ -41,8 +41,9 @@ class BookingAgent(AgentBase):
             "back to them before going further."
         )
         identify.set_functions(["record_bike", "start_scheduling"])
-        # the model's constrained path
-        identify.set_valid_steps(["schedule"])
+        # No native route out. Listing "schedule" here would hand the model a
+        # next_step straight past the check below, which is the whole point.
+        identify.set_valid_steps([])
 
         schedule = flow.add_step("schedule")
         schedule.set_text(

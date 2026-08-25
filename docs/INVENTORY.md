@@ -291,7 +291,7 @@ While a slow tool runs, the caller hears a per-language filler or a wait file in
 
 ### `call-an-api-without-a-backend`
 
-A DataMap tool calls a third-party API from SignalWire's side and templates the response; you run no server.
+A DataMap tool calls a third-party API from SignalWire's side and templates the response, so no service of yours is in the tool path.
 
 - kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
 - interfaces: agents-sdk, swml, hosted · capabilities: datamap, serverless

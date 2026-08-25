@@ -43,5 +43,4 @@ sections:
                 output:
                   response: >-
                     I could not reach the book catalogue. Ask the caller to read
-                    the ISBN again, and if it fails twice offer to take the
-                    title instead.
+                    the ISBN again, or offer to take the title instead.

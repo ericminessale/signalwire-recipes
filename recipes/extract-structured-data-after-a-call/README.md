@@ -36,21 +36,22 @@ call" returns a paragraph, and a paragraph is not a row.
 `summary`, then in `post_prompt_data.parsed[0]`, then by parsing
 `post_prompt_data.raw`, so the handler sees a dict either way.
 
-Then the handler checks it. An `outcome` outside the four allowed values, a
-`callback_requested` with no number, a number that is not E.164: a model produces each
-of these occasionally. None of them should reach your database. A failed record goes
-to a quarantine list with the reason, because the call still happened and losing it is
-worse than flagging it.
+Then the handler checks it. A model occasionally produces an `outcome` outside the four allowed values, or a
+`callback_requested` with no number. It also produces a bare `+` where E.164 was asked
+for, and keys nobody requested. None should
+reach your database. A failed record goes to a quarantine list with the reason,
+because the call still happened and losing it is worse than flagging it.
 
 ## Run it
 
 ```bash
 cd python
 pip install -r requirements.txt
+cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/support`.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/support`, using the credentials you set. Without them the request is refused.
 
 ## Verify it
 
@@ -64,7 +65,7 @@ It renders the SWML and asserts:
 
 - the post-prompt names all three keys, and a `post_prompt_url` is set
 - a well-formed summary is filed against its `call_id`
-- five malformed summaries are quarantined, each with the reason it failed
+- ten malformed summaries are quarantined, each with the reason it failed
 - nothing malformed reaches the filed records
 - both delivery shapes, `parsed` and a raw JSON string, resolve to the same dict
 
@@ -79,6 +80,6 @@ tool, where your code answers instead of the model summarising.
 
 ## What to change first
 
-Add a `sentiment` key to the post-prompt and leave the validator alone. It
-arrives, it is not in `REQUIRED`, and it is stored without being checked. That
-is the gap every new field opens.
+Add a `sentiment` key to the post-prompt and leave the validator alone. Every summary
+is now quarantined as `unexpected sentiment`, because the schema is closed at both
+ends. Widening it is a code change, which is the point.

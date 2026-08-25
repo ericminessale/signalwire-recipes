@@ -5,8 +5,7 @@ bridge, with a chosen voice per direction.
 
 Proof: both surfaces validate against the SWML schema; live_translate starts
 before connect so the bridged leg is inside the session; both directions are
-translated; each direction names its own voice; and the webhook handler keeps
-finals with the direction they came from, keeps the summary, and drops partials.
+translated; and each direction names its own voice.
 """
 import os
 import pathlib
@@ -46,29 +45,9 @@ def main():
     assert start["webhook"] == "https://recipes.example.test/translation", start
     check(V.load_yaml(HERE / "swml" / "agent.yaml"), "yaml")
 
-    # the webhook keeps what is worth keeping and drops the rest
-    client = recipe.app.test_client()
-    events = [
-        {"call_id": "c1", "type": "partial", "text": "necesito ay"},
-        {"call_id": "c1", "direction": "remote-caller",
-         "text": "necesito ayuda", "translated": "I need help"},
-        {"call_id": "c1", "direction": "local-caller",
-         "text": "of course", "translated": "por supuesto"},
-        {"call_id": "c1", "type": "summary", "summary": "Caller asked for help."},
-    ]
-    for e in events:
-        assert client.post("/translation", json=e).status_code == 204
-
-    turns = recipe.turns["c1"]
-    assert len(turns) == 2, turns                      # the partial was dropped
-    assert {t["direction"] for t in turns} == {"remote-caller", "local-caller"}
-    assert turns[0]["spoken"] == "necesito ayuda", turns
-    assert turns[0]["heard"] == "I need help", turns   # each side hears the other
-    assert recipe.summaries["c1"] == "Caller asked for help."
-
     print(f"ok: live_translate({start['from_lang']} -> {start['to_lang']}, "
-          f"{start['from_voice']}/{start['to_voice']}) before connect, both legs; "
-          f"{len(turns)} finals kept, partial dropped, summary kept")
+          f"{start['from_voice']}/{start['to_voice']}) before connect, "
+          f"both legs, on both surfaces")
 
 
 if __name__ == "__main__":

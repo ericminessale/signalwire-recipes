@@ -9,6 +9,7 @@ handler the way the platform does shows the record filed on a good payload, and
 quarantined rather than trusted on a bad one.
 """
 import json
+import os
 import pathlib
 import sys
 
@@ -18,12 +19,18 @@ sys.path.insert(0, str(HERE / "python"))
 
 import verifylib as V  # noqa: E402
 
+# what a reader's .env supplies; without it the SDK generates a password that
+# exists only in this process and the number's webhook gets a 401
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
+
 
 def main():
     V.sdk_banner()
     import app as recipe
 
     agent = recipe.SupportAgent()
+    V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
@@ -53,6 +60,19 @@ def main():
           "callback_number": "555 0100"}, "E.164"),
         ({"outcome": "resolved"}, "missing"),
         ("the caller was happy", "not an object"),
+        # sol: "+" and "+abc" passed the old startswith("+") check
+        ({"outcome": "resolved", "reason": "x", "callback_number": "+"},
+         "E.164"),
+        ({"outcome": "resolved", "reason": "x", "callback_number": "+abc"},
+         "E.164"),
+        ({"outcome": "resolved", "reason": "x",
+          "callback_number": "+1234567890123456"}, "E.164"),
+        # an empty reason is a row nobody can act on
+        ({"outcome": "resolved", "reason": "   ", "callback_number": None},
+         "reason is empty"),
+        # the post-prompt asked for exactly three keys
+        ({"outcome": "resolved", "reason": "x", "callback_number": None,
+          "sentiment": "positive"}, "unexpected sentiment"),
     ]
     for payload, expected in bad:
         agent.on_summary(payload, {"call_id": "c2"})

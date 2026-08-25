@@ -11,8 +11,9 @@ the arguments as JSON Schema. The SDK renders the function into the tool schema 
 model already understands, and your handler runs when it is called. The model asks;
 your code answers.
 
-A SWAIG function is not a different thing from an LLM tool. It is rendered into
-the OpenAI-format tool schema and sent to the model every turn.
+A SWAIG function is not a different thing from an LLM tool. The document holds a SWAIG
+definition, and the platform renders it into the tool schema the model reads on every
+turn.
 
 ## How it works
 
@@ -52,10 +53,11 @@ return value, not in a prompt bullet asking the model to say it nicely.
 ```bash
 cd python
 pip install -r requirements.txt
+cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/orders`.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/orders`, using the credentials you set. Without them the request is refused.
 
 ## Verify it
 
@@ -75,9 +77,9 @@ It renders the SWML and asserts:
 
 ## Limitations
 
-Tool selection degrades past roughly seven active tools. When an agent grows
-past that, scope them per step rather than adding an eighth
-(`scope-tools-per-step`).
+The SDK puts tool-selection accuracy as degrading past roughly seven or eight
+simultaneously active tools (`core/mixins/tool_mixin.py`). When an agent grows past
+that, scope them per step rather than adding another (`scope-tools-per-step`).
 
 `secure=True` is the default, so the callback requires a SWAIG token. Leave it
 on for anything touching a real customer record.

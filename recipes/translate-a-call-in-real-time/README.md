@@ -6,19 +6,19 @@
 
 ## What this demonstrates
 
-Two people who share no language hold one conversation. The caller speaks
-Spanish and hears English; the agent speaks English and hears Spanish. No
-third party joins, no interpreter is scheduled, and neither side installs
-anything. `live_translate` runs the translation inside the call itself.
+Two people who share no language hold one conversation. The caller speaks Spanish and
+hears the agent's English as Spanish. The agent speaks English and hears the caller's
+Spanish as English. No third party joins, no interpreter is scheduled, and neither
+side installs anything.
 
 This is a call-level verb, not an AI agent. There is no prompt to write and no
 model to govern.
 
 ## How it works
 
-`live_translate` opens a translation session, then `connect` bridges the second
-party. The order matters: started after `connect`, the session covers only the
-caller, and the agent's speech is never translated.
+`live_translate` opens a translation session, then `connect` bridges the second party.
+The order matters. `connect` blocks until the bridge ends, so a `live_translate`
+placed after it never runs while anyone is talking.
 
 ```yaml
 - live_translate:
@@ -43,9 +43,10 @@ transcript read aloud rather than a conversation.
 `to_voice`, the agent hears `from_voice`. Omit one and that direction falls back
 to the default voice.
 
-With `live_events` on, your webhook receives partials while someone is still
-speaking. Each final carries its direction and both strings, the words spoken
-and the words the other side heard.
+`webhook` is where translation events are POSTed while the call runs, with
+`live_events` adding partial results and `ai_summary` a summary at the end. This
+recipe sets them and stops there, because the event payload is not something it can
+prove offline.
 
 ## Run it
 
@@ -72,7 +73,6 @@ Both surfaces validate against the SWML schema. The verifier asserts:
 - the schema's required `from_lang`, `to_lang` and `direction` are all present
 - both `remote-caller` and `local-caller` are translated
 - each direction names its own voice, and the two differ
-- the webhook keeps finals with their direction, keeps the summary, drops partials
 
 ## Limitations
 

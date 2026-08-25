@@ -44,7 +44,7 @@ def book_lookup():
         # top-level: spoken only when every webhook above has failed
         .fallback_output(FunctionResult(
             "I could not reach the book catalogue. Ask the caller to read the "
-            "ISBN again, and if it fails twice offer to take the title instead."
+            "ISBN again, or offer to take the title instead."
         ))
     )
 
