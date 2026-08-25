@@ -315,6 +315,16 @@ Retiring a folder is a deliberate `git rm`.
   artifact iframe may refuse the API).
 - The preview banner is a preview notice: shown on the index only, hidden on
   every recipe page.
+- **The frame is 1560px, not 1180.** 1180 was a strip on a 4K monitor and left
+  the code pane 80 characters wide, so a normal Python line grew a horizontal
+  scrollbar (Eric caught it; the clipped line was visible in the 1920 render
+  and was let through). At 1560 the pane is 860px and fits the longest recipe
+  line (114ch) at 1920 with no scrollbar; below 1244px the viewport decides. The
+  recipe page splits 2fr/3fr, code on the larger side. **Recipe code lines stay
+  at or under 100 characters** — at 1280 the pane is ~96ch and longer lines
+  scroll. README fenced code (`pre.mdcode`) is illustrative and wraps; it never
+  scrolls. A scrollbar at the bottom of a code block is a layout bug, not a
+  code-block feature: measure `scrollWidth > clientWidth` at 1920 and 1280.
 
 ## Open work
 

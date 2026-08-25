@@ -60,7 +60,10 @@ a{color:inherit;text-decoration:none;}
 code,.mono{font-family:var(--mono);font-feature-settings:'tnum','zero';}
 h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   line-height:1.1;margin:0;color:var(--fg);text-wrap:balance;}
-.wrap{max-width:1180px;margin:0 auto;padding:0 32px 120px;}
+/* the frame grows with the screen: 1180 was a strip on a 4K monitor and left a
+   code pane 80 characters wide. 1560 fits the longest recipe line (114ch) at
+   1920 with room; below 1244px the viewport decides anyway */
+.wrap{max-width:1560px;margin:0 auto;padding:0 32px 120px;}
 
 /* hero, centred like the site's section heads */
 .hero{padding:76px 0 0;text-align:center;}
@@ -138,7 +141,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
    right and kept in view; below that, one column that fills the frame */
 .dgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 56px;align-items:start;margin-top:8px;}
 @media (min-width:1080px){
-  .dgrid{grid-template-columns:minmax(0,9fr) minmax(0,11fr);}
+  .dgrid{grid-template-columns:minmax(0,2fr) minmax(0,3fr);}  /* code gets the larger share */
   .dside .cw{position:sticky;top:14px;margin-top:34px;}
   .dside pre.src{max-height:calc(100vh - 150px);}
 }
@@ -211,7 +214,7 @@ pre.src .nb,pre.src .bp,pre.src .nn{color:var(--fg-2);}
 pre.src .o,pre.src .p,pre.src .punctuation{color:var(--fg-muted);}
 pre.mdcode{margin:10px 0 14px;background:var(--surface);color:var(--fg-2);padding:14px 16px;
   border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:12px;
-  line-height:1.55;overflow-x:auto;}
+  line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;}  /* illustrative: wrap, never scroll */
 .rels{border-top:1px solid var(--line-2);padding-top:24px;}
 .rels .rel{border-top:1px solid var(--line);padding:12px 0 14px;}
 @media (min-width:1080px){.rels{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 40px;}
@@ -224,7 +227,7 @@ a.cx:hover{color:var(--fuchsia);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turquoise);}
-.pvbanner{max-width:1180px;margin:0 auto;padding:18px 32px 0;}
+.pvbanner{max-width:1560px;margin:0 auto;padding:18px 32px 0;}
 .pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:8px;
   padding:11px 15px;font-size:12.5px;color:var(--fg-muted);
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
