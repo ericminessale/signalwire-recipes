@@ -106,6 +106,12 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   padding:17px 19px 18px;color:inherit;transition:background 140ms ease;}
 .card:hover{background:var(--surface);}
 .card:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
+/* preview --all: not yet written */
+.card.planned{cursor:default;}
+.card.planned:hover{background:var(--page);}
+.card.planned .ct,.card.planned .cd{color:var(--fg-subtle);}
+.card.planned .cs{color:var(--fg-subtle);opacity:.7;}
+.card.planned .surf{color:var(--fg-subtle);border:1px solid var(--line);border-radius:3px;padding:1px 6px;}
 .card .ct{font-family:var(--head);font-weight:600;font-size:14.5px;line-height:1.3;
   letter-spacing:-.015em;}
 .card .cs{font-family:var(--mono);font-size:10.5px;color:var(--turquoise);
@@ -223,6 +229,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   box-shadow:inset 2px 0 0 var(--fuchsia);transition:background 140ms ease;}
 .buildcard:hover{background:var(--surface);}
 .buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
+/* preview --all: a build with no repository is not a build yet - no rail */
+.buildcard.planned{box-shadow:inset 2px 0 0 var(--line-2);cursor:default;}
+.buildcard.planned:hover{background:var(--page);}
+.buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
+.buildcard.planned .part.state{background:transparent;border:1px solid var(--line);color:var(--fg-subtle);}
 .buildcard .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--fg-subtle);}
 .buildcard .bt{font-family:var(--head);font-weight:600;font-size:16px;
@@ -561,14 +572,19 @@ def build_index(recipes, body_only=False):
         more = len(b.get("composes", [])) - 3
         if more > 0:
             parts += '<span class="part more">+%d</span>' % more
+        planned = b.get("_planned")  # preview --all only
+        if planned:
+            parts += '<span class="part state">%s</span>' % (
+                "no repository yet" if planned == "folder" else "planned")
         return (
-            '<a class="buildcard" href="#%s" data-kind="build" data-proj="%d" '
-            'data-cat="%s" data-hay="%s">'
+            '<a class="buildcard%s" href="#%s" data-kind="build" data-proj="%d" '
+            'data-cat="%s" data-hay="%s"%s>'
             '%s'
             '<span class="bt">%s</span><span class="bs">%s</span>'
             '<span class="parts">%s</span></a>'
-            % (esc(b["slug"]), 0 if home else 1,
+            % (" planned" if planned else "", esc(b["slug"]), 0 if home else 1,
                " ".join(sorted(touches(b))), esc(hay(b)),
+               ' aria-disabled="true"' if planned else "",
                ('<span class="lab">%s</span>' % also) if also else "",
                esc(b["title"]), esc(b.get("summary", "")), parts)
         )
@@ -576,13 +592,17 @@ def build_index(recipes, body_only=False):
 
     def card(r):
         surf = " ".join(SURFACE_ABBR.get(x, x) for x in written_surfaces(r))
+        planned = r.get("_planned")  # preview --all only: greyed, not yet written
+        if planned:
+            surf = "not written yet" if planned == "folder" else "planned"
         return (
-            '<a class="card" data-kind="recipe" href="#%s" data-cat="%s" data-hay="%s">'
+            '<a class="card%s" data-kind="recipe" href="#%s" data-cat="%s" data-hay="%s"%s>'
             '<span class="ct">%s</span><span class="cs">%s</span>'
             '<span class="cd">%s</span>'
             '<span class="cf"><span class="sp"></span><span class="surf">%s</span></span>'
             "</a>"
-            % (esc(r["slug"]), esc(r["category"]), esc(hay(r)), esc(r["title"]),
+            % (" planned" if planned else "", esc(r["slug"]), esc(r["category"]), esc(hay(r)),
+               ' aria-disabled="true"' if planned else "", esc(r["title"]),
                esc(r.get("alias") or r["slug"]), esc(r.get("summary", "")), esc(surf))
         )
 
@@ -913,21 +933,55 @@ PREVIEW_CSS = ""
 
 def build_preview(recipes):
     """One file, index plus every showable recipe, navigable without a server."""
-    live = recipes if "--all" in sys.argv else [
-        r for r in recipes if has_content(r)
-    ]
+    written = [r for r in recipes if has_content(r)]
+    if "--all" in sys.argv:
+        # Everything the directory will carry: written folders in full, folders
+        # not yet written greyed, and inventory rows with no folder yet greyed
+        # further. The public build never sees the synthetic rows.
+        live = list(recipes)
+        for r in live:
+            if not has_content(r):
+                r["_planned"] = "folder"
+        have = {r["slug"] for r in recipes}
+        plan = ROOT / "docs" / "enum" / "inventory.json"
+        if plan.exists():
+            for row in json.loads(plan.read_text(encoding="utf-8"))["rows"]:
+                if row["slug"] in have:
+                    continue
+                acr = {"pii", "sms", "mms", "otp", "pbx", "ivr", "sip", "dtmf", "mcp", "api",
+                       "rtmp", "e911", "10dlc", "crm", "sdk", "ani", "twiml", "pstn", "webrtc",
+                       "pubsub", "relay", "ai"}  # no vocab keys here (LEAK guard)
+                words = [w.upper() if w in acr else w for w in row["slug"].split("-")]
+                words[0] = words[0] if words[0].isupper() else words[0].capitalize()
+                live.append({
+                    "slug": row["slug"],
+                    "title": " ".join(words),
+                    "alias": "", "summary": row["claim"], "scenario": "",
+                    "category": row["products"][0], "products": row["products"],
+                    "subcategory": row.get("task_group") or "other",
+                    "capabilities": row.get("capabilities", []), "surfaces": [],
+                    "kind": "build" if row["kind"] == "build" else "recipe",
+                    "tier": "launch" if row.get("launch") else "next",
+                    "_surfaces_on_disk": [], "_planned": "planned",
+                })
+        _TITLES.update({r["slug"]: r["title"] for r in live})
+    else:
+        live = written
     if not live:
         raise SystemExit("no recipe has content yet - nothing to preview")
 
+    n_planned = sum(1 for r in live if r.get("_planned"))
     parts = [
         '<div class="pvbanner"><div><b>Preview</b> &nbsp;'
-        "Generated by <code>build.py --preview</code> from %d recipe folder%s. "
-        "Click a recipe; Esc returns. Interactive demos are declared but their "
-        "runtime is not built yet."
-        "</div></div>" % (len(live), "" if len(live) == 1 else "s"),
+        "Generated by <code>build.py --preview</code>: %d written, %d not yet "
+        "(greyed). Click a written recipe; Esc returns. Interactive demos are "
+        "declared but their runtime is not built yet."
+        "</div></div>" % (len(written), n_planned),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
     for r in live:
+        if r.get("_planned"):
+            continue
         parts.append(
             '<div data-view="%s" hidden>%s</div>'
             % (esc(r["slug"]), build_detail(r, body_only=True))

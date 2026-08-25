@@ -3,7 +3,7 @@
   "kind": "build",
   "title": "AI Call Center",
   "alias": "hybrid AI + human contact centre",
-  "summary": "A complete contact centre: AI triage, priority queues, live human agents, supervisor monitoring, and transfers that keep their context.",
+  "summary": "A complete contact centre: AI triage, priority queues, live human agents in the browser, and supervisor listen, whisper and barge.",
   "scenario": "What the recipes look like assembled into a product",
   "category": "ai-agents",
   "products": [
