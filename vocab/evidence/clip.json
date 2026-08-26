@@ -1,1 +1,7 @@
-{"label":"Recorded clip","renderer":"clip","file_key":"clip"}
+{
+  "label": "Recorded clip",
+  "renderer": "clip",
+  "file_key": "clip",
+  "replayable": false,
+  "_why": "a recording already has its own transport"
+}

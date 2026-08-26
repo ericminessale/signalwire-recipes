@@ -226,6 +226,47 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   font-size:11px;line-height:1.65;background:var(--surface);border-radius:var(--r-sm);}
 .acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px;}
 .acts .n{font-size:12px;color:var(--fg-subtle);flex:1 1 16rem;}
+/* The replay control belongs to the evidence, so it sits in its header
+   rather than under it as a call to action. */
+.ev-h .trplay{margin-left:auto;display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--body);font-size:11.5px;letter-spacing:0;color:var(--accent);
+  background:rgba(var(--accent-rgb),.08);border:1px solid rgba(var(--accent-rgb),.26);
+  border-radius:var(--r-sm);padding:5px 11px;cursor:pointer;text-transform:none;
+  transition:background 130ms ease,border-color 130ms ease,color 130ms ease;}
+.ev-h .trplay:hover:not(:disabled){background:rgba(var(--accent-rgb),.16);
+  border-color:rgba(var(--accent-rgb),.5);}
+.ev-h .trplay:disabled{opacity:.4;cursor:default;}
+.ev-h .trplay:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.trplay .ti{width:0;height:0;border-style:solid;border-width:4.5px 0 4.5px 7px;
+  border-color:transparent transparent transparent currentColor;}
+.trplay[data-state="playing"] .ti{width:7px;height:8px;border:none;
+  background:linear-gradient(to right,currentColor 0 2.5px,transparent 2.5px 4.5px,
+  currentColor 4.5px 7px);}
+.evnote{font-size:11.5px;color:var(--fg-subtle);margin:14px 0 0;}
+/* Replay fades turns in; it never removes them from the layout or from the
+   accessibility tree. `display:none` would take an unrevealed turn out of
+   that tree, so pressing Replay made the transcript vanish for a screen
+   reader. Opacity keeps the whole transcript readable by assistive tech
+   throughout, and reserves the block's full height, so nothing shifts. */
+/* opacity:0, not display:none. An element at zero opacity stays in the
+   accessibility tree and is still read, so a screen reader keeps the whole
+   transcript while a sighted reader watches it arrive. */
+.tr.replay .l,.tr.replay .sys{opacity:0;transition:opacity 240ms ease;}
+.tr.replay .l.on,.tr.replay .sys.on{opacity:1;}
+/* The caret rides the last revealed turn, so no node is moved and it cannot
+   be orphaned or left mid-list. It hangs off the turn's text span: on .l,
+   which is a grid, an ::after on the row itself becomes a third column and
+   wraps to its own line. */
+.tr.replay .l.tip span:last-child::after,
+.tr.replay .sys.tip::after{content:"";display:inline-block;width:7px;height:12px;
+  background:var(--accent);vertical-align:-2px;margin-left:7px;
+  animation:trblink 1s steps(2,start) infinite;}
+@keyframes trblink{50%{opacity:0;}}
+/* Reduced motion keeps the reading pace and drops the animation. Collapsing
+   the pace instead turned a replay into nine flashes in under a second. */
+@media (prefers-reduced-motion:reduce){
+  .tr.replay .l,.tr.replay .sys{transition:none;}
+  .tr.replay .tip::after{animation:none;}}
 .btn:disabled{background:var(--raised);border-color:var(--line);color:var(--fg-subtle);
   cursor:not-allowed;}
 .sec{margin:34px 0;}
@@ -1303,6 +1344,84 @@ document.querySelectorAll('.cw .copy').forEach(function(b){
     function sel(){var r=document.createRange();r.selectNodeContents(pre);var g=getSelection();g.removeAllRanges();g.addRange(r);b.textContent='Selected';setTimeout(function(){b.textContent='Copy';},1400);}
   });
 });
+
+// --- transcript replay -----------------------------------------------------
+// The transcript is the asset no other developer docs have, and it was a
+// static wall of text. Replaying it shows the exchange arriving the way it
+// does on a call.
+//
+// Pacing is computed here from the length of each turn rather than stored in
+// transcript.json. A transcript is a specimen of what the code does, and a
+// stored duration would be a measurement nobody took.
+//
+// The reveal is opacity, never display. An unrevealed turn stays in the
+// layout and in the accessibility tree, so a screen reader has the whole
+// transcript whatever the player is doing, and nothing shifts. The button
+// ships `hidden disabled` and is unhidden here, so a reader without
+// JavaScript is never shown a control that cannot work.
+document.querySelectorAll('[data-demo-slot]').forEach(function(slot){
+  var btn=slot.querySelector('.trplay');
+  var tr=slot.querySelector('.tr');
+  if(!btn||!tr) return;
+  var turns=[].slice.call(tr.querySelectorAll('.l,.sys'));
+  if(!turns.length) return;
+  var label=btn.querySelector('.tl');
+  var timer=null, at=0;
+
+  // Reading pace, floored so a two-word turn still registers and capped so a
+  // long one does not stall. Reduced motion keeps this pace and only drops
+  // the animation: collapsing it turned the replay into rapid flashing.
+  function delay(el){
+    var n=parseInt(el.dataset.n,10)||20;
+    return Math.max(320,Math.min(2200,260+n*26));
+  }
+
+  function clear(){
+    if(timer){clearTimeout(timer);timer=null;}
+    turns.forEach(function(t){t.classList.remove('on');t.classList.remove('tip');});
+    at=0;
+  }
+
+  function stop(){
+    clear();
+    tr.classList.remove('replay');
+    btn.dataset.state='';
+    label.textContent='Replay';
+    btn.setAttribute('aria-label','Replay the transcript');
+  }
+
+  function step(){
+    if(at>=turns.length){
+      timer=setTimeout(stop,600);   // settle on the full transcript
+      return;
+    }
+    var el=turns[at++];
+    turns.forEach(function(t){t.classList.remove('tip');});
+    el.classList.add('on');
+    if(at<turns.length) el.classList.add('tip');
+    timer=setTimeout(step,delay(el));
+  }
+
+  function play(){
+    clear();
+    tr.classList.add('replay');
+    btn.dataset.state='playing';
+    label.textContent='Stop';
+    btn.setAttribute('aria-label','Stop the replay');
+    step();
+  }
+
+  btn.hidden=false;
+  btn.disabled=false;
+  btn.setAttribute('aria-label','Replay the transcript');
+  btn.addEventListener('click',function(){
+    if(btn.dataset.state==='playing') stop(); else play();
+  });
+  // a replay running in a tab nobody is looking at is just a timer
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden&&btn.dataset.state==='playing') stop();
+  });
+});
 """.strip()
 
 
@@ -1338,17 +1457,34 @@ def build_detail(r, body_only=False):
     out.append('<div class="claim"><h2>The claim</h2><p>%s</p></div>' % claim)
 
     if ehtml:
+        # The panel is a slot. Today it holds a replay of the specimen; a live
+        # runtime can occupy the same markup later. `data-demo-mode` says what
+        # this recipe would host, so the slot knows what to build.
+        replayable = bool(spec.get("replayable"))
         out.append(
-            '<div class="ev"><div class="ev-h"><span class="dot" aria-hidden="true"></span>'
-            "Evidence &middot; %s</div><div class=\"ev-b\">%s" % (esc(spec["label"]), ehtml)
+            '<div class="ev" data-demo-slot data-demo-mode="%s">'
+            '<div class="ev-h"><span class="dot" aria-hidden="true"></span>'
+            "Evidence &middot; %s" % (esc(r.get("demo", "none")), esc(spec["label"]))
         )
+        if replayable:
+            # Rendered disabled and enabled by the script, so a reader without
+            # JavaScript is never offered a control that cannot work.
+            out.append(
+                '<button type="button" class="trplay" hidden disabled '
+                'aria-describedby="ev-note-%s">'
+                '<span class="ti" aria-hidden="true"></span>'
+                '<span class="tl">Replay</span></button>' % esc(r["slug"])
+            )
+        out.append('</div><div class="ev-b">%s' % ehtml)
         if edata.get("caption"):
             out.append("<cite>%s</cite>" % esc(edata["caption"]))
-        if modeinfo.get("interactive"):
+        if replayable:
+            # Only what the page actually does. The demo mode's copy describes
+            # a runtime that does not exist yet, and printing it here promises
+            # the reader something they cannot do.
             out.append(
-                '<div class="acts"><button type="button" class="btn" disabled>%s</button>'
-                '<span class="n">%s Runtime not built yet.</span></div>'
-                % (esc(modeinfo["label"]), esc(modeinfo.get("copy", "")))
+                '<p class="evnote" id="ev-note-%s">A specimen of this exchange, '
+                'replayed at reading pace.</p>' % esc(r["slug"])
             )
         out.append("</div></div>")
 

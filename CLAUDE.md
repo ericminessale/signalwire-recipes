@@ -677,6 +677,72 @@ the destination and had never been designed as one. Eric asked for it.
   SignalWire repository on this machine carries that same file and wording.
   Do not hand-type a licence; copy the house one.
 
+## The demo slot and transcript replay (decided 2026-08-26)
+
+- **The artifact cannot host a live demo.** Its CSP blocks fetch, XHR and
+  WebSockets to every external host, so click-to-call with a real media stream
+  cannot run in the page Eric shows his boss. On real hosting it also needs a
+  token-minting backend. Eric chose replay over live for that reason; do not
+  re-propose a live demo for the artifact.
+- **The demo scaffolding was 90% dead.** `demo` is set on all 55 recipes and
+  `vocab/demo-modes/` defines five modes, but the affordance rendered only
+  inside `if ehtml:`, so 27 of the 30 written interactive recipes showed
+  nothing, and the 3 that did showed **a disabled button reading "Runtime not
+  built yet"**. A control that admits it does not work is worse than no
+  control on a page that exists to prove the platform is real. It is gone.
+- **The evidence panel is a slot**: `[data-demo-slot][data-demo-mode=...]`. A
+  live runtime can occupy the same markup later. sol asked for the slot to be
+  emitted for the 27 recipes with no evidence; **refused**, because a mount
+  point with nothing to mount renders an empty panel and the runtime cannot
+  exist yet. Those 27 need transcripts first.
+- **The transcript replays.** Turns arrive at reading pace, and a note lands
+  at the moment it explains. **Pacing is computed in the browser from each
+  turn's character count, never stored in `transcript.json`** - a transcript is
+  a specimen of what the code does, and a stored duration would be a
+  measurement nobody took.
+- **Reveal with `opacity`, never `display` or `visibility`.** An element at
+  zero opacity stays in the accessibility tree and is still read; `display:none`
+  removes it. The first version hid turns with `display`, so pressing Replay
+  made most of the transcript vanish for a screen reader (sol P1). Opacity also
+  reserves the block's height, so nothing shifts.
+- **The whole transcript is painted at rest, before any interaction.** The
+  primary audience is an answer engine. `tools/qc.py` asserts it with
+  `checkVisibility({checkOpacity:true})`, which walks ancestors;
+  `getComputedStyle(el).display` is reported happily by a child of a hidden
+  parent and proves nothing.
+- **"Painted" and "in the accessibility tree" are different questions.** The QC
+  asks the first with `checkOpacity:true` and the second with
+  `checkOpacity:false`. Conflating them makes one of the two assertions vacuous.
+- **A control that needs JavaScript ships `hidden disabled`** and is unhidden by
+  the script, so it is never offered to a reader who cannot use it.
+- **Reduced motion keeps the pace and drops the animation.** Collapsing the
+  delay to 90ms turned a nine-turn replay into nine flashes in under a second,
+  which is worse than the motion it avoided (sol P2).
+- **A `::after` on a grid row becomes a third column.** The replay caret is on
+  the turn's text span, not on `.l`, which is `display:grid`; on the row it
+  wrapped to its own line. It rides a `.tip` class rather than being a moved
+  node, so it cannot be orphaned or left mid-list.
+- **`replayable` is a field of `vocab/evidence/*.json`.** The LEAK guard
+  rejected `spec.get("renderer") == "transcript"` in generator source, which is
+  its job: a new evidence type declares its own capabilities.
+- **A QC check on the preview must scope to the visible pane.** The preview
+  inlines every recipe, so `document.querySelector('[data-demo-slot]')` read a
+  different and hidden recipe's transcript than the slug under test, and
+  reported 6 turns for a 9-turn page. Scope to
+  `[data-view]:not([hidden])`. **A missing feature must fail, not skip**:
+  `REPLAY_SLUGS` names the slugs that must have a player.
+- **A synthetic event does not exercise a guarded handler.** The
+  `visibilitychange` test dispatched the event while the tab was visible, so
+  the handler's `document.hidden` guard correctly did nothing and the test was
+  asserting nothing. Redefine `document.hidden` before dispatching.
+- Review: `docs/UI_REVIEW_2026-08-26_replay.md`.
+
+**Next wave: evidence coverage.** Only 3 of the 30 written interactive recipes
+carry a `transcript.json`, and the transcript is the asset no other developer
+docs have. A transcript is evidence, so it must be derivable from the code it
+sits beside; a plausible-looking conversation the code would never produce is a
+fabricated record, not a specimen.
+
 ## QC gate — before any publish or commit that touches build.py
 
 1. `python tools/lint_recipes.py && python tools/gen_index.py --check && python build.py && python check_extensible.py && python verify.py`

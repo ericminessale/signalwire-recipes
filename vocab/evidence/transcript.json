@@ -1,1 +1,7 @@
-{"label":"Annotated transcript","renderer":"transcript","file_key":"transcript"}
+{
+  "label": "Annotated transcript",
+  "renderer": "transcript",
+  "file_key": "transcript",
+  "replayable": true,
+  "_why": "turn-by-turn, so it can be replayed at reading pace"
+}

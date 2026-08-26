@@ -35,6 +35,9 @@ SESSION = "qc"
 # 2026-08-26 because the site had a viewport meta tag and no phone-width
 # check, so the chip strip's wrapped state was never exercised.
 VIEWPORTS = ((2560, 1100), (1920, 1000), (1280, 720), (820, 900), (390, 844))
+# slugs known to carry a transcript: a missing slot here is a
+# deleted player, not an absent feature
+REPLAY_SLUGS = ("scope-tools-per-step",)
 RECIPES_TO_CHECK = ("scope-tools-per-step", "build-an-ivr-menu", "register-a-10dlc-brand-and-campaign")
 
 
@@ -43,6 +46,8 @@ JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return 
 
 JS_CAROUSEL = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var t=f.querySelector('.ftrack');var cards=[].slice.call(f.querySelectorAll('.fcard'));if(!t||cards.length<2)return JSON.stringify({skip:true});var o={cards:cards.length};o.dots=f.querySelectorAll('.fdot').length;o.per=parseInt(t.style.getPropertyValue('--per'),10)||0;var w=f.querySelector('.fviewport');o.clipped=w?getComputedStyle(w).overflow==='hidden':false;var cw=cards[0].getBoundingClientRect().width;var vw=w?w.getBoundingClientRect().width:0;o.widthMatchesPer=(vw&&o.per)?Math.abs(cw-((vw-(o.per-1)*10)/o.per))<3:false;var live=cards.filter(function(c){return !c.hidden}).length;o.dotsMatch=o.per?o.dots===Math.ceil(live/o.per):false;var at=function(){return t.style.transform};var next=f.querySelector('.farrow[data-step="1"]');var prev=f.querySelector('.farrow[data-step="-1"]');var play=f.querySelector('.fplay');if(play)play.click();var was=at();next.click();o.moved=at()!==was;o.status=(f.querySelector('.fstatus')||{}).textContent||'';o.current=f.querySelectorAll('.fdot[aria-current="page"]').length;o.inert=f.querySelectorAll('.fcard[inert]').length;o.ariaHidden=f.querySelectorAll('.fcard[aria-hidden="true"]').length;o.reachable=cards.length-o.inert;prev.click();o.wrapped=at()===was;if(play){var lab=play.getAttribute('aria-label');next.click();prev.click();o.stillPaused=play.getAttribute('aria-label')===lab;play.click();}return JSON.stringify(o)})()"""
 
+
+JS_REPLAY = """(function(){var v=document.querySelector('[data-view]:not([hidden])')||document;var slot=v.querySelector('[data-demo-slot]');if(!slot)return JSON.stringify({noslot:true});var btn=slot.querySelector('.trplay'),tr=slot.querySelector('.tr');if(!btn||!tr)return JSON.stringify({noslot:true});var turns=[].slice.call(tr.querySelectorAll('.l,.sys'));var seen=function(){return turns.filter(function(t){  return t.checkVisibility?t.checkVisibility(    {checkOpacity:true,checkVisibilityCSS:true})  :getComputedStyle(t).display!=='none'}).length};var o={total:turns.length};o.restBefore=seen();o.hiddenAttr=btn.hidden;o.enabled=!btn.disabled;btn.click();o.playing=btn.dataset.state==='playing';o.stepping=tr.querySelectorAll('.on').length;o.inTreeDuring=turns.filter(function(t){return t.checkVisibility?t.checkVisibility({checkOpacity:false,checkVisibilityCSS:true}):getComputedStyle(t).display!=='none'}).length;btn.click();o.restAfter=seen();o.stopped=btn.dataset.state!=='playing';btn.click();Object.defineProperty(document,'hidden',{value:true,configurable:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;o.visStopped=btn.dataset.state!=='playing';o.restAfterVis=seen();o.replayClass=tr.classList.contains('replay');return JSON.stringify(o)})()"""
 
 JS_DEADLINKS = """(function(){var bad=[];document.querySelectorAll('a[href]').forEach(function(a){  var h=a.getAttribute('href');  if(h==='#'||h===''||h===null)    bad.push((a.textContent||'').trim().slice(0,40)||a.className);});return JSON.stringify({bad:bad.slice(0,6),n:bad.length})})()"""
 
@@ -258,6 +263,44 @@ def main(argv):
                 r = evaljs(JS_OVERLAP)
                 if r["n"]:
                     fail(w, "overlap", f"{slug}: code block covers {r['n']} element(s), e.g. {r['covered'][:2]}")
+                r = evaljs(JS_REPLAY)
+                if r.get("noslot"):
+                    if slug in REPLAY_SLUGS:
+                        fail(w, "replay", f"{slug} carries a transcript but has "
+                                          "no replay slot; the player is gone")
+                else:
+                    # The primary audience is an answer engine, so every turn
+                    # must be genuinely visible with no interaction at all.
+                    if r["restBefore"] != r["total"]:
+                        fail(w, "replay", f"{slug}: {r['restBefore']} of "
+                                          f"{r['total']} turns pass "
+                                          "checkVisibility at rest")
+                    if r.get("hiddenAttr") or not r.get("enabled"):
+                        fail(w, "replay", f"{slug}: the control is still hidden "
+                                          "or disabled with the script running")
+                    if not r.get("playing"):
+                        fail(w, "replay", f"{slug}: clicking did not start a replay")
+                    if r["stepping"] >= r["total"]:
+                        fail(w, "replay", f"{slug}: {r['stepping']} of "
+                                          f"{r['total']} turns revealed at once, "
+                                          "so it is not replaying")
+                    # the reason the reveal is opacity and not display
+                    if r["inTreeDuring"] != r["total"]:
+                        fail(w, "replay", f"{slug}: only {r['inTreeDuring']} of "
+                                          f"{r['total']} turns remain in the "
+                                          "accessibility tree during replay; a "
+                                          "screen reader would lose the transcript")
+                    if r["restAfter"] != r["total"] or not r.get("stopped"):
+                        fail(w, "replay", f"{slug}: stopping left "
+                                          f"{r['restAfter']}/{r['total']} turns "
+                                          "and state "
+                                          f"{'playing' if not r.get('stopped') else 'ok'}")
+                    if not r.get("visStopped") or r["restAfterVis"] != r["total"]:
+                        fail(w, "replay", f"{slug}: a hidden tab did not stop the "
+                                          "replay cleanly")
+                    if r.get("replayClass"):
+                        fail(w, "replay", f"{slug}: the replay class survived a stop")
+
                 r = evaljs(JS_TABS)
                 if not r.get("skip") and not r.get("changed"):
                     fail(w, "tabs", f"{slug}: switching tabs did not change the pane ({r})")
@@ -272,7 +315,7 @@ def main(argv):
             print("  " + f)
         return 1
     print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured, "
-          "carousel, taskgroup, divider, arrows, sidescroll, deadlink at "
+          "carousel, taskgroup, divider, arrows, sidescroll, deadlink, replay at "
           + ", ".join(f"{w}x{h}" for w, h in VIEWPORTS))
     return 0
 
