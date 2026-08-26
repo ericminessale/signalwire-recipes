@@ -113,8 +113,13 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:4px;
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
-.chip[aria-pressed="true"]{color:var(--fg);background:var(--raised);
-  border-color:var(--line-2);}
+/* Selection is the one state that answers "what am I looking at", so it
+   carries colour. Blue is the brand primary and is already on the page in
+   the mark; fuchsia's four jobs stay spent, turquoise still means navigate. */
+.chip[aria-pressed="true"]{color:#eaf0ff;background:rgba(4,78,244,.22);
+  border-color:rgba(4,78,244,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.07);}
+.chip[aria-pressed="true"] .cn{color:#c9d8ff;}
+.chip[aria-pressed="true"]:hover{background:rgba(4,78,244,.3);}
 .chip:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 
 /* category section */
@@ -307,8 +312,18 @@ a.cx:hover{color:var(--fg);}
 /* collapsed category still shows its shape: name, count, task groups */
 details.cat{border-bottom:1px solid var(--line);}
 details.cat[open]{padding-bottom:34px;}
+/* a landmark reads as one: an open category lifts off the page ground */
+details.cat[open]>summary.cat-h{background:linear-gradient(
+  to bottom,rgba(255,255,255,.045),rgba(255,255,255,0));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+summary.cat-h{transition:background 140ms ease;border-radius:var(--r-md) var(--r-md) 0 0;
+  padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;}
+summary.cat-h:hover{background:rgba(255,255,255,.03);}
+.cat-h .n{font-family:var(--mono);font-size:11px;color:var(--fg-2);
+  background:rgba(255,255,255,.06);border-radius:2px;padding:2px 6px;
+  margin-left:2px;}
 summary.cat-h{list-style:none;cursor:pointer;display:flex;align-items:baseline;
-  gap:14px;padding:22px 0;flex-wrap:wrap;}
+  gap:14px;padding:22px 10px;flex-wrap:wrap;}
 summary.cat-h::-webkit-details-marker{display:none;}
 summary.cat-h::before{content:"+";font-family:var(--mono);font-size:13px;
   color:var(--fg-subtle);width:12px;}
@@ -317,9 +332,23 @@ summary.cat-h:hover .ct2{color:var(--fg-2);}
 summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
 .ct2{font-family:var(--head);font-weight:600;font-size:23px;letter-spacing:-.03em;}
 .cat-h .n{font-family:var(--mono);font-size:11.5px;color:var(--fg-subtle);}
-.tgs{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
-.tg{font-size:12px;color:var(--fg-subtle);}
-.tg .cn,.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
+/* Task groups. These were a run-on of grey text that looked like navigation
+   and was not; now they are buttons that open the category and go to the
+   group, so the affordance and the behaviour agree. */
+.tgs{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto;justify-content:flex-end;
+  max-width:70%;row-gap:5px;}
+.tg{display:inline-flex;align-items:center;gap:6px;font-family:var(--body);
+  font-size:11.5px;line-height:1;color:var(--fg-muted);cursor:pointer;
+  padding:5px 8px;border-radius:var(--r-sm);border:1px solid transparent;
+  background:rgba(255,255,255,.035);
+  transition:background 130ms ease,color 130ms ease,border-color 130ms ease;}
+.tg:hover{background:rgba(255,255,255,.07);color:var(--fg);
+  border-color:var(--line-2);}
+.tg:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.tg .cn{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);
+  background:rgba(0,0,0,.35);border-radius:2px;padding:2px 5px;}
+.tg:hover .cn{color:var(--fg-2);}
+.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
 .catbody{padding-top:4px;}
 .tgroup{margin-top:22px;}
 .tgh{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--fg-muted);
@@ -364,19 +393,22 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .eyebrow .mk{width:15px;height:auto;display:block;}
 
 /* task groups: enough contrast and air to separate on first glance */
-.tgroup{margin-top:38px;}
+.tgroup{margin-top:38px;scroll-margin-top:120px;}
 .tgroup:first-child{margin-top:22px;}
 .tgh{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
   letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:baseline;gap:9px;}
 .tgh .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);font-weight:400;}
+.tgh:focus-visible{outline:2px solid var(--fuchsia);outline-offset:4px;border-radius:2px;}
 .tgh::after{content:"";flex:1;height:1px;background:var(--line);}
 
 /* separators live on the cards, so an unfilled cell is just background */
 .grid,.bgrid{gap:0;background:transparent;border:none;
   border-left:1px solid var(--line);border-radius:0;}
 .card,.buildcard{border-top:1px solid var(--line);
-  border-right:1px solid var(--line);background:transparent;}
-.card:hover,.buildcard:hover{background:var(--surface);}
+  border-right:1px solid var(--line);background:transparent;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.028);}
+.card:hover,.buildcard:hover{background:var(--surface);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 
 /* lockup: official mark carries the wordmark */
 .eyebrow{display:inline-flex;align-items:center;gap:11px;}
@@ -399,18 +431,53 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
 /* featured: a raised plate above the categories. It borrows no fuchsia -
    that colour already has its four jobs - and earns its place with depth */
-.feat{margin:34px 0 44px;}
+/* The band sits above the page rather than on it: its own ground, a top
+   light, and a real shadow. Depth is what separates it, not colour. */
+.feat{margin:30px 0 46px;padding:18px 18px 20px;border-radius:var(--r-lg);
+  background:linear-gradient(to bottom,rgba(255,255,255,.045),rgba(255,255,255,.012));
+  border:1px solid var(--line-2);box-shadow:var(--lip),var(--lift);}
+.feathead{display:flex;align-items:center;gap:14px;margin:0 0 14px;}
 .feath{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
-  letter-spacing:-.01em;margin:0 0 14px;display:flex;align-items:baseline;gap:9px;}
-.feath::after{content:"";flex:1;height:1px;background:var(--line);}
-.fgrid{display:grid;gap:10px;
-  grid-template-columns:repeat(auto-fill,minmax(400px,1fr));}
+  letter-spacing:-.01em;margin:0;white-space:nowrap;}
+.feathead::after{content:"";order:1;flex:1;height:1px;background:var(--line);}
+.fnav{order:2;display:flex;align-items:center;gap:10px;}
+.farrow{width:26px;height:26px;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:50%;cursor:pointer;font-size:16px;
+  line-height:1;color:var(--turquoise);background:rgba(64,224,208,.09);
+  border:1px solid rgba(64,224,208,.28);
+  transition:background 130ms ease,border-color 130ms ease,transform 130ms ease;}
+.farrow:hover{background:rgba(64,224,208,.17);border-color:rgba(64,224,208,.5);}
+.farrow:active{transform:scale(.94);}
+.farrow:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.fdots{display:flex;gap:6px;}
+.fdot{width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.18);border:none;transition:background 130ms ease;}
+.fdot:hover{background:rgba(255,255,255,.34);}
+.fdot.on{background:var(--turquoise);}
+.fdot:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.fviewport{overflow:hidden;}
+/* --per is set by the script from the viewport, so a page is really a page */
+.ftrack{display:flex;gap:10px;--per:3;
+  transition:transform 420ms cubic-bezier(.4,0,.2,1);}
+.ftrack>.fcard{flex:0 0 calc((100% - (var(--per) - 1) * 10px) / var(--per));}
+.fstatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+  white-space:nowrap;margin:0;}
+.fplay{width:26px;height:26px;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:50%;cursor:pointer;font-size:9px;
+  letter-spacing:1px;line-height:1;color:var(--turquoise);
+  background:rgba(64,224,208,.09);border:1px solid rgba(64,224,208,.28);
+  transition:background 130ms ease,border-color 130ms ease;}
+.fplay:hover{background:rgba(64,224,208,.17);border-color:rgba(64,224,208,.5);}
+.fplay:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){.ftrack{transition:none;}}
+/* Inside a raised band the cards are recessed, not raised again: two
+   plates stacked read as one flat slab. */
 .fcard{display:flex;flex-direction:column;justify-content:space-between;gap:18px;
-  min-height:118px;padding:18px 20px 16px;color:inherit;
-  background:var(--plate);border:1px solid var(--line-2);border-radius:var(--r-lg);
-  box-shadow:var(--lip),var(--lift);
-  transition:border-color 140ms ease,transform 140ms ease;}
-.fcard:hover{border-color:var(--line-3);transform:translateY(-1px);}
+  min-height:124px;padding:18px 20px 16px;color:inherit;
+  background:var(--well);border:1px solid var(--line);border-radius:var(--r-md);
+  box-shadow:var(--sunk);
+  transition:border-color 140ms ease,background 140ms ease,transform 140ms ease;}
+.fcard:hover{border-color:var(--line-3);background:#0d0d10;transform:translateY(-1px);}
 .fcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .fcard .fl{font-family:var(--head);font-weight:600;font-size:19px;
   letter-spacing:-.03em;line-height:1.22;color:var(--fg);text-wrap:balance;}
@@ -421,7 +488,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   border-color:var(--line);}
 .fcard.planned:hover{transform:none;border-color:var(--line);}
 .fcard.planned .fl{color:var(--fg-muted);}
-@media (max-width:700px){.fgrid{grid-template-columns:1fr;}}
+@media (max-width:760px){.tgs{display:none;}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 """
 
@@ -488,6 +555,8 @@ function apply(){
     // the band is a front door, not a result: a search or a chip replaces it
     feat.hidden=!!(t||on.length)||fc.every(c=>c.hidden);
   }
+  const band=document.querySelector('.feat');
+  if(band)band.dispatchEvent(new Event('featured:relayout'));
   allChip.setAttribute('aria-pressed',on.length?'false':'true');
   const none=document.getElementById('none'); if(none)none.hidden=n>0;
   const u=new URL(location.href);
@@ -495,6 +564,142 @@ function apply(){
   on.length?u.searchParams.set('c',on.join(',')):u.searchParams.delete('c');
   history.replaceState(null,'',u);
 }
+
+// --- featured carousel -----------------------------------------------------
+// The cards stay in one flat track and the script decides how many make a
+// page, because that depends on the viewport and on which cards are filtered
+// out. Every card stays in the DOM, so the filter counts and the unbuilt
+// toggle still see all of them.
+(function(){
+  const feat=document.querySelector('.feat'); if(!feat)return;
+  const track=feat.querySelector('.ftrack');
+  const viewport=feat.querySelector('.fviewport');
+  const GAP=10;   // matches the track's gap in the stylesheet
+  const dotWrap=feat.querySelector('.fdots');
+  const status=feat.querySelector('.fstatus');
+  const playBtn=feat.querySelector('.fplay');
+  const nav=feat.querySelector('.fnav');
+  const all=[...feat.querySelectorAll('.fcard')];
+  if(!track||!viewport||!all.length)return;
+  const still=window.matchMedia('(prefers-reduced-motion: reduce)');
+  const wide=window.matchMedia('(min-width: 1101px)');
+  const mid=window.matchMedia('(min-width: 761px)');
+  let at=0, timer=null, paused=false;
+
+  // String, not Number: setProperty ignores a numeric value, and the cards
+  // then keep the stylesheet's width while the script pages a different
+  // number of them.
+  const perPage=()=>{const n=wide.matches?3:(mid.matches?2:1);
+    track.style.setProperty('--per',String(n)); return n;};
+  // only cards a filter has left visible are worth paging through
+  const shown=()=>all.filter(c=>!c.hidden);
+  const pageCount=()=>Math.max(1,Math.ceil(shown().length/perPage()));
+
+  function stop(){ if(timer){clearInterval(timer);timer=null;} }
+  function start(){
+    stop();
+    // every reason to hold still, checked in one place: the arrows and the
+    // dots used to restart the timer while the pointer was still inside
+    if(paused||document.hidden||still.matches||pageCount()<2)return;
+    if(feat.matches(':hover')||feat.contains(document.activeElement))return;
+    timer=setInterval(()=>go(at+1,false),10000);
+  }
+
+  function go(i,announce){
+    const pages=pageCount();
+    at=(i+pages)%pages;
+    const per=perPage();
+    const visible=shown();
+    // A page spans the viewport exactly, because the cards are sized to fill
+    // it, so the offset is whole viewports plus one gap each. offsetLeft
+    // cannot be used here: applying a transform makes the track the cards'
+    // offsetParent, so the measurement changes meaning as soon as it is used.
+    const vw=viewport.getBoundingClientRect().width;
+    track.style.transform='translateX(-'+(at*(vw+GAP))+'px)';
+    [...dotWrap.children].forEach((d,n)=>{
+      d.classList.toggle('on',n===at);
+      if(n===at)d.setAttribute('aria-current','page');
+      else d.removeAttribute('aria-current');
+    });
+    // A card nobody can see should be reachable by neither tab nor a screen
+    // reader's virtual cursor, so it leaves the accessibility tree too.
+    const onPage=new Set(visible.slice(at*per,at*per+per));
+    all.forEach(c=>{
+      const off=!onPage.has(c);
+      c.toggleAttribute('inert',off);
+      if(off)c.setAttribute('aria-hidden','true');
+      else c.removeAttribute('aria-hidden');
+    });
+    if(announce&&status)status.textContent='Featured page '+(at+1)+' of '+pages;
+  }
+
+  function dots(){
+    const pages=pageCount();
+    dotWrap.innerHTML='';
+    for(let i=0;i<pages;i++){
+      const d=document.createElement('button');
+      d.type='button'; d.className='fdot'; d.dataset.page=i;
+      d.setAttribute('aria-label','Featured page '+(i+1)+' of '+pages);
+      d.addEventListener('click',()=>{ go(i,true); start(); });
+      dotWrap.appendChild(d);
+    }
+    if(nav)nav.hidden=pages<2;
+  }
+
+  // rebuilt whenever the page size or the visible set can have changed
+  function layout(){ dots(); go(Math.min(at,pageCount()-1),false); start(); }
+  feat.addEventListener('featured:relayout',layout);
+
+  feat.querySelectorAll('.farrow').forEach(b=>b.addEventListener('click',()=>{
+    go(at+Number(b.dataset.step),true); start();
+  }));
+  playBtn&&playBtn.addEventListener('click',()=>{
+    paused=!paused;
+    playBtn.textContent=paused?'\u25B6':'\u2759\u2759';
+    playBtn.setAttribute('aria-label',paused?'Play featured':'Pause featured');
+    paused?stop():start();
+  });
+  feat.addEventListener('mouseenter',stop);
+  feat.addEventListener('mouseleave',start);
+  feat.addEventListener('focusin',stop);
+  feat.addEventListener('focusout',e=>{ if(!feat.contains(e.relatedTarget))start(); });
+  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+  [still,wide,mid].forEach(m=>m.addEventListener&&m.addEventListener('change',layout));
+  let lastPer=0;
+  window.addEventListener('resize',()=>{
+    const per=perPage();
+    if(per!==lastPer){lastPer=per;layout();}
+  });
+  layout();
+})();
+
+// --- task groups go where they say they go ---------------------------------
+// They used to be text that looked like navigation. Clicking one now opens its
+// category and scrolls to the group.
+document.querySelectorAll('.tg').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const cat=chip.closest('details.cat'); if(!cat)return;
+    cat.open=true;
+    const group=document.getElementById(chip.getAttribute('aria-controls'));
+    if(!group)return;
+    // The cards carry content-visibility:auto, so their real heights replace
+    // the estimates as they paint and a smooth scroll chases a moving target.
+    // Jump, let layout settle, then correct. The offset clears the sticky
+    // strip with room to spare: settling shifts the landing by ~20px.
+    const where=()=>group.getBoundingClientRect().top+window.scrollY-120;
+    window.scrollTo({top:where(),behavior:'auto'});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const target=where();
+      if(Math.abs(target-window.scrollY)>4)
+        window.scrollTo({top:target,behavior:'auto'});
+      // move focus with the viewport, or a keyboard user is still up in the
+      // category header with no idea the page went somewhere
+      const heading=group.querySelector('.tgh');
+      if(heading)heading.focus({preventScroll:true});
+    }));
+  });
+});
+
 q.addEventListener('input',apply);
 if(tog)tog.addEventListener('click',()=>{
   const was=tog.getAttribute('aria-pressed')==='true';
@@ -855,12 +1060,31 @@ def build_index(recipes, body_only=False):
 
     featured = ""
     if feat_items:
-        featured = (
-            '<section class="feat" id="feat">'
-            '<h2 class="feath">Featured</h2>'
-            '<div class="fgrid">%s</div></section>'
-            % "".join(fcard(r) for r in feat_items)
+        # One flat track. How many fit a page is a runtime question, because
+        # it changes with the viewport and with which cards are filtered out,
+        # so the dots are built in JS rather than baked here.
+        nav = (
+            '<div class="fnav">'
+            '<button type="button" class="fplay" aria-label="Pause featured">'
+            '&#10073;&#10073;</button>'
+            '<button type="button" class="farrow" data-step="-1" '
+            'aria-label="Previous featured">&#8249;</button>'
+            '<div class="fdots"></div>'
+            '<button type="button" class="farrow" data-step="1" '
+            'aria-label="Next featured">&#8250;</button></div>'
         )
+        featured = (
+            '<section class="feat" id="feat" aria-labelledby="feath">'
+            '<div class="feathead"><h2 class="feath" id="feath">Featured</h2>%s</div>'
+            '<div class="fviewport"><div class="ftrack">%s</div></div>'
+            '<p class="fstatus" role="status" aria-live="polite"></p>'
+            '</section>'
+            % (nav, "".join(fcard(r) for r in feat_items))
+        )
+
+    def group_id(cat_key, group_key):
+        """One spelling of a group's id, used by the anchor and its button."""
+        return esc("g-%s-%s" % (cat_key, group_key))
 
     sections = []
     for c in V["categories"]:
@@ -876,15 +1100,19 @@ def build_index(recipes, body_only=False):
         ordered = sorted(groups.items(), key=lambda kv: (-len(kv[1]), kv[0]))
 
         tabs = "".join(
-            '<span class="tg" data-g="%s">%s <span class="cn">%d</span></span>'
-            % (esc(k), esc(subs.get(k, {}).get("label", k)), len(v))
+            '<button type="button" class="tg" data-g="%s" aria-controls="%s">'
+            '%s<span class="cn">%d</span></button>'
+            % (esc(k), group_id(c["key"], k),
+               esc(subs.get(k, {}).get("label", k)), len(v))
             for k, v in ordered
         )
 
         blocks = "".join(
-            '<div class="tgroup" data-g="%s"><h3 class="tgh">%s <span class="cn">%d</span></h3>'
+            '<div class="tgroup" id="%s" data-g="%s">'
+            '<h3 class="tgh" tabindex="-1">%s <span class="cn">%d</span></h3>'
             '<div class="grid">%s</div></div>'
-            % (esc(k), esc(subs.get(k, {}).get("label", k)), len(v),
+            % (group_id(c["key"], k), esc(k),
+               esc(subs.get(k, {}).get("label", k)), len(v),
                "".join(card(r) for r in sorted(v, key=rank)))
             for k, v in ordered
         )

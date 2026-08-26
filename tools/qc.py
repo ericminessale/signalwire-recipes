@@ -38,6 +38,12 @@ RECIPES_TO_CHECK = ("scope-tools-per-step", "build-an-ivr-menu", "register-a-10d
 JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var paint=function(e){return getComputedStyle(e).display!=='none'};var cards=function(sel){return [].slice.call(f.querySelectorAll(sel)).filter(paint).length};var q=document.getElementById('q');var chip=[].slice.call(document.querySelectorAll('.chip')).filter(function(c){return c.dataset.f&&c.dataset.f!=='all'&&c.dataset.f.indexOf('kind:')!==0})[0];var o={dup:document.querySelectorAll('.fcard.card').length};o.initial=paint(f);q.value='transfer';q.dispatchEvent(new Event('input'));o.onSearch=paint(f);q.value='';q.dispatchEvent(new Event('input'));o.cleared=paint(f);if(chip){chip.click();o.onChip=paint(f);chip.click();o.chipOff=paint(f);}var t=document.getElementById('pvtog');if(t){var before=cards('.fcard');o.plannedBefore=cards('.fcard.planned');t.click();o.togBand=paint(f);o.togShrank=cards('.fcard')<before;o.togPlanned=cards('.fcard.planned');t.click();}return JSON.stringify(o)})()"""
 
 
+JS_CAROUSEL = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var t=f.querySelector('.ftrack');var cards=[].slice.call(f.querySelectorAll('.fcard'));if(!t||cards.length<2)return JSON.stringify({skip:true});var o={cards:cards.length};o.dots=f.querySelectorAll('.fdot').length;o.per=parseInt(t.style.getPropertyValue('--per'),10)||0;var w=f.querySelector('.fviewport');o.clipped=w?getComputedStyle(w).overflow==='hidden':false;var cw=cards[0].getBoundingClientRect().width;var vw=w?w.getBoundingClientRect().width:0;o.widthMatchesPer=(vw&&o.per)?Math.abs(cw-((vw-(o.per-1)*10)/o.per))<3:false;var live=cards.filter(function(c){return !c.hidden}).length;o.dotsMatch=o.per?o.dots===Math.ceil(live/o.per):false;var at=function(){return t.style.transform};var next=f.querySelector('.farrow[data-step="1"]');var prev=f.querySelector('.farrow[data-step="-1"]');var play=f.querySelector('.fplay');if(play)play.click();var was=at();next.click();o.moved=at()!==was;o.status=(f.querySelector('.fstatus')||{}).textContent||'';o.current=f.querySelectorAll('.fdot[aria-current="page"]').length;o.inert=f.querySelectorAll('.fcard[inert]').length;o.ariaHidden=f.querySelectorAll('.fcard[aria-hidden="true"]').length;o.reachable=cards.length-o.inert;prev.click();o.wrapped=at()===was;if(play){var lab=play.getAttribute('aria-label');next.click();prev.click();o.stillPaused=play.getAttribute('aria-label')===lab;play.click();}return JSON.stringify(o)})()"""
+
+
+JS_TASKGROUP = """(function(){var chip=document.querySelector('details.cat .tg');if(!chip)return JSON.stringify({skip:true});var cat=chip.closest('details.cat');var o={tag:chip.tagName,wasOpen:cat.open};cat.open=false;chip.click();o.opened=cat.open;var g=cat.querySelector('.tgroup[data-g="'+chip.dataset.g+'"]');o.hasGroup=!!g;o.focusable=chip.tabIndex>=0;var keys=[].slice.call(cat.querySelectorAll('.tg')).map(function(c){return c.dataset.g});var groups=[].slice.call(cat.querySelectorAll('.tgroup')).map(function(t){return t.dataset.g});o.orphans=keys.filter(function(k){return groups.indexOf(k)<0});return JSON.stringify(o)})()"""
+
+
 def pw(*args, timeout=90):
     exe = shutil.which("playwright-cli") or shutil.which("playwright-cli.cmd")
     if not exe:
@@ -141,6 +147,48 @@ def main(argv):
                 if r.get("togPlanned"):
                     fail(w, "featured", f"{r['togPlanned']} planned featured card(s) still painted "
                                         "with the unbuilt hidden")
+            r = evaljs(JS_CAROUSEL)
+            if not r.get("skip"):
+                if not r.get("moved"):
+                    fail(w, "carousel", "the next arrow did not move the track")
+                if not r.get("wrapped"):
+                    fail(w, "carousel", "arrowing forward then back did not return")
+                if not r.get("clipped"):
+                    fail(w, "carousel", "the viewport does not clip")
+                if not r.get("per"):
+                    fail(w, "carousel", "--per is unset, so the cards are sized by the "
+                                        "stylesheet rather than by the page size")
+                if not r.get("widthMatchesPer"):
+                    fail(w, "carousel", f"card width disagrees with --per={r.get('per')}")
+                if not r.get("dotsMatch"):
+                    fail(w, "carousel", f"{r.get('dots')} dots for {r.get('cards')} cards "
+                                        f"at {r.get('per')} per page")
+                if r.get("current") != 1:
+                    fail(w, "carousel", f"{r.get('current')} dots aria-current, want 1")
+                if not r.get("inert") or not r.get("ariaHidden"):
+                    fail(w, "carousel", "offscreen cards are not inert and aria-hidden, "
+                                        "so a screen reader still reaches them")
+                if not r.get("reachable"):
+                    fail(w, "carousel", "no featured card is reachable")
+                if not r.get("status"):
+                    fail(w, "carousel", "no status announced on a manual page change")
+                if r.get("stillPaused") is False:
+                    fail(w, "carousel", "using an arrow restarted a paused carousel")
+
+            r = evaljs(JS_TASKGROUP)
+            if not r.get("skip"):
+                if r.get("tag") != "BUTTON":
+                    fail(w, "taskgroup", f"task group is a {r.get('tag')}, not a button; "
+                                         "it looks like navigation")
+                if not r.get("opened"):
+                    fail(w, "taskgroup", "clicking a task group did not open its category")
+                if not r.get("hasGroup"):
+                    fail(w, "taskgroup", "a task group points at no group in the page")
+                if not r.get("focusable"):
+                    fail(w, "taskgroup", "task groups are not reachable by keyboard")
+                if r.get("orphans"):
+                    fail(w, "taskgroup", f"task groups with no matching group: {r['orphans']}")
+
             r = evaljs(JS_TOGGLE)
             if not r.get("skip"):
                 if not (r["after"] < r["before"]):
@@ -171,7 +219,8 @@ def main(argv):
         for f in failures:
             print("  " + f)
         return 1
-    print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured at "
+    print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured, "
+          "carousel, taskgroup at "
           + ", ".join(f"{w}x{h}" for w, h in VIEWPORTS))
     return 0
 

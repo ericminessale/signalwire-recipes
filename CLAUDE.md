@@ -147,7 +147,13 @@ brand cheatsheet's abstractions and not invented:
 - the official logo SVG carries the wordmark — never set the company name as type
 - **fuchsia `#F72A72` has exactly four jobs**: primary button, build rail, active
   Builds chip, selected surface tab. If you are reaching for it a fifth time,
-  the answer is a neutral.
+  the answer is a neutral, or one of the other two signals below.
+- **Three signals, three meanings.** Fuchsia marks a build and the four jobs
+  above. Turquoise navigates: links, identifiers, the carousel arrows and dots.
+  **SignalWire blue `#044EF4` selects** the active category chip, which is the
+  one state answering "what am I looking at" and was a grey box until Eric
+  pointed at it (2026-08-26). Blue is the brand primary and already on the page
+  in the mark. Nothing else takes blue.
 - **The build rail marks a build that exists.** A 2px fuchsia inset plus a
   brighter cell edge (`--line-2`) on a live build card; a planned build (no
   repository) gets neither, so in a mixed band the real one reads as real and
@@ -163,6 +169,33 @@ brand cheatsheet's abstractions and not invented:
 - horizontal separators are `border-top` on the card, so a rule stops where the
   cards stop. A `border-bottom` scheme draws a full-width line over cells that
   do not exist.
+
+### Index interaction (decided 2026-08-26)
+
+- **A control that looks like navigation must navigate.** The task-group strip
+  in each category header was grey text carrying counts, sitting where
+  navigation sits, doing nothing. They are `<button>`s now: they open their
+  category, scroll to the group and move focus to its heading. `tools/qc.py`
+  fails the build if one is not a button, does not open its category, or points
+  at a group that does not exist.
+- **The featured band is a carousel**, three up at 1101px+, two at 761px+, one
+  below. The track is **one flat list of cards**, not pre-baked pages: the
+  script computes how many fit, sets `--per`, and rebuilds the dots, so paging
+  follows the viewport and skips cards a filter has hidden.
+- **Auto-advance carries obligations.** It pauses on hover, on focus within, on
+  a hidden tab, under `prefers-reduced-motion`, and on a persistent
+  pause/resume button. `start()` checks all of them in one place, because the
+  first version restarted the timer from the arrow handlers while the pointer
+  was still inside.
+- **Offscreen cards leave the accessibility tree**, with `inert` and
+  `aria-hidden`, not just `tabindex="-1"`. Tab order is not the only way in.
+- **Never position a slide with `offsetLeft`.** Transforming the track makes it
+  the cards' `offsetParent`, so `card.offsetLeft` changes coordinate space the
+  moment the transform is applied and paging freezes after one step. Compute
+  from the viewport width plus the gap.
+- **`element.style.setProperty` ignores a Number.** `setProperty('--per', 3)`
+  does nothing; it needs `String(3)`. The cards kept the stylesheet's width
+  while the script paged a different number of them, and nothing errored.
 
 ### Index layout (decided 2026-08-25)
 
