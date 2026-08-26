@@ -425,24 +425,31 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 
 /* the Builds filter is a different kind of thing */
 .chip.kind{margin-left:14px;position:relative;border-color:var(--line);}
-.chip.kind::before{content:"";position:absolute;left:-8px;top:50%;
+.chip.kind::before{content:"";position:absolute;left:-11px;top:50%;
   transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
   border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
-/* featured: a raised plate above the categories. It borrows no fuchsia -
-   that colour already has its four jobs - and earns its place with depth */
-/* The band sits above the page rather than on it: its own ground, a top
-   light, and a real shadow. Depth is what separates it, not colour. */
-.feat{margin:30px 0 46px;padding:18px 18px 20px;border-radius:var(--r-lg);
-  background:linear-gradient(to bottom,rgba(255,255,255,.045),rgba(255,255,255,.012));
-  border:1px solid var(--line-2);box-shadow:var(--lip),var(--lift);}
+/* Featured: three cards with an arrow either side, and no container.
+   A plate holding recessed cards is one frame inside another, which is what
+   made it read as boxy. The band is the page now and the cards are the
+   objects raised off it, so the depth lands on the thing you click. It
+   borrows no fuchsia - that colour already has its four jobs. */
+.feat{margin:30px 0 46px;}
+/* the arrows sit outside the cards and the viewport takes the rest */
+.frow{display:flex;align-items:center;gap:14px;}
+.frow .fviewport{flex:1 1 auto;min-width:0;}
+.frow .farrow{flex:0 0 auto;}
 .feathead{display:flex;align-items:center;gap:14px;margin:0 0 14px;}
 .feath{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
   letter-spacing:-.01em;margin:0;white-space:nowrap;}
-.feathead::after{content:"";order:1;flex:1;height:1px;background:var(--line);}
+/* the heading needs no trailing rule: the strip above already separates
+   the band, and a rule running out of a heading is the generated tell */
+.feathead::after{content:"";order:1;flex:1;}
 .fnav{order:2;display:flex;align-items:center;gap:10px;}
-.farrow{width:26px;height:26px;display:inline-flex;align-items:center;
-  justify-content:center;border-radius:50%;cursor:pointer;font-size:16px;
+/* Bigger than the header controls because these are the primary affordance
+   and they stand alone in the margin with nothing to borrow scale from. */
+.farrow{width:38px;height:38px;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:50%;cursor:pointer;font-size:21px;
   line-height:1;color:var(--turquoise);background:rgba(64,224,208,.09);
   border:1px solid rgba(64,224,208,.28);
   transition:background 130ms ease,border-color 130ms ease,transform 130ms ease;}
@@ -470,25 +477,47 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fplay:hover{background:rgba(64,224,208,.17);border-color:rgba(64,224,208,.5);}
 .fplay:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){.ftrack{transition:none;}}
-/* Inside a raised band the cards are recessed, not raised again: two
-   plates stacked read as one flat slab. */
-.fcard{display:flex;flex-direction:column;justify-content:space-between;gap:18px;
-  min-height:124px;padding:18px 20px 16px;color:inherit;
-  background:var(--well);border:1px solid var(--line);border-radius:var(--r-md);
-  box-shadow:var(--sunk);
-  transition:border-color 140ms ease,background 140ms ease,transform 140ms ease;}
-.fcard:hover{border-color:var(--line-3);background:#0d0d10;transform:translateY(-1px);}
+/* With the plate gone the cards are the raised objects on the page. The
+   rows below are flat on --page, so this is the level that separates them. */
+.fcard{display:flex;flex-direction:column;gap:14px;
+  min-height:150px;padding:18px 20px 16px;color:inherit;
+  background:linear-gradient(to bottom,#1d1d23,#17171b);
+  border:1px solid var(--line-2);border-radius:var(--r-lg);
+  box-shadow:var(--lip),var(--lift);
+  transition:border-color 140ms ease,transform 140ms ease,box-shadow 140ms ease;}
+.fcard:hover{border-color:var(--line-3);transform:translateY(-2px);
+  box-shadow:var(--lip),0 2px 4px rgba(0,0,0,.45),0 16px 34px -14px rgba(0,0,0,.8);}
+/* The icon says which product line the card belongs to at a glance. It is
+   one accent, not six: the design system allows blue, fuchsia and purple as
+   fills only, turquoise is the one sanctioned accent text on dark, and this
+   page already spends blue on selection and fuchsia on builds. So the shape
+   differentiates and the tile gives the card a focal point. */
+.ftile{width:34px;height:34px;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:var(--r-md);color:var(--turquoise);
+  background:rgba(255,255,255,.045);border:1px solid var(--line);}
+/* An iconless category keeps the slot: display:none takes the 34px and
+   the gap with it and drops that card's claim above its neighbours. */
+.ftile:empty{visibility:hidden;}
+.fico{width:17px;height:17px;display:block;}
 .fcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .fcard .fl{font-family:var(--head);font-weight:600;font-size:19px;
   letter-spacing:-.03em;line-height:1.22;color:var(--fg);text-wrap:balance;}
-.fcard .fm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.fcard .fm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-top:auto;}
 .fcard .fn{font-family:var(--mono);font-size:11px;color:var(--fg-muted);}
 .fcard .fc{font-size:11.5px;color:var(--fg-subtle);margin-left:auto;}
+/* A planned card has nothing behind it, so it does not get the lift. */
 .fcard.planned{cursor:default;background:var(--surface);box-shadow:none;
   border-color:var(--line);}
-.fcard.planned:hover{transform:none;border-color:var(--line);}
+.fcard.planned:hover{transform:none;border-color:var(--line);box-shadow:none;}
 .fcard.planned .fl{color:var(--fg-muted);}
+.fcard.planned .ftile{color:var(--fg-subtle);background:rgba(255,255,255,.03);
+  border-color:var(--line);}
 @media (max-width:760px){.tgs{display:none;}}
+/* The circle may shrink at touch widths; the hit box may not. Padding
+   carries the target to 44px while the painted control stays 32. */
+@media (max-width:760px){.frow{gap:2px;}
+  .farrow{width:32px;height:32px;font-size:18px;padding:6px;
+    box-sizing:content-box;background-clip:content-box;}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 """
 
@@ -579,6 +608,7 @@ function apply(){
   const status=feat.querySelector('.fstatus');
   const playBtn=feat.querySelector('.fplay');
   const nav=feat.querySelector('.fnav');
+  const arrows=[...feat.querySelectorAll('.farrow')];
   const all=[...feat.querySelectorAll('.fcard')];
   if(!track||!viewport||!all.length)return;
   const still=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -644,13 +674,14 @@ function apply(){
       dotWrap.appendChild(d);
     }
     if(nav)nav.hidden=pages<2;
+    arrows.forEach(b=>{b.hidden=pages<2;});
   }
 
   // rebuilt whenever the page size or the visible set can have changed
   function layout(){ dots(); go(Math.min(at,pageCount()-1),false); start(); }
   feat.addEventListener('featured:relayout',layout);
 
-  feat.querySelectorAll('.farrow').forEach(b=>b.addEventListener('click',()=>{
+  arrows.forEach(b=>b.addEventListener('click',()=>{
     go(at+Number(b.dataset.step),true); start();
   }));
   playBtn&&playBtn.addEventListener('click',()=>{
@@ -665,10 +696,26 @@ function apply(){
   feat.addEventListener('focusout',e=>{ if(!feat.contains(e.relatedTarget))start(); });
   document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
   [still,wide,mid].forEach(m=>m.addEventListener&&m.addEventListener('change',layout));
-  let lastPer=0;
+  // A resize is not a page change, so it must not animate: retargeting a
+  // live transform transition on every resize event makes the cards lag
+  // behind the window being dragged. Jump, then restore the transition.
+  function place(){
+    const prev=track.style.transition;
+    track.style.transition='none';
+    go(at,false);
+    void track.offsetWidth;      // flush, or the restore is coalesced away
+    track.style.transition=prev;
+  }
+  let lastPer=0, raf=0;
   window.addEventListener('resize',()=>{
-    const per=perPage();
-    if(per!==lastPer){lastPer=per;layout();}
+    if(raf)return;
+    raf=requestAnimationFrame(()=>{
+      raf=0;
+      const per=perPage();
+      if(per!==lastPer){lastPer=per;dots();at=Math.min(at,pageCount()-1);
+        place();start();return;}
+      place();   // same page, new viewport width: re-place the track
+    });
   });
   layout();
 })();
@@ -939,6 +986,21 @@ def used_in(recipes):
     return out
 
 
+def category_icon(key):
+    """A category's glyph, from its vocabulary file.
+
+    The path lives in vocab/categories/<key>.json so a new category ships its
+    own icon without touching this file. A category with no `icon_path` simply
+    renders no tile.
+    """
+    for c in V["categories"]:
+        if c["key"] == key and c.get("icon_path"):
+            return ('<svg class="fico" viewBox="0 0 640 640" aria-hidden="true" '
+                    'focusable="false"><path fill="currentColor" d="%s"/></svg>'
+                    % c["icon_path"])
+    return ""
+
+
 def build_index(recipes, body_only=False):
     subs = V.get("subcategories", {})
     cat_of = {r["slug"]: r.get("category") for r in recipes}
@@ -1046,6 +1108,7 @@ def build_index(recipes, body_only=False):
         planned = r.get("_planned")
         return (
             '<a class="fcard%s"%s data-slug="%s" data-hay="%s"%s>'
+            '<span class="ftile">%s</span>'
             '<span class="fl">%s</span>'
             '<span class="fm"><span class="fn">%s</span>'
             '<span class="fc">%s</span></span></a>'
@@ -1053,6 +1116,7 @@ def build_index(recipes, body_only=False):
                "" if planned else ' href="r/%s.html"' % esc(r["slug"]),
                esc(r["slug"]), esc(hay(r)),
                ' aria-disabled="true"' if planned else "",
+               category_icon(r.get("category", "")),
                esc(r["feature_line"]), esc(r["title"]),
                esc("planned" if planned else
                    cat_label.get(r.get("category"), r.get("category", ""))))
@@ -1063,20 +1127,22 @@ def build_index(recipes, body_only=False):
         # One flat track. How many fit a page is a runtime question, because
         # it changes with the viewport and with which cards are filtered out,
         # so the dots are built in JS rather than baked here.
-        nav = (
-            '<div class="fnav">'
-            '<button type="button" class="fplay" aria-label="Pause featured">'
-            '&#10073;&#10073;</button>'
-            '<button type="button" class="farrow" data-step="-1" '
-            'aria-label="Previous featured">&#8249;</button>'
-            '<div class="fdots"></div>'
-            '<button type="button" class="farrow" data-step="1" '
-            'aria-label="Next featured">&#8250;</button></div>'
-        )
+        # Arrows flank the cards. The dots and the pause sit up in the
+        # heading line, quiet, so the card row stays a card row.
+        nav = ('<div class="fnav">'
+               '<div class="fdots"></div>'
+               '<button type="button" class="fplay" aria-label="Pause featured">'
+               '&#10073;&#10073;</button></div>')
         featured = (
             '<section class="feat" id="feat" aria-labelledby="feath">'
             '<div class="feathead"><h2 class="feath" id="feath">Featured</h2>%s</div>'
+            '<div class="frow">'
+            '<button type="button" class="farrow" data-step="-1" '
+            'aria-label="Previous featured">&#8249;</button>'
             '<div class="fviewport"><div class="ftrack">%s</div></div>'
+            '<button type="button" class="farrow" data-step="1" '
+            'aria-label="Next featured">&#8250;</button>'
+            '</div>'
             '<p class="fstatus" role="status" aria-live="polite"></p>'
             '</section>'
             % (nav, "".join(fcard(r) for r in feat_items))

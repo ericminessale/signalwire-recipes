@@ -189,6 +189,58 @@ brand cheatsheet's abstractions and not invented:
   was still inside.
 - **Offscreen cards leave the accessibility tree**, with `inert` and
   `aria-hidden`, not just `tabindex="-1"`. Tab order is not the only way in.
+- **The featured band has no container.** A plate holding recessed cards is one
+  frame inside another, and Eric read it as "very containerized/boxy"
+  (2026-08-26). The band is the page now; the *cards* are the raised objects
+  (gradient plus `--lip`/`--lift`), and because the category rows below are flat
+  on `--page`, that elevation is what makes the row read first. The arrows moved
+  out of the heading into `.frow` and flank the cards; dots and pause stay in the
+  heading line so the card row stays a card row. Do not re-introduce the plate.
+- **A rule trailing out of a heading is the generated-design tell** - already the
+  rule for the recipe page, and `.feathead::after` was breaking it on the index.
+  With the plate gone, the `.controls` border-bottom is the one separator the
+  band needs. Two lines for one boundary is one too many.
+- **Category icons live in `vocab/categories/<key>.json`** as `icon` and
+  `icon_path`, never in `build.py`. The LEAK guard caught the first attempt
+  within a minute of writing it, which is exactly its job: a new category ships
+  its own glyph and the generator does not change. Icons come from the
+  SignalWire library via the Knowledge MCP's `get_icons` (Font Awesome Pro
+  7.2.0, `viewBox="0 0 640 640"`, `fill="currentColor"`), never from memory -
+  SVG path data is not something to recall.
+- **The icons are one accent, not six.** Eric floated per-category colour.
+  `get_design('colors')` is explicit: blue `#044EF4` and fuchsia are **fills
+  only, never text on dark**, and turquoise on dark is the sanctioned accent
+  text. This page already spends blue on selection and fuchsia on builds, so a
+  third and fourth hue would break "three signals, three meanings". The glyph
+  *shape* differentiates and the tile gives the card a focal point. Per-category
+  colour is still open if Eric wants it, but it has to arrive as filled tiles,
+  not coloured glyphs.
+- **A resize is not a page change, so it must not animate.** Calling `go()` from
+  a resize handler retargeted a live `transform` transition on every event and
+  the cards lagged behind the window being dragged (sol, 2026-08-26). `place()`
+  drops the transition, jumps, flushes with `offsetWidth`, and restores it, and
+  the handler is batched through one `requestAnimationFrame`.
+- **A control may shrink at touch widths; its hit box may not.** The arrows
+  paint at 32px under 760px and carry 6px of `content-box` padding with
+  `background-clip:content-box`, so the target measures 46px and the circle
+  still looks 32. Measured, not assumed.
+- **Never collapse a slot with `display:none` to hide an optional ornament.**
+  `.ftile:empty{display:none}` took the 34px and the gap with it, which would
+  drop an iconless card's claim ~48px above its neighbours and undo the shared
+  baseline. It is `visibility:hidden`.
+- Round-2 review is `docs/UI_REVIEW_2026-08-26_featured.md`. Its P1 (arrows
+  visible while `hidden`) was **refused**: `build.py:71` already carries
+  `[hidden]{display:none!important}`, and a measurement confirmed
+  `display:none` and a zero-width rect. Its turquoise finding was **taken in
+  part**: the tile fill went neutral, the glyph kept the accent, because the
+  design system's answer for turquoise on dark is "read this first" and a fully
+  grey icon returns the flatness the pass exists to fix.
+
+- **A divider between two chips sits at the midpoint of the gap.** The Builds
+  divider was `left:-8px` against 22px of space (an 8px flex gap plus a 14px
+  margin), so it hugged Builds and read as belonging to it (Eric, 2026-08-26).
+  It is `-11px`. Measure the two rects and assert the midpoint; do not eyeball a
+  negative offset.
 - **Never position a slide with `offsetLeft`.** Transforming the track makes it
   the cards' `offsetParent`, so `card.offsetLeft` changes coordinate space the
   moment the transform is applied and paging freezes after one step. Compute
