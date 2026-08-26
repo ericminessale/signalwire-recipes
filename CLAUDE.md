@@ -743,6 +743,49 @@ docs have. A transcript is evidence, so it must be derivable from the code it
 sits beside; a plausible-looking conversation the code would never produce is a
 fabricated record, not a specimen.
 
+## Deployment (decided 2026-08-26)
+
+- **Vercel, on a SignalWire team account, with the repo in the `signalwire`
+  org.** Eric's call. Vercel over GitHub Pages **because of serverless
+  functions**: a live in-page demo needs an endpoint that mints Browser SDK
+  tokens, and Pages is static only. The demo slot on each recipe page exists to
+  take that runtime when it is built.
+- **Vercel's Hobby plan is for personal, non-commercial projects.** This is a
+  company asset, so it needs a Team plan. Do not stand the public URL up on a
+  personal account.
+- **The deploy builds; it does not serve committed files.** `site/` is
+  gitignored. `vercel.json` runs
+  `python3 -m pip install -r requirements.txt && python3 build.py` and serves
+  `site/`. Use `python3`, not `python`: the build image is Node-first.
+- **The gate belongs in CI, not in the deploy build.** `.github/workflows/gate.yml`
+  has two jobs: `gate` (lint, index freshness, build, extensibility, verify) and
+  `render` (the browser checks, which need Playwright and are slower). Until
+  this existed nothing enforced the gate except someone remembering to run it.
+- **CI installs `signalwire-sdk==3.0.1` from PyPI**, and `verify.py` wants the
+  directory *containing* the package on `SIGNALWIRE_SDK_PATH`. Locally that is
+  the vendored checkout; on a runner it is `sysconfig.get_paths()["purelib"]`.
+  The vendored layout is `signalwire-sdk/signalwire/signalwire/`, which is why
+  the local path ends one level above the package.
+- **`requirements.txt` is the tooling, not the recipes**: Pygments and PyYAML.
+  Each recipe pins its own dependencies. The render checks additionally need
+  `playwright-cli`, which is npm rather than pip.
+
+## The SDK pin (decided 2026-08-26)
+
+- **Recipes pin `signalwire-sdk==3.0.1` exactly, never a range.** They pinned
+  `>=3.0.1` while PyPI serves 3.4.0, so a developer cloning today got 3.4.0
+  while every verifier asserts 3.0.1 behaviour. This repo has already lost a
+  session to that shape of drift, where a newer SDK on the path shadowed the
+  vendored one and a run reported "verified" against a version it never loaded.
+- **Moving off the pin is a deliberate wave**: bump, run all 42 verifiers, fix
+  what broke, commit. `tools/lint_recipes.py` refuses a range (`SDK_PIN`).
+- **A silent fallback for a missing dependency is a deployment hazard.**
+  `highlight_code()` caught every exception and returned escaped text, so a
+  machine without Pygments built the whole site unhighlighted and said nothing.
+  It counts its fallbacks now and refuses when none succeeded, which is the
+  signature of an absent dependency rather than an odd lexer. The fallback for
+  a genuinely unknown lexer stays.
+
 ## QC gate — before any publish or commit that touches build.py
 
 1. `python tools/lint_recipes.py && python tools/gen_index.py --check && python build.py && python check_extensible.py && python verify.py`

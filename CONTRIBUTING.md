@@ -107,6 +107,15 @@ An `AgentBase` recipe also needs `SWML_BASIC_AUTH_USER` and
 exists only in the running process. The number's webhook then gets a 401, and
 the password changes on every restart.
 
+## Pin the SDK exactly
+
+Recipes pin `signalwire-sdk==3.0.1`, not a range. Every verifier asserts the
+behaviour of that exact version. An open range installs a newer SDK on a clean
+clone, so the code a reader runs no longer matches the claim that was proved.
+
+Moving off the pin is a deliberate change: bump it, run every verifier, fix
+what broke, then commit. The linter refuses a range.
+
 ## Write it like engineering
 
 The reader is a developer deciding whether the platform does the thing. Name

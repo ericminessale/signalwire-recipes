@@ -51,6 +51,12 @@ AI_TELLS = (
     (r"\bwe'?ll explore\b|\blet'?s (dive|explore|take a look)\b", "tour-guide framing"),
     (r"\bgame[- ]chang(er|ing)\b", "game-changer"),
 )
+# Every verifier asserts the behaviour of this exact SDK. An open
+# range let a clone install a newer one and diverge from what was
+# proved, silently. Moving off it is a deliberate wave: bump, re-run
+# every verifier, fix, commit.
+SDK_PIN = "signalwire-sdk==3.0.1"
+
 MAX_SENTENCE = 26   # writing guide: keep sentences under 26 words
 
 
@@ -154,6 +160,16 @@ def check(d, fail):
             at = prose.find(sent[:40])
             ln = prose[:at].count("\n") + 1 if at > 0 else 0
             fail(slug, f"README.md:~{ln}", f"{n}-word sentence; the guide caps them at {MAX_SENTENCE}")
+    req = d / "python" / "requirements.txt"
+    if req.exists() and req.stat().st_size:
+        rtxt = req.read_text(encoding="utf-8")
+        if "signalwire-sdk" in rtxt and SDK_PIN not in rtxt:
+            got = next((ln.strip() for ln in rtxt.splitlines()
+                        if "signalwire-sdk" in ln), "?")
+            fail(slug, "python/requirements.txt",
+                 f"pins {got}; it must be {SDK_PIN}, the version the verifier "
+                 "asserts. An open range installs a newer SDK on a clean clone")
+
     env_example = d / ".env.example"
     if not env_example.exists():
         fail(slug, ".env.example", "missing")

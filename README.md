@@ -75,7 +75,9 @@ build cannot claim a recipe that does not exist.
 ## Requirements
 
 - Python 3.10 or newer, which is what `signalwire-sdk` requires
-- `signalwire-sdk>=3.0.1`, installed per recipe from its `requirements.txt`
+- `signalwire-sdk==3.0.1`, installed per recipe from its `requirements.txt`.
+  The pin is exact on purpose: every verifier asserts the behaviour of that
+  version, so a clone reproduces what was proved
 - Node and npm for the recipes that ship a `typescript/` directory, which
   install `@signalwire/js` from their own `package.json`
 
@@ -96,6 +98,24 @@ work with this code.
 Folders are flat and named for the mechanism, not the scenario. The slug is
 what a developer would search for, so `require-verification-before-unlocking-tools`
 rather than `bank-agent`. The bank goes in the metadata as a tag.
+
+## Deploying
+
+The site is generated, so a deploy builds it rather than serving committed
+files. `site/` is not in the repository.
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 build.py            # writes site/
+```
+
+`vercel.json` carries that build command and points at `site/`. The gate runs
+separately in GitHub Actions, because the render checks need a browser and do
+not belong in a deploy build.
+
+A live in-page demo needs an endpoint that mints Browser SDK tokens. Vercel can
+host one, which is why it is the target; the demo slot on each recipe page is
+built to take it when it exists.
 
 ## Contributing
 

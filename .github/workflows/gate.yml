@@ -1,0 +1,88 @@
+# The QC gate, run on every push and pull request.
+#
+# Until now nothing enforced it except a person remembering to. Every check
+# here is a bug that shipped once, so a green run is the claim that none of
+# them has come back.
+#
+# The site build is Vercel's job. This workflow is the gate, and its failure
+# is what should stop a deploy.
+name: gate
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install the tooling
+        run: pip install -r requirements.txt
+
+      - name: Install the SDK the verifiers were written against
+        # The exact pin, not a range: every verifier asserts the behaviour of
+        # this version, and a newer one on the path is how a "verified" run
+        # once turned out to have tested something else.
+        run: pip install "signalwire-sdk==3.0.1"
+
+      - name: Prose, structure and required files
+        run: python tools/lint_recipes.py
+
+      - name: The generated index is current
+        run: python tools/gen_index.py --check
+
+      - name: Build
+        run: python build.py
+
+      - name: Vocabulary stays out of the generator
+        run: python check_extensible.py
+
+      - name: Every recipe proves its claim
+        # verify.py puts SIGNALWIRE_SDK_PATH on PYTHONPATH, so it wants the
+        # directory *containing* the package. Locally that is the vendored
+        # checkout; on a runner it is site-packages.
+        run: |
+          export SIGNALWIRE_SDK_PATH="$(python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
+          python verify.py
+
+  render:
+    # The render checks need a browser, so they get their own job and do not
+    # hold up the fast feedback above.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install the tooling
+        run: pip install -r requirements.txt
+
+      - name: Install playwright-cli
+        run: |
+          npm install -g @playwright/cli
+          npx playwright install --with-deps chromium
+
+      - name: Build the preview at full volume
+        run: |
+          python build.py
+          python build.py --preview --all
+
+      - name: Render checks at five widths
+        run: python tools/qc.py
