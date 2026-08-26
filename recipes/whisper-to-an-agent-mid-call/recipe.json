@@ -31,7 +31,8 @@
       "docs swml/reference/calling/join-conference (coach)",
       "features Whisper (coach member shape)",
       "sdk function_result.py:1046 join_conference(coach=)",
-      "verified 2026-08-25: recipes/whisper-to-an-agent-mid-call/verify.py"
+      "verified 2026-08-25: recipes/whisper-to-an-agent-mid-call/verify.py",
+      "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
     ]
   }
 }

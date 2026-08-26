@@ -32,7 +32,8 @@
     ],
     "evidence": [
       "docs swml/guides/webhook-security (HMAC)",
-      "docs apis/rest/webhooks/swaig-signature-request"
+      "docs apis/rest/webhooks/swaig-signature-request",
+      "NEEDS VERIFICATION 2026-08-25: the signature scheme itself. The SDK implements no signature verification (no hmac import anywhere in 3.0.1), and docs/enum/platform-docs.md records only that an HMAC exists and where it is documented. Writing a verifier needs the header name, the exact signed payload and the key, and inventing any of the three would ship a security recipe that does not verify anything. Read signalwire.com/docs/swml/guides/webhook-security and capture one signed request first."
     ]
   }
 }

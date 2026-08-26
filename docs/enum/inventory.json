@@ -418,7 +418,8 @@
         "sdk ai_config_mixin.py:493 add_mcp_server",
         "sdk skills/mcp_gateway/skill.py:22",
         "features External Tools",
-        "demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)"
+        "demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)",
+        "NEEDS VERIFICATION 2026-08-25: add_mcp_server() emits ai.SWAIG.mcp_servers, and that key is absent from the SDK's own bundled schema.json (0 occurrences), whose SWAIG object sets unevaluatedProperties:{not:{}}. A document configured this way therefore fails validate_swml() against 3.0.1. The client side is not broken the way enable_mcp_server() is (the config does render), but the recipe cannot be proven offline: the document does not validate and discovery happens on the platform at session start. Confirm against a live agent and a newer schema."
       ]
     },
     {
@@ -903,7 +904,8 @@
       "evidence": [
         "docs swml/reference/calling/ai/params (audible_latency, debug_webhook_url)",
         "demo testbot (107-capability conformance harness)",
-        "demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)"
+        "demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)",
+        "NEEDS VERIFICATION 2026-08-25: this is a tool row, not a recipe, and the measurement needs real stereo call recordings to analyse. signalwire/latency_checker is the published method (MCP get_doc('mary') cites it as the canonical source for any latency claim). Port or wrap that rather than deriving a method here."
       ]
     },
     {
@@ -1241,7 +1243,7 @@
       "slug": "brief-the-human-before-the-bridge-completes",
       "claim": "The receiving agent hears a whispered summary before the caller's audio is joined.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1263,7 +1265,8 @@
       ],
       "evidence": [
         "docs swml/reference/calling/connect (confirm)",
-        "features pre-join TTS whisper"
+        "features pre-join TTS whisper",
+        "verified 2026-08-25: recipes/brief-the-human-before-the-bridge-completes/verify.py"
       ]
     },
     {
@@ -1336,7 +1339,7 @@
       "slug": "offer-a-callback-instead-of-a-hold",
       "claim": "A waiting caller is released with a promise, and the return call opens with the context they already gave.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1356,7 +1359,8 @@
       ],
       "evidence": [
         "features Max wait cap -> callback enrollment; queue_dispatch._offer_callback_and_release",
-        "features: redirecting a live waiting leg to new SWML is not possible - design the release, do not promise a redirect"
+        "features: redirecting a live waiting leg to new SWML is not possible - design the release, do not promise a redirect",
+        "verified 2026-08-25: recipes/offer-a-callback-instead-of-a-hold/verify.py"
       ]
     },
     {
@@ -1844,7 +1848,8 @@
       ],
       "evidence": [
         "docs swml/guides/webhook-security (HMAC)",
-        "docs apis/rest/webhooks/swaig-signature-request"
+        "docs apis/rest/webhooks/swaig-signature-request",
+        "NEEDS VERIFICATION 2026-08-25: the signature scheme itself. The SDK implements no signature verification (no hmac import anywhere in 3.0.1), and docs/enum/platform-docs.md records only that an HMAC exists and where it is documented. Writing a verifier needs the header name, the exact signed payload and the key, and inventing any of the three would ship a security recipe that does not verify anything. Read signalwire.com/docs/swml/guides/webhook-security and capture one signed request first."
       ]
     },
     {
@@ -2905,7 +2910,8 @@
         "c:voice-support-line (stub, no repo)"
       ],
       "evidence": [
-        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run",
+        "OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately."
       ]
     },
     {
@@ -2936,7 +2942,8 @@
         "t:hotel-guest-services"
       ],
       "evidence": [
-        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run",
+        "OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately."
       ]
     },
     {
@@ -2962,7 +2969,8 @@
         "t:law-firm-client-intake"
       ],
       "evidence": [
-        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run"
+        "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run",
+        "OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately."
       ]
     },
     {

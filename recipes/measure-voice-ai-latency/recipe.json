@@ -32,7 +32,8 @@
     "evidence": [
       "docs swml/reference/calling/ai/params (audible_latency, debug_webhook_url)",
       "demo testbot (107-capability conformance harness)",
-      "demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)"
+      "demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)",
+      "NEEDS VERIFICATION 2026-08-25: this is a tool row, not a recipe, and the measurement needs real stereo call recordings to analyse. signalwire/latency_checker is the published method (MCP get_doc('mary') cites it as the canonical source for any latency claim). Port or wrap that rather than deriving a method here."
     ]
   }
 }

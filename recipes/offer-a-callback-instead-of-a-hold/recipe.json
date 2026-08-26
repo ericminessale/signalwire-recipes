@@ -22,14 +22,15 @@
   "subcategory": "routing",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "#15"
     ],
     "evidence": [
       "features Max wait cap -> callback enrollment; queue_dispatch._offer_callback_and_release",
-      "features: redirecting a live waiting leg to new SWML is not possible - design the release, do not promise a redirect"
+      "features: redirecting a live waiting leg to new SWML is not possible - design the release, do not promise a redirect",
+      "verified 2026-08-25: recipes/offer-a-callback-instead-of-a-hold/verify.py"
     ]
   }
 }

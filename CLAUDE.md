@@ -568,6 +568,18 @@ These cost a review round each. They are not in any single doc.
   `unknown` / `detecting` / `error`.
 - **The bundled schema requires `play` to be an object** with a `url`. The
   `play: "say:..."` shorthand in the docs does not validate locally.
+- **`enter_queue.transfer_after_bridge` is a string, not a boolean.** It holds
+  a URL or inline SWML, and `"false"` is how you say "carry on in this
+  document". A real boolean fails schema validation. It is also required.
+- **`connect` takes a `confirm`**, run on the answering leg before the bridge
+  completes, as a URL or inline SWML. That is the whisper-before-handoff
+  mechanism. `FunctionResult.connect()` does not expose it, so build the verb
+  and hand it over with `execute_swml`.
+- **`add_mcp_server()` emits a key the bundled schema rejects.**
+  `ai.SWAIG.mcp_servers` appears nowhere in 3.0.1's `schema.json`, whose SWAIG
+  object sets `unevaluatedProperties: {not: {}}`, so a document configured that
+  way fails `validate_swml()`. Unlike `enable_mcp_server()` the config does
+  render; the recipe is on hold because it cannot be proven offline.
 - **`join_conference` narrows two fields more than they look.** `beep` is one
   of `true` / `false` / `onEnter` / `onExit`, and `status_callback_event` takes
   a **single** event name, not a space-separated list. A list is the natural

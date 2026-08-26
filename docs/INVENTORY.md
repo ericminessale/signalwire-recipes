@@ -5,10 +5,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 ## Counts
 
 **121 rows.** By kind: recipe 100 · build 8 · guide 4 · tool 2 · hold 7.  
-By status: verified 40 · written 4 · stub 10 · proposed 60 · hold 7.  
+By status: verified 42 · written 4 · stub 8 · proposed 60 · hold 7.  
 Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
 Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
-Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 12.
+Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
 
@@ -320,6 +320,7 @@ Tools on an existing MCP server are discovered at startup and callable by the ag
   - sdk skills/mcp_gateway/skill.py:22
   - features External Tools
   - demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)
+  - NEEDS VERIFICATION 2026-08-25: add_mcp_server() emits ai.SWAIG.mcp_servers, and that key is absent from the SDK's own bundled schema.json (0 occurrences), whose SWAIG object sets unevaluatedProperties:{not:{}}. A document configured this way therefore fails validate_swml() against 3.0.1. The client side is not broken the way enable_mcp_server() is (the config does render), but the recipe cannot be proven offline: the document does not validate and discovery happens on the platform at session start. Confirm against a live agent and a newer schema.
 
 ### `write-a-reusable-agent-skill`
 
@@ -783,12 +784,13 @@ Callers wait in a named queue with hold audio and are bridged in order as agents
 
 A waiting caller is released with a promise, and the return call opens with the context they already gave.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Routing & queueing** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Routing & queueing** · lens Voice & Call Control
 - interfaces: swml, rest · capabilities: queue, outbound
 - folds: #15
 - evidence:
   - features Max wait cap -> callback enrollment; queue_dispatch._offer_callback_and_release
   - features: redirecting a live waiting leg to new SWML is not possible - design the release, do not promise a redirect
+  - verified 2026-08-25: recipes/offer-a-callback-instead-of-a-hold/verify.py
 
 ### `route-sip-calls-to-agents-by-username`
 
@@ -915,6 +917,7 @@ A request that did not come from SignalWire is rejected before any of your logic
 - evidence:
   - docs swml/guides/webhook-security (HMAC)
   - docs apis/rest/webhooks/swaig-signature-request
+  - NEEDS VERIFICATION 2026-08-25: the signature scheme itself. The SDK implements no signature verification (no hmac import anywhere in 3.0.1), and docs/enum/platform-docs.md records only that an HMAC exists and where it is documented. Writing a verifier needs the header name, the exact signed payload and the key, and inventing any of the three would ship a security recipe that does not verify anything. Read signalwire.com/docs/swml/guides/webhook-security and capture one signed request first.
 
 ### `register-an-e911-address-for-a-number`
 
@@ -1009,12 +1012,13 @@ A live call is bridged to a number, SIP URI or Resource address, and optionally 
 
 The receiving agent hears a whispered summary before the caller's audio is joined.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Handoff** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Handoff** · lens Voice & Call Control
 - interfaces: swml · capabilities: transfer, conference
 - folds: #9; t:warm-transfer; t:warm-transfer-ai-briefing; t:call-whisper-screen-pop
 - evidence:
   - docs swml/reference/calling/connect (confirm)
   - features pre-join TTS whisper
+  - verified 2026-08-25: recipes/brief-the-human-before-the-bridge-completes/verify.py
 
 ### `hand-off-from-ai-to-a-human-agent`
 
@@ -1363,6 +1367,7 @@ An IVR that queues, records and transfers to humans, with no AI in the path.
 - folds: c:voice-support-line (stub, no repo)
 - evidence:
   - folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run
+  - OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately.
 
 ### `sms-support-desk`
 
@@ -1373,6 +1378,7 @@ A two-way SMS desk with opt-out handling, threading and an AI first responder.
 - folds: c:sms-support-desk (stub, no repo); t:sms-conversation-threading; t:hotel-guest-services
 - evidence:
   - folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run
+  - OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately.
 
 ### `governed-intake-agent`
 
@@ -1383,6 +1389,7 @@ An intake agent that composes ordered steps, per-step tools, hidden fields and a
 - folds: c:governed-intake-agent (stub, no repo); t:insurance-claims-intake; t:law-firm-client-intake
 - evidence:
   - folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run
+  - OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately.
 
 ### `outbound-notification-campaign`
 
@@ -1489,6 +1496,7 @@ Turn latency is measured from end-of-speech to first audio, with the method publ
   - docs swml/reference/calling/ai/params (audible_latency, debug_webhook_url)
   - demo testbot (107-capability conformance harness)
   - demo postpromptviewer lib/metrics/latency.js (latency from post_prompt payload)
+  - NEEDS VERIFICATION 2026-08-25: this is a tool row, not a recipe, and the measurement needs real stereo call recordings to analyse. signalwire/latency_checker is the published method (MCP get_doc('mary') cites it as the canonical source for any latency claim). Port or wrap that rather than deriving a method here.
 
 ### `run-the-sdk-conformance-suite`
 
@@ -1659,12 +1667,15 @@ A rep takes calls in the browser while a sidecar streams objection-handling insi
 ## Rows that need verification before they are written
 
 - `require-verification-before-unlocking-tools` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
+- `call-an-mcp-server-from-a-live-call` — 2026-08-25: add_mcp_server() emits ai.SWAIG.mcp_servers, and that key is absent from the SDK's own bundled schema.json (0 occurrences), whose SWAIG object sets unevaluatedProperties:{not:{}}. A document configured this way therefore fails validate_swml() against 3.0.1. The client side is not broken the way enable_mcp_server() is (the config does render), but the recipe cannot be proven offline: the document does not validate and discovery happens on the platform at session start. Confirm against a live agent and a newer schema.
 - `run-livekit-agents-code-on-signalwire` — plugin classes are no-op stubs (livewire/plugins.py:49-124); the claim must be scoped to what actually maps
 - `let-an-agent-see-the-callers-camera` — exact tool the model calls and the image path
+- `measure-voice-ai-latency` — 2026-08-25: this is a tool row, not a recipe, and the measurement needs real stereo call recordings to analyse. signalwire/latency_checker is the published method (MCP get_doc('mary') cites it as the canonical source for any latency claim). Port or wrap that rather than deriving a method here.
 - `hand-off-from-ai-to-a-human-agent` — the notes transport - which webhook/payload the dequeuing side receives, and where the agent's notes are keyed (global_data via post_prompt vs. your own store)
 - `whisper-to-an-agent-mid-call` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 - `barge-into-a-live-call` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 - `handle-call-status-callbacks` — 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this.
+- `verify-a-webhook-signature` — 2026-08-25: the signature scheme itself. The SDK implements no signature verification (no hmac import anywhere in 3.0.1), and docs/enum/platform-docs.md records only that an HMAC exists and where it is documented. Writing a verifier needs the header name, the exact signed payload and the key, and inventing any of the three would ship a security recipe that does not verify anything. Read signalwire.com/docs/swml/guides/webhook-security and capture one signed request first.
 - `run-the-same-agent-over-text` — the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages
 - `put-an-agent-in-a-web-chat-widget` — browser-side auth to the AI Chat API (a token proxy is likely required)
 - `publish-events-to-browsers-with-pubsub` — v4 exposes no PubSub client; recipe must target v3 or Fabric conversations

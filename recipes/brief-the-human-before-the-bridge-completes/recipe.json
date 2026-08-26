@@ -22,7 +22,7 @@
   "subcategory": "handoff",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "#9",
@@ -32,7 +32,8 @@
     ],
     "evidence": [
       "docs swml/reference/calling/connect (confirm)",
-      "features pre-join TTS whisper"
+      "features pre-join TTS whisper",
+      "verified 2026-08-25: recipes/brief-the-human-before-the-bridge-completes/verify.py"
     ]
   }
 }
