@@ -44,6 +44,8 @@ JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return 
 JS_CAROUSEL = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var t=f.querySelector('.ftrack');var cards=[].slice.call(f.querySelectorAll('.fcard'));if(!t||cards.length<2)return JSON.stringify({skip:true});var o={cards:cards.length};o.dots=f.querySelectorAll('.fdot').length;o.per=parseInt(t.style.getPropertyValue('--per'),10)||0;var w=f.querySelector('.fviewport');o.clipped=w?getComputedStyle(w).overflow==='hidden':false;var cw=cards[0].getBoundingClientRect().width;var vw=w?w.getBoundingClientRect().width:0;o.widthMatchesPer=(vw&&o.per)?Math.abs(cw-((vw-(o.per-1)*10)/o.per))<3:false;var live=cards.filter(function(c){return !c.hidden}).length;o.dotsMatch=o.per?o.dots===Math.ceil(live/o.per):false;var at=function(){return t.style.transform};var next=f.querySelector('.farrow[data-step="1"]');var prev=f.querySelector('.farrow[data-step="-1"]');var play=f.querySelector('.fplay');if(play)play.click();var was=at();next.click();o.moved=at()!==was;o.status=(f.querySelector('.fstatus')||{}).textContent||'';o.current=f.querySelectorAll('.fdot[aria-current="page"]').length;o.inert=f.querySelectorAll('.fcard[inert]').length;o.ariaHidden=f.querySelectorAll('.fcard[aria-hidden="true"]').length;o.reachable=cards.length-o.inert;prev.click();o.wrapped=at()===was;if(play){var lab=play.getAttribute('aria-label');next.click();prev.click();o.stillPaused=play.getAttribute('aria-label')===lab;play.click();}return JSON.stringify(o)})()"""
 
 
+JS_DEADLINKS = """(function(){var bad=[];document.querySelectorAll('a[href]').forEach(function(a){  var h=a.getAttribute('href');  if(h==='#'||h===''||h===null)    bad.push((a.textContent||'').trim().slice(0,40)||a.className);});return JSON.stringify({bad:bad.slice(0,6),n:bad.length})})()"""
+
 JS_CHROME = """(function(){var o={};var b=document.querySelector('.chip.kind');if(b&&b.previousElementSibling){  var prev=b.previousElementSibling;  var rg=document.createRange();rg.selectNodeContents(prev);  var ink=rg.getBoundingClientRect().right;  var bl=b.getBoundingClientRect().left;  var d=bl+parseFloat(getComputedStyle(b,'::before').left);  var sameRow=Math.abs(prev.getBoundingClientRect().top-b.getBoundingClientRect().top)<2;  if(sameRow){o.divFromInk=d-ink;o.divFromChip=bl-d;}  else{o.wrappedDividerPainted=getComputedStyle(b,'::before').content!=='none';}}var a=document.querySelector('.farrow');if(a){var cs=getComputedStyle(a);var r=a.getBoundingClientRect();  var ring=function(e){var c=getComputedStyle(e);return c.borderTopWidth!=='0px'||c.boxShadow!=='none'||c.backgroundImage!=='none'||(c.backgroundColor!=='rgba(0, 0, 0, 0)'&&c.backgroundColor!=='transparent')};  var pseudo=function(e,w){var c=getComputedStyle(e,w);return c.content!=='none'&&(c.borderTopWidth!=='0px'||(c.backgroundColor!=='rgba(0, 0, 0, 0)'&&c.backgroundColor!=='transparent'))};  o.arrowRing=ring(a)||pseudo(a,'::before')||pseudo(a,'::after');  o.arrowHit=Math.min(r.width,r.height);  var nx=document.querySelector('.farrow[data-step="1"]');  var pv=document.querySelector('.farrow[data-step="-1"]');  if(nx&&pv&&document.querySelectorAll('.fdot').length>1){    nx.click();o.pulseFwd=nx.classList.contains('pulse')&&!pv.classList.contains('pulse');    nx.classList.remove('pulse');pv.classList.remove('pulse');    pv.click();o.pulseBack=pv.classList.contains('pulse')&&!nx.classList.contains('pulse');  }}return JSON.stringify(o)})()"""
 
 JS_TASKGROUP = """(function(){var chip=document.querySelector('details.cat .tg');if(!chip)return JSON.stringify({skip:true});var cat=chip.closest('details.cat');var o={tag:chip.tagName,wasOpen:cat.open};cat.open=false;chip.click();o.opened=cat.open;var g=cat.querySelector('.tgroup[data-g="'+chip.dataset.g+'"]');o.hasGroup=!!g;o.focusable=chip.tabIndex>=0;var keys=[].slice.call(cat.querySelectorAll('.tg')).map(function(c){return c.dataset.g});var groups=[].slice.call(cat.querySelectorAll('.tgroup')).map(function(t){return t.dataset.g});o.orphans=keys.filter(function(k){return groups.indexOf(k)<0});return JSON.stringify(o)})()"""
@@ -182,6 +184,11 @@ def main(argv):
                 if r.get("stillPaused") is False:
                     fail(w, "carousel", "using an arrow restarted a paused carousel")
 
+            r = evaljs(JS_DEADLINKS)
+            if r["n"]:
+                fail(w, "deadlink", f"{r['n']} anchor(s) with href='#': "
+                                    f"{r['bad']}")
+
             r = evaljs(JS_CHROME)
             if "divFromInk" in r:
                 # a chip paints nothing over its padding, so measure ink to ink
@@ -265,7 +272,7 @@ def main(argv):
             print("  " + f)
         return 1
     print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured, "
-          "carousel, taskgroup, divider, arrows, sidescroll at "
+          "carousel, taskgroup, divider, arrows, sidescroll, deadlink at "
           + ", ".join(f"{w}x{h}" for w, h in VIEWPORTS))
     return 0
 

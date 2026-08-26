@@ -1,0 +1,5 @@
+{
+  "_comment": "Where the generated site points when it sends a reader to the code. Kept out of build.py so moving the repository to another org is one edit here.",
+  "repo": "https://github.com/ericminessale/signalwire-recipes",
+  "branch": "master"
+}

@@ -639,9 +639,45 @@ cards could sit under the sticky filter strip, 113 cards had no
   (Eric, 2026-08-25). Those sections live in the reading column; the aside is
   the code alone.
 
+## The repository as a destination (decided 2026-08-26)
+
+The site's whole job is to hand a reader to a folder they clone, so the repo is
+the destination and had never been designed as one. Eric asked for it.
+
+- **`README.md` is the front door.** It had none at all: a visitor arriving from
+  a recipe page landed on a bare directory listing.
+- **`recipes/README.md` is generated** by `tools/gen_index.py`, so the index
+  cannot drift from the folders. It reuses `build.has_content()`, so "written"
+  means there exactly what it means on the site. `--check` fails when stale and
+  is part of the gate. It is not author-owned, and says so in its first line.
+- **`CONTRIBUTING.md` is the authoring protocol for outsiders.** It carries the
+  three verifier rules, the `load_dotenv` and basic-auth traps, and the gate.
+- **The lint now covers `README.md` and `CONTRIBUTING.md`.** Holding 55 recipe
+  READMEs to the writing guide while leaving the front door unchecked made no
+  sense. It caught "declare the products honestly" on the first run.
+- **Folders stay flat.** Eric floated `recipes/ai/<slug>/`. Category is
+  *derived* from `products`, so a directory level would duplicate a fact that
+  can then drift; slugs are globally unique and are the search query; and
+  `composes` / `prerequisites` / `related` all reference bare slugs, so nesting
+  breaks the graph and every URL. A categorised index gives the navigation
+  without the coupling.
+- **`site.config.json` holds the repo URL and branch**, not `build.py`, so
+  moving to the SignalWire org is one edit outside the generator.
+- **Every recipe page links to its own folder.** The footer's two links were
+  `href="#"` on all 51 recipe pages: `repo` is only set on builds, so the
+  fallback was a dead anchor, and "Report an issue" was hardcoded to `#`. The
+  hero's "Browse the repository" was a `<button>` with no handler. This is the
+  card-href rule again on a different element, so **`tools/qc.py` now refuses
+  any `href="#"` anywhere in the document**, hidden panes included.
+- **`design/` is untracked.** It held abandoned exploration artboards from an
+  early session; the visual language came from the live site instead. The local
+  files are kept, `git rm --cached` only.
+- **A LICENSE is still missing** and is Eric's call, not mine. The vendored SDK
+  is MIT.
+
 ## QC gate — before any publish or commit that touches build.py
 
-1. `python tools/lint_recipes.py && python build.py && python check_extensible.py && python verify.py`
+1. `python tools/lint_recipes.py && python tools/gen_index.py --check && python build.py && python check_extensible.py && python verify.py`
    The lint is the authoring protocol made mechanical: required README sections,
    the prose tells, line length, `load_dotenv()` where the environment is read,
    no `signalwire_agents`, a `verify.py` per recipe. Every rule in it is a

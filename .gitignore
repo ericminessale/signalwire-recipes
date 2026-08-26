@@ -25,3 +25,6 @@ docs/*
 docs/enum/*
 !docs/enum/inventory.json
 !docs/enum/render_inventory.py
+
+# abandoned design exploration from an early session; kept locally
+design/

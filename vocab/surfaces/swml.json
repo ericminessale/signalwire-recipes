@@ -4,7 +4,7 @@
   "entry": "agent.yaml",
   "deps": null,
   "install": null,
-  "run": "(no install \u2014 point a number at the file)",
+  "run": "(no install; point a number at the file)",
   "verify": "python -c \"import yaml,sys;yaml.safe_load(open(sys.argv[1]))\" agent.yaml",
   "interfaces": [
     "swml"

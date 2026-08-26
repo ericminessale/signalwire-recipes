@@ -173,22 +173,52 @@ def check(d, fail):
                      "that lives only in the process and the webhook gets a 401")
 
 
+def check_repo_doc(path, fail):
+    """The repository's own prose follows the guide the recipes follow.
+
+    Checks the tells and the sentence cap. The required-section list is a
+    recipe rule and does not apply here.
+    """
+    if not path.exists():
+        return fail(path.name, "", "missing: it is the repository's front door")
+    md = path.read_text(encoding="utf-8")
+    prose = re.sub(r"```.*?```", "", md, flags=re.S)
+    prose = re.sub(r"`[^`]*`", "", prose)
+    for pat, msg in AI_TELLS:
+        for m in re.finditer(pat, prose, re.I):
+            fail(path.name, "~%d" % (prose[:m.start()].count(chr(10)) + 1), msg)
+    body = re.sub(r"^[#>\-*|].*$", "", prose, flags=re.M)
+    for sent in re.split(r"(?<=[.!?])\s+|\n\s*\n", body):
+        n = len(re.findall(r"[A-Za-z0-9'\u2019]+", sent))
+        if n > MAX_SENTENCE:
+            at = prose.find(sent[:40])
+            ln = prose[:at].count(chr(10)) + 1 if at > 0 else 0
+            fail(path.name, "~%d" % ln,
+                 "%d-word sentence; the guide caps them at %d" % (n, MAX_SENTENCE))
+
+
 def main(argv):
     wanted = set(argv[1:])
     problems = []
 
     def fail(slug, where, msg):
-        problems.append(f"  {slug}/{where}: {msg}")
+        problems.append(f"  {slug}/{where}: {msg}" if where
+                        else f"  {slug}: {msg}")
 
     dirs = sorted(p for p in RECIPES.iterdir()
                   if p.is_dir() and (not wanted or p.name in wanted))
     for d in dirs:
         check(d, fail)
+    if not wanted:
+        # the front door, checked only on a full run
+        for doc in ("README.md", "CONTRIBUTING.md"):
+            check_repo_doc(RECIPES.parent / doc, fail)
     if problems:
         print(f"lint: {len(problems)} problem(s)")
         print("\n".join(problems))
         return 1
-    print(f"lint: {len(dirs)} recipe folders clean")
+    print(f"lint: {len(dirs)} recipe folders clean"
+          + ("" if wanted else ", README and CONTRIBUTING clean"))
     return 0
 
 
