@@ -571,9 +571,10 @@ These cost a review round each. They are not in any single doc.
   `governed-intake-agent`) need repositories or retirement; `ai-call-center`'s
   `composes` must be re-verified against its code.
 - The nine NEEDS VERIFICATION rows in `docs/INVENTORY.md`.
-- **Chat is absent from the corpus** and is the cheapest path to an interactive
-  demo: text in, text out, no WebRTC, no PSTN, no media stack. Voice
-  interactivity needs a runtime service and belongs behind it.
+- **Chat is absent from the corpus and stays absent for now.** It looked like
+  the cheapest path to an interactive demo, but the chat-mode AI kernel is
+  unreleased (see *Platform facts learned the hard way*), so both chat rows are
+  on hold. Do not plan around it until it ships.
 - The enumeration pass is done (`docs/enum/`); the remaining coverage debt is
   the nine NEEDS VERIFICATION rows listed at the end of `docs/INVENTORY.md`.
   sol round 6 (`docs/LIST_REVIEW_2026-08-25_round6.md`) cleared the list for

@@ -451,7 +451,7 @@
       "slug": "write-a-reusable-agent-skill",
       "claim": "A SkillBase subclass packages tools, hints and prompt sections so any agent can add_skill it with params.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "ai-agents"
@@ -470,7 +470,9 @@
       "evidence": [
         "sdk core/skill_base.py:19",
         "sdk skills/registry.py:132,350",
-        "demo cabby cabby.py:15 imports GoogleMapsClient from a skill directly"
+        "demo cabby cabby.py:15 imports GoogleMapsClient from a skill directly",
+        "verified 2026-08-25: recipes/write-a-reusable-agent-skill/verify.py",
+        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
       ]
     },
     {
@@ -509,7 +511,7 @@
       "slug": "route-a-call-to-an-ai-agent",
       "claim": "A phone number's SWML webhook resource points at your agent's URL and the call lands in the agent.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "ai-agents",
@@ -531,7 +533,9 @@
       "evidence": [
         "features Phone number management (swml_webhook resource)",
         "docs apis/rest/swml-webhook/create-swml-webhook",
-        "sdk rest/namespaces/fabric.py assign_phone_route"
+        "sdk rest/namespaces/fabric.py assign_phone_route",
+        "verified 2026-08-25: recipes/route-a-call-to-an-ai-agent/verify.py",
+        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
       ]
     },
     {
@@ -571,7 +575,7 @@
       "slug": "switch-language-mid-call",
       "claim": "The agent detects the caller's language and answers in it, switching mid-conversation without a transfer.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "ai-agents"
@@ -594,7 +598,9 @@
         "docs swml/reference/calling/ai/multilingual",
         "sdk ai_config_mixin.py:75 add_language",
         "features Multilingual support",
-        "demo ginospizza add_language(inworld voice) (legacy SDK)"
+        "demo ginospizza add_language(inworld voice) (legacy SDK)",
+        "verified 2026-08-25: recipes/switch-language-mid-call/verify.py",
+        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
       ]
     },
     {
@@ -1118,7 +1124,7 @@
       "slug": "collect-speech-input-and-branch",
       "claim": "The caller says what they want and the document branches on the recognised phrase; no AI agent involved.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1138,7 +1144,9 @@
       "evidence": [
         "docs swml/reference/calling/prompt (speech_engine, speech_hints)",
         "docs compatibility-api/cxml/reference/voice (Gather input=speech)",
-        "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable."
+        "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.",
+        "verified 2026-08-25: recipes/collect-speech-input-and-branch/verify.py",
+        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
       ]
     },
     {
@@ -1693,7 +1701,7 @@
       "slug": "detect-an-answering-machine",
       "claim": "An outbound call is classified human, machine or fax before your logic runs, and the message waits for the beep.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1716,7 +1724,9 @@
         "docs swml/reference/calling/detect-machine (detect_message_end)",
         "compat Calls MachineDetection/AsyncAmd",
         "features AMD shipped 2026-06-09",
-        "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error."
+        "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.",
+        "verified 2026-08-25: recipes/detect-an-answering-machine/verify.py",
+        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
       ]
     },
     {
@@ -1796,7 +1806,8 @@
       "folds": [],
       "evidence": [
         "docs apis/rest/webhooks (SWML inbound call webhook, status callbacks)",
-        "compat Calls StatusCallbackEvent"
+        "compat Calls StatusCallbackEvent",
+        "NEEDS VERIFICATION 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this."
       ]
     },
     {

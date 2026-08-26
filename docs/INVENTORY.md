@@ -5,10 +5,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 ## Counts
 
 **121 rows.** By kind: recipe 100 · build 8 · guide 4 · tool 2 · hold 7.  
-By status: verified 30 · written 4 · stub 20 · proposed 60 · hold 7.  
+By status: verified 35 · written 4 · stub 15 · proposed 60 · hold 7.  
 Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
 Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
-Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 8.
+Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 9.
 
 ## Column key
 
@@ -41,13 +41,15 @@ Your backend dials a number with an AI agent attached and the agent waits for th
 
 A phone number's SWML webhook resource points at your agent's URL and the call lands in the agent.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents, voice) · task group **Routing & queueing** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents, voice) · task group **Routing & queueing** · lens AI Agents & Automation
 - interfaces: agents-sdk, rest · capabilities: call-fabric
 - folds: t:route-phone-calls-to-ai-agent; t:build-voice-ai-agent
 - evidence:
   - features Phone number management (swml_webhook resource)
   - docs apis/rest/swml-webhook/create-swml-webhook
   - sdk rest/namespaces/fabric.py assign_phone_route
+  - verified 2026-08-25: recipes/route-a-call-to-an-ai-agent/verify.py
+  - UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed.
 
 #### Monitoring
 
@@ -322,13 +324,15 @@ Tools on an existing MCP server are discovered at startup and callable by the ag
 
 A SkillBase subclass packages tools, hints and prompt sections so any agent can add_skill it with params.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Tools & integrations** · lens AI Agents & Automation
 - interfaces: agents-sdk · capabilities: skills
 - folds: #32
 - evidence:
   - sdk core/skill_base.py:19
   - sdk skills/registry.py:132,350
   - demo cabby cabby.py:15 imports GoogleMapsClient from a skill directly
+  - verified 2026-08-25: recipes/write-a-reusable-agent-skill/verify.py
+  - UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed.
 
 ### `let-an-agent-see-the-callers-camera`
 
@@ -431,7 +435,7 @@ One deployed agent serves many tenants; prompt, voice and tools are set per requ
 
 The agent detects the caller's language and answers in it, switching mid-conversation without a transfer.
 
-- kind **recipe** · status **stub** · category **AI Agents** (ai-agents) · task group **Other** · lens AI Agents & Automation
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents) · task group **Other** · lens AI Agents & Automation
 - interfaces: agents-sdk, swml · capabilities: multilingual
 - folds: #33; t:ai-multilingual-code-switching-agent; t:ai-language-learning-phone-tutor
 - evidence:
@@ -439,6 +443,8 @@ The agent detects the caller's language and answers in it, switching mid-convers
   - sdk ai_config_mixin.py:75 add_language
   - features Multilingual support
   - demo ginospizza add_language(inworld voice) (legacy SDK)
+  - verified 2026-08-25: recipes/switch-language-mid-call/verify.py
+  - UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed.
 
 ### `start-from-a-prefab-agent`
 
@@ -582,7 +588,7 @@ Several callers share one named audio conference, and members can be muted, remo
 
 An outbound call is classified human, machine or fax before your logic runs, and the message waits for the beep.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
 - interfaces: swml, rest, cxml, relay · capabilities: amd
 - folds: t:texml-voicemail-drop
 - evidence:
@@ -590,6 +596,8 @@ An outbound call is classified human, machine or fax before your logic runs, and
   - compat Calls MachineDetection/AsyncAmd
   - features AMD shipped 2026-06-09
   - settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.
+  - verified 2026-08-25: recipes/detect-an-answering-machine/verify.py
+  - UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed.
 
 ### `send-dtmf-to-an-external-ivr`
 
@@ -722,13 +730,15 @@ A Call Flow Builder flow deployed over REST answers, gathers and forwards with n
 
 The caller says what they want and the document branches on the recognised phrase; no AI agent involved.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Routing & queueing** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Routing & queueing** · lens Voice & Call Control
 - interfaces: swml, cxml · capabilities: stt
 - folds: t:ai-powered-ivr-replacement
 - evidence:
   - docs swml/reference/calling/prompt (speech_engine, speech_hints)
   - docs compatibility-api/cxml/reference/voice (Gather input=speech)
   - settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.
+  - verified 2026-08-25: recipes/collect-speech-input-and-branch/verify.py
+  - UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed.
 
 ### `route-calls-by-dialed-number-or-time`
 
@@ -848,6 +858,7 @@ Every state change of a call is posted to your URL and the payload is enough to 
 - evidence:
   - docs apis/rest/webhooks (SWML inbound call webhook, status callbacks)
   - compat Calls StatusCallbackEvent
+  - NEEDS VERIFICATION 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this.
 
 ### `reconcile-webhooks-against-the-logs-api`
 
@@ -1642,6 +1653,7 @@ A rep takes calls in the browser while a sidecar streams objection-handling insi
 - `run-livekit-agents-code-on-signalwire` — plugin classes are no-op stubs (livewire/plugins.py:49-124); the claim must be scoped to what actually maps
 - `let-an-agent-see-the-callers-camera` — exact tool the model calls and the image path
 - `hand-off-from-ai-to-a-human-agent` — the notes transport - which webhook/payload the dequeuing side receives, and where the agent's notes are keyed (global_data via post_prompt vs. your own store)
+- `handle-call-status-callbacks` — 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this.
 - `run-the-same-agent-over-text` — the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages
 - `put-an-agent-in-a-web-chat-widget` — browser-side auth to the AI Chat API (a token proxy is likely required)
 - `publish-events-to-browsers-with-pubsub` — v4 exposes no PubSub client; recipe must target v3 or Fabric conversations

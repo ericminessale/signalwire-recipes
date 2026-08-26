@@ -22,7 +22,7 @@
   "subcategory": "other",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#33",
@@ -33,7 +33,8 @@
       "docs swml/reference/calling/ai/multilingual",
       "sdk ai_config_mixin.py:75 add_language",
       "features Multilingual support",
-      "demo ginospizza add_language(inworld voice) (legacy SDK)"
+      "demo ginospizza add_language(inworld voice) (legacy SDK)",
+      "verified 2026-08-25: recipes/switch-language-mid-call/verify.py"
     ]
   }
 }

@@ -28,7 +28,8 @@
     "folds": [],
     "evidence": [
       "docs apis/rest/webhooks (SWML inbound call webhook, status callbacks)",
-      "compat Calls StatusCallbackEvent"
+      "compat Calls StatusCallbackEvent",
+      "NEEDS VERIFICATION 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this."
     ]
   }
 }

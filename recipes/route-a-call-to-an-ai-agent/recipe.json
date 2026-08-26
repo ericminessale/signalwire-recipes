@@ -13,9 +13,7 @@
     "call-fabric"
   ],
   "surfaces": [
-    "python",
-    "typescript",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "talk",
@@ -24,7 +22,7 @@
   "subcategory": "routing",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "t:route-phone-calls-to-ai-agent",
@@ -33,7 +31,8 @@
     "evidence": [
       "features Phone number management (swml_webhook resource)",
       "docs apis/rest/swml-webhook/create-swml-webhook",
-      "sdk rest/namespaces/fabric.py assign_phone_route"
+      "sdk rest/namespaces/fabric.py assign_phone_route",
+      "verified 2026-08-25: recipes/route-a-call-to-an-ai-agent/verify.py"
     ]
   }
 }

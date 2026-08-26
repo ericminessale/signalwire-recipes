@@ -22,7 +22,7 @@
   "subcategory": "routing",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:ai-powered-ivr-replacement"
@@ -30,7 +30,8 @@
     "evidence": [
       "docs swml/reference/calling/prompt (speech_engine, speech_hints)",
       "docs compatibility-api/cxml/reference/voice (Gather input=speech)",
-      "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable."
+      "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.",
+      "verified 2026-08-25: recipes/collect-speech-input-and-branch/verify.py"
     ]
   }
 }
