@@ -113,6 +113,11 @@ python3 build.py            # writes site/
 separately in GitHub Actions, because the render checks need a browser and do
 not belong in a deploy build.
 
+`site.config.json` holds the repository link, the base URL and `indexable`.
+While `indexable` is false the build writes a `robots.txt` that disallows
+everything and puts `noindex` on every page. It refuses to finish if a page
+escapes without the tag.
+
 A live in-page demo needs an endpoint that mints Browser SDK tokens. Vercel can
 host one, which is why it is the target; the demo slot on each recipe page is
 built to take it when it exists.

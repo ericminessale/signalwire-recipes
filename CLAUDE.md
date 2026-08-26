@@ -745,14 +745,33 @@ fabricated record, not a specimen.
 
 ## Deployment (decided 2026-08-26)
 
-- **Vercel, on a SignalWire team account, with the repo in the `signalwire`
-  org.** Eric's call. Vercel over GitHub Pages **because of serverless
-  functions**: a live in-page demo needs an endpoint that mints Browser SDK
-  tokens, and Pages is static only. The demo slot on each recipe page exists to
-  take that runtime when it is built.
-- **Vercel's Hobby plan is for personal, non-commercial projects.** This is a
-  company asset, so it needs a Team plan. Do not stand the public URL up on a
-  personal account.
+- **This is a prototype host, not a launch.** Eric, 2026-08-26: "the proposal
+  is not to deploy publically on vercel, just get away from the limitations of
+  an artifact." Vercel runs it on his work account
+  (`eric.minessale@signalwire.com`, `ericminessale` GitHub linked). The repo
+  stays private and where it is; moving it to the `signalwire` org is a
+  separate, later decision.
+- **What escaping the artifact actually buys.** The CSP is only the visible
+  limit. The bigger one is that the artifact is a single inlined
+  `preview.html`, so `sitemap.xml`, `llms.txt`, per-recipe URLs and anything
+  about retrieval cannot be exercised at all - and retrieval is audience #1.
+  A real host also allows a real phone and a future token endpoint.
+- **Vercel over GitHub Pages because of serverless functions.** A live in-page
+  demo needs an endpoint that mints Browser SDK tokens, and Pages is static
+  only. The demo slot on each recipe page exists to take that runtime.
+- **The artifact stays the thing Eric shows his boss** until he says otherwise.
+  Vercel is additive. Keep republishing the artifact after every wave.
+- **`indexable` is false, and going public is that one boolean.** A prototype
+  carrying 43 of 121 recipes, indexed as *the* SignalWire recipes source before
+  the real one exists, becomes a competing result that has to be de-indexed
+  later. While it is false every page carries
+  `<meta name="robots" content="noindex,nofollow">` and `robots.txt` disallows
+  everything; `build.py` walks the written files and **refuses** if a page
+  escaped without the tag, because one path that skips `page()` would ship
+  indexable in silence.
+- **`BASE` was hardcoded to `https://signalwire.com/recipes`** and now comes
+  from `site.config.json`. On a preview host the sitemap was advertising 56
+  URLs that all 404.
 - **The deploy builds; it does not serve committed files.** `site/` is
   gitignored. `vercel.json` runs
   `python3 -m pip install -r requirements.txt && python3 build.py` and serves

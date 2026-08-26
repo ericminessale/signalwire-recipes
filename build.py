@@ -15,6 +15,8 @@ import sys
 ROOT = pathlib.Path(__file__).parent
 RECIPES = ROOT / "recipes"
 SITE = ROOT / "site"
+# BASE and indexability come from site.config.json; see site_config().
+# Assigned in main() once the config has been read.
 BASE = "https://signalwire.com/recipes"
 
 import vocab
@@ -982,6 +984,25 @@ def highlight_code(code, lexer_name):
         return esc(code)
 
 
+def check_noindex():
+    """Every emitted page must carry the tag while the site is a prototype.
+
+    Checked against the files on disk rather than the code path that should
+    have added it, because a page rendered without `page()` would otherwise
+    ship indexable and silently.
+    """
+    if INDEXABLE:
+        return
+    bad = [f.relative_to(SITE).as_posix()
+           for f in sorted(SITE.rglob("*.html"))
+           if 'name="robots"' not in f.read_text(encoding="utf-8")]
+    if bad:
+        raise SystemExit(
+            "build: site.config.json says indexable=false but %d page(s) "
+            "carry no robots meta: %s" % (len(bad), ", ".join(bad[:5]))
+        )
+
+
 def check_highlighting():
     """Nothing highlighted anywhere is a missing dependency, not a bad lexer."""
     if _HL["fell_back"] and not _HL["ok"]:
@@ -1066,7 +1087,12 @@ def page(title, body, favicon_title=None):
         # so none of the responsive CSS applies on a real device
         '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
         "<title>" + esc(title) + "</title>\n"
-        '<meta name="theme-color" content="#0f0f12">\n'
+        # A prototype host must not become a competing source for a site whose
+        # whole point is being retrieved. robots.txt asks; this tells, and it
+        # travels with the page if the file is ever missed.
+        + ('' if INDEXABLE else
+           '<meta name="robots" content="noindex,nofollow">\n')
+        + '<meta name="theme-color" content="#0f0f12">\n'
         '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
@@ -1665,6 +1691,20 @@ def build_llms(recipes):
     return "\n".join(out)
 
 
+def build_robots():
+    """Open the site to crawlers only when it is the real one.
+
+    While `indexable` is false this disallows everything, because an
+    incomplete corpus indexed as the SignalWire recipes source would have to
+    be de-indexed later.
+    """
+    if not INDEXABLE:
+        return ("# Prototype host. Set indexable=true in site.config.json when\n"
+                "# this becomes the public site.\n"
+                "User-agent: *\nDisallow: /\n")
+    return "User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n" % BASE
+
+
 def build_sitemap(recipes):
     urls = "".join(
         f"<url><loc>{BASE}/{r['slug']}</loc></url>" for r in sorted(recipes, key=lambda r: r["slug"])
@@ -1678,7 +1718,7 @@ def build_sitemap(recipes):
 
 
 def site_config():
-    """Where the site points when it sends a reader to the code."""
+    """Where the site points, and how it presents itself to crawlers."""
     f = ROOT / "site.config.json"
     if not f.exists():
         return {}
@@ -1686,6 +1726,8 @@ def site_config():
 
 
 CFG = site_config()
+BASE = CFG.get("base_url") or BASE
+INDEXABLE = bool(CFG.get("indexable"))
 
 
 def repo_url(*parts):
@@ -1860,9 +1902,11 @@ def main():
         (SITE / "r" / f"{r['slug']}.md").write_text(build_md(r), encoding="utf-8")
     (SITE / "llms.txt").write_text(build_llms(recipes), encoding="utf-8")
     (SITE / "sitemap.xml").write_text(build_sitemap(recipes), encoding="utf-8")
+    (SITE / "robots.txt").write_text(build_robots(), encoding="utf-8")
 
     launch = sum(1 for r in recipes if r.get("tier") == "launch")
     check_highlighting()
+    check_noindex()
     print(
         f"build: {len(recipes)} recipes -> site/  "
         f"({launch} launch tier, {len(recipes)*2+3} files)"
