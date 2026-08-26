@@ -40,9 +40,10 @@ def main():
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
     steps = {s["name"]: s for s in ai["prompt"]["contexts"]["default"]["steps"]}
 
-    # The model has no native route out of the guarded step. Listing
-    # "schedule" in valid_steps would give it a next_step straight past the
-    # handler, so the guard has to be the only way forward.
+    # Listing "schedule" in valid_steps would hand the model a next_step
+        # straight past the handler. Leaving it empty removes that tool, but it
+        # is not a lock: the runtime still advances on step criteria, which is
+    # why start_scheduling and confirm_slot both re-check the state below.
     assert steps["identify_bike"]["valid_steps"] == [], steps
     assert "schedule" not in steps["identify_bike"]["valid_steps"], steps
     assert steps["identify_bike"]["functions"] == ["record_bike",
@@ -92,9 +93,9 @@ def main():
         raw_data={"global_data": {"bike_type": "gravel"}})
     assert "Booked a gravel" in r["response"], r
 
-    print(f"ok: identify_bike has no valid_steps, so the handler is the only "
-          f"way forward; it refuses start_scheduling until one of "
-          f"{sorted(SERVICEABLE)} is recorded, then emits change_step")
+    print(f"ok: start_scheduling and confirm_slot both refuse until one of "
+          f"{sorted(SERVICEABLE)} is recorded; the transition arrives as "
+          f"change_step, and reaching a step buys nothing on its own")
 
 
 if __name__ == "__main__":

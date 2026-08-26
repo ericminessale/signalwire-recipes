@@ -47,9 +47,11 @@ open. They matter more here than in a supervised agent, because no code is watch
 `hints` tells the recogniser the words it would otherwise guess at. A proper
 noun like a restaurant's name is the usual case.
 
-What this document deliberately has no room for is a tool. A SWAIG function
-needs a webhook, and a webhook is a server. The moment the agent has to look
-something up, this recipe stops being the right shape and
+This document has no tool, which is a choice rather than a limit. A tool with a
+handler needs a webhook, and a webhook is a server. A DataMap tool does not: it
+carries its request in the document, so an agent that only reads a third-party API
+stays serverless. That is `call-an-api-without-a-backend`. The moment a tool needs
+code of yours to decide something, this recipe stops being the right shape and
 `give-an-agent-a-tool` starts.
 
 ## Run it
@@ -70,8 +72,7 @@ asserts:
 
 - the verbs are `answer`, `ai`, `hangup`
 - the agent has both a prompt and a post-prompt with a destination
-- there is no `SWAIG` block, because a tool would need the server this recipe
-  claims not to need
+- there is no `SWAIG` block at all, so no tool needs a handler of yours
 - the post-prompt URL is the only URL in the agent, and it is a sink
 - both timeouts are set, so an abandoned call ends
 - the recogniser is given the proper noun as a hint

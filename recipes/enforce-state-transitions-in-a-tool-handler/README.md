@@ -7,9 +7,10 @@
 
 ## What this demonstrates
 
-The caller cannot reach scheduling until a bike the shop actually services has
-been recorded. The rule lives in the tool handler, which reads collected state
-instead of asking the model whether it collected anything.
+No slot is booked until a bike the shop actually services has been recorded. The rule
+lives in the tool handlers, which read collected state instead of asking the model
+whether it collected anything. The caller may well reach the scheduling step; what
+they cannot do is get a booking out of it.
 
 `valid_steps` shapes the navigation tool the model is offered. It does not constrain
 your webhook, so the handler is the last authority on the transition. It is also not a
@@ -69,7 +70,7 @@ python verify.py
 
 It renders the SWML and runs the handlers, asserting:
 
-- `identify_bike` exposes two tools and clamps the model to `schedule`
+- `identify_bike` exposes two tools and offers the model no `next_step`
 - an unserviceable bike is refused and writes no state
 - a serviceable one is normalised and written as `set_global_data`
 - `start_scheduling` is refused with no state, and refused again when the state

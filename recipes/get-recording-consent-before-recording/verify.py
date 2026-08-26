@@ -4,7 +4,9 @@ Claim: recording starts from the consent tool's result, not before, and no
 business step is reachable while consent is still outstanding.
 
 Proof: the rendered SWML shows the disclosure step exposing only the consent
-tool and carrying no route onward, and no record_call anywhere in the document.
+tool, and no record_call anywhere in the document. Note what this cannot
+prove: the handler receives the answer the model extracted, so the cases below
+exercise the decision on that string, not the caller's audio.
 Running the handler shows recording emitted on agreement, withheld on refusal,
 and withheld again on an ambiguous answer.
 """
@@ -54,6 +56,8 @@ def main():
     steps = {s["name"]: s for s in ai["prompt"]["contexts"]["default"]["steps"]}
 
     # While consent is outstanding, the account tool is not on the table.
+    # Not a lock: the runtime can still advance, which is why get_balance
+    # re-checks the state further down.
     assert steps["disclose"]["functions"] == ["record_consent"], steps
     assert "get_balance" not in steps["disclose"]["functions"], steps
     assert steps["disclose"]["valid_steps"] == [], steps

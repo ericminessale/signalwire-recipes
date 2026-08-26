@@ -33,11 +33,12 @@ def main():
     assert ai["post_prompt"]["text"].strip(), ai["post_prompt"]
     assert ai["post_prompt_url"].startswith("https://"), ai
 
-    # No SDK: the document is hand-written, so nothing here may depend on a
-    # service of ours answering a tool call.
+    # No SDK, and no tool of any kind, so nothing here depends on a
+        # service of ours answering a tool call. A DataMap tool would also be
+    # serverless; this agent simply has none.
     assert "SWAIG" not in ai, (
-        "a SWAIG function needs a webhook, which is the server this recipe "
-        "claims not to need"
+        "no SWAIG block at all: a handler-backed tool would need the server "
+        "this recipe claims not to need"
     )
 
         # One URL, and it is a sink rather than a source: it receives a

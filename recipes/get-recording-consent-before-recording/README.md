@@ -7,13 +7,14 @@
 
 ## What this demonstrates
 
-The document contains no `record_call`. Recording begins only when the consent
-handler emits one, and the handler emits one only when the caller actually
-said yes. A refusal moves the call on without recording, and an ambiguous
-answer does neither.
+The document contains no `record_call`. Recording begins only when the consent handler
+emits one, and it emits one only for an exact match against a set of agreements. A
+refusal moves the call on without recording, and anything else does neither.
 
-In a two-party consent jurisdiction the refusal path is the one that has to
-work. This recipe treats "not a clear yes" as not consent.
+In a two-party consent jurisdiction the refusal path is the one that has to work, so
+anything short of a clear yes is not consent. What the recipe cannot do is hear the
+call. The handler judges the string the model extracted, which makes faithful
+transcription a trust boundary rather than a guarantee.
 
 ## How it works
 
@@ -74,7 +75,7 @@ python verify.py
 It renders the SWML and runs the handler, asserting:
 
 - `record_call` appears nowhere in the document
-- the disclosure step exposes only `record_consent` and has no route onward
+- the disclosure step exposes only `record_consent`
 - a yes emits `record_call` in stereo on both directions, plus `change_step`
 - a no moves on and emits no recording
 - seven non-answers emit no recording and no transition, including
