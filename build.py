@@ -57,7 +57,12 @@ CSS = """
   --r-md:6px;   /* command wells, inline code blocks */
   --r-sm:3px;   /* chips */
   --fuchsia:#F72A72;
-  --turquoise:#40E0D0;
+  /* Two accents, not three. Fuchsia acts and marks builds; periwinkle
+     selects and navigates. Every accent job reads these, so the palette is
+     one edit rather than a hunt through the stylesheet. */
+  --accent:#8B96FF;
+  --accent-rgb:139,150,255;
+  --select-rgb:110,123,255;
   --head:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
   --body:Lexend,ui-sans-serif,system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
@@ -114,12 +119,15 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
 /* Selection is the one state that answers "what am I looking at", so it
-   carries colour. Blue is the brand primary and is already on the page in
-   the mark; fuchsia's four jobs stay spent, turquoise still means navigate. */
-.chip[aria-pressed="true"]{color:#eaf0ff;background:rgba(4,78,244,.22);
-  border-color:rgba(4,78,244,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.07);}
-.chip[aria-pressed="true"] .cn{color:#c9d8ff;}
-.chip[aria-pressed="true"]:hover{background:rgba(4,78,244,.3);}
+   carries colour. It takes --select-rgb, a shade deeper than --accent, so a
+   selected chip outranks ordinary accent text without becoming a third hue.
+   Fuchsia's jobs are untouched. */
+.chip[aria-pressed="true"]{color:#eef0ff;
+  background:rgba(var(--select-rgb),.22);
+  border-color:rgba(var(--select-rgb),.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);}
+.chip[aria-pressed="true"] .cn{color:#c8ceff;}
+.chip[aria-pressed="true"]:hover{background:rgba(var(--select-rgb),.31);}
 .chip:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 
 /* category section */
@@ -148,7 +156,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .card.planned .surf{color:var(--fg-subtle);border:1px solid var(--line);border-radius:3px;padding:1px 6px;}
 .card .ct{font-family:var(--head);font-weight:600;font-size:14.5px;line-height:1.3;
   letter-spacing:-.015em;}
-.card .cs{font-family:var(--mono);font-size:10.5px;color:var(--turquoise);
+.card .cs{font-family:var(--mono);font-size:10.5px;color:var(--accent);
   line-height:1.4;overflow-wrap:anywhere;}
 .card .cd{font-size:12.5px;color:var(--fg-muted);line-height:1.55;flex:1;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
@@ -180,39 +188,39 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
-.tech{font-family:var(--mono);font-size:12px;color:var(--turquoise);margin-top:12px;}
+.tech{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:12px;}
 .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;
   color:var(--fg-2);margin-top:16px;}
-.kicker::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--turquoise);}
+.kicker::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--accent);}
 .sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
 .b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
   background:var(--raised);border-radius:var(--r-sm);padding:3px 8px;}
-/* The claim is the one thing the page asserts, so it is the one tinted object:
-   a turquoise wash with a keyline down the left. Turquoise because fuchsia's
-   four jobs are spent and the page should keep exactly one signal colour. */
-.claim{background:rgba(64,224,208,.045);border:1px solid rgba(64,224,208,.19);
+/* The claim is the one thing the page asserts, so it is the one tinted
+   object: an accent wash with a keyline down the left. The accent rather than
+   fuchsia, because fuchsia acts and marks builds and the claim does neither. */
+.claim{background:rgba(var(--accent-rgb),.045);border:1px solid rgba(var(--accent-rgb),.19);
   border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
-  box-shadow:inset 2px 0 0 rgba(64,224,208,.78),inset 0 1px 0 rgba(255,255,255,.06),
+  box-shadow:inset 2px 0 0 rgba(var(--accent-rgb),.78),inset 0 1px 0 rgba(255,255,255,.06),
     0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
 .claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
-  color:var(--turquoise);font-weight:600;margin:0 0 10px;opacity:.85;}
+  color:var(--accent);font-weight:600;margin:0 0 10px;opacity:.85;}
 .claim p{margin:0;color:var(--fg);font-size:18px;line-height:1.55;letter-spacing:-.005em;
   max-width:62ch;}
 /* Evidence is quoted, not framed: no fill and no border, a keyline down the
    left the way a pull quote is set. It is the one thing on the page nobody
    else in developer documentation has, and it should not look like a card. */
-.ev{margin:0 0 40px;padding-left:18px;border-left:2px solid rgba(64,224,208,.42);}
+.ev{margin:0 0 40px;padding-left:18px;border-left:2px solid rgba(var(--accent-rgb),.42);}
 .ev-h{display:flex;align-items:center;gap:9px;padding:0 0 12px;
   font-family:var(--head);font-size:13px;font-weight:600;color:var(--fg-2);}
-.ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--turquoise);flex:none;}
+.ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--accent);flex:none;}
 .ev-b{padding:0;}
 .ev cite{display:block;margin-top:16px;font-style:normal;font-size:12px;color:var(--fg-subtle);}
 .tr{font-family:var(--mono);font-size:12px;line-height:1.8;}
 .tr .l{display:grid;grid-template-columns:52px 1fr;gap:14px;padding:1px 0;}
 .tr .w{color:var(--fg-subtle);text-align:right;border-right:1px solid var(--line);
   padding-right:13px;margin-right:-1px;}
-.tr .w.ai{color:var(--turquoise);}
+.tr .w.ai{color:var(--accent);}
 /* the annotations are the editor speaking, not the call */
 .tr .sys{color:var(--fg-muted);padding:9px 13px;margin:11px 0 11px 66px;display:block;
   font-size:11px;line-height:1.65;background:var(--surface);border-radius:var(--r-sm);}
@@ -235,7 +243,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .sec.proc p{font-size:14px;color:var(--fg-subtle);}
 .sec p em{font-style:italic;color:var(--fg-2);}
 .steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--well);
-  border:none;border-left:2px solid rgba(64,224,208,.48);border-radius:0 var(--r-md) var(--r-md) 0;
+  border:none;border-left:2px solid rgba(var(--accent-rgb),.48);border-radius:0 var(--r-md) var(--r-md) 0;
   padding:13px 16px;line-height:1.9;overflow-x:auto;}
 .steps .cl{display:block;padding-left:20px;text-indent:-20px;}
 .steps .cl::before{content:"$";color:var(--fg-subtle);display:inline-block;width:20px;
@@ -288,7 +296,7 @@ a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--r
 a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
-.dfoot a{color:var(--turquoise);}
+.dfoot a{color:var(--accent);}
 .pvbanner{max-width:1560px;margin:0 auto;padding:18px 32px 0;}
 .pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:8px;
   padding:11px 15px;font-size:12.5px;color:var(--fg-muted);
@@ -424,8 +432,14 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .bhead .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);font-weight:400;}
 
 /* the Builds filter is a different kind of thing */
+/* .wrapped is set by the script when the chip starts a new flex row */
 .chip.kind{margin-left:14px;position:relative;border-color:var(--line);}
-.chip.kind::before{content:"";position:absolute;left:-11px;top:50%;
+/* -18, not -11: the preceding chip paints nothing over its 14px of
+   padding, so the midpoint of the boxes is not the midpoint of the ink.
+   A divider separates two things; when the strip wraps and Builds starts a
+   row there is nothing on its left, so the rule goes. */
+.chip.kind.wrapped::before{content:none;}
+.chip.kind::before{content:"";position:absolute;left:-18px;top:50%;
   transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
   border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
@@ -446,21 +460,29 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
    the band, and a rule running out of a heading is the generated tell */
 .feathead::after{content:"";order:1;flex:1;}
 .fnav{order:2;display:flex;align-items:center;gap:10px;}
-/* Bigger than the header controls because these are the primary affordance
-   and they stand alone in the margin with nothing to borrow scale from. */
-.farrow{width:38px;height:38px;display:inline-flex;align-items:center;
-  justify-content:center;border-radius:50%;cursor:pointer;font-size:21px;
-  line-height:1;color:var(--turquoise);background:rgba(64,224,208,.09);
-  border:1px solid rgba(64,224,208,.28);
-  transition:background 130ms ease,border-color 130ms ease,transform 130ms ease;}
-.farrow:hover{background:rgba(64,224,208,.17);border-color:rgba(64,224,208,.5);}
-.farrow:active{transform:scale(.94);}
-.farrow:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+/* A bare chevron, not a button in a ring: the circle read as a container
+   around a container. Transparent padding keeps the hit box the ring used to
+   provide, and the glyph grows into the accent on hover, on focus, and for a
+   moment whenever the cards move, so the control answers them. */
+.farrow{display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;padding:11px;box-sizing:content-box;
+  border:none;background:none;border-radius:var(--r-sm);cursor:pointer;
+  font-size:26px;line-height:1;color:#fff;
+  transition:color 160ms ease,transform 220ms cubic-bezier(.34,1.4,.64,1);}
+.farrow:hover,.farrow:focus-visible{color:var(--accent);transform:scale(1.45);}
+/* A pulse must not shrink an arrow the pointer is already enlarging:
+   these rules are equally specific, so the state is scoped instead. */
+.farrow.pulse:not(:hover):not(:focus-visible){color:var(--accent);
+  transform:scale(1.35);}
+.farrow:active{transform:scale(1.1);}
+.farrow:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+@media (prefers-reduced-motion:reduce){
+  .farrow,.farrow:hover,.farrow.pulse,.farrow:active{transform:none;}}
 .fdots{display:flex;gap:6px;}
 .fdot{width:7px;height:7px;padding:0;border-radius:50%;cursor:pointer;
   background:rgba(255,255,255,.18);border:none;transition:background 130ms ease;}
 .fdot:hover{background:rgba(255,255,255,.34);}
-.fdot.on{background:var(--turquoise);}
+.fdot.on{background:var(--accent);}
 .fdot:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .fviewport{overflow:hidden;}
 /* --per is set by the script from the viewport, so a page is really a page */
@@ -471,10 +493,10 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   white-space:nowrap;margin:0;}
 .fplay{width:26px;height:26px;display:inline-flex;align-items:center;
   justify-content:center;border-radius:50%;cursor:pointer;font-size:9px;
-  letter-spacing:1px;line-height:1;color:var(--turquoise);
-  background:rgba(64,224,208,.09);border:1px solid rgba(64,224,208,.28);
+  letter-spacing:1px;line-height:1;color:var(--accent);
+  background:rgba(var(--accent-rgb),.09);border:1px solid rgba(var(--accent-rgb),.28);
   transition:background 130ms ease,border-color 130ms ease;}
-.fplay:hover{background:rgba(64,224,208,.17);border-color:rgba(64,224,208,.5);}
+.fplay:hover{background:rgba(var(--accent-rgb),.17);border-color:rgba(var(--accent-rgb),.5);}
 .fplay:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){.ftrack{transition:none;}}
 /* With the plate gone the cards are the raised objects on the page. The
@@ -488,12 +510,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fcard:hover{border-color:var(--line-3);transform:translateY(-2px);
   box-shadow:var(--lip),0 2px 4px rgba(0,0,0,.45),0 16px 34px -14px rgba(0,0,0,.8);}
 /* The icon says which product line the card belongs to at a glance. It is
-   one accent, not six: the design system allows blue, fuchsia and purple as
-   fills only, turquoise is the one sanctioned accent text on dark, and this
-   page already spends blue on selection and fuchsia on builds. So the shape
-   differentiates and the tile gives the card a focal point. */
+   one accent, not six: the page runs on two colours, and a third and fourth
+   hue would undo that. The shape differentiates and the tile gives the card
+   a focal point. */
 .ftile{width:34px;height:34px;display:inline-flex;align-items:center;
-  justify-content:center;border-radius:var(--r-md);color:var(--turquoise);
+  justify-content:center;border-radius:var(--r-md);color:var(--accent);
   background:rgba(255,255,255,.045);border:1px solid var(--line);}
 /* An iconless category keeps the slot: display:none takes the 34px and
    the gap with it and drops that card's claim above its neighbours. */
@@ -513,11 +534,9 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fcard.planned .ftile{color:var(--fg-subtle);background:rgba(255,255,255,.03);
   border-color:var(--line);}
 @media (max-width:760px){.tgs{display:none;}}
-/* The circle may shrink at touch widths; the hit box may not. Padding
-   carries the target to 44px while the painted control stays 32. */
+/* The glyph may shrink at touch widths; the hit box may not. */
 @media (max-width:760px){.frow{gap:2px;}
-  .farrow{width:32px;height:32px;font-size:18px;padding:6px;
-    box-sizing:content-box;background-clip:content-box;}}
+  .farrow{width:22px;height:22px;font-size:22px;padding:11px;}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
 """
 
@@ -594,6 +613,28 @@ function apply(){
   history.replaceState(null,'',u);
 }
 
+// --- the Builds divider only exists between two chips on one row ---------
+(function(){
+  const kind=document.querySelector('.chip.kind');
+  if(!kind||!kind.previousElementSibling)return;
+  function measure(){
+    const a=kind.previousElementSibling.getBoundingClientRect();
+    const b=kind.getBoundingClientRect();
+    kind.classList.toggle('wrapped',Math.abs(a.top-b.top)>2);
+  }
+  // A ResizeObserver, not a resize listener batched through rAF: rAF does not
+  // run while the tab is hidden, so a window resized in the background would
+  // leave the divider stale until the next resize. An observer delivers on the
+  // first render after the tab comes back.
+  if(window.ResizeObserver){
+    const ro=new ResizeObserver(measure);
+    ro.observe(kind.parentElement);
+  } else {
+    window.addEventListener('resize',measure);
+  }
+  measure();
+})();
+
 // --- featured carousel -----------------------------------------------------
 // The cards stay in one flat track and the script decides how many make a
 // page, because that depends on the viewport and on which cards are filtered
@@ -632,11 +673,26 @@ function apply(){
     // dots used to restart the timer while the pointer was still inside
     if(paused||document.hidden||still.matches||pageCount()<2)return;
     if(feat.matches(':hover')||feat.contains(document.activeElement))return;
-    timer=setInterval(()=>go(at+1,false),10000);
+    timer=setInterval(()=>go(at+1,false,1),10000);
   }
 
-  function go(i,announce){
+  // the arrow the movement went towards grows for a beat, so the control
+  // reads as the thing that moved the cards
+  let pulseTimer=0;
+  function pulse(dir){
+    if(still.matches)return;
+    const b=arrows.find(a=>Number(a.dataset.step)===dir);
+    if(!b)return;
+    arrows.forEach(a=>a.classList.remove('pulse'));
+    void b.offsetWidth;
+    b.classList.add('pulse');
+    clearTimeout(pulseTimer);
+    pulseTimer=setTimeout(()=>b.classList.remove('pulse'),420);
+  }
+
+  function go(i,announce,dir){
     const pages=pageCount();
+    const from=at;
     at=(i+pages)%pages;
     const per=perPage();
     const visible=shown();
@@ -660,6 +716,7 @@ function apply(){
       if(off)c.setAttribute('aria-hidden','true');
       else c.removeAttribute('aria-hidden');
     });
+    if(dir&&at!==from)pulse(dir);
     if(announce&&status)status.textContent='Featured page '+(at+1)+' of '+pages;
   }
 
@@ -670,7 +727,7 @@ function apply(){
       const d=document.createElement('button');
       d.type='button'; d.className='fdot'; d.dataset.page=i;
       d.setAttribute('aria-label','Featured page '+(i+1)+' of '+pages);
-      d.addEventListener('click',()=>{ go(i,true); start(); });
+      d.addEventListener('click',()=>{ go(i,true,i>at?1:-1); start(); });
       dotWrap.appendChild(d);
     }
     if(nav)nav.hidden=pages<2;
@@ -682,7 +739,8 @@ function apply(){
   feat.addEventListener('featured:relayout',layout);
 
   arrows.forEach(b=>b.addEventListener('click',()=>{
-    go(at+Number(b.dataset.step),true); start();
+    const step=Number(b.dataset.step);
+    go(at+step,true,step); start();
   }));
   playBtn&&playBtn.addEventListener('click',()=>{
     paused=!paused;
@@ -701,6 +759,8 @@ function apply(){
   // behind the window being dragged. Jump, then restore the transition.
   function place(){
     const prev=track.style.transition;
+    clearTimeout(pulseTimer);
+    arrows.forEach(a=>a.classList.remove('pulse'));
     track.style.transition='none';
     go(at,false);
     void track.offsetWidth;      // flush, or the restore is coalesced away

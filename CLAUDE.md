@@ -148,12 +148,24 @@ brand cheatsheet's abstractions and not invented:
 - **fuchsia `#F72A72` has exactly four jobs**: primary button, build rail, active
   Builds chip, selected surface tab. If you are reaching for it a fifth time,
   the answer is a neutral, or one of the other two signals below.
-- **Three signals, three meanings.** Fuchsia marks a build and the four jobs
-  above. Turquoise navigates: links, identifiers, the carousel arrows and dots.
-  **SignalWire blue `#044EF4` selects** the active category chip, which is the
-  one state answering "what am I looking at" and was a grey box until Eric
-  pointed at it (2026-08-26). Blue is the brand primary and already on the page
-  in the mark. Nothing else takes blue.
+- **Two accents, not three (decided 2026-08-26).** Fuchsia `#F72A72` acts and
+  marks builds; periwinkle `--accent #8B96FF` navigates and `--select-rgb`
+  `#6E7BFF` selects. The page had fuchsia, SignalWire blue `#044EF4` and
+  turquoise `#40E0D0` in its first three coloured elements - hues 340 / 222 /
+  176, almost evenly spaced, which is the least cohesive arrangement three hues
+  can take. Eric: "the sequential change from fuchsia to blue to cyan does not
+  work visually. they are not cohesive." Warm against one cool now carries the
+  contrast, and selection sharing navigation's hue is honest, since "where am
+  I" and "where can I go" are the same question.
+- **The SignalWire brand colour rules are not binding in this project.** Eric
+  released it explicitly (2026-08-26): "the brand guidelines color wise from
+  signalwire knowledge mcp are not a rule we have to follow in this project if
+  its a limiting factor." They were the reason blue and turquoise were locked
+  to their jobs, and that lock is what produced the incoherent triad. Consult
+  `get_design('colors')`, then decide; do not treat it as a constraint.
+- **Every accent job reads `--accent` / `--accent-rgb` / `--select-rgb`.** The
+  `--turquoise` token was deleted rather than redefined, because a token named
+  for a colour it no longer holds is a trap. A palette change is one edit.
 - **The build rail marks a build that exists.** A 2px fuchsia inset plus a
   brighter cell edge (`--line-2`) on a live build card; a planned build (no
   repository) gets neither, so in a mixed band the real one reads as real and
@@ -241,6 +253,50 @@ brand cheatsheet's abstractions and not invented:
   margin), so it hugged Builds and read as belonging to it (Eric, 2026-08-26).
   It is `-11px`. Measure the two rects and assert the midpoint; do not eyeball a
   negative offset.
+- **Measure ink, not boxes.** The Builds divider was moved to the midpoint of
+  the two chips' *bounding boxes* and Eric still read it as wrong, because the
+  preceding chip has a transparent border and paints nothing over its 14px of
+  padding: 25.7px from one chip's text, 11px from the other's border. Measured
+  ink to ink (a `Range` over the chip's contents) the midpoint is `-18px`.
+  A `getBoundingClientRect()` is not what a reader sees. `tools/qc.py` now
+  asserts the two distances agree within 3px.
+- **Look at the render with the browser, not only with a headless script.**
+  Eric asked "are you not using that mcp that can properly view the render?"
+  after two wrong divider fixes. The Chrome MCP's `zoom` on a 130px region
+  showed the skew in one look; the numbers I had been printing hid it because
+  I was measuring the wrong quantity. Zoom into the detail under discussion.
+- **The carousel arrows are bare chevrons, not buttons in rings.** A circle
+  around a control that already sits beside carded content is a container
+  around a container (Eric, 2026-08-26). White glyph, no border, no background,
+  transparent `content-box` padding for the 46px hit box, scaling into the
+  accent on hover and focus, and a 420ms `.pulse` whenever the cards move so
+  the control reads as the thing that moved them.
+- **An interaction outranks a signal.** `.farrow.pulse` and the hover rule were
+  equally specific, so an auto-advance pulse arriving under the pointer shrank
+  the arrow from 1.45 to 1.35 and grew it back 420ms later (sol). The pulse is
+  scoped `:not(:hover):not(:focus-visible)`.
+- **A divider needs two things to divide.** When the chip strip wraps and
+  Builds starts a row, the rule to its left has nothing on the other side, so
+  `.chip.kind.wrapped::before{content:none}` removes it. The class is set by a
+  **`ResizeObserver`, not a resize listener batched through `requestAnimationFrame`** -
+  rAF does not run while the tab is hidden, so a window resized in the
+  background left the divider stale until the next resize.
+- **`tools/qc.py` runs a phone width (390x844) as of 2026-08-26.** It had four
+  viewports and none was a phone, which is why the wrapped chip strip had never
+  been exercised despite the viewport meta tag being fixed weeks earlier.
+- **The no-overflow rule for code panes applies at 820 and up, not below.** At
+  390px the pane is 324px, about 37 characters, and no real code line fits; the
+  web guidelines call for wide content to scroll inside its own `overflow-x`
+  container, which is what it does. What must hold at *every* width is that the
+  **page** never scrolls sideways, and `qc.py` now asserts that separately.
+- **A sabotage that changes nothing proves nothing.** The sidescroll guard was
+  first "tested" by forcing `.dhead` - a class the page does not use - and the
+  QC passed, which read as a broken guard. Check that the sabotage actually
+  reaches the DOM before concluding anything about the check.
+- **Pass a direction, never derive it from a modular delta.** The pulse chose
+  its arrow with `(at-from+pages)%pages`, which cannot tell forward from back
+  when `pages===2` - and six featured cards at three up is exactly two pages,
+  so Previous lit Next in the common case. Callers know which way they went.
 - **Never position a slide with `offsetLeft`.** Transforming the track makes it
   the cards' `offsetParent`, so `card.offsetLeft` changes coordinate space the
   moment the transform is applied and paging freezes after one step. Compute
