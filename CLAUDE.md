@@ -672,8 +672,10 @@ the destination and had never been designed as one. Eric asked for it.
 - **`design/` is untracked.** It held abandoned exploration artboards from an
   early session; the visual language came from the live site instead. The local
   files are kept, `git rm --cached` only.
-- **A LICENSE is still missing** and is Eric's call, not mine. The vendored SDK
-  is MIT.
+- **MIT, `Copyright (c) 2026 SignalWire`** (Eric approved it 2026-08-26). The
+  text is the vendored SDK's own LICENSE with the year changed, because every
+  SignalWire repository on this machine carries that same file and wording.
+  Do not hand-type a licence; copy the house one.
 
 ## QC gate — before any publish or commit that touches build.py
 

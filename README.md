@@ -103,6 +103,10 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md). A recipe is finished when
 `python verify.py <slug>` passes, and the linter holds the prose to the
 SignalWire writing guide.
 
+## Licence
+
+MIT. See [LICENSE](LICENSE). Take the code and use it.
+
 ## Docs
 
 - [SignalWire documentation](https://signalwire.com/docs)
