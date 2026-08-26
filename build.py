@@ -955,19 +955,41 @@ def prose(blocks):
     return [b for b in blocks if not b.startswith(PRE_MARK)]
 
 
+# One unknown lexer should not break a build; a missing Pygments should.
+# Both used to take the same silent fallback, so a machine without the
+# dependency produced a complete site with every code block unstyled.
+_HL = {"ok": 0, "fell_back": 0}
+
+
 def highlight_code(code, lexer_name):
     """Pygments at build time; the lexer comes from the surface's vocab entry.
-    Falls back to escaped text when Pygments or the lexer is unavailable."""
+
+    Falls back to escaped text when Pygments or the lexer is unavailable, and
+    records which, so the build can refuse a site with no highlighting at all.
+    """
     if not lexer_name:
         return esc(code)
     try:
         from pygments import highlight
         from pygments.formatters import HtmlFormatter
         from pygments.lexers import get_lexer_by_name
-        return highlight(code, get_lexer_by_name(lexer_name, stripnl=False),
-                         HtmlFormatter(nowrap=True)).rstrip("\n")
-    except Exception:  # missing dependency or unknown lexer: never break the build
+        out = highlight(code, get_lexer_by_name(lexer_name, stripnl=False),
+                        HtmlFormatter(nowrap=True)).rstrip("\n")
+        _HL["ok"] += 1
+        return out
+    except Exception:
+        _HL["fell_back"] += 1
         return esc(code)
+
+
+def check_highlighting():
+    """Nothing highlighted anywhere is a missing dependency, not a bad lexer."""
+    if _HL["fell_back"] and not _HL["ok"]:
+        raise SystemExit(
+            "build: %d code blocks rendered with no highlighting and none "
+            "succeeded. Pygments is probably not installed; run "
+            "pip install -r requirements.txt" % _HL["fell_back"]
+        )
 
 
 def read_code(d, surface, V):
@@ -1840,6 +1862,7 @@ def main():
     (SITE / "sitemap.xml").write_text(build_sitemap(recipes), encoding="utf-8")
 
     launch = sum(1 for r in recipes if r.get("tier") == "launch")
+    check_highlighting()
     print(
         f"build: {len(recipes)} recipes -> site/  "
         f"({launch} launch tier, {len(recipes)*2+3} files)"

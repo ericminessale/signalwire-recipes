@@ -1,0 +1,9 @@
+# Tooling for the generator and the gate, not for the recipes. Each recipe
+# pins its own dependencies in recipes/<slug>/<surface>/requirements.txt.
+#
+#   pip install -r requirements.txt
+#
+# The render checks in tools/qc.py also need playwright-cli on PATH, which is
+# an npm package rather than a Python one.
+Pygments>=2.17          # syntax highlighting, applied at build time
+PyYAML>=6.0             # tools/verifylib.py reads the swml surface
