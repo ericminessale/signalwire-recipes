@@ -64,7 +64,7 @@ Point a phone number's SWML webhook at `https://<your-host>/translate`.
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 Both surfaces validate against the SWML schema. The verifier asserts:

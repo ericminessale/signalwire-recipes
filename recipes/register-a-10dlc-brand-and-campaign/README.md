@@ -57,7 +57,7 @@ in the Dashboard before running this against a real project.
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, `register()` must make exactly three documented requests

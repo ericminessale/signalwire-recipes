@@ -73,10 +73,19 @@ def main():
     for who in ("human", "machine"):
         said = sw["case"][who][0]["play"]["url"]
         assert said.startswith("say:") and recipe.MESSAGE in said, (who, said)
+    # No branch may offer a keypress: this document collects no digits.
+    assert "prompt" not in V.verb_names(doc), V.verb_names(doc)
+    for branch in list(sw["case"].values()) + [sw["default"]]:
+        for verb in branch:
+            said = verb.get("play", {}).get("url", "")
+            assert "press" not in said.lower(), said
 
-    # The unclassified outcomes are a person until proven otherwise.
+    # The unclassified outcomes get the bare message: no keypress offer, and
+    # nothing that only makes sense to a person.
     assert sw["default"], sw
-    assert recipe.MESSAGE in sw["default"][0]["play"]["url"], sw["default"]
+    default_said = sw["default"][0]["play"]["url"]
+    assert recipe.MESSAGE in default_said, sw["default"]
+    assert "press" not in default_said.lower(), default_said
     for value in recipe.UNKNOWN:
         assert value not in sw["case"], value
 

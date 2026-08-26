@@ -472,7 +472,7 @@
         "sdk skills/registry.py:132,350",
         "demo cabby cabby.py:15 imports GoogleMapsClient from a skill directly",
         "verified 2026-08-25: recipes/write-a-reusable-agent-skill/verify.py",
-        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
+        "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
       ]
     },
     {
@@ -535,7 +535,7 @@
         "docs apis/rest/swml-webhook/create-swml-webhook",
         "sdk rest/namespaces/fabric.py assign_phone_route",
         "verified 2026-08-25: recipes/route-a-call-to-an-ai-agent/verify.py",
-        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
+        "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
       ]
     },
     {
@@ -600,7 +600,7 @@
         "features Multilingual support",
         "demo ginospizza add_language(inworld voice) (legacy SDK)",
         "verified 2026-08-25: recipes/switch-language-mid-call/verify.py",
-        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
+        "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
       ]
     },
     {
@@ -1146,7 +1146,7 @@
         "docs compatibility-api/cxml/reference/voice (Gather input=speech)",
         "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable.",
         "verified 2026-08-25: recipes/collect-speech-input-and-branch/verify.py",
-        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
+        "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
       ]
     },
     {
@@ -1726,7 +1726,7 @@
         "features AMD shipped 2026-06-09",
         "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.",
         "verified 2026-08-25: recipes/detect-an-answering-machine/verify.py",
-        "UNAUDITED 2026-08-25: codex terminated three times without returning a verdict on wave 3 (twice on the full brief, once on a diff-scoped one), each time partway through reading docs/_review_wave3.txt. A smoke test confirms codex itself works. verify.py proves the claim, but no sol review has been applied. Both prior waves found real defects on audit round 1, so treat these as unreviewed."
+        "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
       ]
     },
     {

@@ -7,9 +7,9 @@
 
 ## What this demonstrates
 
-An outbound call that classifies whoever answered before it speaks. A person
-gets a greeting they can respond to, a voicemail gets the message after the
-beep, and a fax tone gets hung up on.
+An outbound call that classifies whoever answered before it speaks. A person and a
+voicemail both hear the repair message, voicemail playback waits until after the beep,
+and a fax tone gets hung up on.
 
 The classification happens in the document, so no code of yours is in the loop
 while the call is deciding.
@@ -39,10 +39,10 @@ holds until the greeting finishes, so the message is played after the beep. With
 off, the call talks over the outgoing greeting and the recording catches half a
 sentence.
 
-The documented values are lowercase: `machine`, `human`, `fax`, `unknown`,
-`detecting` and `error`. The last three go to `default`, and this recipe treats
-them as a person. That is the safer failure. A human who hears a voicemail message is confused; a
-voicemail that hears a greeting meant for a human records nothing useful.
+The documented values are lowercase: `machine`, `human`, `fax`, `unknown`, `detecting`
+and `error`. The last three go to `default`, which plays the message and nothing else.
+That is the safe thing to say when the classifier could not decide, because it works
+read to a person or recorded by a machine.
 
 The document travels with the origination on `dial`, so the classification runs
 on the leg being answered. There is no separate call to bridge first.
@@ -61,7 +61,7 @@ python app.py +15552223333
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer replaced by a recorder, the verifier asserts:
@@ -73,6 +73,7 @@ With the HTTP layer replaced by a recorder, the verifier asserts:
 - every case is one of the six documented values, and `human`, `machine` and
   `fax` are all handled
 - a fax hangs up, a human and a machine both hear the message
+- no branch offers a keypress, because the document collects no digits
 - the three unclassified outcomes fall to the default rather than being cased
 
 ## Limitations

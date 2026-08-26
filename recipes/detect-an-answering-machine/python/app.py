@@ -53,8 +53,11 @@ def reminder_document():
                     "variable": "detect_result",
                     "case": {
                         HUMAN: [
-                            {"play": {"url": f"say:{MESSAGE} Press one to "
-                                             "speak to the workshop."}},
+                            # A person can be told something a machine
+                            # cannot act on. Nothing here collects a digit,
+                            # so nothing here offers one.
+                            {"play": {"url": f"say:{MESSAGE} The workshop is "
+                                             "open until six today."}},
                         ],
                         MACHINE: [
                             # detect_message_end held us until the beep
@@ -65,8 +68,9 @@ def reminder_document():
                             {"hangup": {}},
                         ],
                     },
-                    # unknown, detecting and error all land here: treat an
-                    # unclassified answer as a person, not as a machine
+                    # unknown, detecting and error land here. The message
+                    # alone is the safe thing to play when the classifier
+                    # could not decide: it works read to either.
                     "default": [
                         {"play": {"url": f"say:{MESSAGE}"}},
                     ],

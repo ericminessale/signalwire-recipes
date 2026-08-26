@@ -42,7 +42,7 @@ curl -X POST localhost:8080/otp/verify -H 'content-type: application/json' -d '{
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, the verifier checks the three documented MFA requests

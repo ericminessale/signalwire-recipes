@@ -39,7 +39,7 @@ python -c "import app; print(app.send('+1555...', 'https://<public-url>/document
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, `send()` must make one documented POST with the required

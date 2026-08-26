@@ -43,7 +43,7 @@ python app.py buy +14155550123 https://<your-host>/ivr
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer replaced by a recorder, `provision()` must make exactly three

@@ -6,8 +6,8 @@ agent can add_skill it with params.
 Proof: registering the class makes it addressable by name, and one add_skill
 line puts all three of its contributions into the rendered SWML. Adding it
 twice with different params yields two instances, which only works because the
-instance key is built from tool_name; without a distinct one the second is
-dropped with a warning and no error.
+instance key is built from tool_name; without a distinct one only one tool
+survives, which is what this asserts.
 """
 import json
 import os
@@ -59,11 +59,16 @@ def main():
     assert "the shop" in hints and "the workshop" in hints, hints
     assert "opening hours" in hints, hints
 
-    # 3. Prompt sections, also from the skill.
+    # 3. Prompt sections, also from the skill. Each must name the tool its
+    # own instance registered: naming the skill would point the model at a
+    # tool that does not exist once tool_name differs.
     pom = json.dumps(ai["prompt"])
     assert "Hours for the shop" in pom, ai["prompt"]
     assert "Hours for the workshop" in pom, ai["prompt"]
     assert "Never guess an opening time" in pom, ai["prompt"]
+    for tool in tools:
+        assert f"Use {tool} to answer" in pom, (tool, ai["prompt"])
+    assert "Use store_hours to answer" not in pom, ai["prompt"]
 
     # params really do reach the handler: different hours per instance.
     r = agent._execute_swaig_function("shop_hours", {"day": "saturday"},

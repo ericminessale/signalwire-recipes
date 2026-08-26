@@ -42,7 +42,7 @@ python -c "import app; print(app.send('+15552223333', 'Your table is ready.'))"
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It swaps the REST client's HTTP layer for a recorder, then checks the POST path and

@@ -57,9 +57,17 @@ def check(doc, label):
     assert sw["default"], (label, sw)
     assert sw["default"][-1]["transfer"]["dest"] in sections, (label, sw)
 
-    # Each hint the recogniser is given is a phrase the switch can act on.
+        # Each hint the recogniser is given is a phrase the switch can act on.
     assert set(prompt["speech_hints"]) <= set(sw["case"]), (
         label, sorted(set(prompt["speech_hints"]) - set(sw["case"])))
+
+    # Two phrases reach billing, and three destinations remain. The README
+    # claims this of both surfaces, so both surfaces are checked.
+    assert sw["case"]["account"] == sw["case"]["billing"] == [
+        {"transfer": {"dest": "billing"}}
+    ], (label, sw["case"])
+    dests = {v[0]["transfer"]["dest"] for v in sw["case"].values()}
+    assert len(dests) == 3, (label, sorted(dests))
     return sw
 
 
@@ -68,10 +76,6 @@ def main():
     import app as recipe
 
     sw = check(recipe.build().get_document(), "python")
-    # the table drives the document, so two phrases can share a destination
-    assert sw["case"]["account"] == sw["case"]["billing"], sw["case"]
-    assert len(set(v[0]["transfer"]["dest"] for v in sw["case"].values())) == 3, sw
-
     check(V.load_yaml(HERE / "swml" / "agent.yaml"), "yaml")
 
     print(f"ok: prompt listens on {sorted(SPEECH & set(V.first(recipe.build().get_document(), 'prompt')))} "

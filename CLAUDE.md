@@ -210,6 +210,13 @@ brand cheatsheet's abstractions and not invented:
   written down: a `\\n` inside a quoted heredoc reached the file as a real
   newline and left `tools/qc.py` and `tools/lint_recipes.py` unparseable. If a
   patch string contains a backslash, it goes in a file. No exceptions.
+- **One recipe per codex brief.** A five-recipe brief (1,422 lines) killed
+  codex three times with no verdict, and it also dies if invited to open SDK
+  files mid-review. Splitting to one recipe per brief, with the house rules
+  inlined and SDK excursions forbidden, returned a verdict every time. Inline
+  what it must not go looking for, including the fact that `requirements.txt`
+  and `.env.example` exist but are omitted from the excerpt, or it reports
+  their absence as a finding.
 - **Give codex a diff, not a tree.** Pointed at the working directory, one
   review spent its entire budget enumerating
   `recipes/create-a-video-room-and-join-from-the-browser/typescript/node_modules`
@@ -364,6 +371,11 @@ compiles. The folder contains:
   document — build the documented sibling `"transfer": "true"` by hand).
   TypeScript is type-checked against the installed `@signalwire/js` when
   `typescript/node_modules` exists; that caught three wrong member names.
+- **A verifier must not import its expected values from the recipe.** Sol
+  caught `switch-language-mid-call` importing `LANGUAGES` from `app.py` and
+  comparing it to the rendered document: swapping both surfaces to unrelated
+  languages would still have passed. Expected values live in the verifier, and
+  two surfaces are compared against that third thing rather than each other.
 - `python verify.py` at the root runs every recipe's verifier with the SDK
   path resolved absolutely (`SIGNALWIRE_SDK_PATH` overrides).
 
@@ -556,6 +568,13 @@ These cost a review round each. They are not in any single doc.
   `unknown` / `detecting` / `error`.
 - **The bundled schema requires `play` to be an object** with a `url`. The
   `play: "say:..."` shorthand in the docs does not validate locally.
+- **`add_skill` silently drops a duplicate instance.** The instance key is
+  `SKILL_NAME + "_" + params["tool_name"]`, so adding one skill twice without
+  distinct `tool_name` values keeps only the first. A warning in the log, no
+  error, and one tool where you expected two. A multi-instance skill must also
+  name its tool from `tool_name`, or the two instances collide.
+- **`languages_enabled` gates the `languages` list.** Without it the platform
+  ignores the list and answers in the first voice. Nothing errors.
 - **Matching an utterance is substring-unsafe.** "yesterday" contains "yes"
   and "I can't say yes" contains it too. Normalise the whole answer (expand
   contractions before dropping apostrophes, strip politeness but never hedges

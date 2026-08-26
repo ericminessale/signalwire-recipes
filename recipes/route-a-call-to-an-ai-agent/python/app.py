@@ -30,8 +30,9 @@ def point_number_at(agent_url=AGENT_URL, phone_route_id=PHONE_ROUTE_ID):
         # where SignalWire fetches the document when a call arrives
         primary_request_url=agent_url,
         primary_request_method="POST",
-        # if the agent is down, the call still has somewhere to go
-        fallback_request_url=f"{agent_url}/fallback",
+        # a second URL for SignalWire to try if the primary request fails.
+        # Host it apart from the agent, or it shares the outage it covers.
+        fallback_request_url=os.getenv("FALLBACK_URL", f"{agent_url}/fallback"),
         fallback_request_method="POST",
     )
     client.fabric.resources.assign_phone_route(

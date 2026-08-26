@@ -61,7 +61,7 @@ Set the number's message handler to `https://<your-host>/sms`.
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It drives the webhook with the documented payload and asserts:

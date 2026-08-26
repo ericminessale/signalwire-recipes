@@ -52,7 +52,7 @@ prints its URL and Basic Auth on start).
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It renders the SWML and asserts the per-step `functions` lists. It then runs each tool

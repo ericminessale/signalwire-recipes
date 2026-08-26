@@ -53,7 +53,7 @@ Open the page with `?to=+15551234567` to dial a phone number instead.
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, the verifier asserts both halves:

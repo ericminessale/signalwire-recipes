@@ -56,7 +56,7 @@ address (the `to_pbx` section of `swml/agent.yaml`).
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, setup must make exactly the two documented requests,

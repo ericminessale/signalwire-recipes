@@ -51,7 +51,9 @@ class StoreHoursSkill(SkillBase):
         return [{
             "title": f"Hours for {self.location}",
             "bullets": [
-                f"Use store_hours to answer any question about when "
+                # name the tool this instance actually registers, not the
+                # skill: two instances mean two different tool names
+                f"Use {self.tool_name} to answer any question about when "
                 f"{self.location} is open.",
                 "Never guess an opening time. If the tool does not know a "
                 "day, say so.",

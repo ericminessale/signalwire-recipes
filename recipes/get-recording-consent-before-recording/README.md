@@ -69,7 +69,7 @@ Point a phone number's SWML webhook at
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It renders the SWML and runs the handler, asserting:

@@ -57,7 +57,7 @@ system of record.
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It renders the SWML and asserts the account tools are `active: false`. It then runs

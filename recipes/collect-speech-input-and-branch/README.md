@@ -70,7 +70,7 @@ surface can be pasted into a hosted SWML Script instead.
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 Both surfaces validate against the SWML schema. The verifier asserts:
@@ -93,6 +93,7 @@ so the `default` branch is load bearing rather than decorative.
 
 ## What to change first
 
-Add `max_digits: 1` to the prompt. Both detectors arm, the caller can press or
-speak, and the same `switch` handles either because a digit arrives in
-`prompt_value` too.
+Add `max_digits: 1` to the prompt and a `"1"` case beside `sales`. Both detectors arm,
+and the same `switch` serves both, because a digit arrives in `prompt_value` exactly
+as a word does. Add the digit without the case and every keypress falls to the
+default.

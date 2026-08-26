@@ -1,7 +1,8 @@
 """Prove the claim without a network.
 
-Claim: a phone number's SWML webhook resource points at your agent's URL and
-the call lands in the agent.
+Claim: a phone number is bound to a SWML webhook resource holding your agent's
+URL. Whether a call then lands is a live-call question this cannot answer; what
+it proves is that the binding is made correctly.
 
 Proof: with the HTTP layer replaced by a recorder, two documented requests are
 made in dependency order. The resource carries the agent URL as its primary
@@ -45,8 +46,9 @@ def main():
     V.assert_documented("rest", "POST", WEBHOOKS, body)
     assert body["primary_request_url"] == os.environ["AGENT_URL"], body
     assert body["primary_request_method"] == "POST", body
-    # a call still has somewhere to go when the agent is down
-    assert body["fallback_request_url"].startswith(os.environ["AGENT_URL"]), body
+    # a second URL for SignalWire to try; independence from the agent is a
+    # deployment choice, so this asserts only that one is set
+    assert body["fallback_request_url"], body
 
     # 2. the number, bound to the resource that was just created
     path = f"/api/fabric/resources/res-abc/phone_routes"

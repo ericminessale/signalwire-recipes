@@ -39,7 +39,7 @@ Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/ac
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It runs the tool handler as the platform would, and asserts the response contains

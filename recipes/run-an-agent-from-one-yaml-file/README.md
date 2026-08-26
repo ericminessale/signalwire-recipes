@@ -64,7 +64,7 @@ paste `swml/agent.yaml`, and set a phone number's handler to that script.
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 The document validates against the SDK's bundled SWML schema. The verifier

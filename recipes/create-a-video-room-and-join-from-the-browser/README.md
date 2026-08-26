@@ -56,7 +56,7 @@ Proxy `/token` from the page to the Flask app (or serve both from one origin).
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer recorded, the two routes must make the documented

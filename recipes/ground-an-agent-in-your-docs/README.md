@@ -51,7 +51,7 @@ Alternatives with the same shape: the SDK's `datasphere` skill (webhook) or
 ## Verify it
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It replaces the REST client's HTTP layer with a recorder and runs the tool. The

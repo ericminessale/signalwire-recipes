@@ -60,7 +60,7 @@ python app.py +15552223333
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer replaced by a recorder, `place()` must make exactly one

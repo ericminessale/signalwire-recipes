@@ -64,7 +64,7 @@ python app.py
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer replaced by a recorder, `navigate()` must make one request.

@@ -53,7 +53,7 @@ Library needs no key, so it works as written.
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It renders the SWML and asserts:

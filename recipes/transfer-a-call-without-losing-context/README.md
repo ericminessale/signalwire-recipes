@@ -50,7 +50,7 @@ Point a phone number's SWML webhook at `https://<your-host>/intake`.
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 It renders both agents' SWML and asserts:

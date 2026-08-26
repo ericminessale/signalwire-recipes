@@ -6,9 +6,9 @@
 
 ## What this demonstrates
 
-Two requests take a number you own to a ringing agent. The first creates a SWML
-webhook resource holding your agent's URL. The second attaches the number's
-phone route to that resource.
+Two requests bind a number you own to a SWML webhook resource that holds your agent's
+URL. The first creates the resource. The second attaches the number's phone route to
+it.
 
 The number is bound to the resource rather than the URL. Moving the agent is
 then one update of the resource, however many numbers point at it.
@@ -24,12 +24,13 @@ resource = client.fabric.swml_webhooks.create(
     name="support agent",
     primary_request_url=AGENT_URL,
     primary_request_method="POST",
-    fallback_request_url=f"{AGENT_URL}/fallback",
+    fallback_request_url=FALLBACK_URL,
 )
 ```
 
-The fallback is worth setting even though it is optional. Without it, an agent
-that is down means a call with nowhere to go.
+The fallback is worth setting even though it is optional: it gives SignalWire a second
+URL to try when the primary request fails. Host it apart from the agent, or it shares
+the outage it exists to cover.
 
 Then the number. `assign_phone_route` posts to the resource's `phone_routes`,
 taking the route id and a handler:
@@ -65,7 +66,7 @@ python app.py
 No network, no account:
 
 ```bash
-python verify.py
+python verify.py          # from the recipe folder, not python/
 ```
 
 With the HTTP layer replaced by a recorder, the verifier asserts:
