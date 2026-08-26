@@ -21,14 +21,15 @@
   "subcategory": "observe",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "../Barge Demo exists in the workspace"
     ],
     "evidence": [
       "docs swml/reference/calling/join-conference (muted, end_on_exit)",
-      "features Barge"
+      "features Barge",
+      "verified 2026-08-25: recipes/barge-into-a-live-call/verify.py"
     ]
   }
 }

@@ -22,7 +22,7 @@
   "subcategory": "observe",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:call-whisper-monitoring"
@@ -30,7 +30,8 @@
     "evidence": [
       "docs swml/reference/calling/join-conference (coach)",
       "features Whisper (coach member shape)",
-      "sdk function_result.py:1046 join_conference(coach=)"
+      "sdk function_result.py:1046 join_conference(coach=)",
+      "verified 2026-08-25: recipes/whisper-to-an-agent-mid-call/verify.py"
     ]
   }
 }

@@ -13,7 +13,6 @@
   ],
   "surfaces": [
     "python",
-    "typescript",
     "swml"
   ],
   "governed": false,
@@ -23,7 +22,7 @@
   "subcategory": "call-control",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:build-conference-calling",
@@ -31,7 +30,8 @@
     ],
     "evidence": [
       "docs swml/reference/calling/join-conference",
-      "docs compatibility-api/rest (Conferences, Participants)"
+      "docs compatibility-api/rest (Conferences, Participants)",
+      "verified 2026-08-25: recipes/build-a-conference-call/verify.py"
     ]
   }
 }

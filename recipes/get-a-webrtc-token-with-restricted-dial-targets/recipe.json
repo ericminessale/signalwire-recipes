@@ -13,7 +13,6 @@
     "security"
   ],
   "surfaces": [
-    "typescript",
     "python"
   ],
   "governed": true,
@@ -23,13 +22,14 @@
   "subcategory": "governance",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "video",
     "folds": [],
     "evidence": [
       "docs apis/rest/subscribers/tokens (guest token allowed_addresses <= 10)",
       "sdk rest/namespaces/fabric.py create_guest_token",
-      "demo afterhours app.py:866 client.fabric.tokens.create_guest_token"
+      "demo afterhours app.py:866 client.fabric.tokens.create_guest_token",
+      "verified 2026-08-25: recipes/get-a-webrtc-token-with-restricted-dial-targets/verify.py"
     ]
   }
 }

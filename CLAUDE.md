@@ -568,6 +568,14 @@ These cost a review round each. They are not in any single doc.
   `unknown` / `detecting` / `error`.
 - **The bundled schema requires `play` to be an object** with a `url`. The
   `play: "say:..."` shorthand in the docs does not validate locally.
+- **`join_conference` narrows two fields more than they look.** `beep` is one
+  of `true` / `false` / `onEnter` / `onExit`, and `status_callback_event` takes
+  a **single** event name, not a space-separated list. A list is the natural
+  thing to write and fails schema validation.
+- **`FunctionResult` helpers omit fields already at their schema default**, so
+  an absent key is the assertion. `end_on_exit=False` never appears in the
+  emitted document. Assert `"key" not in verb`, not `verb.get(key, default)`,
+  which passes either way.
 - **`add_skill` silently drops a duplicate instance.** The instance key is
   `SKILL_NAME + "_" + params["tool_name"]`, so adding one skill twice without
   distinct `tool_name` values keeps only the first. A warning in the log, no

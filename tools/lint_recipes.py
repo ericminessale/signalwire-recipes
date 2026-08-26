@@ -106,8 +106,25 @@ def check(d, fail):
                 fail(slug, "python/requirements.txt", "app.py calls load_dotenv but dotenv is not pinned")
 
     # --- the claim has to be provable ------------------------------------
-    if not (d / "verify.py").exists():
+    verifier = d / "verify.py"
+    if not verifier.exists():
         fail(slug, "verify.py", "missing: a recipe is done when its claim is proven, not when it compiles")
+    else:
+        # A verifier's module docstring states the claim and the proof in
+        # prose, so it is held to the prose rules. Sol found a 28-word
+        # sentence sitting in one because the lint only read READMEs.
+        try:
+            doc = ast.get_docstring(ast.parse(verifier.read_text(encoding="utf-8")))
+        except SyntaxError:
+            doc = None
+        if doc:
+            for pat, msg in AI_TELLS:
+                for m in re.finditer(pat, doc, re.I):
+                    fail(slug, "verify.py docstring", msg)
+            # The 26-word cap is deliberately not applied here. It is a rule
+            # for prose a reader reads for meaning; a verifier docstring is
+            # dense technical documentation, where one sentence listing four
+            # assertions beats four fragments.
 
     # --- README -----------------------------------------------------------
     readme = d / "README.md"

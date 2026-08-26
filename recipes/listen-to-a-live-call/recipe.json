@@ -13,8 +13,7 @@
     "media-streaming"
   ],
   "surfaces": [
-    "python",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "observe",
@@ -23,7 +22,7 @@
   "subcategory": "observe",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "sol gap #4",
@@ -33,7 +32,8 @@
       "docs swml/reference/calling/tap (WebSocket or RTP)",
       "features Listen (tap to AudioMonitor)",
       "sdk function_result.py:1183 tap",
-      "demo sidecar tap to wss /ws/audio as PCMU, browser playback via AudioWorklet"
+      "demo sidecar tap to wss /ws/audio as PCMU, browser playback via AudioWorklet",
+      "verified 2026-08-25: recipes/listen-to-a-live-call/verify.py"
     ]
   }
 }

@@ -5,10 +5,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 ## Counts
 
 **121 rows.** By kind: recipe 100 · build 8 · guide 4 · tool 2 · hold 7.  
-By status: verified 35 · written 4 · stub 15 · proposed 60 · hold 7.  
+By status: verified 40 · written 4 · stub 10 · proposed 60 · hold 7.  
 Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
 Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
-Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 9.
+Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 12.
 
 ## Column key
 
@@ -95,6 +95,7 @@ Account tools do not exist in the model's tool list until a verification tool ha
   - docs swml/guides/toggle-functions
   - demo pathfinder tools.py:260,385 toggle_functions gating a tool
   - verified 2026-08-25: recipes/require-verification-before-unlocking-tools/verify.py
+  - NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 
 ### `scope-tools-per-step` **·launch**
 
@@ -577,12 +578,13 @@ A bidirectional audio stream connects the call to your media server, which can a
 
 Several callers share one named audio conference, and members can be muted, removed and recorded over REST.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
 - interfaces: swml, cxml, rest · capabilities: conference
 - folds: t:build-conference-calling; scenario t:conference-live-poll-dtmf (DTMF polling is not evidenced; scenario only)
 - evidence:
   - docs swml/reference/calling/join-conference
   - docs compatibility-api/rest (Conferences, Participants)
+  - verified 2026-08-25: recipes/build-a-conference-call/verify.py
 
 ### `detect-an-answering-machine`
 
@@ -817,7 +819,7 @@ Partial and final transcripts of both legs arrive at your webhook while the call
 
 Call audio is forked to your WebSocket while the call continues; the participants hear nothing.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
 - interfaces: swml, rest, relay · capabilities: tap, media-streaming
 - folds: sol gap #4; t:call-whisper-monitoring
 - evidence:
@@ -825,29 +827,34 @@ Call audio is forked to your WebSocket while the call continues; the participant
   - features Listen (tap to AudioMonitor)
   - sdk function_result.py:1183 tap
   - demo sidecar tap to wss /ws/audio as PCMU, browser playback via AudioWorklet
+  - verified 2026-08-25: recipes/listen-to-a-live-call/verify.py
 
 ### `whisper-to-an-agent-mid-call`
 
 A supervisor joins the conference as a coach: heard by one agent, silent to everyone else.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
 - interfaces: swml · capabilities: conference, coach
 - folds: t:call-whisper-monitoring
 - evidence:
   - docs swml/reference/calling/join-conference (coach)
   - features Whisper (coach member shape)
   - sdk function_result.py:1046 join_conference(coach=)
+  - verified 2026-08-25: recipes/whisper-to-an-agent-mid-call/verify.py
+  - NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 
 ### `barge-into-a-live-call`
 
 A third party enters a live conference with full audio; leaving does not end the call.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Monitoring** · lens Voice & Call Control
 - interfaces: swml · capabilities: conference
 - folds: ../Barge Demo exists in the workspace
 - evidence:
   - docs swml/reference/calling/join-conference (muted, end_on_exit)
   - features Barge
+  - verified 2026-08-25: recipes/barge-into-a-live-call/verify.py
+  - NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 
 ### `handle-call-status-callbacks`
 
@@ -948,12 +955,13 @@ Each tenant gets a subproject and a token scoped to it; a leaked token cannot re
 
 A guest token can only dial the addresses you list; a visitor cannot reach anything else.
 
-- kind **recipe** · status **stub** · category **Voice** (voice) · task group **Governance** · lens Video & WebRTC
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Governance** · lens Video & WebRTC
 - interfaces: rest, browser-sdk · capabilities: tokens, security
 - evidence:
   - docs apis/rest/subscribers/tokens (guest token allowed_addresses <= 10)
   - sdk rest/namespaces/fabric.py create_guest_token
   - demo afterhours app.py:866 client.fabric.tokens.create_guest_token
+  - verified 2026-08-25: recipes/get-a-webrtc-token-with-restricted-dial-targets/verify.py
 
 ### `check-consent-before-an-outbound-call`
 
@@ -1650,9 +1658,12 @@ A rep takes calls in the browser while a sidecar streams objection-handling insi
 
 ## Rows that need verification before they are written
 
+- `require-verification-before-unlocking-tools` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 - `run-livekit-agents-code-on-signalwire` — plugin classes are no-op stubs (livewire/plugins.py:49-124); the claim must be scoped to what actually maps
 - `let-an-agent-see-the-callers-camera` — exact tool the model calls and the image path
 - `hand-off-from-ai-to-a-human-agent` — the notes transport - which webhook/payload the dequeuing side receives, and where the agent's notes are keyed (global_data via post_prompt vs. your own store)
+- `whisper-to-an-agent-mid-call` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
+- `barge-into-a-live-call` — 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback.
 - `handle-call-status-callbacks` — 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this.
 - `run-the-same-agent-over-text` — the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages
 - `put-an-agent-in-a-web-chat-widget` — browser-side auth to the AI Chat API (a token proxy is likely required)

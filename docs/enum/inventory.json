@@ -78,7 +78,8 @@
         "sdk tool_mixin.py:39 active:false via swaig_fields",
         "docs swml/guides/toggle-functions",
         "demo pathfinder tools.py:260,385 toggle_functions gating a tool",
-        "verified 2026-08-25: recipes/require-verification-before-unlocking-tools/verify.py"
+        "verified 2026-08-25: recipes/require-verification-before-unlocking-tools/verify.py",
+        "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
       ],
       "featured": true,
       "feature_line": "Tools that do not exist until the caller proves who they are.",
@@ -1560,7 +1561,7 @@
       "slug": "listen-to-a-live-call",
       "claim": "Call audio is forked to your WebSocket while the call continues; the participants hear nothing.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1584,7 +1585,8 @@
         "docs swml/reference/calling/tap (WebSocket or RTP)",
         "features Listen (tap to AudioMonitor)",
         "sdk function_result.py:1183 tap",
-        "demo sidecar tap to wss /ws/audio as PCMU, browser playback via AudioWorklet"
+        "demo sidecar tap to wss /ws/audio as PCMU, browser playback via AudioWorklet",
+        "verified 2026-08-25: recipes/listen-to-a-live-call/verify.py"
       ]
     },
     {
@@ -1621,7 +1623,7 @@
       "slug": "whisper-to-an-agent-mid-call",
       "claim": "A supervisor joins the conference as a coach: heard by one agent, silent to everyone else.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1641,14 +1643,16 @@
       "evidence": [
         "docs swml/reference/calling/join-conference (coach)",
         "features Whisper (coach member shape)",
-        "sdk function_result.py:1046 join_conference(coach=)"
+        "sdk function_result.py:1046 join_conference(coach=)",
+        "verified 2026-08-25: recipes/whisper-to-an-agent-mid-call/verify.py",
+        "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
       ]
     },
     {
       "slug": "barge-into-a-live-call",
       "claim": "A third party enters a live conference with full audio; leaving does not end the call.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1666,14 +1670,16 @@
       ],
       "evidence": [
         "docs swml/reference/calling/join-conference (muted, end_on_exit)",
-        "features Barge"
+        "features Barge",
+        "verified 2026-08-25: recipes/barge-into-a-live-call/verify.py",
+        "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
       ]
     },
     {
       "slug": "build-a-conference-call",
       "claim": "Several callers share one named audio conference, and members can be muted, removed and recorded over REST.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -1694,7 +1700,8 @@
       ],
       "evidence": [
         "docs swml/reference/calling/join-conference",
-        "docs compatibility-api/rest (Conferences, Participants)"
+        "docs compatibility-api/rest (Conferences, Participants)",
+        "verified 2026-08-25: recipes/build-a-conference-call/verify.py"
       ]
     },
     {
@@ -2496,7 +2503,7 @@
       "slug": "get-a-webrtc-token-with-restricted-dial-targets",
       "claim": "A guest token can only dial the addresses you list; a visitor cannot reach anything else.",
       "kind": "recipe",
-      "status": "stub",
+      "status": "verified",
       "launch": false,
       "products": [
         "voice"
@@ -2515,7 +2522,8 @@
       "evidence": [
         "docs apis/rest/subscribers/tokens (guest token allowed_addresses <= 10)",
         "sdk rest/namespaces/fabric.py create_guest_token",
-        "demo afterhours app.py:866 client.fabric.tokens.create_guest_token"
+        "demo afterhours app.py:866 client.fabric.tokens.create_guest_token",
+        "verified 2026-08-25: recipes/get-a-webrtc-token-with-restricted-dial-targets/verify.py"
       ]
     },
     {

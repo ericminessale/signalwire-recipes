@@ -6,7 +6,7 @@ it proves is that the binding is made correctly.
 
 Proof: with the HTTP layer replaced by a recorder, two documented requests are
 made in dependency order. The resource carries the agent URL as its primary
-request URL, and the number is bound to the resource that was just created,
+request URL, and the number is bound to the resource created a moment earlier,
 with the handler set to calls rather than messages.
 """
 import os

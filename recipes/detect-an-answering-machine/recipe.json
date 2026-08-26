@@ -31,7 +31,8 @@
       "compat Calls MachineDetection/AsyncAmd",
       "features AMD shipped 2026-06-09",
       "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.",
-      "verified 2026-08-25: recipes/detect-an-answering-machine/verify.py"
+      "verified 2026-08-25: recipes/detect-an-answering-machine/verify.py",
+      "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
     ]
   }
 }
