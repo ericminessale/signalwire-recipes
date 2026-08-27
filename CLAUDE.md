@@ -820,6 +820,18 @@ fabricated record, not a specimen.
   while code strings were a hardcoded turquoise fighting all of it. Nearly
   every fuchsia rule was on the index, so a recipe page had one small fuchsia
   tab underline against roughly 29 periwinkle jobs.
+- **An alpha below about .1 is not a colour, it is a rumour.** The first
+  attempt gave the claim a fuchsia wash at `.05` and borders at `.2`, which
+  paint as nothing on this ground. Eric, looking at the render: "theres no
+  fuchsia. like ltierally none. one tiny line." He was exactly right, and a
+  measurement confirmed it: four fuchsia declarations on the whole reading
+  column, all on `.claim`, three invisible, leaving a single 2px inset line.
+  **Count what is painted, do not trust that a rule was written.**
+- **Fuchsia gets the structure, not the decoration.** The rule under the
+  header, the claim plate at an alpha that paints (`.11` fill, `.5` border,
+  3px keyline), and the `border-top` that opens every argument section, so it
+  recurs down the column. Procedure sections keep a neutral rule, so the
+  existing two-tier hierarchy is what carries the colour.
 - **Three registers, doing different work.** Fuchsia carries the claim, the
   category dot and the active tab, and it leads because the claim is the
   largest object on the page. Turquoise carries identifiers, code, commands

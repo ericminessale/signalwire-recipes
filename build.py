@@ -192,7 +192,8 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .detail.solo{max-width:900px;margin-inline:auto;}
 .detail.solo .rels{margin-top:44px;}
 .dh{max-width:60ch;}
-.drule{height:1px;background:var(--line);margin:30px 0 0;}
+/* the first rule on the page, and the brand's colour rather than a grey */
+.drule{height:2px;background:rgba(var(--fuchsia-rgb),.55);margin:30px 0 0;}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
@@ -209,12 +210,12 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The claim is the one thing the page asserts and the largest object on it,
    so it takes fuchsia. That is what makes a recipe page read as ours: the
    sentence the page is judged on is in the brand's colour, not a tint. */
-.claim{background:rgba(var(--fuchsia-rgb),.05);border:1px solid rgba(var(--fuchsia-rgb),.2);
+.claim{background:rgba(var(--fuchsia-rgb),.11);border:1px solid rgba(var(--fuchsia-rgb),.5);
   border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
-  box-shadow:inset 2px 0 0 rgba(var(--fuchsia-rgb),.8),inset 0 1px 0 rgba(255,255,255,.06),
+  box-shadow:inset 3px 0 0 var(--fuchsia),inset 0 1px 0 rgba(255,255,255,.07),
     0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
 .claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
-  color:#FF7AA5;font-weight:600;margin:0 0 10px;}
+  color:#FF8FB4;font-weight:600;margin:0 0 10px;}
 .claim p{margin:0;color:var(--fg);font-size:18px;line-height:1.55;letter-spacing:-.005em;
   max-width:62ch;}
 /* Evidence is quoted, not framed: no fill and no border, a keyline down the
@@ -307,8 +308,11 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .sec h2{font-size:19px;margin:0 0 10px;}
 .rels h2{font-size:13.5px;font-weight:600;color:var(--fg-2);}
 /* An argument section opens on a rule: a separator between two blocks, which
-   is what this project's separators are. Not a line trailing out of a heading. */
-.sec.arg{margin:0 0 40px;padding-top:18px;border-top:1px solid var(--line);}
+   is what this project's separators are. Not a line trailing out of a heading.
+   The rule is fuchsia, so the brand recurs down the column at every section
+   boundary instead of sitting once at the top and never again. */
+.sec.arg{margin:0 0 40px;padding-top:18px;
+  border-top:2px solid rgba(var(--fuchsia-rgb),.45);}
 .sec.arg h2{font-size:21px;display:block;margin:0 0 14px;}
 /* procedure sections are quieter and tighter: type alone separates them */
 .sec.proc{margin:24px 0 0;}
@@ -339,7 +343,8 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   background:transparent;color:var(--fg-subtle);cursor:pointer;
   border-bottom:2px solid transparent;}
 .stab:hover{color:var(--fg);}
-.stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);}
+.stab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fuchsia);
+  border-bottom-width:2px;}
 pre.src{margin:0;background:var(--well);color:var(--fg-2);padding:18px 18px 20px;
   overscroll-behavior:contain;
   border:none;border-top:1px solid var(--well-line);box-shadow:var(--sunk);
