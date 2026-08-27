@@ -860,6 +860,22 @@ fabricated record, not a specimen.
   colour the page did not need is exactly the vibe-coded addition this pass
   existed to remove.
 
+### Sharing a link (added 2026-08-27)
+
+- **Every page carries its own `description` and Open Graph tags.** There were
+  none, so a URL pasted into Slack, Teams or an email unfurled as a bare link.
+  A recipe's description is its `summary`, so each of the 55 links describes
+  that recipe rather than the site.
+- **`og:url` is emitted only when `indexable` is true.** `base_url` is where
+  the site will live, not where a prototype host serves it, and a card
+  pointing at a page that 404s is worse than a card without a URL.
+- **`site/404.html`** exists; Vercel serves it for any unmatched path on a
+  static build with no configuration.
+- **There is no `og:image` yet.** A card renders on title and description
+  alone. Generating one needs either a raster written at build time or
+  `@vercel/og`, which is a Node function and would put npm in a repo that has
+  none. Worth doing before any public launch, not before a private share.
+
 ### The header persists (decided 2026-08-27)
 
 - **Every recipe page carries the SignalWire mark.** It was on the index and
