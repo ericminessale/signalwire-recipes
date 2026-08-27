@@ -112,7 +112,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .cta{display:flex;gap:12px;justify-content:center;margin:28px 0 0;}
 .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);
   font-size:13px;font-weight:500;padding:9px 20px;border-radius:var(--r-md);
-  background:var(--fuchsia);color:var(--page);border:1px solid var(--fuchsia);
+  background:var(--fuchsia);color:#fff;border:1px solid var(--fuchsia);
   cursor:pointer;font-weight:600;}
 .btn:hover{background:#ff3f81;border-color:#ff3f81;}
 .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line-2);}
@@ -216,11 +216,11 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The page's primary action. The site exists to hand you a folder to clone,
    so this is not a footnote. Solid fuchsia: the action colour, as a fill. */
 .ghcta{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--body);font-size:12.5px;font-weight:600;color:var(--page);
+  font-family:var(--body);font-size:12.5px;font-weight:600;color:#fff;
   background:var(--fuchsia);border-radius:var(--r-md);padding:8px 15px;
   white-space:nowrap;transition:filter 130ms ease,transform 130ms ease;}
 .ghcta svg{width:14px;height:14px;display:block;flex:none;}
-.ghcta:hover{filter:brightness(1.09);color:var(--page);}
+.ghcta:hover{filter:brightness(1.09);color:#fff;}
 .ghcta:active{transform:translateY(1px);}
 .ghcta:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
 @media (max-width:600px){.ghcta{margin-left:0;}}
