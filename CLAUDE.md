@@ -836,10 +836,14 @@ fabricated record, not a specimen.
   has a fourth guard, SOLID**, which refuses any `rgba()` carrying the fuchsia
   triple below alpha 1. Six had accumulated before anyone said so, because
   each one looks reasonable while you are writing it.
-- **The two registers divide by material.** Fuchsia is solid marks: a rule, a
-  keyline, a dot, a fill. Periwinkle is tinted surfaces, where alpha is the
-  point and the composite stays true to the hue. The claim plate is periwinkle
-  with a solid fuchsia keyline, which is the division in one object.
+- **One object, one accent.** The claim plate was given a periwinkle wash and
+  a solid fuchsia keyline, as a neat illustration of the register split. Eric:
+  "no one said to mix perrywinkle and fuchsia that looks bad." He is right, and
+  nobody asked for it. The claim is periwinkle throughout. A rule that is
+  elegant to explain is not thereby good to look at.
+- **The two registers divide by material, across objects and not inside one.**
+  Fuchsia is solid marks: a rule, a keyline, a dot, a fill. Periwinkle is
+  tinted surfaces, where alpha is the point and the composite stays true.
 - **Fuchsia gets the structure, not the decoration.** The rule under the
   header, the claim plate at an alpha that paints (`.11` fill, `.5` border,
   3px keyline), and the `border-top` that opens every argument section, so it

@@ -210,12 +210,12 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The claim is the one thing the page asserts and the largest object on it,
    so it takes fuchsia. That is what makes a recipe page read as ours: the
    sentence the page is judged on is in the brand's colour, not a tint. */
-/* A wash is periwinkle's job. Fuchsia at a low alpha over this ground
-   composites to a dull violet, so the keyline is the solid fuchsia here and
-   the surface behind it stays a true tint. */
+/* One object, one accent. The claim is periwinkle throughout: wash, border
+   and keyline. Two accents inside a single small object read as a mistake,
+   whatever the reasoning behind the split was. */
 .claim{background:rgba(var(--accent-rgb),.05);border:1px solid rgba(var(--accent-rgb),.2);
   border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
-  box-shadow:inset 3px 0 0 var(--fuchsia),inset 0 1px 0 rgba(255,255,255,.07),
+  box-shadow:inset 3px 0 0 rgba(var(--accent-rgb),.85),inset 0 1px 0 rgba(255,255,255,.07),
     0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
 .claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
   color:var(--accent);font-weight:600;margin:0 0 10px;}
