@@ -309,8 +309,14 @@ brand cheatsheet's abstractions and not invented:
 
 - **Builds sit at the bottom of a category, not the top.** A category is read
   for its recipes; a build is where they end up assembled, so it belongs after
-  them. Its separating rule is therefore a `border-top` on `.bsec`, opening the
-  block rather than closing it.
+  them.
+- **`.bsec` has no rule of its own (revised 2026-08-27).** It used to carry a
+  full-width `border-top`, which put two lines 29px apart around one boundary:
+  that rule, then the hairline the `Builds` heading already trails like every
+  task group in the category. Eric caught the pair and preferred keeping the
+  heading's. The block still reads as different, because its cards are wider
+  and carry the build rail. The earlier note calling the full-width rule
+  deliberate is superseded.
 - **A featured band sits above the first category**, carrying the standout
   capabilities by their one-line claim ("Two people, two languages, one call.")
   rather than their slug. It is driven entirely by data: `featured`,
@@ -324,8 +330,7 @@ brand cheatsheet's abstractions and not invented:
   category counts and `tools/qc.py`'s own toggle check all inflate by six.
   `tools/qc.py` asserts `.fcard.card` is empty.
 - The band **borrows no fuchsia**. That colour already has its four jobs; the
-  band earns its place with depth (`--plate`, `--lip`, `--lift`). **`.bsec` is the one deliberate exception**: it separates
-  two blocks rather than two cells, so full width is the point.
+  band earns its place with depth (`--plate`, `--lip`, `--lift`).
 
 ## Working method
 

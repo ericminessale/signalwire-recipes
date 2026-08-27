@@ -493,7 +493,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 /* builds sit under the recipes they are assembled from, so the neutral rule
    opens the block rather than closing it. full-width is deliberate: it
    separates two blocks, not two cells */
-.bsec{border-top:1px solid var(--line-2);margin-top:34px;padding-top:6px;}
+/* No rule of its own. The Builds heading already draws one the way every
+   task group in the category does, and two lines 29px apart for one
+   boundary is one too many. The block still reads as different: its
+   cards are wider and carry the build rail. */
+.bsec{margin-top:34px;padding-top:6px;}
 .buildcard.planned{cursor:default;box-shadow:none;}
 .buildcard.planned:hover{background:var(--page);}
 .buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
