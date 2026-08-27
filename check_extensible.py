@@ -177,10 +177,31 @@ def guard_radius_scale():
     return bad
 
 
+def guard_solid_fuchsia():
+    """Fuchsia is a fill, a rule, a keyline or a dot. Never a wash.
+
+    Any rgba() carrying the fuchsia triple with an alpha below 1 fails.
+    Periwinkle is the register for tinted surfaces, where the composite of a
+    low alpha stays true to the hue.
+    """
+    src = (ROOT / "build.py").read_text(encoding="utf-8")
+    bad = []
+    pattern = r"rgba\(\s*(?:247\s*,\s*42\s*,\s*114|var\(--fuchsia-rgb\))\s*,\s*([0-9.]+)\s*\)"
+    for m in re.finditer(pattern, src):
+        alpha = float(m.group(1))
+        if alpha < 1:
+            line = src[:m.start()].count("\n") + 1
+            bad.append("build.py:%d paints fuchsia at alpha %s; it composites "
+                       "to a dull violet on this ground. Fuchsia is solid, or "
+                       "use the periwinkle accent for a wash" % (line, m.group(1)))
+    return bad
+
+
 def main():
     bad = 0
     for name, fn in (("LEAK", guard_leak), ("SYNTH", guard_synthetic),
-                     ("SCALE", guard_radius_scale)):
+                     ("SCALE", guard_radius_scale),
+                     ("SOLID", guard_solid_fuchsia)):
         fails = fn()
         if fails:
             bad += len(fails)
@@ -193,7 +214,8 @@ def main():
         print(f"\n{bad} failure(s). The extensibility contract is broken.")
         return 1
     print("\nContracts hold: a new category, surface and recipe render with")
-    print("zero generator changes, and every corner is on the radius scale.")
+    print("zero generator changes, every corner is on the radius scale, and")
+    print("fuchsia is never painted at partial opacity.")
     return 0
 
 

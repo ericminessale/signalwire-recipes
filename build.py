@@ -85,7 +85,7 @@ CSS = """
 button,a,summary{touch-action:manipulation;}
 body{margin:0;background:var(--page);color:var(--fg);font-family:var(--body);
   font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-::selection{background:rgba(247,42,114,.32);color:#fff;}
+::selection{background:var(--fuchsia);color:#fff;}
 a{color:inherit;text-decoration:none;}
 code,.mono{font-family:var(--mono);font-feature-settings:'tnum','zero';}
 h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
@@ -193,7 +193,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .detail.solo .rels{margin-top:44px;}
 .dh{max-width:60ch;}
 /* the first rule on the page, and the brand's colour rather than a grey */
-.drule{height:2px;background:rgba(var(--fuchsia-rgb),.55);margin:30px 0 0;}
+.drule{height:2px;background:var(--fuchsia);margin:30px 0 0;}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
@@ -210,12 +210,15 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The claim is the one thing the page asserts and the largest object on it,
    so it takes fuchsia. That is what makes a recipe page read as ours: the
    sentence the page is judged on is in the brand's colour, not a tint. */
-.claim{background:rgba(var(--fuchsia-rgb),.11);border:1px solid rgba(var(--fuchsia-rgb),.5);
+/* A wash is periwinkle's job. Fuchsia at a low alpha over this ground
+   composites to a dull violet, so the keyline is the solid fuchsia here and
+   the surface behind it stays a true tint. */
+.claim{background:rgba(var(--accent-rgb),.05);border:1px solid rgba(var(--accent-rgb),.2);
   border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
   box-shadow:inset 3px 0 0 var(--fuchsia),inset 0 1px 0 rgba(255,255,255,.07),
     0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
 .claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
-  color:#FF8FB4;font-weight:600;margin:0 0 10px;}
+  color:var(--accent);font-weight:600;margin:0 0 10px;}
 .claim p{margin:0;color:var(--fg);font-size:18px;line-height:1.55;letter-spacing:-.005em;
   max-width:62ch;}
 /* Evidence is quoted, not framed: no fill and no border, a keyline down the
@@ -312,7 +315,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
    The rule is fuchsia, so the brand recurs down the column at every section
    boundary instead of sitting once at the top and never again. */
 .sec.arg{margin:0 0 40px;padding-top:18px;
-  border-top:2px solid rgba(var(--fuchsia-rgb),.45);}
+  border-top:1px solid var(--fuchsia);}
 .sec.arg h2{font-size:21px;display:block;margin:0 0 14px;}
 /* procedure sections are quieter and tighter: type alone separates them */
 .sec.proc{margin:24px 0 0;}
@@ -471,7 +474,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .buildcard .part.more{color:var(--fg-muted);}
 .buildcard .also{color:var(--fg-subtle);margin-left:7px;text-transform:none;
   letter-spacing:0;}
-.chip.kind[aria-pressed="true"]{color:var(--fuchsia);border-color:rgba(247,42,114,.35);}
+.chip.kind[aria-pressed="true"]{color:#fff;border-color:var(--fuchsia);}
 
 /* brand lockup */
 .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);
@@ -522,7 +525,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .chip.kind::before{content:"";position:absolute;left:-18px;top:50%;
   transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
-  border-color:rgba(247,42,114,.4);background:rgba(247,42,114,.07);}
+  border-color:var(--fuchsia);background:var(--fuchsia);}
 /* Featured: three cards with an arrow either side, and no container.
    A plate holding recessed cards is one frame inside another, which is what
    made it read as boxy. The band is the page now and the cards are the

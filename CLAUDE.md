@@ -827,6 +827,19 @@ fabricated record, not a specimen.
   measurement confirmed it: four fuchsia declarations on the whole reading
   column, all on `.claim`, three invisible, leaving a single 2px inset line.
   **Count what is painted, do not trust that a rule was written.**
+- **Fuchsia is never painted at partial opacity. Ever.** Eric's rule,
+  2026-08-27: "never use fuchsia in low opacity. you used it in this 'the
+  claim section' as a see through background which just turns it into an ugly
+  purple. its exclusively for solid colors." `#F72A72` over this ground at a
+  low alpha composites to a dull violet, so a translucent fuchsia is not a
+  softer fuchsia, it is a different and worse colour. **`check_extensible.py`
+  has a fourth guard, SOLID**, which refuses any `rgba()` carrying the fuchsia
+  triple below alpha 1. Six had accumulated before anyone said so, because
+  each one looks reasonable while you are writing it.
+- **The two registers divide by material.** Fuchsia is solid marks: a rule, a
+  keyline, a dot, a fill. Periwinkle is tinted surfaces, where alpha is the
+  point and the composite stays true to the hue. The claim plate is periwinkle
+  with a solid fuchsia keyline, which is the division in one object.
 - **Fuchsia gets the structure, not the decoration.** The rule under the
   header, the claim plate at an alpha that paints (`.11` fill, `.5` border,
   3px keyline), and the `border-top` that opens every argument section, so it
