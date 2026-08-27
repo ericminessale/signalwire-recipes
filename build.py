@@ -200,17 +200,17 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The site header on a recipe page. Present, not sticky: a sticky element
    here has painted over three sections before. The mark is smaller than the
    index hero's so it reads as a header rather than a second hero. */
-.shead{display:flex;align-items:center;justify-content:space-between;gap:18px;
-  flex-wrap:wrap;padding:0 0 22px;margin:0 0 4px;}
+.shead{display:flex;align-items:center;gap:18px;padding:0 0 14px;margin:0;}
 .slock{display:inline-flex;align-items:center;gap:9px;color:var(--fg-2);
   font-family:var(--head);font-weight:600;font-size:15px;letter-spacing:-.01em;}
 .slock:hover{color:var(--fg);}
 .slock .lg{height:19px;width:auto;display:block;}
 .slock .dot{width:3px;height:3px;border-radius:50%;background:var(--fg-subtle);}
-.slock:focus-visible,.sback:focus-visible{outline:2px solid var(--fuchsia);
+.slock:focus-visible,.sback a:focus-visible{outline:2px solid var(--fuchsia);
   outline-offset:3px;border-radius:var(--r-sm);}
-.sback{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
-.sback:hover{color:var(--fg);}
+.sback{font-family:var(--mono);font-size:11.5px;margin:0;}
+.sback a{color:var(--fg-muted);}
+.sback a:hover{color:var(--fg);}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
@@ -1555,13 +1555,16 @@ def build_detail(r, body_only=False):
         # Every page carries the mark. The lockup is the home link, which
         # is what a logo is for; the explicit back link stays beside it
         # because this is documentation and people navigate it that way.
+        # The mark sits on its own line and the way back sits under it, where
+        # a breadcrumb goes. Pushed to the far right it read as detached from
+        # both the header and the page.
         '<header class="shead">'
         '<a class="slock" href="../index.html" data-home '
         'aria-label="SignalWire Recipes, back to all recipes">'
         + LOGO + '<span class="dot" aria-hidden="true"></span>'
         '<span class="sname">Recipes</span></a>'
-        '<a class="sback" href="../index.html" data-home>&larr; all recipes</a>'
-        '</header>',
+        '</header>'
+        '<p class="sback"><a href="../index.html" data-home>&larr; all recipes</a></p>',
         '<div class="kicker">%s</div>' % esc(CAT_LABEL.get(r.get("category"), "")),
         '<div class="dh"><h1>%s</h1>' % esc(r["title"]),
     ]
