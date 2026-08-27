@@ -62,9 +62,15 @@ CSS = """
   /* Two accents, not three. Fuchsia acts and marks builds; periwinkle
      selects and navigates. Every accent job reads these, so the palette is
      one edit rather than a hunt through the stylesheet. */
+  /* Three accents doing three different jobs, not one tinting everything.
+     --accent is the exhibit (evidence, replay), --turq is the code and the
+     things you type, and fuchsia carries the claim and selection. */
   --accent:#8B96FF;
   --accent-rgb:139,150,255;
   --select-rgb:110,123,255;
+  --turq:#40E0D0;
+  --turq-rgb:64,224,208;
+  --fuchsia-rgb:247,42,114;
   --head:'Instrument Sans',ui-sans-serif,system-ui,sans-serif;
   --body:Lexend,ui-sans-serif,system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
@@ -101,7 +107,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   margin:18px auto 0;}
 .cta{display:flex;gap:12px;justify-content:center;margin:28px 0 0;}
 .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);
-  font-size:13px;font-weight:500;padding:9px 20px;border-radius:4px;
+  font-size:13px;font-weight:500;padding:9px 20px;border-radius:var(--r-md);
   background:var(--fuchsia);color:#fff;border:1px solid var(--fuchsia);cursor:pointer;}
 .btn:hover{background:#ff3f81;border-color:#ff3f81;}
 .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line-2);}
@@ -113,11 +119,11 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   border-bottom:1px solid var(--line);margin-top:58px;padding:14px 0;
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 #q{flex:1 1 15rem;min-width:11rem;background:var(--surface);color:var(--fg);
-  border:1px solid var(--line-2);border-radius:4px;padding:8px 12px;
+  border:1px solid var(--line-2);border-radius:var(--r-md);padding:8px 12px;
   font-family:var(--mono);font-size:12px;}
 #q::placeholder{color:var(--fg-subtle);}
 #q:focus-visible{outline:2px solid var(--fuchsia);outline-offset:1px;border-color:var(--fuchsia);}
-.chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:4px;
+.chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:var(--r-md);
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
 /* Selection is the one state that answers "what am I looking at", so it
@@ -139,7 +145,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 
 /* recipe grid: denser, four up */
 .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
-  border-radius:8px;overflow:hidden;
+  border-radius:var(--r-lg);overflow:hidden;
   grid-template-columns:repeat(auto-fill,minmax(258px,1fr));}
 .card{display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--page);
   padding:17px 19px 18px;color:inherit;transition:background 140ms ease;
@@ -155,7 +161,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .card.planned:hover{background:var(--page);}
 .card.planned .ct,.card.planned .cd{color:var(--fg-subtle);}
 .card.planned .cs{color:var(--fg-subtle);opacity:.7;}
-.card.planned .surf{color:var(--fg-subtle);border:1px solid var(--line);border-radius:3px;padding:1px 6px;}
+.card.planned .surf{color:var(--fg-subtle);border:1px solid var(--line);border-radius:var(--r-sm);padding:1px 6px;}
 .card .ct{font-family:var(--head);font-weight:600;font-size:14.5px;line-height:1.3;
   letter-spacing:-.015em;}
 .card .cs{font-family:var(--mono);font-size:10.5px;color:var(--accent);
@@ -171,7 +177,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .hint{margin-top:44px;font-family:var(--mono);font-size:11px;color:var(--fg-subtle);
   text-align:center;}
 kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line);
-  border-radius:3px;padding:1px 5px;font-size:11px;}
+  border-radius:var(--r-sm);padding:1px 5px;font-size:11px;}
 
 /* ---- recipe page ---- */
 .detail{padding:56px 0 0;}
@@ -190,29 +196,32 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
-.tech{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:12px;}
+/* an identifier is something you type, so it matches the code */
+.tech{font-family:var(--mono);font-size:12px;color:var(--turq);margin-top:12px;}
 .kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;
   color:var(--fg-2);margin-top:16px;}
-.kicker::before{content:"";width:6px;height:6px;border-radius:999px;background:var(--accent);}
+.kicker::before{content:"";width:6px;height:6px;border-radius:999px;
+  background:var(--fuchsia);}
 .sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
 .b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
   background:var(--raised);border-radius:var(--r-sm);padding:3px 8px;}
-/* The claim is the one thing the page asserts, so it is the one tinted
-   object: an accent wash with a keyline down the left. The accent rather than
-   fuchsia, because fuchsia acts and marks builds and the claim does neither. */
-.claim{background:rgba(var(--accent-rgb),.045);border:1px solid rgba(var(--accent-rgb),.19);
+/* The claim is the one thing the page asserts and the largest object on it,
+   so it takes fuchsia. That is what makes a recipe page read as ours: the
+   sentence the page is judged on is in the brand's colour, not a tint. */
+.claim{background:rgba(var(--fuchsia-rgb),.05);border:1px solid rgba(var(--fuchsia-rgb),.2);
   border-radius:var(--r-lg);padding:24px 26px 26px;margin:0 0 40px;
-  box-shadow:inset 2px 0 0 rgba(var(--accent-rgb),.78),inset 0 1px 0 rgba(255,255,255,.06),
+  box-shadow:inset 2px 0 0 rgba(var(--fuchsia-rgb),.8),inset 0 1px 0 rgba(255,255,255,.06),
     0 2px 5px rgba(0,0,0,.45),0 16px 36px -18px rgba(0,0,0,.85);}
 .claim h2{font-family:var(--head);font-size:12.5px;letter-spacing:-.01em;
-  color:var(--accent);font-weight:600;margin:0 0 10px;opacity:.85;}
+  color:#FF7AA5;font-weight:600;margin:0 0 10px;}
 .claim p{margin:0;color:var(--fg);font-size:18px;line-height:1.55;letter-spacing:-.005em;
   max-width:62ch;}
 /* Evidence is quoted, not framed: no fill and no border, a keyline down the
    left the way a pull quote is set. It is the one thing on the page nobody
    else in developer documentation has, and it should not look like a card. */
-.ev{margin:0 0 40px;padding-left:18px;border-left:2px solid rgba(var(--accent-rgb),.42);}
+/* the exhibit keeps its own colour, so it reads as a distinct register */
+.ev{margin:0 0 40px;padding-left:18px;border-left:2px solid rgba(var(--accent-rgb),.5);}
 .ev-h{display:flex;align-items:center;gap:9px;padding:0 0 12px;
   font-family:var(--head);font-size:13px;font-weight:600;color:var(--fg-2);}
 .ev-h .dot{width:7px;height:7px;border-radius:999px;background:var(--accent);flex:none;}
@@ -245,6 +254,29 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   background:linear-gradient(to right,currentColor 0 2.5px,transparent 2.5px 4.5px,
   currentColor 4.5px 7px);}
 .evnote{font-size:11.5px;color:var(--fg-subtle);margin:14px 0 0;}
+/* The reading column arrives in the order the argument is made.
+   Driven by scroll position, not by events: an IntersectionObserver fires on
+   threshold crossings, so a section that passes the viewport between frames
+   goes from ratio 0 to ratio 0, never fires, and stays invisible for good.
+   A view() timeline holds its end state once the range is passed, so no
+   scroll speed, anchor jump or restored position can strand content.
+   Browsers without support simply get the page, fully visible. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dmain > .claim,
+    .dmain > .ev,
+    .dmain > .sec{
+      animation:rvin linear both;
+      animation-timeline:view();
+      animation-range:entry 0% entry 34%;
+    }
+  }
+}
+@keyframes rvin{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:none;}
+}
+
 /* Replay fades turns in; it never removes them from the layout or from the
    accessibility tree. `display:none` would take an unrevealed turn out of
    that tree, so pressing Replay made the transcript vanish for a screen
@@ -286,7 +318,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .sec.proc p{font-size:14px;color:var(--fg-subtle);}
 .sec p em{font-style:italic;color:var(--fg-2);}
 .steps{font-family:var(--mono);font-size:12px;color:var(--fg-2);background:var(--well);
-  border:none;border-left:2px solid rgba(var(--accent-rgb),.48);border-radius:0 var(--r-md) var(--r-md) 0;
+  border:none;border-left:2px solid rgba(var(--turq-rgb),.5);border-radius:0 var(--r-md) var(--r-md) 0;
   padding:13px 16px;line-height:1.9;overflow-x:auto;}
 .steps .cl{display:block;padding-left:20px;text-indent:-20px;}
 .steps .cl::before{content:"$";color:var(--fg-subtle);display:inline-block;width:20px;
@@ -299,7 +331,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .cwr{display:flex;align-items:center;gap:12px;}
 .cwr .fn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);}
 .copy{font-family:var(--body);font-size:11.5px;color:var(--fg-muted);background:transparent;
-  border:1px solid var(--line-2);border-radius:4px;padding:4px 10px;cursor:pointer;}
+  border:1px solid var(--line-2);border-radius:var(--r-md);padding:4px 10px;cursor:pointer;}
 .copy:hover{color:var(--fg);border-color:var(--fg-subtle);}
 .copy:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .stabs{display:flex;gap:2px;}
@@ -314,8 +346,8 @@ pre.src{margin:0;background:var(--well);color:var(--fg-2);padding:18px 18px 20px
   font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
 pre.src .c,pre.src .c1,pre.src .cm,pre.src .cs,pre.src .ch{color:var(--fg-subtle);font-style:italic;}
-pre.src .k,pre.src .kn,pre.src .kd,pre.src .kr,pre.src .kt,pre.src .kc,pre.src .ow{color:var(--fg);font-weight:500;}
-pre.src .s,pre.src .s1,pre.src .s2,pre.src .sd,pre.src .sa,pre.src .se,pre.src .si,pre.src .sb,pre.src .sh,pre.src .sx,pre.src .l-Scalar-Plain{color:#8fd6cf;}
+pre.src .k,pre.src .kn,pre.src .kd,pre.src .kr,pre.src .kt,pre.src .kc{color:var(--fg);font-weight:500;}
+pre.src .s,pre.src .s1,pre.src .s2,pre.src .sd,pre.src .sa,pre.src .se,pre.src .si,pre.src .sb,pre.src .sh,pre.src .sx,pre.src .l-Scalar-Plain{color:var(--turq);}
 pre.src .nf,pre.src .nc,pre.src .fm,pre.src .nx{color:var(--fg);}
 pre.src .nd,pre.src .na{color:var(--fg-muted);}
 pre.src .nt{color:var(--fg);}
@@ -335,23 +367,23 @@ pre.mdcode{margin:10px 0 14px;background:rgba(255,255,255,.025);color:var(--fg-m
 .rels .rel h3{font-size:13px;font-weight:600;color:var(--fg-2);margin:0 0 8px;}
 .rels .rel p{margin:0;color:var(--fg-2);font-size:14px;}
 a.cx{font-family:var(--mono);font-size:11px;color:var(--fg-2);background:var(--raised);
-  border-radius:4px;padding:5px 10px;}
+  border-radius:var(--r-md);padding:5px 10px;}
 a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
-.dfoot a{color:var(--accent);}
+.dfoot a{color:var(--turq);}
 .pvbanner{max-width:1560px;margin:0 auto;padding:18px 32px 0;}
-.pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:8px;
+.pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-lg);
   padding:11px 15px;font-size:12.5px;color:var(--fg-muted);
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
 .pvbanner .pvt{flex:1;min-width:260px;}
 .pvbanner b{color:var(--fg-2);font-weight:500;font-variant-numeric:tabular-nums;}
 .pvtog{font-family:var(--body);font-size:12px;color:var(--fg-2);cursor:pointer;
-  background:var(--raised);border:1px solid var(--line-2);border-radius:6px;
+  background:var(--raised);border:1px solid var(--line-2);border-radius:var(--r-md);
   padding:5px 11px;display:inline-flex;align-items:center;gap:7px;}
 .pvtog:hover{border-color:var(--fg-subtle);}
 .pvtog:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
-.pvtog .sw{position:relative;width:22px;height:13px;border-radius:7px;flex:none;
+.pvtog .sw{position:relative;width:22px;height:13px;border-radius:var(--r-md);flex:none;
   background:var(--line-2);transition:background 140ms ease;}
 .pvtog .sw i{position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;
   background:var(--fg-2);transition:transform 140ms ease;}
@@ -371,7 +403,7 @@ summary.cat-h{transition:background 140ms ease;border-radius:var(--r-md) var(--r
   padding-left:10px;padding-right:10px;margin-left:-10px;margin-right:-10px;}
 summary.cat-h:hover{background:rgba(255,255,255,.03);}
 .cat-h .n{font-family:var(--mono);font-size:11px;color:var(--fg-2);
-  background:rgba(255,255,255,.06);border-radius:2px;padding:2px 6px;
+  background:rgba(255,255,255,.06);border-radius:var(--r-sm);padding:2px 6px;
   margin-left:2px;}
 summary.cat-h{list-style:none;cursor:pointer;display:flex;align-items:baseline;
   gap:14px;padding:22px 10px;flex-wrap:wrap;}
@@ -397,7 +429,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   border-color:var(--line-2);}
 .tg:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .tg .cn{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);
-  background:rgba(0,0,0,.35);border-radius:2px;padding:2px 5px;}
+  background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:2px 5px;}
 .tg:hover .cn{color:var(--fg-2);}
 .chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
 .catbody{padding-top:4px;}
@@ -407,7 +439,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 
 /* a build card spans two recipe columns, so two sit in one recipe row */
 .bgrid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
-  border-radius:8px;overflow:hidden;margin:20px 0 4px;
+  border-radius:var(--r-lg);overflow:hidden;margin:20px 0 4px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
 .buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;scroll-margin-top:86px;
   background:var(--page);padding:17px 19px 18px;color:inherit;
@@ -430,7 +462,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .buildcard .bs{font-size:12.5px;color:var(--fg-muted);line-height:1.55;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .buildcard .parts{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
-.buildcard .part{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);background:var(--raised);border-radius:3px;padding:2px 6px;}
+.buildcard .part{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);background:var(--raised);border-radius:var(--r-sm);padding:2px 6px;}
 .buildcard .part.more{color:var(--fg-muted);}
 .buildcard .also{color:var(--fg-subtle);margin-left:7px;text-transform:none;
   letter-spacing:0;}
@@ -449,7 +481,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .tgh{font-family:var(--head);font-weight:600;font-size:14px;color:var(--fg-2);
   letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:baseline;gap:9px;}
 .tgh .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);font-weight:400;}
-.tgh:focus-visible{outline:2px solid var(--fuchsia);outline-offset:4px;border-radius:2px;}
+.tgh:focus-visible{outline:2px solid var(--fuchsia);outline-offset:4px;border-radius:var(--r-sm);}
 .tgh::after{content:"";flex:1;height:1px;background:var(--line);}
 
 /* separators live on the cards, so an unfilled cell is just background */

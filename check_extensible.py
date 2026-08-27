@@ -18,6 +18,7 @@ import json
 import pathlib
 import shutil
 import subprocess
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).parent
@@ -154,9 +155,32 @@ def guard_synthetic():
         )
 
 
+def guard_radius_scale():
+    """Every corner is a token, a shape, or zero.
+
+    Shapes (50%, 999px) are exempt: they are not steps on a scale, they are
+    a circle and a pill. Everything else must name --r-sm / --r-md / --r-lg,
+    so the page has one radius system instead of fifteen.
+    """
+    src = (ROOT / "build.py").read_text(encoding="utf-8")
+    allowed = ("var(--r-", "50%", "999px", "0")
+    bad = []
+    for m in re.finditer(r"border-radius:([^;}]+)", src):
+        value = m.group(1).strip()
+        if any(tok in value for tok in ("var(--r-", "50%", "999px")):
+            continue
+        if value == "0":
+            continue
+        line = src[:m.start()].count("\n") + 1
+        bad.append('build.py:%d uses a raw radius "%s"; the scale is '
+                   "--r-sm / --r-md / --r-lg" % (line, value))
+    return bad
+
+
 def main():
     bad = 0
-    for name, fn in (("LEAK", guard_leak), ("SYNTH", guard_synthetic)):
+    for name, fn in (("LEAK", guard_leak), ("SYNTH", guard_synthetic),
+                     ("SCALE", guard_radius_scale)):
         fails = fn()
         if fails:
             bad += len(fails)
@@ -168,8 +192,8 @@ def main():
     if bad:
         print(f"\n{bad} failure(s). The extensibility contract is broken.")
         return 1
-    print("\nExtensibility contract holds: a new category, surface and recipe")
-    print("all rendered with zero changes to generator source.")
+    print("\nContracts hold: a new category, surface and recipe render with")
+    print("zero generator changes, and every corner is on the radius scale.")
     return 0
 
 

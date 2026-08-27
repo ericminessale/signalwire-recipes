@@ -805,6 +805,52 @@ fabricated record, not a specimen.
   signature of an absent dependency rather than an odd lexer. The fallback for
   a genuinely unknown lexer stays.
 
+## Colour and the design pass (decided 2026-08-27)
+
+- **The brand guidelines are not a constraint here, and neither is a table I
+  invent to replace them.** Eric released the project from `get_design` and
+  then had to say it twice, because after his first correction I went back to
+  the MCP and produced a fresh rigid assignment. The failure both times was
+  the same shape: one prescriptive lock table.
+- **The fault was exclusivity, not the hue.** Eric: "this branding is not
+  reading signalwire at all... the fuchsia is nowhere to be seen. maybe in
+  combination with variety it would work but you cant just use this purple."
+  One token owned the claim, the identifier, the category dot, the evidence
+  keyline and dot, the speaker labels, the replay control and the footer links,
+  while code strings were a hardcoded turquoise fighting all of it. Nearly
+  every fuchsia rule was on the index, so a recipe page had one small fuchsia
+  tab underline against roughly 29 periwinkle jobs.
+- **Three registers, doing different work.** Fuchsia carries the claim, the
+  category dot and the active tab, and it leads because the claim is the
+  largest object on the page. Turquoise carries identifiers, code, commands
+  and links: the things you type. Periwinkle carries the evidence and its
+  replay. That is variety with the brand in front, not a tint.
+- **Measure a colour rule before believing it.** A gold rule for code
+  operators was added, looked plausible, and rendered *grey*: a later, more
+  specific rule won. It was deleted rather than fought for, because a fourth
+  colour the page did not need is exactly the vibe-coded addition this pass
+  existed to remove.
+
+### The design skills, and what they caught
+
+- **Radius was a scale on paper and fifteen values in practice.** `--r-sm` 3 /
+  `--r-md` 6 / `--r-lg` 10 were documented and then bypassed by raw `2px`,
+  `3px`, `4px`, `6px`, `7px` and `8px`. Mixed radii are what separate a page
+  that looks designed from one that looks assembled. Now nine values remain,
+  all tokens, shapes (`50%`, `999px`) or zero, and **`check_extensible.py`
+  has a third guard, SCALE**, that refuses a raw pixel radius.
+- **`IntersectionObserver` cannot drive a scroll reveal safely.** It fires on
+  threshold crossings, so a section that passes the viewport between two
+  frames goes from ratio 0 below to ratio 0 above without ever crossing one.
+  No callback arrives, and it stays at `opacity:0` permanently. A fast scroll
+  stranded three sections; a `boundingClientRect.top < 0` check inside the
+  callback does not help, because the callback is what never runs. **Use
+  `animation-timeline: view()`**: it is a function of scroll position, holds
+  its end state past the range, needs no JavaScript, and degrades to a fully
+  visible page where unsupported. It also deleted about forty lines.
+- **An entrance animation that can hide content is worse than none.** Verify a
+  reveal by jumping the scroll, not by scrolling smoothly past it.
+
 ## QC gate — before any publish or commit that touches build.py
 
 1. `python tools/lint_recipes.py && python tools/gen_index.py --check && python build.py && python check_extensible.py && python verify.py`
