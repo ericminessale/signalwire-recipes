@@ -111,7 +111,8 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .cta{display:flex;gap:12px;justify-content:center;margin:28px 0 0;}
 .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--body);
   font-size:13px;font-weight:500;padding:9px 20px;border-radius:var(--r-md);
-  background:var(--fuchsia);color:#fff;border:1px solid var(--fuchsia);cursor:pointer;}
+  background:var(--fuchsia);color:var(--page);border:1px solid var(--fuchsia);
+  cursor:pointer;font-weight:600;}
 .btn:hover{background:#ff3f81;border-color:#ff3f81;}
 .btn.ghost{background:transparent;color:var(--fg);border-color:var(--line-2);}
 .btn.ghost:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.24);}
@@ -211,6 +212,17 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
   outline-offset:3px;border-radius:var(--r-sm);}
 .sback{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .sback:hover{color:var(--fg);}
+/* The page's primary action. The site exists to hand you a folder to clone,
+   so this is not a footnote. Solid fuchsia: the action colour, as a fill. */
+.ghcta{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--body);font-size:12.5px;font-weight:600;color:var(--page);
+  background:var(--fuchsia);border-radius:var(--r-md);padding:8px 15px;
+  white-space:nowrap;transition:filter 130ms ease,transform 130ms ease;}
+.ghcta svg{width:14px;height:14px;display:block;flex:none;}
+.ghcta:hover{filter:brightness(1.09);color:var(--page);}
+.ghcta:active{transform:translateY(1px);}
+.ghcta:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
+@media (max-width:600px){.ghcta{margin-left:0;}}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
@@ -1597,6 +1609,31 @@ document.querySelectorAll('[data-demo-slot]').forEach(function(slot){
 """.strip()
 
 
+def gh_cta(r):
+    """The page's primary action, as a button rather than a footnote.
+
+    A build points at its own repository; a recipe points at its folder.
+    Neither falls back to a dead anchor.
+    """
+    target = r.get("repo") or folder_url(r["slug"])
+    if not target:
+        return ""
+    label = "View the repository" if r.get("repo") else "View on GitHub"
+    return ('<a class="ghcta" href="%s">'
+            '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">'
+            '<path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 '
+            '6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37'
+            '-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-'
+            '.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87'
+            '.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2'
+            '-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.'
+            '09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.'
+            '82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0'
+            ' 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-'
+            '4.42-3.58-8-8-8z"/></svg>'
+            '<span>%s</span></a>' % (esc(target), esc(label)))
+
+
 def build_detail(r, body_only=False):
     d = RECIPES / r["slug"]
     sections = read_sections(d)
@@ -1624,7 +1661,8 @@ def build_detail(r, body_only=False):
         + LOGO + '<span class="dot" aria-hidden="true"></span>'
         '<span class="sname">Recipes</span></a>'
         '<a class="sback" href="../index.html" data-home>&larr; all recipes</a>'
-        '</header>',
+        + gh_cta(r)
+        + '</header>',
         '<div class="dh"><h1>%s</h1>' % esc(r["title"]),
     ]
     # One line of identity under the title: what product line this belongs to,
@@ -1767,12 +1805,9 @@ def build_detail(r, body_only=False):
     # A build points at its own repository; a recipe points at its folder.
     # Neither may fall back to '#': a dead link here is the one control that
     # hands the reader from the page to the code.
+    # The GitHub link is a button in the header now. Repeating it here would
+    # be two controls with one destination on a single page.
     links = []
-    target = r.get("repo") or folder_url(r["slug"])
-    if target:
-        label = ("View the repository" if r.get("repo")
-                 else "View this recipe on GitHub")
-        links.append('<a href="%s">%s</a>' % (esc(target), label))
     issues = repo_url("issues", "new")
     if issues:
         links.append('<a href="%s">Report an issue</a>' % esc(issues))
