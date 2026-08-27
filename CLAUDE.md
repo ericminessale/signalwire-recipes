@@ -827,7 +827,17 @@ fabricated record, not a specimen.
   measurement confirmed it: four fuchsia declarations on the whole reading
   column, all on `.claim`, three invisible, leaving a single 2px inset line.
   **Count what is painted, do not trust that a rule was written.**
-- **Fuchsia is never painted at partial opacity. Ever.** Eric's rule,
+- **The no-alpha rule is about surfaces, not every element.** Eric's rule came
+  from a claim plate: a large fuchsia wash on this ground composites to a dull
+  violet. Applying it to everything carrying the fuchsia triple swept up two
+  small controls that were fine, and made both worse. The active Builds chip
+  went from a tint with fuchsia text to a solid fuchsia block, far louder than
+  a filter state should be and out of parity with the category chips.
+  `::selection` went solid when it is conventionally translucent so the text
+  reads through. Eric: "my issue was with containers and stuff not buttons."
+  A small control may carry a tint as a state; a surface may not. The SOLID
+  guard names its exceptions, so adding one is a decision rather than a habit.
+- **Fuchsia is never painted at partial opacity on a surface.** Eric's rule,
   2026-08-27: "never use fuchsia in low opacity. you used it in this 'the
   claim section' as a see through background which just turns it into an ugly
   purple. its exclusively for solid colors." `#F72A72` over this ground at a

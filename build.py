@@ -88,7 +88,8 @@ CSS = """
 button,a,summary{touch-action:manipulation;}
 body{margin:0;background:var(--page);color:var(--fg);font-family:var(--body);
   font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-::selection{background:var(--fuchsia);color:#fff;}
+/* translucent on purpose: the selected text has to read through it */
+::selection{background:rgba(var(--fuchsia-rgb),.32);color:#fff;}
 a{color:inherit;text-decoration:none;}
 code,.mono{font-family:var(--mono);font-feature-settings:'tnum','zero';}
 h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
@@ -508,7 +509,8 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .buildcard .part.more{color:var(--fg-muted);}
 .buildcard .also{color:var(--fg-subtle);margin-left:7px;text-transform:none;
   letter-spacing:0;}
-.chip.kind[aria-pressed="true"]{color:#fff;border-color:var(--fuchsia);}
+.chip.kind[aria-pressed="true"]{color:var(--fuchsia);
+  border-color:rgba(var(--fuchsia-rgb),.35);}
 
 /* brand lockup */
 .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--body);
@@ -558,8 +560,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .chip.kind.wrapped::before{content:none;}
 .chip.kind::before{content:"";position:absolute;left:-18px;top:50%;
   transform:translateY(-50%);width:1px;height:16px;background:var(--line);}
+/* A filter state, not a call to action. The tint is the point: solid
+   fuchsia here shouts louder than the thing it is filtering. */
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
-  border-color:var(--fuchsia);background:var(--fuchsia);}
+  border-color:rgba(var(--fuchsia-rgb),.4);
+  background:rgba(var(--fuchsia-rgb),.07);}
 /* Featured: three cards with an arrow either side, and no container.
    A plate holding recessed cards is one frame inside another, which is what
    made it read as boxy. The band is the page now and the cards are the

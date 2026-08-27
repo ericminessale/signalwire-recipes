@@ -185,15 +185,33 @@ def guard_solid_fuchsia():
     low alpha stays true to the hue.
     """
     src = (ROOT / "build.py").read_text(encoding="utf-8")
+
+    # The rule is about surfaces: a large fuchsia wash on this ground reads as
+    # a dull violet. A small control may carry a tint as a state, because at
+    # that size it reads as a tint. Exceptions are named so that adding one is
+    # a decision rather than a habit.
+    allowed = (
+        '.chip.kind[aria-pressed="true"]',   # a filter state, not a CTA
+        "::selection",                       # text must read through it
+    )
     bad = []
     pattern = r"rgba\(\s*(?:247\s*,\s*42\s*,\s*114|var\(--fuchsia-rgb\))\s*,\s*([0-9.]+)\s*\)"
     for m in re.finditer(pattern, src):
         alpha = float(m.group(1))
-        if alpha < 1:
-            line = src[:m.start()].count("\n") + 1
-            bad.append("build.py:%d paints fuchsia at alpha %s; it composites "
-                       "to a dull violet on this ground. Fuchsia is solid, or "
-                       "use the periwinkle accent for a wash" % (line, m.group(1)))
+        if alpha >= 1:
+            continue
+        # the selector this declaration belongs to
+        open_brace = src.rfind("{", 0, m.start())
+        prev_close = max(src.rfind("}", 0, open_brace),
+                         src.rfind(";", 0, open_brace))
+        selector = src[prev_close + 1:open_brace].strip().splitlines()[-1].strip()
+        if any(a in selector for a in allowed):
+            continue
+        line = src[:m.start()].count("\n") + 1
+        bad.append('build.py:%d paints fuchsia at alpha %s on "%s"; it '
+                   "composites to a dull violet on this ground. Fuchsia is "
+                   "solid on a surface, or use the periwinkle accent for a "
+                   "wash" % (line, m.group(1), selector[:40]))
     return bad
 
 
