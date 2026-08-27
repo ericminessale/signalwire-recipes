@@ -1041,6 +1041,32 @@ def highlight_code(code, lexer_name):
         return esc(code)
 
 
+def check_advertised_urls():
+    """Every URL the site advertises must resolve to a file it wrote.
+
+    og:url and the sitemap both pointed at /<slug>, a clean-URL layout this
+    site does not have, so all 56 advertised URLs 404'd. A link that unfurls
+    to a dead page is worse than one that does not unfurl.
+    """
+    if not BASE:
+        return
+    sm = (SITE / "sitemap.xml").read_text(encoding="utf-8")
+    import re as _re
+    bad = []
+    for loc in _re.findall(r"<loc>([^<]+)</loc>", sm):
+        rel = loc[len(BASE):].lstrip("/")
+        target = SITE / (rel or "index.html")
+        if target.is_dir():
+            target = target / "index.html"
+        if not target.exists():
+            bad.append(loc)
+    if bad:
+        raise SystemExit(
+            "build: %d advertised URL(s) do not resolve to a written file, "
+            "e.g. %s" % (len(bad), ", ".join(bad[:3]))
+        )
+
+
 def check_noindex():
     """Every emitted page must carry the tag while the site is a prototype.
 
@@ -1159,7 +1185,7 @@ def social(title, desc, path=None):
     out.append('<meta property="og:type" content="website">')
     out.append('<meta property="og:site_name" content="SignalWire Recipes">')
     out.append('<meta name="twitter:card" content="summary">')
-    if BASE and path is not None and INDEXABLE:
+    if BASE and path is not None:
         out.append('<meta property="og:url" content="%s">'
                    % esc(BASE.rstrip("/") + path))
     return "\n".join(out) + "\n"
@@ -1746,7 +1772,7 @@ def build_detail(r, body_only=False):
     return body if body_only else page(
         r["title"] + " - SignalWire Recipes", body,
         desc=r.get("summary") or "",
-        path="/%s" % r["slug"],
+        path=recipe_path(r["slug"]),
     )
 
 
@@ -1831,9 +1857,20 @@ def build_robots():
     return "User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n" % BASE
 
 
+def recipe_path(slug):
+    """Where a recipe is actually served, which is where the file is written.
+
+    og:url and the sitemap both read this, so neither can drift from the
+    other or from the build. It was /<slug>, a clean-URL layout the site does
+    not have, so every advertised URL 404'd.
+    """
+    return "/r/%s.html" % slug
+
+
 def build_sitemap(recipes):
     urls = "".join(
-        f"<url><loc>{BASE}/{r['slug']}</loc></url>" for r in sorted(recipes, key=lambda r: r["slug"])
+        f"<url><loc>{BASE}{recipe_path(r['slug'])}</loc></url>"
+        for r in sorted(recipes, key=lambda r: r["slug"])
     )
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -2034,6 +2071,7 @@ def main():
     launch = sum(1 for r in recipes if r.get("tier") == "launch")
     check_highlighting()
     check_noindex()
+    check_advertised_urls()
     print(
         f"build: {len(recipes)} recipes -> site/  "
         f"({launch} launch tier, {len(recipes)*2+3} files)"

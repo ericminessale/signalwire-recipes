@@ -2,7 +2,8 @@
   "_comment": "Where the generated site points when it sends a reader to the code, and how it presents itself to crawlers. Kept out of build.py so moving the repository or going public is one edit here.",
   "repo": "https://github.com/ericminessale/signalwire-recipes",
   "branch": "master",
-  "base_url": "https://signalwire.com/recipes",
+  "base_url": "https://signalwire-recipes.vercel.app",
   "indexable": false,
-  "_indexable": "False while this is a prototype: every page gets noindex and robots.txt disallows everything. Set true only when this is the real public site, and check base_url is where it actually lives first."
+  "_indexable": "False while this is a prototype: every page gets noindex and robots.txt disallows everything. Set true only when this is the real public site, and check base_url is where it actually lives first.",
+  "_base_url": "Where the site is actually served. Not where it may live one day: a card or a sitemap pointing at a host that does not serve the page is worse than neither."
 }
