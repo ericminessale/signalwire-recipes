@@ -47,6 +47,8 @@ JS_FEATURED = """(function(){var f=document.querySelector('.feat');if(!f)return 
 JS_CAROUSEL = """(function(){var f=document.querySelector('.feat');if(!f)return JSON.stringify({skip:true});var t=f.querySelector('.ftrack');var cards=[].slice.call(f.querySelectorAll('.fcard'));if(!t||cards.length<2)return JSON.stringify({skip:true});var o={cards:cards.length};o.dots=f.querySelectorAll('.fdot').length;o.per=parseInt(t.style.getPropertyValue('--per'),10)||0;var w=f.querySelector('.fviewport');o.clipped=w?getComputedStyle(w).overflow==='hidden':false;var cw=cards[0].getBoundingClientRect().width;var vw=w?w.getBoundingClientRect().width:0;o.widthMatchesPer=(vw&&o.per)?Math.abs(cw-((vw-(o.per-1)*10)/o.per))<3:false;var live=cards.filter(function(c){return !c.hidden}).length;o.dotsMatch=o.per?o.dots===Math.ceil(live/o.per):false;var at=function(){return t.style.transform};var next=f.querySelector('.farrow[data-step="1"]');var prev=f.querySelector('.farrow[data-step="-1"]');var play=f.querySelector('.fplay');if(play)play.click();var was=at();next.click();o.moved=at()!==was;o.status=(f.querySelector('.fstatus')||{}).textContent||'';o.current=f.querySelectorAll('.fdot[aria-current="page"]').length;o.inert=f.querySelectorAll('.fcard[inert]').length;o.ariaHidden=f.querySelectorAll('.fcard[aria-hidden="true"]').length;o.reachable=cards.length-o.inert;prev.click();o.wrapped=at()===was;if(play){var lab=play.getAttribute('aria-label');next.click();prev.click();o.stillPaused=play.getAttribute('aria-label')===lab;play.click();}return JSON.stringify(o)})()"""
 
 
+JS_CONTRAST = """(function(){var lin=function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};var lum=function(c){return 0.2126*lin(c[0])+0.7152*lin(c[1])+0.0722*lin(c[2])};var parse=function(s){var m=s&&s.match(/[\\d.]+/g);  if(!m)return null;return [+m[0],+m[1],+m[2],m.length>3?+m[3]:1]};var bgOf=function(el){var stack=[];var n=el;  while(n&&n.nodeType===1){var c=parse(getComputedStyle(n).backgroundColor);    if(c&&c[3]>0){stack.push(c); if(c[3]>=1)break;} n=n.parentElement;}  var out=[15,15,18];  for(var i=stack.length-1;i>=0;i--){var c=stack[i];    out=[0,1,2].map(function(k){return c[3]*c[k]+(1-c[3])*out[k]});}  return out};var bad=[];var seen=0;document.querySelectorAll('.detail *').forEach(function(el){  var txt='';  for(var i=0;i<el.childNodes.length;i++){    if(el.childNodes[i].nodeType===3) txt+=el.childNodes[i].textContent;}  txt=txt.trim(); if(txt.length<6) return;  var r=el.getBoundingClientRect(); if(!r.width||!r.height) return;  var cs=getComputedStyle(el);  if(cs.visibility==='hidden'||parseFloat(cs.opacity)<0.6) return;  var fg=parse(cs.color); if(!fg) return;  var bg=bgOf(el);  if(fg[3]<1){fg=[0,1,2].map(function(k){return fg[3]*fg[k]+(1-fg[3])*bg[k]});}  var L1=lum(fg),L2=lum(bg);  var ratio=(Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);  var px=parseFloat(cs.fontSize);  var wt=parseInt(cs.fontWeight,10)||400;  var large=(px>=24)||(px>=18.66&&wt>=700);  var need=large?3:4.5;  seen++;  if(ratio<need-0.01) bad.push({t:txt.slice(0,32),px:px,    r:Math.round(ratio*100)/100,need:need});});return JSON.stringify({checked:seen,bad:bad.slice(0,6),n:bad.length})})()"""
+
 JS_REPLAY = """(function(){var v=document.querySelector('[data-view]:not([hidden])')||document;var slot=v.querySelector('[data-demo-slot]');if(!slot)return JSON.stringify({noslot:true});var btn=slot.querySelector('.trplay'),tr=slot.querySelector('.tr');if(!btn||!tr)return JSON.stringify({noslot:true});var turns=[].slice.call(tr.querySelectorAll('.l,.sys'));var seen=function(){return turns.filter(function(t){  return t.checkVisibility?t.checkVisibility(    {checkOpacity:true,checkVisibilityCSS:true})  :getComputedStyle(t).display!=='none'}).length};var o={total:turns.length};o.restBefore=seen();o.hiddenAttr=btn.hidden;o.enabled=!btn.disabled;btn.click();o.playing=btn.dataset.state==='playing';o.stepping=tr.querySelectorAll('.on').length;o.inTreeDuring=turns.filter(function(t){return t.checkVisibility?t.checkVisibility({checkOpacity:false,checkVisibilityCSS:true}):getComputedStyle(t).display!=='none'}).length;btn.click();o.restAfter=seen();o.stopped=btn.dataset.state!=='playing';btn.click();Object.defineProperty(document,'hidden',{value:true,configurable:true});document.dispatchEvent(new Event('visibilitychange'));delete document.hidden;o.visStopped=btn.dataset.state!=='playing';o.restAfterVis=seen();o.replayClass=tr.classList.contains('replay');return JSON.stringify(o)})()"""
 
 JS_DEADLINKS = """(function(){var bad=[];document.querySelectorAll('a[href]').forEach(function(a){  var h=a.getAttribute('href');  if(h==='#'||h===''||h===null)    bad.push((a.textContent||'').trim().slice(0,40)||a.className);});return JSON.stringify({bad:bad.slice(0,6),n:bad.length})})()"""
@@ -263,6 +265,11 @@ def main(argv):
                 r = evaljs(JS_OVERLAP)
                 if r["n"]:
                     fail(w, "overlap", f"{slug}: code block covers {r['n']} element(s), e.g. {r['covered'][:2]}")
+                r = evaljs(JS_CONTRAST)
+                if r["n"]:
+                    fail(w, "contrast", f"{slug}: {r['n']} of {r['checked']} text "
+                                        f"runs under WCAG AA: {r['bad']}")
+
                 r = evaljs(JS_REPLAY)
                 if r.get("noslot"):
                     if slug in REPLAY_SLUGS:
@@ -315,7 +322,7 @@ def main(argv):
             print("  " + f)
         return 1
     print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured, "
-          "carousel, taskgroup, divider, arrows, sidescroll, deadlink, replay at "
+          "carousel, taskgroup, divider, arrows, sidescroll, deadlink, replay, contrast at "
           + ", ".join(f"{w}x{h}" for w, h in VIEWPORTS))
     return 0
 

@@ -860,6 +860,48 @@ fabricated record, not a specimen.
   colour the page did not need is exactly the vibe-coded addition this pass
   existed to remove.
 
+### The header persists (decided 2026-08-27)
+
+- **Every recipe page carries the SignalWire mark.** It was on the index and
+  nowhere else: all 55 recipe pages had no brand mark at all, only a muted
+  "all recipes" link. That was more of why a recipe page did not read as
+  SignalWire than any accent colour was. A page with no logo is not branded,
+  whatever its palette does. Eric asked for it directly.
+- **The logo is a `LOGO` constant**, not a second inlined copy. It was pasted
+  into the index hero; the hero now substitutes it like any other value.
+- **The header is present, not sticky.** A sticky element on this page has
+  painted over three sections before, and "persist on sub pages" is about
+  presence rather than following the scroll.
+- The lockup is the home link, because that is what a logo is for, and the
+  explicit `all recipes` link stays beside it because this is documentation
+  and people navigate it that way. Both carry `data-home`, so view switching
+  in the single-file preview still works.
+
+### The frontend stack, for the record
+
+Plain HTML from a single-file Python generator. No framework, no bundler, no
+npm for the site: `build.py` holds the CSS and JS as string constants and
+writes `site/`. Pygments highlights at build time, PyYAML reads the swml
+surface, and the only external request a page makes is Google Fonts.
+`playwright-cli` is npm but it is the test harness, not the site. **The
+frontend design skills assume React, Next, Tailwind and Motion throughout, so
+only their audit protocol and AI-tell list transfer here.**
+
+### Text contrast (fixed 2026-08-27)
+
+- **The prose scale sits a step higher than it did.** Eric: "the meat and
+  potatoes text is like hard to read cuz you made it grey on grey." Measuring
+  agreed and went further. Body prose was `#8b8b96` at 5.68:1, technically AA
+  but reading as grey on grey, and the step below it, `#63636e` at **3.23:1**,
+  **failed AA outright** while carrying Run it, Verify it, every caption, the
+  capability tags and the transcript speaker labels. `--fg-muted` is `#adadb8`
+  and `--fg-subtle` is `#8b8b96`, so body prose is now 8.61:1.
+- **`tools/qc.py` sweeps every text node for WCAG AA.** It composites
+  translucent backgrounds against their ancestors and applies the large-text
+  exemption, rather than assuming one page background. Nothing in the gate had
+  an opinion about contrast before, which is why it drifted until someone
+  squinted. On the old palette it catches 23 failing runs across a page.
+
 ### The design skills, and what they caught
 
 - **Radius was a scale on paper and fifteen values in practice.** `--r-sm` 3 /
