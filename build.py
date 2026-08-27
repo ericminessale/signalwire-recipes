@@ -200,7 +200,7 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The site header on a recipe page. Present, not sticky: a sticky element
    here has painted over three sections before. The mark is smaller than the
    index hero's so it reads as a header rather than a second hero. */
-.shead{display:flex;align-items:baseline;gap:30px;padding:0 0 18px;margin:0;
+.shead{display:flex;align-items:center;gap:30px;padding:0 0 18px;margin:0;
   flex-wrap:wrap;}
 .slock{display:inline-flex;align-items:center;gap:9px;color:var(--fg-2);
   font-family:var(--head);font-weight:600;font-size:15px;letter-spacing:-.01em;}
