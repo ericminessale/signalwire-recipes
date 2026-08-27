@@ -28,11 +28,19 @@ jobs:
       - name: Install the tooling
         run: pip install -r requirements.txt
 
-      - name: Install the SDK the verifiers were written against
-        # The exact pin, not a range: every verifier asserts the behaviour of
-        # this version, and a newer one on the path is how a "verified" run
-        # once turned out to have tested something else.
-        run: pip install "signalwire-sdk==3.0.1"
+      - name: Install what the recipes import
+        # A verifier imports its recipe's app.py, so the runner needs what the
+        # recipes need, not only what the generator needs. Derived from the
+        # recipe files rather than restated here, so a recipe adding a
+        # dependency cannot leave CI behind. The exact SDK pin comes along
+        # with it, since every recipe pins it exactly, and a newer SDK on the
+        # path is how a "verified" run once turned out to have tested
+        # something else.
+        run: |
+          cat recipes/*/python/requirements.txt 2>/dev/null | sed 's/#.*//' | tr -d '\r' | sed 's/[[:space:]]*$//' | grep -v '^$' | sort -u > /tmp/recipe-reqs.txt
+          echo "installing:"
+          cat /tmp/recipe-reqs.txt
+          pip install -r /tmp/recipe-reqs.txt
 
       - name: Prose, structure and required files
         run: python tools/lint_recipes.py

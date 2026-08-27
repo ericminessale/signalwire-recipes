@@ -200,26 +200,29 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 /* The site header on a recipe page. Present, not sticky: a sticky element
    here has painted over three sections before. The mark is smaller than the
    index hero's so it reads as a header rather than a second hero. */
-.shead{display:flex;align-items:center;gap:18px;padding:0 0 14px;margin:0;}
+.shead{display:flex;align-items:baseline;gap:30px;padding:0 0 18px;margin:0;
+  flex-wrap:wrap;}
 .slock{display:inline-flex;align-items:center;gap:9px;color:var(--fg-2);
   font-family:var(--head);font-weight:600;font-size:15px;letter-spacing:-.01em;}
 .slock:hover{color:var(--fg);}
 .slock .lg{height:19px;width:auto;display:block;}
 .slock .dot{width:3px;height:3px;border-radius:50%;background:var(--fg-subtle);}
-.slock:focus-visible,.sback a:focus-visible{outline:2px solid var(--fuchsia);
+.slock:focus-visible,.sback:focus-visible{outline:2px solid var(--fuchsia);
   outline-offset:3px;border-radius:var(--r-sm);}
-.sback{font-family:var(--mono);font-size:11.5px;margin:0;}
-.sback a{color:var(--fg-muted);}
-.sback a:hover{color:var(--fg);}
+.sback{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
+.sback:hover{color:var(--fg);}
 .back{font-family:var(--mono);font-size:11.5px;color:var(--fg-muted);}
 .back a:hover{color:var(--fg);}
 .dh h1{font-size:clamp(30px,4vw,42px);margin-top:18px;}
 /* an identifier is something you type, so it matches the code */
-.tech{font-family:var(--mono);font-size:12px;color:var(--turq);margin-top:12px;}
-.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;
-  color:var(--fg-2);margin-top:16px;}
-.kicker::before{content:"";width:6px;height:6px;border-radius:999px;
-  background:var(--fuchsia);}
+.tech{font-family:var(--mono);font-size:12px;color:var(--turq);}
+/* product line, then the identifier, on one line under the title */
+.kicker{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:12.5px;
+  font-weight:500;color:var(--fg-2);margin-top:14px;}
+.kicker .kcat{color:var(--fg-2);}
+.kicker .dot{width:3px;height:3px;border-radius:50%;background:var(--fg-subtle);
+  flex:none;}
+
 .sub{color:var(--fg-muted);font-size:16px;line-height:1.65;margin:16px 0 0;max-width:60ch;}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 0;}
 .b{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);
@@ -327,12 +330,14 @@ kbd{font-family:var(--mono);background:var(--raised);border:1px solid var(--line
 .sec{margin:34px 0;}
 .sec h2{font-size:19px;margin:0 0 10px;}
 .rels h2{font-size:13.5px;font-weight:600;color:var(--fg-2);}
-/* An argument section opens on a rule: a separator between two blocks, which
-   is what this project's separators are. Not a line trailing out of a heading.
-   The rule is fuchsia, so the brand recurs down the column at every section
-   boundary instead of sitting once at the top and never again. */
-.sec.arg{margin:0 0 40px;padding-top:18px;
-  border-top:1px solid var(--fuchsia);}
+/* A section break, not a page rule. Full width repeated at every boundary
+   made the same gesture four times down one column; short and centred reads
+   as punctuation between sections. The rule under the header stays full width
+   because it separates the head from the body, which is a different job. */
+.sec.arg{margin:0 0 40px;padding-top:30px;position:relative;}
+.sec.arg::before{content:"";position:absolute;top:0;left:50%;
+  transform:translateX(-50%);width:18%;min-width:64px;height:1px;
+  background:var(--fuchsia);}
 .sec.arg h2{font-size:21px;display:block;margin:0 0 14px;}
 /* procedure sections are quieter and tighter: type alone separates them */
 .sec.proc{margin:24px 0 0;}
@@ -1618,13 +1623,19 @@ def build_detail(r, body_only=False):
         'aria-label="SignalWire Recipes, back to all recipes">'
         + LOGO + '<span class="dot" aria-hidden="true"></span>'
         '<span class="sname">Recipes</span></a>'
-        '</header>'
-        '<p class="sback"><a href="../index.html" data-home>&larr; all recipes</a></p>',
-        '<div class="kicker">%s</div>' % esc(CAT_LABEL.get(r.get("category"), "")),
+        '<a class="sback" href="../index.html" data-home>&larr; all recipes</a>'
+        '</header>',
         '<div class="dh"><h1>%s</h1>' % esc(r["title"]),
     ]
+    # One line of identity under the title: what product line this belongs to,
+    # then the thing you would actually type, behind the same dot the header
+    # lockup uses.
+    ident = ['<span class="kcat">%s</span>'
+             % esc(CAT_LABEL.get(r.get("category"), ""))]
     if r.get("alias"):
-        out.append('<div class="tech" translate="no">%s</div>' % esc(r["alias"]))
+        ident.append('<span class="dot" aria-hidden="true"></span>'
+                     '<span class="tech" translate="no">%s</span>' % esc(r["alias"]))
+    out.append('<div class="kicker">%s</div>' % "".join(ident))
     out.append('<p class="sub">%s</p>' % esc(r.get("summary", "")))
     # nothing internal on a public page
     meta = "".join(
