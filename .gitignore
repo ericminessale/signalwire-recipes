@@ -28,3 +28,6 @@ docs/enum/*
 
 # abandoned design exploration from an early session; kept locally
 design/
+
+# the deploy build venv (tools/vercel_build.sh)
+.vbuild/
