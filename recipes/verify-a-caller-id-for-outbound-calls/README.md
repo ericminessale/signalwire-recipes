@@ -1,21 +1,23 @@
 # Verify a caller ID for outbound calls
 
-> Three REST calls take a number you own elsewhere through verification as an outbound caller ID: register it, send back the code the verification call reads out, and redial if the code was missed.
+> Three REST requests register a number you own elsewhere as a verified caller ID, submit the code you heard, and redial the verification call if you missed it.
 
 **Scenario:** a shop that wants outbound calls to show its long-standing mobile number
 
 ## What this demonstrates
 
-`POST /api/relay/rest/verified_caller_ids` registers a number and a display name.
-`PUT /api/relay/rest/verified_caller_ids/{id}/verification` submits the
-`verification_code`. `POST` to that same verification path places the
-verification call again. The SDK wraps the three as `create`,
-`submit_verification` and `redial_verification` on `client.verified_callers`.
+You send three requests. `POST /api/relay/rest/verified_caller_ids` carries
+the number and a display name; the vendored REST spec titles it "Create
+verified caller ID". `PUT /api/relay/rest/verified_caller_ids/{id}/verification`
+carries `verification_code`, titled "Validate verification code". `POST` to
+that same path is "Redial verification call". The SDK wraps the three as
+`create`, `submit_verification` and `redial_verification` on
+`client.verified_callers`.
 
-The vendored REST spec, `tools/openapi/rest.json`, is what the verifier checks
-the three requests against. It marks `number` as the one required field on
-create and `verification_code` as required on the PUT. The response carries
-`id`, `number`, `name`, `verified`, `verified_at` and `status`.
+The verifier checks the three requests against that spec. It marks `number` as
+the one required field on create and `verification_code` as required on the
+PUT. The spec's response schema carries `id`, `number`, `name`, `verified`,
+`verified_at` and `status`.
 
 ## How it works
 
@@ -44,16 +46,16 @@ PUT  /api/relay/rest/verified_caller_ids/<id>/verification
 POST /api/relay/rest/verified_caller_ids/<id>/verification
 ```
 
-The id in the second and third paths is the `id` the first response returned.
-Once `verified` is true, the number is a value you can pass as `from` when you
-place an outbound call.
+The id in the second and third paths is the `id` the first response returned,
+per the spec's response schema. `verified` and `status` in that schema are how
+you read the outcome.
 
 ## Run it
 
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # project id, API token, space
+cp ../.env.example .env          # then edit .env: your project id, API token and space
 python app.py start +1XXXXXXXXXX "Shop mobile"     # the phone rings and reads a code
 python app.py confirm <id> <code>
 python app.py resend <id>                          # if nobody caught the code
@@ -70,8 +72,8 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-The verifier swaps the SDK's HTTP layer for a recorder, calls the three helpers,
-and asserts the following.
+The verifier swaps the SDK's HTTP layer for a recorder, calls your three
+helpers, and asserts the following.
 
 - `start` makes one `POST` to the documented path with exactly `number` and `name`
 - `confirm` makes one `PUT` to the id's verification path with exactly `verification_code`
@@ -81,11 +83,8 @@ and asserts the following.
 
 ## Limitations
 
-The verifier proves the three requests. Whether the phone rings and what the
-code is are the platform's side of a live run.
-
-A verified caller ID is a number you own elsewhere. Numbers on your SignalWire
-project need no verification to be used as `from`.
+The verifier proves the three requests. Whether the phone rings, what the code
+is, and when `verified` flips are the platform's side of a live run.
 
 ## What to change first
 

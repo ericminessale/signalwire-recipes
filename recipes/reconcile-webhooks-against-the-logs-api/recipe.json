@@ -1,9 +1,9 @@
 {
   "slug": "reconcile-webhooks-against-the-logs-api",
   "title": "Reconcile webhooks against the logs api",
-  "alias": "",
-  "summary": "When a status webhook is missed, the voice and message logs API is the source of truth and can be diffed against your records.",
-  "scenario": "",
+  "alias": "logs.voice.list / list_events / logs.messages.list",
+  "summary": "A pass over a time window of the voice and message logs finds the calls and messages your webhook handler never recorded, and fetches the event trail of each missed call.",
+  "scenario": "A nightly job that catches the status callbacks a deploy swallowed",
   "surfaces": [
     "python"
   ],
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "sol gap #3",
@@ -32,8 +32,17 @@
     "evidence": [
       "docs apis/rest/voice-logs/list-voice-logs (events)",
       "docs apis/rest/message-logs/list-message-logs",
-      "sdk rest/namespaces/logs.py"
+      "sdk rest/namespaces/logs.py",
+      "tools/openapi/rest.json GET /api/voice/logs and /api/messaging/logs: created_after, created_before, page_size 1-1000; GET /api/voice/logs/{id}/events -> Voice.LogEvent{event_at, level, name, details}",
+      "sdk rest/namespaces/logs.py VoiceLogs.list/list_events, MessageLogs.list; client.logs (rest/client.py:103)",
+      "verified 2026-09-02: recipes/reconcile-webhooks-against-the-logs-api/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "send-an-sms"
+  ],
+  "related": [
+    "place-an-outbound-call"
+  ]
 }

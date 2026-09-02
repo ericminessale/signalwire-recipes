@@ -1,16 +1,15 @@
 {
   "slug": "push-events-from-an-agent-to-the-browser",
   "title": "Push events from an agent to the browser",
-  "alias": "",
-  "summary": "A SWML user_event fired by the agent arrives in the browser client's userVariables$ stream during the call.",
-  "scenario": "",
+  "alias": "FunctionResult.swml_user_event",
+  "summary": "A tool result carries a SWML user_event whose event is any JSON object the handler chooses. The bundled schema describes the verb as sending events to the connected client on the call.",
+  "scenario": "A booking page that highlights the slot the caller picked, the moment the agent holds it",
   "surfaces": [
-    "swml",
     "python",
-    "typescript"
+    "swml"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -23,7 +22,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "t:ai-assistant-client-side-tools-nextjs",
@@ -35,8 +34,19 @@
       "sdk function_result.py:263 swml_user_event",
       "demo holyguacamole EVENTS.md (best-documented user_event contract)",
       "demo example app.py:409-446 swml_user_event; web/app.js subscribes user_event",
-      "demo techtarot app.py:570-588 raw SWML user_event variant"
+      "demo techtarot app.py:570-588 raw SWML user_event variant",
+      "sdk function_result.py:263 swml_user_event wraps user_event in a one-verb SWML action",
+      "schema.json UserEvent: event required, any JSON object; commonly used with the browser-sdk",
+      "tools/openapi/rest.json calling.user_event variant: params.event required",
+      "verified 2026-09-02: recipes/push-events-from-an-agent-to-the-browser/verify.py"
     ]
   },
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "call-from-a-browser",
+    "inject-a-message-into-a-live-ai-call"
+  ]
 }

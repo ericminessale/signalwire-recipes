@@ -4,11 +4,13 @@ Claim: an emergency address is created with the fields the spec requires and
 `emergency_enabled` on, then attached to a number by id, in two REST calls.
 
 Proof: with the HTTP layer replaced by a recorder, `create_address` makes one
-POST to the documented addresses path whose body carries every field in the
-spec's required list plus `emergency_enabled: true`, and `attach` makes one
-POST to the number's documented e911 path with exactly `e911_address_id`.
-Every field is documented; the required lists are read from the spec, not
-assumed. Expected values live here, not in app.py.
+POST to the documented addresses path. Its body carries every field in the
+spec's required list plus `emergency_enabled: true`. `attach` makes one POST
+to the number's documented e911 path with exactly `e911_address_id`. The
+verifier reads both required lists from the spec rather than assuming them,
+and every field sent is a documented property. `number_id` makes one GET to
+the numbers list and picks the matching id. Expected values live here, not in
+app.py.
 """
 import os
 import pathlib
@@ -50,6 +52,13 @@ def main():
     recipe.client.addresses._http = rec
 
     recipe.create_address(**FIELDS, address_type="Suite", address_number="4")
+    recipe.client.phone_numbers._http = V.Recorder(
+        responses=[{"data": [{"id": "other", "number": "+15550000000"},
+                             {"id": NUMBER_ID, "number": "+15557654321"}]}])
+    assert recipe.number_id("+15557654321") == NUMBER_ID
+    (listing,) = recipe.client.phone_numbers._http.calls
+    assert (listing["method"], listing["path"]) == ("GET", "/api/relay/rest/phone_numbers"), listing
+    V.assert_documented("rest", "GET", "/api/relay/rest/phone_numbers", None)
     recipe.attach(NUMBER_ID, ADDRESS_ID)
     assert len(rec.calls) == 2, rec.calls
     create, attach = rec.calls
@@ -73,7 +82,8 @@ def main():
     V.assert_documented("rest", "POST", E911, attach["body"])
 
     print(f"ok: POST {ADDRESSES} with the spec's {len(required_for(ADDRESSES, 'post')[0])} "
-          f"required fields plus emergency_enabled; POST {template} with e911_address_id")
+          f"required fields plus emergency_enabled; GET the numbers list for the id; "
+          f"POST {template} with e911_address_id")
 
 
 if __name__ == "__main__":

@@ -1244,6 +1244,33 @@ redact-a-message-body-after-sending and test-an-agent-offline-with-swaig-test.
   And a long Python patch still goes through `Write`, never a heredoc: two
   heredocs died this wave on quoting alone, with no backslash in sight.
 
+## Wave 5 of the fill-out (2026-09-02)
+
+run-an-agent-as-a-cloud-function, push-events-from-an-agent-to-the-browser,
+reduce-background-noise-on-a-call, split-one-number-into-isolated-personas and
+reconcile-webhooks-against-the-logs-api.
+
+- **The contexts schema requires a context named `default`.** A flow whose
+  entry context is called anything else fails `validate_swml` with an error
+  that echoes the whole document and hides the reason at the end. Name the
+  entry context `default`; the SDK's own docstrings assume it.
+- **The Lambda branch is drivable offline.** Set `AWS_LAMBDA_FUNCTION_NAME`
+  and call `agent.run(event, None)` with an API Gateway v2 event: `rawPath`,
+  `headers` (the `Authorization` header is checked by `_check_lambda_auth`),
+  `body` as a JSON string. The root returns the SWML in `body`; `/swaig`
+  returns the tool result; a bad header returns the 401 challenge dict.
+- **`swml_user_event(event)` is the SDK helper for `user_event`**; the wire
+  shape is a one-verb SWML action. The schema requires `event` and allows any
+  JSON object. The browser side is the Browser SDK's business; do not claim it.
+- **`denoise` and `stop_denoise` take no parameters**, in SWML and as the REST
+  commands `calling.denoise` / `calling.denoise.stop` (empty `params`).
+- **The logs API is the reconciler.** `client.logs.voice.list(created_after=,
+  created_before=, page_size=)` and `.list_events(id)`; `page_size` is 1-1000.
+  The `Recorder` takes `responses=[...]` to answer with fixtures in order.
+- **Writing files while a background lint runs produces phantom failures.**
+  Two chains failed on `_TODO` and a missing `.env` block that were simply not
+  written yet. Lint after the writes land, or lint the named folders only.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

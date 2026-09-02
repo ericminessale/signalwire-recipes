@@ -2,7 +2,7 @@
   "slug": "look-up-a-callers-carrier-and-name",
   "title": "Look up a callers carrier and name",
   "alias": "lookup include=carrier,cnam",
-  "summary": "One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name, so a call can be enriched before anyone answers.",
+  "summary": "One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name.",
   "scenario": "A support line that wants to know who is calling before the agent picks up",
   "surfaces": [
     "python"

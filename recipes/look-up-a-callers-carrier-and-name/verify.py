@@ -4,12 +4,13 @@ Claim: one GET to the lookup path returns a number's details, and
 `include=carrier,cnam` is what asks for carrier and caller-ID name.
 
 Proof: with the HTTP layer replaced by a recorder, `enrich` makes exactly one
-GET to the documented lookup path for the number with `include` set to
-`carrier,cnam`, and `check` makes one GET with no query at all. The path and
-the `include` parameter are documented in the vendored spec, whose description
-of `include` names exactly those two values. The spec's response schema
-carries `carrier` and `cnam` objects. Expected values live here, not in
-app.py.
+GET to the documented lookup path with `include` set to `carrier,cnam`.
+`check` makes one GET with no query at all. The vendored spec documents the
+path and the `include` parameter, and its description of `include` names
+exactly those two values. The spec's response schema carries `valid_number`,
+`e164`, the formatted forms, `country_code`, `number_type`, a `carrier` object
+with `linetype` and a `cnam` object with `caller_id`. Expected values live
+here, not in app.py.
 """
 import os
 import pathlib
@@ -58,13 +59,19 @@ def main():
     resp = op["responses"]["200"]["content"]["application/json"]["schema"]
     resp = schemas[resp["$ref"].split("/")[-1]] if "$ref" in resp else resp
     props = resp["properties"]
-    assert {"carrier", "cnam", "valid_number", "e164", "number_type"} <= set(props), sorted(props)
-    carrier = schemas[props["carrier"]["$ref"].split("/")[-1]] if "$ref" in props["carrier"] else props["carrier"]
-    assert "linetype" in carrier["properties"], sorted(carrier["properties"])
+    advertised = {"carrier", "cnam", "valid_number", "e164", "number_type", "country_code",
+                  "national_number_formatted", "international_number_formatted", "timezones"}
+    assert advertised <= set(props), sorted(advertised - set(props))
+
+    def obj(name):
+        node = props[name]
+        return schemas[node["$ref"].split("/")[-1]] if "$ref" in node else node
+    assert "linetype" in obj("carrier")["properties"], sorted(obj("carrier")["properties"])
+    assert "caller_id" in obj("cnam")["properties"], sorted(obj("cnam")["properties"])
 
     print(f"ok: GET {PATH}?include=carrier,cnam and once without a query; include is "
           f"documented with those two values; the response schema carries carrier "
-          f"(with linetype) and cnam")
+          f"(with linetype), cnam (with caller_id) and the formatted fields")
 
 
 if __name__ == "__main__":

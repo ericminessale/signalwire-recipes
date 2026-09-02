@@ -1,9 +1,9 @@
 {
   "slug": "run-an-agent-as-a-cloud-function",
   "title": "Run an agent as a cloud function",
-  "alias": "",
-  "summary": "The same agent file runs unchanged on AWS Lambda, Google Cloud Functions or Azure Functions.",
-  "scenario": "",
+  "alias": "AgentBase.run(event, context) in Lambda mode",
+  "summary": "The same agent file runs as an AWS Lambda handler. agent.run(event, context) returns the SWML for a request to the root and the tool result for a POST to /swaig, behind the same basic auth.",
+  "scenario": "A stock-lookup agent that should cost nothing between calls",
   "surfaces": [
     "python"
   ],
@@ -20,7 +20,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "t:edge-ai-assistant-backend",
@@ -32,8 +32,18 @@
       "demo cloud-functions",
       "sdk-surface: Cloudflare adapter ABSENT",
       "demo cloud-functions aws/handler.py:107, gcloud/main.py:132, azure/function_app/__init__.py:106 (legacy SDK 1.0.8-1.0.10 - port before quoting)",
-      "demo utility handler.py:17-20 Mangum on Lambda"
+      "demo utility handler.py:17-20 Mangum on Lambda",
+      "sdk core/mixins/serverless_mixin.py handle_serverless_request lambda branch: rawPath or pathParameters.proxy, base64 body, swaig -> _execute_swaig_function, else _render_swml; returns statusCode/headers/body",
+      "sdk core/mixins/auth_mixin.py:139 _check_lambda_auth reads the event's Authorization header",
+      "sdk core/logging_config.py:44-72 get_execution_mode keyed on AWS_LAMBDA_FUNCTION_NAME etc.",
+      "verified 2026-09-02: recipes/run-an-agent-as-a-cloud-function/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "test-an-agent-offline-with-swaig-test"
+  ]
 }

@@ -2,7 +2,7 @@
 
 > One PATCH with `body: ""` clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible.
 
-**Scenario:** a one-time code was texted and must not stay in anyone's message logs
+**Scenario:** you texted a one-time code and want it gone from SignalWire's stored records
 
 ## What this demonstrates
 
@@ -10,12 +10,14 @@
 of a message you already sent. The vendored REST spec says the endpoint "clears
 the message body for compliance, privacy, or moderation purposes". It says "the
 only accepted value for `body` is an empty string", and the platform rejects
-anything else with `body_must_be_empty`. Messages still `queued` or `initiated` cannot be
-redacted; `delivered`, `undelivered` and `failed` can. Once redacted, "the
-original body is overwritten and cannot be recovered".
+anything else with `body_must_be_empty`. Per the spec, messages still `queued`
+or `initiated` "cannot be redacted", while `delivered`, `undelivered` and
+`failed` "are eligible". Once redacted, "the original body is overwritten and
+cannot be recovered".
 
 The SDK's REST client wraps no method for this path in 3.0.1. The recipe sends
-the request through the HTTP client the client's namespaces share.
+the request through the `HttpClient` that `RestClient` builds once and shares
+with every namespace (`signalwire/rest/client.py:74-85`).
 
 ## How it works
 
@@ -34,11 +36,11 @@ PATCH /api/messaging/messages/7c9e6679-7425-40de-944b-e07fc1f90ae7
 {"body": ""}
 ```
 
-The id is the message segment id: the `id` the send returned, and the one
-`/api/messaging/logs` shows. The response carries the message with its `body`
-cleared, alongside `status`, `direction`, `from`, `to` and `created_at`.
+The spec says the id is "the message segment ID", the one the create endpoint
+returned and `/api/messaging/logs` shows. The spec's 200 response carries the
+message with `body`, `status`, `direction`, `from`, `to` and `created_at`.
 
-Pair this with a status callback: redact when the callback reports a terminal
+Pair this with a status callback. Redact when the callback reports a terminal
 state, because the spec refuses the PATCH while the message is in progress.
 
 ## Run it
@@ -46,12 +48,12 @@ state, because the spec refuses the PATCH while the message is in progress.
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # project id, API token, space
+cp ../.env.example .env          # then edit .env: your project id, API token and space
 python app.py <message_id>
 ```
 
 There is no server to expose; the script speaks to the REST API and exits. Take
-the id from the send response of a message that has already been delivered.
+the id from the send response of a message the platform has already delivered.
 
 ## Verify it
 
@@ -65,16 +67,18 @@ The verifier swaps the SDK's HTTP layer for a recorder, calls `redact`, and
 asserts the following.
 
 - exactly one `PATCH` to the documented path for the id, with the body `{"body": ""}`
-- the path and body are documented, and the spec's required list is exactly `body`
+- the spec documents the path and body, and its required list is exactly `body`
 - the spec's description of `body` says it must be an empty string
-- the spec's description of the operation names `delivered`, `undelivered`, `failed` and `queued`
+- the spec's description of the operation says it clears the body, puts `queued` and `initiated` on the refused side, puts `delivered`, `undelivered` and `failed` on the eligible side, and says the original cannot be recovered
+- the spec's 200 response schema carries `id`, `body`, `status`, `from`, `to` and `created_at`
 
 ## Limitations
 
 The verifier proves the request. Whether a given message is eligible depends on
 its state at the moment you send the PATCH.
 
-Redaction is SignalWire's copy. The recipient's phone still has the text.
+Redaction changes SignalWire's copy. It cannot recall a copy the carrier
+already delivered to a handset.
 
 ## What to change first
 

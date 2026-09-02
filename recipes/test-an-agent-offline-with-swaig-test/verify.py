@@ -4,12 +4,14 @@ Claim: the SDK's `swaig-test` CLI loads an agent file and, with no number,
 tunnel or account, dumps the SWML the platform would fetch, lists the tools,
 and runs a tool with the arguments you give it.
 
-Proof: run the CLI as a subprocess against python/app.py three times. The
-`--dump-swml --raw` output parses as JSON, validates against the bundled
-schema, and carries the one tool. `--list-tools` names the tool and its
-parameter. `--exec check_hours --day saturday` prints the handler's exact
-response, and an invalid day prints its refusal. Expected values live here,
-not in app.py.
+Proof: run the CLI as a subprocess against python/app.py four times, with a
+child environment that carries only the SDK path and the basic-auth pair, so
+no account credential can reach it. The `--dump-swml --raw` output parses as
+JSON, validates against the bundled schema, and carries the one tool.
+`--list-tools` prints the tool's block with its description and its required
+parameter. `--exec check_hours --day saturday` prints `RESULT:` and then the
+handler's exact response on the `FunctionResult:` line, and an invalid day
+prints its refusal the same way. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -33,16 +35,29 @@ INVALID = "INVALID: ask for a day of the week."
 
 
 def swaig_test(*args):
-    """Run the CLI the way a developer does, as its own process."""
+    """Run the CLI the way a developer does, as its own process, with an
+    environment that holds no account credential."""
     import signalwire
-    env = dict(os.environ)
+    keep = ("PATH", "SYSTEMROOT", "TEMP", "TMP", "HOME", "USERPROFILE", "LANG")
+    env = {k: v for k, v in os.environ.items() if k in keep}
+    env["SWML_BASIC_AUTH_USER"] = os.environ["SWML_BASIC_AUTH_USER"]
+    env["SWML_BASIC_AUTH_PASSWORD"] = os.environ["SWML_BASIC_AUTH_PASSWORD"]
     # the directory that holds the `signalwire` package, so the child sees
     # the same SDK this verifier loaded
     env["PYTHONPATH"] = str(pathlib.Path(signalwire.__file__).parent.parent)
     cmd = [sys.executable, "-m", "signalwire.cli.swaig_test_wrapper", str(APP), *args]
-    r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=120)
+    r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=120,
+                       cwd=str(HERE))  # no .env here, so load_dotenv() finds nothing
     assert r.returncode == 0, (args, r.returncode, r.stderr[-800:])
     return r.stdout
+
+
+def result_line(out):
+    """The FunctionResult line that follows RESULT:, whitespace normalised."""
+    lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+    i = lines.index("RESULT:")
+    assert lines[i + 1].startswith("FunctionResult: "), lines[i:i + 2]
+    return lines[i + 1][len("FunctionResult: "):]
 
 
 def main():
@@ -55,15 +70,18 @@ def main():
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
     assert [f["function"] for f in ai["SWAIG"]["functions"]] == ["check_hours"], ai["SWAIG"]
 
-    # the tool inventory, with its parameter
+    # the tool inventory: the tool's block, then its parameter, in that order
     out = swaig_test("--list-tools")
-    assert "check_hours" in out and "day (string) (required)" in out, out
+    lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+    head = "check_hours - Look up the shop's opening hours for a day of the week. (LOCAL webhook)"
+    i = lines.index(head)
+    assert lines[i + 1] == "Parameters:", lines[i:i + 3]
+    assert lines[i + 2] == "day (string) (required): A day of the week, in English.", lines[i + 2]
+    assert sum(ln.endswith("(LOCAL webhook)") for ln in lines) == 1, "one tool listed"
 
     # the handler, run with arguments and fake call data
-    out = swaig_test("--exec", "check_hours", "--day", "saturday")
-    assert SATURDAY in out, out
-    out = swaig_test("--exec", "check_hours", "--day", "someday")
-    assert INVALID in out, out
+    assert result_line(swaig_test("--exec", "check_hours", "--day", "saturday")) == SATURDAY
+    assert result_line(swaig_test("--exec", "check_hours", "--day", "someday")) == INVALID
 
     print(f"ok: swaig-test dumped valid SWML with ['check_hours'], listed the tool "
           f"and its required 'day', and ran it: {SATURDAY!r} and the INVALID refusal")

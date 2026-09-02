@@ -1,14 +1,14 @@
 {
   "slug": "split-one-number-into-isolated-personas",
   "title": "Split one number into isolated personas",
-  "alias": "",
-  "summary": "One number reaches sales, support or billing; each persona's tools are structurally unavailable to the others.",
-  "scenario": "",
+  "alias": "isolated contexts + per-step functions",
+  "summary": "One number reaches sales, support or billing through the default context. Each persona is an isolated context whose step names only its own tools, so the other desks' tools are structurally absent while it is on the line.",
+  "scenario": "A bicycle shop with one number and three desks that must not blur into each other",
   "surfaces": [
     "python"
   ],
   "governed": true,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#3 (pattern it teaches: separate personas that structurally cannot use each other's tools)",
@@ -30,8 +30,18 @@
     "evidence": [
       "sdk contexts.py:820 set_isolated, :192 set_functions per step, :353 swml_change_context",
       "demo afterhours swml_change_context (emergency vs non-emergency)",
-      "per-persona voice dropped from the claim: languages are agent-level in the SDK"
+      "per-persona voice dropped from the claim: languages are agent-level in the SDK",
+      "sdk contexts.py:820 set_isolated renders context.isolated; :265 Step.set_valid_contexts; :192 set_functions",
+      "schema.json Contexts requires a context named default; ContextsPOMObject.isolated resets conversation history to only the system prompt",
+      "verified 2026-09-02: recipes/split-one-number-into-isolated-personas/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "scope-tools-per-step"
+  ],
+  "related": [
+    "change-the-agents-instructions-mid-call",
+    "require-verification-before-unlocking-tools"
+  ]
 }

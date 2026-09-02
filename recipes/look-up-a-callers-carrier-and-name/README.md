@@ -1,6 +1,6 @@
 # Look up a caller's carrier and name
 
-> One GET returns a number's validity, formatting, country and type. `include=carrier,cnam` adds the carrier record and the caller-ID name, so a call can be enriched before anyone answers.
+> One GET returns a number's validity, formatting, country and type. `include=carrier,cnam` adds the carrier record and the caller-ID name.
 
 **Scenario:** a support line that wants to know who is calling before the agent picks up
 
@@ -32,26 +32,22 @@ GET /api/relay/rest/lookup/phone_number/+15557654321?include=carrier,cnam
 ```
 
 The spec's response schema carries `valid_number`, `e164`, the national and
-international formatted forms, `country_code`, `timezones`, `number_type`, and
-two objects that appear when asked for. `carrier` holds `lrn`, `spid`, `ocn`,
-`lata`, `city`, `state`, `jurisdiction`, `lec` and `linetype`; `cnam` holds
-`caller_id`. `check` leaves `include` off and pays for nothing extra.
-
-A tool handler on an agent can call `enrich` with `caller_id_num` from the tool
-POST and put `linetype` and `caller_id` into `global_data`, so the greeting can
-use the name.
+international formatted forms, `country_code`, `timezones` and `number_type`,
+plus two objects you ask for with `include`. `carrier` holds `lrn`, `spid`,
+`ocn`, `lata`, `city`, `state`, `jurisdiction`, `lec` and `linetype`; `cnam`
+holds `caller_id`. `check` leaves `include` off and asks for nothing that the
+spec marks as possibly billable.
 
 ## Run it
 
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # project id, API token, space
+cp ../.env.example .env          # then edit .env: your project id, API token and space
 python app.py +1XXXXXXXXXX
 ```
 
-There is no server to expose; the script speaks to the REST API and exits. The
-`carrier` and `cnam` includes are billable, per the spec.
+There is no server to expose; the script speaks to the REST API and exits.
 
 ## Verify it
 
@@ -66,17 +62,17 @@ asserts the following.
 
 - `enrich` makes one `GET` to the documented lookup path for the number with `include=carrier,cnam` and nothing else
 - `check` makes one `GET` to the same path with no query
-- the path and the `include` parameter are documented, and the spec's description of `include` names `carrier` and `cnam`
-- the spec's response schema carries `carrier` with `linetype`, `cnam`, `valid_number`, `e164` and `number_type`
+- the spec documents the path and the `include` parameter, and its description of `include` names `carrier` and `cnam`
+- the spec's response schema carries every field this README names, with `linetype` under `carrier` and `caller_id` under `cnam`
 
 ## Limitations
 
 The verifier proves the request and the documented response shape, not what a
-lookup returns for a real number. CNAM data is a carrier database; a name is
-absent for many numbers, and the spec marks both includes billable.
+lookup returns for a real number. The spec says the included information is
+"some of which are billable"; it does not price it.
 
 ## What to change first
 
 Change `include="carrier,cnam"` to `include="carrier"` and run the verifier.
-The params assertion fails, which is the point: each include is a separate,
-billable request for data, and you ask for exactly what you need.
+The params assertion fails, which is the point: `include` names exactly the
+extra information you asked for.

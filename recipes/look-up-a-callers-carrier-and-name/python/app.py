@@ -1,9 +1,9 @@
 """Look up a caller's carrier and name.
 
 One GET returns what the platform knows about a number: whether it is valid,
-its formatted forms, its country and time zones and, when you ask for them,
-carrier details and the CNAM caller-ID name. `include=carrier,cnam` is what
-asks; the spec notes those two are billable.
+its formatted forms, its country and time zones. `include=carrier,cnam` adds
+carrier details and the CNAM caller-ID name. The spec says the included
+information is "some of which are billable".
 
 Written against signalwire-sdk 3.0.1 (RestClient.lookup).
 """

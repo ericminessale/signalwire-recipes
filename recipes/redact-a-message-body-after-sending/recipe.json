@@ -3,7 +3,7 @@
   "title": "Redact a message body after sending",
   "alias": "PATCH messaging/messages body \"\"",
   "summary": "One PATCH with body \"\" clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible.",
-  "scenario": "A one-time code was texted and must not stay in anyone's message logs",
+  "scenario": "You texted a one-time code and want it gone from SignalWire's stored records",
   "surfaces": [
     "python"
   ],

@@ -2,7 +2,7 @@
   "slug": "verify-a-caller-id-for-outbound-calls",
   "title": "Verify a caller id for outbound calls",
   "alias": "verified_caller_ids create / verification",
-  "summary": "Three REST calls take a number you own elsewhere through verification as an outbound caller ID: register it, send back the code the verification call reads out, and redial if the code was missed.",
+  "summary": "Three REST requests register a number you own elsewhere as a verified caller ID, submit the code you heard, and redial the verification call if you missed it.",
   "scenario": "A shop that wants outbound calls to show its long-standing mobile number",
   "surfaces": [
     "python"
@@ -32,9 +32,7 @@
     ]
   },
   "subcategory": "governance",
-  "prerequisites": [
-    "buy-a-number-and-point-it-at-your-app"
-  ],
+  "prerequisites": [],
   "related": [
     "place-an-outbound-call"
   ]

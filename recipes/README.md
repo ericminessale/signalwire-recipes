@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-63 of 121 folders are written and verified. The rest are planned and carry a stub.
+68 of 121 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -12,8 +12,8 @@ and without a network.
 
 ## Contents
 
-- [AI Agents](#ai-agents) (27)
-- [Voice](#voice) (26)
+- [AI Agents](#ai-agents) (30)
+- [Voice](#voice) (28)
 - [Messaging](#messaging) (5)
 - [MFA](#mfa) (1)
 - [Video](#video) (1)
@@ -41,6 +41,7 @@ Agents that answer, reason, and act on a live call.
 | [Protect tool webhooks with per call tokens](protect-tool-webhooks-with-per-call-tokens/) | Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all. | Python |
 | [Require verification before unlocking tools](require-verification-before-unlocking-tools/) | The account tools do not exist in the model's world until a handler says the caller passed. | Python |
 | [Scope an agent's tools per step](scope-tools-per-step/) | At each point in the conversation the model can only see the tools you allowed there. | Python |
+| [Split one number into isolated personas](split-one-number-into-isolated-personas/) | One number reaches sales, support or billing through the default context. Each persona is an isolated context whose step names only its own tools, so the other desks' tools are structurally absent while it is on the line. | Python |
 | [Walk a caller through ordered steps](walk-a-caller-through-ordered-steps/) | Every step names one tool. Each step but the last names only its successor, so the next_step tool the model is offered has no backward or skip target. | Python |
 | [Write a disposition from handler owned data](write-a-disposition-from-handler-owned-data/) | The qualification fields of a disposition come from what your tool handlers wrote to global_data during the call, not from the transcript or the model's summary. | Python |
 
@@ -80,6 +81,7 @@ Agents that answer, reason, and act on a live call.
 | [Cover tool latency with fillers](cover-tool-latency-with-fillers/) | The slow tool renders a filler phrase, and a wait file when you host one, while each language carries its own filler pool. | Python |
 | [Extract structured data after a call](extract-structured-data-after-a-call/) | Get typed fields out of a finished conversation instead of parsing a transcript. | Python |
 | [Give an agent a tool](give-an-agent-a-tool/) | Let the model call your function, and decide what it gets back. | Python |
+| [Push events from an agent to the browser](push-events-from-an-agent-to-the-browser/) | A tool result carries a SWML user_event whose event is any JSON object the handler chooses. The bundled schema describes the verb as sending events to the connected client on the call. | Python, Markup |
 | [Write a reusable agent skill](write-a-reusable-agent-skill/) | Package a capability once and load it into any agent with one line. | Python |
 
 ### Other
@@ -87,6 +89,7 @@ Agents that answer, reason, and act on a live call.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Configure an agent per request](configure-an-agent-per-request/) | One deployed agent serves many tenants. A callback runs on every SWML request and configures an ephemeral copy from the query string or a header, so the deployed agent never changes. | Python |
+| [Run an agent as a cloud function](run-an-agent-as-a-cloud-function/) | The same agent file runs as an AWS Lambda handler. agent.run(event, context) returns the SWML for a request to the root and the tool result for a POST to /swaig, behind the same basic auth. | Python |
 | [Run an agent from one YAML file](run-an-agent-from-one-yaml-file/) | A complete working agent with nothing installed and no server of your own. | Markup |
 | [Start from a prefab agent](start-from-a-prefab-agent/) | A complete receptionist or survey agent runs from a prefab class and a short configuration block. | Python |
 | [Switch language mid-call](switch-language-mid-call/) | Change the conversation language, with a voice that suits it. | Python, Markup |
@@ -106,6 +109,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Detect an answering machine](detect-an-answering-machine/) | Tell a human from a voicemail greeting before you start talking. | Python |
 | [Place an outbound call](place-an-outbound-call/) | Dial a number from your own code and follow the call through to completion. | Python |
 | [Record a call](record-a-call/) | Start a recording and pick it up from the completion webhook. | Python, Markup |
+| [Reduce background noise on a call](reduce-background-noise-on-a-call/) | denoise switches noise reduction on for a leg and stop_denoise switches it off, in SWML or mid-call over REST as calling.denoise and calling.denoise.stop. | Markup, Python |
 | [Send DTMF to someone else's IVR](send-dtmf-to-an-external-ivr/) | Drive another company's phone tree from your own code. | Python |
 | [Take a voicemail](take-a-voicemail/) | When the bridge to the owner does not happen, connect's failed branch plays a prompt and record takes the message in the foreground. Recording events, with the download URL, go to status_url. | Markup, Python |
 
@@ -115,7 +119,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 |---|---|---|
 | [Issue a browser calling token that cannot dial anywhere](get-a-webrtc-token-with-restricted-dial-targets/) | Mint a short-lived browser token and restrict what it is allowed to call. | Python |
 | [Register an e911 address for a number](register-an-e911-address-for-a-number/) | Two REST calls: create an emergency address with the nine fields the spec requires and emergency_enabled on, then attach it to a number by the address id. | Python |
-| [Verify a caller id for outbound calls](verify-a-caller-id-for-outbound-calls/) | Three REST calls take a number you own elsewhere through verification as an outbound caller ID: register it, send back the code the verification call reads out, and redial if the code was missed. | Python |
+| [Verify a caller id for outbound calls](verify-a-caller-id-for-outbound-calls/) | Three REST requests register a number you own elsewhere as a verified caller ID, submit the code you heard, and redial the verification call if you missed it. | Python |
 
 ### Handoff
 
@@ -130,6 +134,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 |---|---|---|
 | [Barge into a live call](barge-into-a-live-call/) | Join an in-progress call with full audio, and leave without tearing it down. | Python |
 | [Listen to a live call](listen-to-a-live-call/) | Attach to a call in progress and hear both sides without joining it. | Python |
+| [Reconcile webhooks against the logs api](reconcile-webhooks-against-the-logs-api/) | A pass over a time window of the voice and message logs finds the calls and messages your webhook handler never recorded, and fetches the event trail of each missed call. | Python |
 | [Start live transcription and consume the webhook](start-live-transcription/) | Turn on transcription for a call and receive the text as it is spoken. | Python, Markup |
 | [Whisper to an agent mid-call](whisper-to-an-agent-mid-call/) | One-way audio that only the agent's leg can hear. | Python |
 
@@ -148,7 +153,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Buy a number and point it at your app](buy-a-number-and-point-it-at-your-app/) | Search by area code or pattern, purchase, and assign the number's call and message handlers, all over REST. | Python |
-| [Look up a callers carrier and name](look-up-a-callers-carrier-and-name/) | One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name, so a call can be enriched before anyone answers. | Python |
+| [Look up a callers carrier and name](look-up-a-callers-carrier-and-name/) | One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name. | Python |
 | [Translate a call in real time](translate-a-call-in-real-time/) | Each side speaks their own language on one bridge. | Python, Markup |
 
 ## Messaging
@@ -220,7 +225,7 @@ Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields
 
 These folders exist and are scaffolded. They have no working code yet.
 
-`add-a-phone-caller-to-a-video-room`, `build-an-ivr-without-a-server`, `call-an-mcp-server-from-a-live-call`, `check-consent-before-an-outbound-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `export-recordings-and-enforce-retention`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `give-an-agent-a-video-avatar`, `governed-intake-agent`, `hand-off-from-ai-to-a-human-agent`, `handle-call-status-callbacks`, `handle-opt-outs-yourself`, `improve-outbound-call-reputation`, `isolate-tenants-with-subprojects-and-scoped-tokens`, `ivr-pathfinder`, `launch-a-prebuilt-video-conference`, `let-a-browser-dial-your-agent-with-no-dashboard-setup`, `let-an-agent-see-the-callers-camera`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `push-events-from-an-agent-to-the-browser`, `put-an-agent-in-a-web-chat-widget`, `receive-calls-in-the-browser`, `reconcile-webhooks-against-the-logs-api`, `record-a-video-room`, `redact-pii-from-logs-and-transcripts`, `reduce-background-noise-on-a-call`, `register-a-sip-endpoint-and-receive-calls`, `route-calls-by-dialed-number-or-time`, `route-sip-calls-to-agents-by-username`, `run-a-bedrock-voice-agent`, `run-an-agent-as-a-cloud-function`, `run-an-ai-sidecar-on-a-live-call`, `run-livekit-agents-code-on-signalwire`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-batch-within-your-rate-limit`, `send-a-whatsapp-template-message`, `send-from-a-number-group-with-sticky-sender`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `split-one-number-into-isolated-personas`, `stream-a-video-room-to-rtmp`, `stream-call-audio-to-your-own-server`, `take-a-payment-without-the-model-seeing-the-card`, `transcribe-a-call-in-the-background`, `verify-a-webhook-signature`, `voice-support-line`
+`add-a-phone-caller-to-a-video-room`, `build-an-ivr-without-a-server`, `call-an-mcp-server-from-a-live-call`, `check-consent-before-an-outbound-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `export-recordings-and-enforce-retention`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `give-an-agent-a-video-avatar`, `governed-intake-agent`, `hand-off-from-ai-to-a-human-agent`, `handle-call-status-callbacks`, `handle-opt-outs-yourself`, `improve-outbound-call-reputation`, `isolate-tenants-with-subprojects-and-scoped-tokens`, `ivr-pathfinder`, `launch-a-prebuilt-video-conference`, `let-a-browser-dial-your-agent-with-no-dashboard-setup`, `let-an-agent-see-the-callers-camera`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `receive-calls-in-the-browser`, `record-a-video-room`, `redact-pii-from-logs-and-transcripts`, `register-a-sip-endpoint-and-receive-calls`, `route-calls-by-dialed-number-or-time`, `route-sip-calls-to-agents-by-username`, `run-a-bedrock-voice-agent`, `run-an-ai-sidecar-on-a-live-call`, `run-livekit-agents-code-on-signalwire`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-batch-within-your-rate-limit`, `send-a-whatsapp-template-message`, `send-from-a-number-group-with-sticky-sender`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `stream-a-video-room-to-rtmp`, `stream-call-audio-to-your-own-server`, `take-a-payment-without-the-model-seeing-the-card`, `transcribe-a-call-in-the-background`, `verify-a-webhook-signature`, `voice-support-line`
 
 ---
 

@@ -5,9 +5,12 @@ sent message's body, and the empty string is the only value the spec allows.
 
 Proof: with the HTTP layer replaced by a recorder, `redact` makes exactly one
 PATCH to the documented path for the id with the body `{"body": ""}`. The spec
-marks `body` required and its description says it must be an empty string;
-the operation's description names the terminal states that are eligible.
-Expected values live here, not in app.py.
+marks `body` required and its description says it must be an empty string.
+The operation's description says the call clears the body, puts queued and
+initiated on the refused side and delivered, undelivered and failed on the
+eligible side, and says the original cannot be recovered. The 200 response
+schema carries the message fields the README names. Expected values live here,
+not in app.py.
 """
 import os
 import pathlib
@@ -50,12 +53,20 @@ def main():
         schema = spec["components"]["schemas"][schema["$ref"].split("/")[-1]]
     assert schema["required"] == ["body"], schema.get("required")
     assert "empty string" in schema["properties"]["body"]["description"]
-    desc = op.get("description", "")
-    for state in ("delivered", "undelivered", "failed", "queued"):
-        assert state in desc, state
+    desc = " ".join(op.get("description", "").split())
+    # the meaning, and which states are on which side of the line
+    assert "clears the message body" in desc, desc[:200]
+    assert "(`queued` or `initiated`) cannot be redacted" in desc, desc
+    assert "`delivered`, `undelivered`, or `failed` are eligible" in desc, desc
+    assert "cannot be recovered" in desc, desc
+    resp = op["responses"]["200"]["content"]["application/json"]["schema"]
+    resp = spec["components"]["schemas"][resp["$ref"].split("/")[-1]] if "$ref" in resp else resp
+    assert {"id", "body", "status", "from", "to", "created_at"} <= set(resp["properties"])
 
     print(f"ok: PATCH {PATH} with {{\"body\": \"\"}}; the spec requires body, allows "
-          f"only the empty string, and names the eligible terminal states")
+          f"only the empty string, says the call clears the body, puts queued and "
+          f"initiated on the refused side and delivered, undelivered and failed on the "
+          f"eligible side")
 
 
 if __name__ == "__main__":

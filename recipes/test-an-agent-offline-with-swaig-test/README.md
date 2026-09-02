@@ -6,10 +6,11 @@
 
 ## What this demonstrates
 
-`swaig-test` is a console script the SDK installs alongside itself, from
-`signalwire/cli/test_swaig.py`. It imports your agent file, finds the
-`AgentBase` in it, and gives you three things you otherwise need a live call
-for. `--dump-swml --raw` prints the exact document the platform would fetch.
+`swaig-test` is a console script the SDK installs alongside itself. Its entry
+point is `signalwire.cli.swaig_test_wrapper:main`, and `signalwire/cli/test_swaig.py`
+is the implementation. It imports your agent file, finds the `AgentBase` in it,
+and lets you inspect three things before any call.
+`--dump-swml --raw` prints the exact document the platform would fetch.
 `--list-tools` prints every tool with its parameters. `--exec <tool> --<arg>
 value` runs the handler with fake call data and prints the `FunctionResult`.
 
@@ -51,8 +52,8 @@ swaig-test app.py --exec check_hours --day thursday
 python app.py                    # when you are ready to serve it for real
 ```
 
-`swaig-test` reads `.env` from the current directory, so the basic-auth pair
-is picked up the same way `app.py` picks it up.
+Importing `app.py` runs its `load_dotenv()`, so the basic-auth pair in `.env`
+reaches the agent the same way it does when you serve it.
 
 ## Verify it
 
@@ -63,18 +64,19 @@ cd ..                     # back to the recipe folder
 python verify.py
 ```
 
-The verifier runs the CLI as a subprocess against `python/app.py` and asserts
-the following.
+The verifier runs the CLI as a subprocess against `python/app.py`, four times,
+and asserts the following.
 
 - `--dump-swml --raw` prints JSON that validates against the bundled schema and carries exactly one tool, `check_hours`
-- `--list-tools` names the tool and shows `day (string) (required)`
-- `--exec check_hours --day saturday` prints the handler's exact response
-- `--exec check_hours --day someday` prints the handler's `INVALID` refusal
+- `--list-tools` prints the tool's block: its description line, `Parameters:`, then `day (string) (required)` with its description, and no second tool
+- `--exec check_hours --day saturday` prints `RESULT:` and then the handler's exact response on the `FunctionResult:` line
+- `--exec check_hours --day someday` prints the handler's `INVALID` refusal the same way
+- the child process gets an environment with only the SDK path and the basic-auth pair, so no account credential is in reach
 
 ## Limitations
 
-`swaig-test` runs your handler; it does not run the model. Whether the model
-would call `check_hours` for "are you open Saturday" is a live-call question.
+`swaig-test` runs your handler; it does not run the model. It cannot tell you
+whether the model would choose `check_hours` for a given sentence.
 
 The CLI is Python-only. A SWML-only recipe has nothing for it to load; validate
 those documents with the schema instead.
