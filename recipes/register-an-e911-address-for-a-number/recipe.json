@@ -1,9 +1,9 @@
 {
   "slug": "register-an-e911-address-for-a-number",
   "title": "Register an e911 address for a number",
-  "alias": "",
-  "summary": "An emergency address is created, validated and attached to a number over REST, and the status goes pending then active.",
-  "scenario": "",
+  "alias": "addresses create + phone_numbers e911_address",
+  "summary": "Two REST calls: create an emergency address with the nine fields the spec requires and emergency_enabled on, then attach it to a number by the address id.",
+  "scenario": "A workshop that puts its street address behind the number its staff dial out on",
   "surfaces": [
     "python"
   ],
@@ -22,7 +22,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "numbers-identity",
     "folds": [
       "sol gap #6",
@@ -31,8 +31,17 @@
     "evidence": [
       "docs platform/e911 (self-service, US only, test with 933)",
       "docs apis/rest/e-911-addresses/create-address",
-      "sdk rest/namespaces/addresses.py"
+      "sdk rest/namespaces/addresses.py",
+      "tools/openapi/rest.json POST /api/relay/rest/addresses required [label,country,first_name,last_name,street_number,street_name,city,state,postal_code]; POST /api/relay/rest/phone_numbers/{id}/e911_address required [e911_address_id]",
+      "sdk rest/namespaces/addresses.py create; no wrapper for the e911_address path in 3.0.1",
+      "verified 2026-09-02: recipes/register-an-e911-address-for-a-number/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "verify-a-caller-id-for-outbound-calls"
+  ]
 }

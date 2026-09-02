@@ -8,9 +8,9 @@
 
 `GET /api/relay/rest/lookup/phone_number/{e164}` returns what the platform knows
 about a number. The vendored REST spec describes `include` as "further number
-information to include in the response, some of which are billable", with two
-values: `carrier` for "full carrier information" and `cnam` for "Caller ID
-information", joined by a comma. The SDK wraps the call as
+information to include in the response, some of which are billable". It takes
+two values, joined by a comma: `carrier` for "full carrier information" and
+`cnam` for "Caller ID information". The SDK wraps the call as
 `client.lookup.phone_number(e164, **params)`.
 
 ## How it works

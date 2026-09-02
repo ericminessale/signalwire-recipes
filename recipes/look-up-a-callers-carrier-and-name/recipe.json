@@ -1,12 +1,11 @@
 {
   "slug": "look-up-a-callers-carrier-and-name",
   "title": "Look up a callers carrier and name",
-  "alias": "",
-  "summary": "One REST call returns carrier, line type and CNAM for a number, so a call can be enriched or screened before it is answered.",
-  "scenario": "",
+  "alias": "lookup include=carrier,cnam",
+  "summary": "One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name, so a call can be enriched before anyone answers.",
+  "scenario": "A support line that wants to know who is calling before the agent picks up",
   "surfaces": [
-    "python",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -22,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "numbers-identity",
     "folds": [
       "t:cnam-caller-id-lookup-enrichment",
@@ -33,8 +32,16 @@
     ],
     "evidence": [
       "docs apis/rest/phone-numbers/lookup-phone-number (include=, billable)",
-      "sdk rest/namespaces/lookup.py"
+      "sdk rest/namespaces/lookup.py",
+      "tools/openapi/rest.json GET /api/relay/rest/lookup/phone_number/{e164_number}: include=carrier,cnam (billable); PhoneNumberLookupResponse carrier{lrn,spid,ocn,lata,city,state,jurisdiction,lec,linetype} cnam{caller_id}",
+      "sdk rest/namespaces/lookup.py phone_number(e164, **params)",
+      "verified 2026-09-02: recipes/look-up-a-callers-carrier-and-name/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [],
+  "related": [
+    "give-an-agent-a-tool",
+    "configure-an-agent-per-request"
+  ]
 }

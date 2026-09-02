@@ -1210,6 +1210,40 @@ keep-heavy-state-out-of-global-data. What the round taught:
 - **`.strip()` a heredoc is not enough; a heredoc with `\` is never safe.**
   Nothing new, but it bit once more this wave.
 
+## Wave 4 of the fill-out (2026-09-02)
+
+Five REST and tooling recipes: verify-a-caller-id-for-outbound-calls,
+look-up-a-callers-carrier-and-name, register-an-e911-address-for-a-number,
+redact-a-message-body-after-sending and test-an-agent-offline-with-swaig-test.
+
+- **The vendored REST spec is a proof surface, not only a lookup.** Four of
+  the five verifiers read the spec's `required` lists, enum values and even
+  operation descriptions and assert the recipe agrees, so a README sentence
+  like "the empty string is the only accepted value" is tested against the
+  spec text rather than remembered.
+- **The redact endpoint clears, it does not edit.** `PATCH
+  /api/messaging/messages/{id}` accepts only `{"body": ""}`; anything else is
+  `body_must_be_empty`. Queued and initiated messages are refused; delivered,
+  undelivered and failed are eligible. The id is the segment id from the send.
+- **Two paths have no SDK wrapper in 3.0.1**: the messaging redact and
+  `phone_numbers/{id}/e911_address`. `RestClient` builds one `HttpClient` and
+  every namespace holds it as `_http` (`rest/client.py:74-85`), so a recipe
+  can send an unwrapped request through `client._http` or
+  `client.<namespace>._http`. Say so in the README; sol reads it as an
+  accident otherwise.
+- **`swaig-test` runs as `python -m signalwire.cli.swaig_test_wrapper
+  <agent.py>`**, which a verifier can drive as a subprocess with `PYTHONPATH`
+  set to the loaded SDK's parent directory. `--exec` prints `RESULT:` then
+  `FunctionResult: <response>`; `--list-tools` prints `day (string)
+  (required)`; `--dump-swml --raw` prints the JSON document. It runs the
+  handler, never the model.
+- **Lookup's `include=carrier,cnam` is billable**, per the spec's own
+  description; the response's `carrier` object carries `linetype` and `cnam`
+  carries `caller_id`.
+- **Scripts that `exec` another script need `__file__` in the namespace.**
+  And a long Python patch still goes through `Write`, never a heredoc: two
+  heredocs died this wave on quoting alone, with no backslash in sight.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

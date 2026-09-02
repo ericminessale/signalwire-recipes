@@ -1,9 +1,9 @@
 {
   "slug": "test-an-agent-offline-with-swaig-test",
   "title": "Test an agent offline with swaig test",
-  "alias": "",
-  "summary": "An agent's SWML and every tool can be exercised from the CLI with fake call data before it is ever deployed.",
-  "scenario": "",
+  "alias": "swaig-test --dump-swml / --list-tools / --exec",
+  "summary": "The SDK's swaig-test command loads an agent file and, with no number, tunnel or account, prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.",
+  "scenario": "Checking a shop-hours agent before it ever answers a call",
   "surfaces": [
     "python"
   ],
@@ -20,15 +20,23 @@
   "tier": "next",
   "plan": {
     "kind": "guide",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [],
     "evidence": [
       "sdk cli/test_swaig.py:222 (--dump-swml, --exec, --simulate-serverless)",
       "features Swaig-test CLI",
       "demo ginospizza test_flow.sh (131 swaig-test cases)",
-      "demo pathfinder (201 offline tests)"
+      "demo pathfinder (201 offline tests)",
+      "sdk pyproject.toml console script swaig-test = signalwire.cli.swaig_test_wrapper:main; cli/test_swaig.py --dump-swml --raw, --list-tools, --exec <fn> --<arg> value",
+      "verified 2026-09-02: recipes/test-an-agent-offline-with-swaig-test/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "stream-agent-debug-events"
+  ]
 }

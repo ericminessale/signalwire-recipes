@@ -1,9 +1,9 @@
 {
   "slug": "verify-a-caller-id-for-outbound-calls",
   "title": "Verify a caller id for outbound calls",
-  "alias": "",
-  "summary": "A number you own elsewhere becomes a permitted outbound caller ID after an automated verification call.",
-  "scenario": "",
+  "alias": "verified_caller_ids create / verification",
+  "summary": "Three REST calls take a number you own elsewhere through verification as an outbound caller ID: register it, send back the code the verification call reads out, and redial if the code was missed.",
+  "scenario": "A shop that wants outbound calls to show its long-standing mobile number",
   "surfaces": [
     "python"
   ],
@@ -20,13 +20,22 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "numbers-identity",
     "folds": [],
     "evidence": [
       "docs apis/rest/verified-caller-id/create-verified-caller-id",
-      "sdk rest/namespaces/verified_callers.py"
+      "sdk rest/namespaces/verified_callers.py",
+      "tools/openapi/rest.json POST /api/relay/rest/verified_caller_ids required [number]; PUT .../{id}/verification required [verification_code]; POST .../{id}/verification redial",
+      "sdk rest/namespaces/verified_callers.py create, submit_verification, redial_verification",
+      "verified 2026-09-02: recipes/verify-a-caller-id-for-outbound-calls/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "place-an-outbound-call"
+  ]
 }

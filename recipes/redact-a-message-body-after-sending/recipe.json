@@ -1,9 +1,9 @@
 {
   "slug": "redact-a-message-body-after-sending",
   "title": "Redact a message body after sending",
-  "alias": "",
-  "summary": "A sent or received message's body is redacted in SignalWire's records over REST while the delivery record survives.",
-  "scenario": "",
+  "alias": "PATCH messaging/messages body \"\"",
+  "summary": "One PATCH with body \"\" clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible.",
+  "scenario": "A one-time code was texted and must not stay in anyone's message logs",
   "surfaces": [
     "python"
   ],
@@ -20,13 +20,22 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "messaging",
     "folds": [],
     "evidence": [
       "docs apis/rest/messages/update-message (PATCH redact)",
-      "compat Messages update (redact)"
+      "compat Messages update (redact)",
+      "tools/openapi/rest.json PATCH /api/messaging/messages/{message_id}: body required, only \"\" accepted (body_must_be_empty); eligible states delivered|undelivered|failed, not queued|initiated",
+      "sdk: no wrapper for the messaging redact path in 3.0.1; sent through RestClient._http",
+      "verified 2026-09-02: recipes/redact-a-message-body-after-sending/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "send-an-sms"
+  ],
+  "related": [
+    "send-an-otp-by-sms-with-voice-fallback"
+  ]
 }
