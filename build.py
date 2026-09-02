@@ -675,6 +675,8 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fcard .fn{font-family:var(--mono);font-size:11px;color:var(--fg-muted);}
 .fcard .fc{font-size:11.5px;color:var(--fg-subtle);margin-left:auto;}
 .fcard.build .fc{display:inline-flex;align-items:center;gap:6px;color:var(--fg-2);}
+/* the glyphs on a featured build match the build cards: near-white, not the accent */
+.fcard.build:not(.planned) .ftile{color:var(--fg-2);}
 .fcard.build .fc .dot{width:7px;height:7px;border-radius:50%;background:var(--fuchsia);display:inline-block;}
 /* A planned card has nothing behind it, so it does not get the lift. */
 .fcard.planned{cursor:default;background:var(--surface);box-shadow:none;
