@@ -33,6 +33,7 @@ os.environ.update({
     "SIGNALWIRE_API_TOKEN": "PT-test",
     "SIGNALWIRE_SPACE": "example.signalwire.com",
     "QUEUE_NAME": "support",
+    "NOTES_PATH": str(HERE / "python" / ".verify-notes.json"),
 })
 
 import verifylib as V  # noqa: E402
@@ -56,6 +57,8 @@ def main():
     from app import agent, take
     import app as recipe
 
+    notes_file = pathlib.Path(os.environ["NOTES_PATH"])
+    notes_file.unlink(missing_ok=True)  # start from no notes, as a fresh clone does
     V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)
@@ -74,7 +77,9 @@ def main():
     assert V.verb_names(action["SWML"]) == ["enter_queue"], V.verb_names(action["SWML"])
     assert V.first(action["SWML"], "enter_queue") == {"queue_name": "support",
                                                        "transfer_after_bridge": "false"}
-    assert recipe.NOTES == {CALL: NOTE}, recipe.NOTES
+    # the notes are on disk, where a second process can read them; the first
+    # version kept a dictionary that python app.py brief never saw (codex)
+    assert json.loads(notes_file.read_text(encoding="utf-8")) == {CALL: NOTE}
 
     # the human's side: the next member's call_id is the key
     rec = V.Recorder(responses=[
@@ -84,6 +89,9 @@ def main():
     recipe.client.queues._http = rec
     queue_id = recipe.find_queue()
     assert queue_id == QID
+    import importlib
+    recipe = importlib.reload(recipe)  # a second interpreter, as far as NOTES go
+    recipe.client.queues._http = rec
     screen = recipe.brief(queue_id)
     assert screen == {"call_id": CALL, "position": 1, "waiting_seconds": 42, "notes": NOTE}, screen
     assert [(c["method"], c["path"]) for c in rec.calls] == \
@@ -109,6 +117,7 @@ def main():
     assert defs["EnterQueueObject"]["required"] == ["queue_name", "transfer_after_bridge"]
     assert "queue:" in defs["ConnectDeviceSingle"]["properties"]["to"]["description"]
 
+    notes_file.unlink(missing_ok=True)
     print(f"ok: hand_off stores notes under {CALL[:10]}... and returns one enter_queue(support) "
           f"with transfer; the next queue member carries that call_id and brief() finds the notes; "
           f"the human connects to queue:support")

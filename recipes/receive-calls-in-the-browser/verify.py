@@ -18,6 +18,7 @@ no address fails with a message. Expected values live here, not in app.py.
 """
 import os
 import pathlib
+import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).parent
@@ -122,8 +123,22 @@ def main():
     to_desc = V.swml_schema()["$defs"]["ConnectDeviceSingle"]["properties"]["to"]["description"]
     assert "Call Fabric Resource address" in to_desc, to_desc
 
+    # the browser side registers and answers; the first version pointed at a
+    # client that only dials (codex, wave 10 review)
+    ts = (HERE / "typescript" / "index.ts").read_text(encoding="utf-8")
+    for needle in ("SignalWire({ token })", "client.online(", "incomingCallHandlers",
+                   ".accept({ rootElement", ".reject()"):
+        assert needle in ts, f"typescript client lacks {needle}"
+    tsc = HERE / "typescript" / "node_modules" / ".bin" / ("tsc.cmd" if os.name == "nt" else "tsc")
+    if tsc.exists():
+        subprocess.run([str(tsc), "--noEmit"], cwd=HERE / "typescript", check=True)
+        compiled = "typescript type-checked against @signalwire/js"
+    else:
+        compiled = "typescript not type-checked (run npm ci in typescript/ first)"
+
     print(f"ok: POST {SUBSCRIBERS} email+display_name, GET its addresses -> {ADDRESS}, POST {TOKENS} "
-          f"reference; the ring document connects to {ADDRESS}; every path, body and required field is documented")
+          f"reference; the ring document connects to {ADDRESS}; every path, body and required field is "
+          f"documented; the browser registers with client.online and answers; {compiled}")
 
 
 if __name__ == "__main__":

@@ -60,10 +60,18 @@ And the document a number runs, with the address from the listing:
   {"connect": {"to": "/private/dana", "timeout": 30}}, {"hangup": {}}]}}
 ```
 
-The browser registers with the token through the Browser SDK, which is the
-client side and outside this recipe; `call-from-a-browser` shows that client.
-The token is per person and expires, so your server mints one when the
-mechanic signs in.
+The browser side is `typescript/index.ts`, on the Browser SDK v3. It builds a
+client from the subscriber token and registers with `client.online`. Each call
+arrives at the handler as an `invite`. `accept({rootElement})` renders the call
+into an element and `reject()` declines it. The token is per person and
+expires, so your server mints one when the mechanic signs in. The page here
+takes it pasted, because the recipe runs no server.
+
+```ts
+const client = await SignalWire({ token });
+await client.online({ incomingCallHandlers: { all: (n) => { pending = n.invite; } } });
+await pending.accept({ rootElement: document.getElementById("call")! });
+```
 
 ## Run it
 
@@ -74,6 +82,7 @@ cp ../.env.example .env          # then edit .env: credentials, the subscriber's
 python app.py subscriber         # once: prints the resource id and the address
 python app.py token              # per sign-in: the token the browser registers with
 python app.py document /private/dana    # the SWML, to serve from a number's webhook
+cd ../typescript && npm ci && npm start # the page: paste the token, go online, answer
 ```
 
 There is no server to expose here; the script speaks to the REST API and
@@ -99,12 +108,13 @@ address and one token. You call the helpers and assert the following.
 - the token answers with `subscriber_id`, `token` and `refresh_token`; the address list carries `id`, `name` and `channels`, and the fixture uses only documented fields
 - the document validates, its verbs are `answer`, `play`, `connect`, `hangup`, and `connect` is exactly the address with a 30-second timeout
 - the bundled schema lists a Call Fabric Resource address among the forms `connect.to` takes
+- the browser client builds a `SignalWire` client from a token, calls `client.online` with an `incomingCallHandlers` entry, and answers with `invite.accept` into a root element; it type-checks against the installed `@signalwire/js` when `typescript/node_modules` exists
 
 ## Limitations
 
-You prove the requests, the shapes and the document. Whether the browser rings,
-and what happens when nobody is registered, are the platform's side of a live
-call. The browser code is in `call-from-a-browser`.
+You prove the requests, the shapes, the document and that the client compiles
+against the SDK's types. Whether the browser rings, and what happens when
+nobody is registered, are the platform's side of a live call.
 
 A subscriber token is a credential for that person. Mint it on your server
 after your own sign-in and hand it over HTTPS.

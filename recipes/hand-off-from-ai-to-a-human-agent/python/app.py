@@ -17,7 +17,9 @@ queue member carries it as `call_id`, and nothing else has to agree.
 Written against signalwire-sdk 3.0.1 (AgentBase, FunctionResult,
 RestClient.queues, SWMLService).
 """
+import json
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from signalwire import AgentBase, FunctionResult, SWMLService
@@ -32,8 +34,23 @@ client = RestClient()
 
 QUEUE = os.getenv("QUEUE_NAME", "support")
 
-# call_id -> what the agent learned before it handed off; swap for your database
-NOTES = {}
+# call_id -> what the agent learned before it handed off. The agent and the
+# human's screen are two processes (python app.py, then python app.py brief),
+# so the notes live in a file both can open; swap the two functions for your
+# database. A dictionary here would be empty in the second process.
+NOTES_PATH = Path(os.getenv("NOTES_PATH", "handoff-notes.json"))
+
+
+def save_note(call_id, note):
+    notes = load_notes()
+    notes[call_id] = note
+    NOTES_PATH.write_text(json.dumps(notes, indent=2), encoding="utf-8")
+
+
+def load_notes():
+    if not NOTES_PATH.exists():
+        return {}
+    return json.loads(NOTES_PATH.read_text(encoding="utf-8"))
 
 # enter_queue: the caller waits here; "false" means carry on in this document
 # after the bridge, and there is nothing after it, so the call ends with the bridge
@@ -67,11 +84,11 @@ class TriageAgent(AgentBase):
     )
     def hand_off(self, args, raw_data):
         call_id = raw_data["call_id"]
-        NOTES[call_id] = {
+        save_note(call_id, {
             "caller_name": args["caller_name"],
             "issue": args["issue"],
             "from": raw_data.get("caller_id_num"),
-        }
+        })
         result = FunctionResult("Thanks. I am putting you through to a person now.")
         # the documented action: the SWML, and a sibling transfer flag so the
         # call leaves the agent for the queue (execute_swml(transfer=True) puts
@@ -93,7 +110,8 @@ def brief(queue_id):
     member = client.queues.get_next_member(queue_id)
     call_id = member["call_id"]
     return {"call_id": call_id, "position": member.get("position"),
-            "waiting_seconds": member.get("wait_time"), "notes": NOTES.get(call_id)}
+            "waiting_seconds": member.get("wait_time"),
+            "notes": load_notes().get(call_id)}
 
 
 def take(service=None):
@@ -107,7 +125,6 @@ def take(service=None):
 agent = TriageAgent()
 
 if __name__ == "__main__":
-    import json
     import sys
 
     if len(sys.argv) == 2 and sys.argv[1] == "brief":

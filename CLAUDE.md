@@ -1566,6 +1566,21 @@ and a paced batch send.
   `calls` or `messages`". The recipe sent `calls` and the verifier passed
   because it checked that "calls" appeared in the description. When a schema
   has an enum, the verifier reads the enum and checks the sent value is in it.
+- **A recipe whose claim is the browser side ships the browser side.**
+  receive-calls-in-the-browser declared only Python and pointed at a client
+  that dials; codex read it as the clone-and-run contract broken. Browser SDK
+  **v3** (`@signalwire/js` 3.30.0) is what documents receiving: `client.online({
+  incomingCallHandlers })`, `invite.accept({ rootElement })`, `invite.reject()`;
+  the v4 release candidate on the dialling recipe has no incoming-call API in
+  its types. Type-check the client against the installed SDK, and prefer the
+  SDK's inferred types to a cast.
+- **Two documented processes cannot share a dictionary.** `python app.py`
+  and `python app.py brief` are two interpreters; the hand-off notes lived in
+  a module-level dict and the verifier, running both halves in one process,
+  never noticed. State that crosses the documented commands goes to a file or
+  a store, and the verifier reloads the module between the halves.
+- **Re-read the clock after a sleep.** A pacer that computes the next slot
+  from the time before it slept lets an oversleep shorten the next gap.
 - **Sign the callback URL once.** A configured status URL that already has a
   query string is the URL SignalWire signs; appending the request's query to
   it again computed the HMAC over `...?x=1?x=1` and refused genuine callbacks.

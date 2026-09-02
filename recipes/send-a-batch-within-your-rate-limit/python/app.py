@@ -60,6 +60,7 @@ def send_batch(recipients, body, number_type=NUMBER_TYPE,
         now = clock()
         if now < next_at:
             sleep(next_at - now)
+            now = clock()  # a sleep can overshoot; pace from when it woke
         results.append(http.post("/api/messaging/messages",
                                  body={"to": to, "from": FROM, "body": body}))
         next_at = max(now, next_at) + interval

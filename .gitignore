@@ -32,3 +32,7 @@ design/
 
 # the deploy build venv (tools/vercel_build.sh)
 .vbuild/
+
+# the hand-off recipe's local notes store, and its verifier's scratch copy
+handoff-notes.json
+.verify-notes.json

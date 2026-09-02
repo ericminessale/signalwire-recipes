@@ -45,9 +45,12 @@ POST /api/messaging/messages
 ```
 
 `next_at` moves forward by the interval from the later of now and the previous
-slot. A slow response therefore does not let the next send catch up in a
-burst. The clock and the sleep are arguments, so the verifier can run the pacer
-against a fake clock. You can swap in an async sleep the same way.
+slot. The clock is read again after a sleep, so a sleep that overshoots pushes
+the next slot out instead of letting two sends land close together. A slow
+response does not let the next send catch up in a burst either. The clock and
+the sleep are arguments, so the verifier can run the pacer against a fake
+clock. Both are synchronous callables; an `asyncio.sleep` passed here would
+not be awaited.
 
 ## Run it
 
@@ -80,6 +83,7 @@ the following.
 - the clock reads at the ten sends are exactly 0.25 seconds apart, the batch spans 2.25 seconds, and the pacer slept nine times for 0.25
 - the platform's responses come back in order
 - four messages at the toll-free rate are a third of a second apart
+- with a sleep that overshoots by 50 ms every time, no two sends are closer than the interval
 - a batch of 10,001 recipients, and an unknown number type, raise before any request
 
 ## Limitations

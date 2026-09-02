@@ -91,6 +91,27 @@ def main():
     assert clock.sleeps == [0.25] * 9, clock.sleeps
     assert [r["id"] for r in results] == [f"m{i}" for i in range(10)], results
 
+    # a sleep that overshoots must not let the next send land early (codex,
+    # wave 10 review): the pacer re-reads the clock after sleeping
+    late = FakeClock()
+    real_sleep = late.sleep
+    late.sleep = lambda seconds: real_sleep(seconds + 0.05)
+    rec2 = V.Recorder(responses=[{"id": f"m{i}", "status": "queued"} for i in range(5)])
+    stamps2 = []
+    real_post2 = rec2.post
+
+    def stamped_post2(path, body=None, params=None):
+        stamps2.append(late.now)
+        return real_post2(path, body, params)
+
+    rec2.post = stamped_post2
+    recipe.http = rec2
+    recipe.send_batch([f"+1555020{i:04d}" for i in range(5)], BODY, "10dlc",
+                      clock=late.clock, sleep=late.sleep)
+    gaps2 = [round(b - a, 6) for a, b in zip(stamps2, stamps2[1:])]
+    assert all(g >= 0.25 for g in gaps2), gaps2
+    assert gaps2 == [0.3] * 4, gaps2
+
     # the toll-free rate spaces them a third of a second apart
     _, _, stamps, _, _ = paced_run(recipe, "toll-free", 4)
     gaps = [round(b - a, 4) for a, b in zip(stamps, stamps[1:])]

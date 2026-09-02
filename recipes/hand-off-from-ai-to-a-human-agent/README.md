@@ -21,15 +21,15 @@ is `queue:support`, one of the forms the schema lists for `connect.to`.
 ```python
 def hand_off(self, args, raw_data):
     call_id = raw_data["call_id"]
-    NOTES[call_id] = {"caller_name": args["caller_name"], "issue": args["issue"],
-                      "from": raw_data.get("caller_id_num")}
+    save_note(call_id, {"caller_name": args["caller_name"], "issue": args["issue"],
+                        "from": raw_data.get("caller_id_num")})
     result = FunctionResult("Thanks. I am putting you through to a person now.")
     result.action.append({"SWML": ENQUEUE, "transfer": "true"})   # the documented shape
     return result
 
 def brief(queue_id):
     member = client.queues.get_next_member(queue_id)
-    return {"call_id": member["call_id"], ..., "notes": NOTES.get(member["call_id"])}
+    return {"call_id": member["call_id"], ..., "notes": load_notes().get(member["call_id"])}
 ```
 
 What the platform receives from the tool, then what the human's phone runs:
@@ -47,10 +47,11 @@ What the platform receives from the tool, then what the human's phone runs:
 on in this document after the bridge, and there is nothing after it. The
 `transfer: "true"` beside the SWML is what the tool webhook documents for a
 call that leaves the agent. `FunctionResult.execute_swml(transfer=True)` would
-put that flag inside the document, so the action is built by hand. `NOTES` is
-a dictionary, the stand-in for whatever the human's screen reads from. The
-screen asks for the next member, takes its `call_id`, and shows the notes filed
-under it.
+put that flag inside the document, so the action is built by hand. The notes
+go to a JSON file at `NOTES_PATH`. The agent and the screen are two processes,
+so a dictionary in the agent would be empty in the shell that runs `brief`.
+Swap the two functions for your database. The screen asks for the next member,
+takes its `call_id`, and shows the notes filed under it.
 
 ## Run it
 
@@ -86,6 +87,7 @@ recorder, and asserts the following.
 - that action's SWML validates, holds exactly one `enter_queue` with `queue_name: support` and `transfer_after_bridge: "false"`, and carries `transfer: "true"`
 - the notes sit under the call id with the name, the issue and the number, and nothing else
 - `find_queue` makes one `GET` of the documented queues list and picks the queue by `friendly_name`
+- the notes land in the file at `NOTES_PATH`, and `brief`, run after the module is reloaded as a second process would load it, reads them back from there
 - `brief` makes one `GET` of the documented next-member path, with no body or query, and returns the member's position, wait and the notes for its `call_id`
 - the spec documents `call_id`, `position` and `wait_time` on the member and describes the read as "without dequeuing"
 - the human's document validates and connects to `queue:support`; the schema requires `queue_name` and `transfer_after_bridge` and lists the `queue:` form for `connect.to`
@@ -101,6 +103,6 @@ can read, keyed by `call_id`, before anything depends on it.
 
 ## What to change first
 
-Key `NOTES` by `args["caller_name"]` instead of `call_id` and run the verifier.
+Key the note by `args["caller_name"]` instead of `call_id` and run the verifier.
 The `brief` assertion fails, because the queue member carries a call id and no
 name. The id is the only field both sides hold.
