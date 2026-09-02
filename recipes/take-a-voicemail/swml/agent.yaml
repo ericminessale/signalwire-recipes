@@ -1,6 +1,6 @@
-# Take a voicemail. `connect` rings the owner; when the bridge does not happen,
+# Take a voicemail. `connect` rings the owner. When the bridge does not happen,
 # `result`'s failed branch plays a prompt and `record` takes the message in
-# the foreground, stopping on `#`, silence or max_length. The platform POSTs
+# the foreground. It stops on `#`, silence or max_length. The platform POSTs
 # recording events, including the download URL, to status_url.
 version: "1.0.0"
 sections:

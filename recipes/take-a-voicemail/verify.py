@@ -1,15 +1,16 @@
 """Prove the claim without a network.
 
 Claim: when the bridge to the owner does not happen, the document plays a
-prompt and records the caller's message in the foreground, and the recording
+prompt and records the caller's message in the foreground. The recording
 events go to `status_url`.
 
 Proof: both surfaces validate against the SWML schema. The `connect` carries
 the owner's number and a timeout. Its `result.case.failed` branch is play,
-record, play, hangup; the record carries a beep, an mp3 format, a max length,
-an end-of-silence timeout, `#` as the terminator and a `status_url` on your
-host. The connected branch only hangs up. The two surfaces render the same
-document. Expected values live here, not in app.py.
+record, play, hangup, with the exact prompt and thanks. The record carries a
+beep, an mp3 format, a max length, an end-of-silence timeout, `#` as the
+terminator and a `status_url` on your host. The connected branch only hangs
+up. The two surfaces render the same document. Expected values live here, not
+in app.py.
 """
 import os
 import pathlib

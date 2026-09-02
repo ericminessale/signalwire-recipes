@@ -1,6 +1,6 @@
 # Place an outbound AI call
 
-> One REST `dial` carries the agent's SWML inside the request. Two `ai` params make it outbound: `direction: outbound`, and `wait_for_user: true` so the agent waits for the callee to speak first.
+> One REST `dial` carries the agent's SWML inside the request. `direction: outbound` makes the agent the caller, and `wait_for_user: true` makes it wait for the callee to speak first.
 
 **Scenario:** a workshop calling a customer to say their bike is ready
 
@@ -9,7 +9,7 @@
 `POST /api/calling/calls` with `command: dial` and the SWML dial variant, which
 the vendored REST spec defines with `from` and `swml` required. The document is
 an ordinary `AgentBase` rendered with `_render_swml()`. Two entries in its
-`ai.params` change the shape of the conversation. The
+`ai.params` do two different jobs. The
 [ai params reference](https://signalwire.com/docs/swml/reference/ai/params)
 says `direction` "forces the direction of the call to the assistant". It says
 `wait_for_user: true` means the "agent will wait for the user to speak first".
@@ -46,8 +46,9 @@ The bundled schema bounds `outbound_attention_timeout` to 10,000 through
 600,000, and the verifier reads that range from the schema. The spec has a
 second dial variant, `Calling.CallCreateParamsURL`, that takes `url` in place
 of `swml`; this recipe inlines the document instead. The `swml/` surface is a
-plain-SWML version of the document with the same two params; the agent's
-rendering adds `answer` and a `pom` prompt.
+plain-SWML version of the document with the same two params. The agent's
+rendering opens with `answer` and carries a `pom` prompt, which the verifier
+asserts.
 
 ## Run it
 
@@ -75,7 +76,7 @@ asserts the following.
 - exactly one `POST` to the documented calling path with `command: dial`
 - every dial parameter is a documented property of the SWML dial variant, and the required ones are present
 - `to` and `from` carry the configured numbers, and the request carries no `url`
-- the inline document validates against the bundled schema and opens with the agent's `Role` section
+- the inline document validates against the bundled schema, opens with `answer`, and its prompt opens with the agent's `Role` section
 - `ai.params` carry `direction: outbound` and `wait_for_user: true`
 - the spec's `required` for that variant includes `from` and `swml`
 - `outbound_attention_timeout` sits inside the range the bundled schema gives

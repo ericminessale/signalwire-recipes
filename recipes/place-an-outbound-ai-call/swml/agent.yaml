@@ -1,8 +1,8 @@
 # Place an outbound AI call: a plain-SWML version of the document app.py
 # renders from its AgentBase and puts in the dial request. It shares the two
-# params that make the conversation outbound. direction forces the call's
-# direction to the assistant; wait_for_user makes the agent wait for the
-# callee's first words.
+# params. direction forces the call's direction to the assistant, which makes
+# the agent the caller; wait_for_user makes the agent wait for the callee's
+# first words.
 version: "1.0.0"
 sections:
   main:

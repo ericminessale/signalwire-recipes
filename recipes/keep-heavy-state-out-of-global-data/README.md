@@ -37,11 +37,11 @@ After the third finding, what the platform receives:
 The three findings in the store run to several hundred bytes; the whole
 `action` stays under 120. Because `areas` holds distinct values, twenty more
 findings on one area leave it the same size. `read_back_report` reads
-`STORE[call_id]`, not `global_data`, so the model receives the full text only
-when it asks for the report, and never carries it between turns.
+`STORE[call_id]`, not `global_data`. `global_data` never carries the full text
+between turns; the model receives it in the read-back response.
 
 `call_id` is the key because it is the one identifier the platform attaches to
-every tool call for the life of the call. Two calls in flight at once get two
+every tool call for the life of the call. Two distinct call ids get two
 records.
 
 ## Run it

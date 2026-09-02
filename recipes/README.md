@@ -28,7 +28,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Place an outbound ai call](place-an-outbound-ai-call/) | One REST dial carries the agent's SWML inside the request. Two ai params make it outbound: direction outbound, and wait_for_user so the agent waits for the callee to speak first. | Python, Markup |
+| [Place an outbound ai call](place-an-outbound-ai-call/) | One REST dial carries the agent's SWML inside the request. direction outbound makes the agent the caller, and wait_for_user makes it wait for the callee to speak first. | Python, Markup |
 
 ### Governance
 

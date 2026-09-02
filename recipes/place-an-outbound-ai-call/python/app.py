@@ -1,10 +1,10 @@
 """Place an outbound AI call.
 
 One REST `dial` command carries the agent's SWML inside the request. Two
-`params` on the `ai` verb make it an outbound conversation. `direction:
-outbound` forces the call's direction to the assistant. `wait_for_user: true`
-makes the agent wait for the callee to speak first. Both are documented in the
-ai params reference.
+`params` on the `ai` verb do two jobs. `direction: outbound` forces the call's
+direction to the assistant, which makes the agent the caller. `wait_for_user:
+true` makes the agent wait for the callee to speak first. Both are documented
+in the ai params reference.
 
 The agent is an ordinary AgentBase; `_render_swml()` gives the document the
 platform would otherwise fetch from it.
@@ -35,8 +35,8 @@ class ReminderAgent(AgentBase):
             "bike is ready, ask when they would like to collect it, then say "
             "goodbye.",
         )
-        # outbound: the agent is the caller, and it waits for the callee's
-        # first words rather than speaking into the ring
+        # direction makes the agent the caller; wait_for_user makes it wait
+        # for the callee's first words rather than speaking into the ring
         self.set_params({"direction": "outbound", "wait_for_user": True,
                          "outbound_attention_timeout": 20000})
 

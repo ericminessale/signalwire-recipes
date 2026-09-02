@@ -1,7 +1,7 @@
 """Take a voicemail.
 
 `connect` rings the owner. When the bridge does not happen, `result`'s failed
-branch plays a prompt and `record` takes the message in the foreground: it
+branch plays a prompt and `record` takes the message in the foreground. It
 runs until `#`, silence or `max_length`, then execution continues. The
 platform POSTs recording events, including the download URL, to `status_url`,
 which is an endpoint you run; this app does not serve one. It also sets

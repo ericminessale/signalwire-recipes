@@ -27,8 +27,8 @@
       "#19 (the dealer cannot be talked out of a bust)"
     ],
     "evidence": [
+      "sdk function_result.py add_action('set_global_data', ...) emits the wire key the platform merges",
       "demo goair state_store.py:1-6, README Per-Call Dynamic Config",
-      "sdk function_result.py:247 update_global_data, :604 set_metadata",
       "docs apis/rest/webhooks/ai-swaig-tool-webhook: call_id and global_data in every tool POST",
       "verified 2026-09-02: recipes/keep-heavy-state-out-of-global-data/verify.py"
     ]

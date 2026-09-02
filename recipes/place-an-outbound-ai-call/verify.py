@@ -68,6 +68,7 @@ def main():
     # the document that rides inside the request is the agent's, and valid
     doc = params["swml"]
     V.validate_swml(doc)
+    assert doc["sections"]["main"][0] == {"answer": {}}, doc["sections"]["main"][0]
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
     assert ai["prompt"]["pom"][0]["title"] == "Role", ai["prompt"]
     p = ai["params"]

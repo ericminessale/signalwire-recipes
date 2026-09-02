@@ -24,6 +24,7 @@ def confirm_order(self, args, raw_data):
     order = raw_data.get("global_data", {}).get("order")
     if not order:
         return FunctionResult("INCOMPLETE: there is no order to confirm yet.")
+    readback = f"{', '.join(order['items'])} for {order['total']:.2f}"
     if normalise(args.get("answer")) not in YES:
         return FunctionResult(f"NOT_A_YES: the caller did not clearly agree to {readback}.")
     r = FunctionResult(f"Confirmed: {readback}. You may commit it now.")
@@ -31,8 +32,8 @@ def confirm_order(self, args, raw_data):
     return r
 ```
 
-`normalise` lower-cases the answer, expands contractions, and drops punctuation
-and four politeness words. The handler then looks the result
+`normalise` lower-cases the answer, expands "that's" and "it's", and drops
+punctuation and four politeness words. The handler then looks the result
 up in a set of whole answers. Membership, never substring: "yesterday" contains
 "yes" and is not a yes, and neither is "I can't say yes". `commit_order` checks
 three things in order: the book already has this `call_id`, there is an order,
