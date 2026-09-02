@@ -7,3 +7,4 @@
 # an npm package rather than a Python one.
 Pygments>=2.17          # syntax highlighting, applied at build time
 PyYAML>=6.0             # tools/verifylib.py reads the swml surface
+httpx>=0.27,<0.29      # starlette.testclient, which five verifiers drive an AgentBase app with

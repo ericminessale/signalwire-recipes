@@ -790,8 +790,10 @@ fabricated record, not a specimen.
   the vendored checkout; on a runner it is `sysconfig.get_paths()["purelib"]`.
   The vendored layout is `signalwire-sdk/signalwire/signalwire/`, which is why
   the local path ends one level above the package.
-- **`requirements.txt` is the tooling, not the recipes**: Pygments and PyYAML.
-  Each recipe pins its own dependencies. The render checks additionally need
+- **`requirements.txt` is the tooling, not the recipes**: Pygments, PyYAML and
+  httpx (starlette's `TestClient` imports it, and five verifiers use that; the
+  runner's starlette 1.6.0 raised without it while the local machine had it by
+  chance, so the last six CI runs were red). Each recipe pins its own dependencies. The render checks additionally need
   `playwright-cli`, which is npm rather than pip.
 
 ## The SDK pin (decided 2026-08-26)
