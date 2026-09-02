@@ -61,7 +61,7 @@ cp ../.env.example .env
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/queue/`. Call
+Point a phone number's SWML webhook at `https://<your-host>/queue`. Call
 `remember(number, reason)` from your intake, `owe_callback(number)` when a caller's
 wait runs out, and `call_back(number)` when an agent frees up.
 

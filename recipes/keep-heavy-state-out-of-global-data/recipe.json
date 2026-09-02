@@ -1,14 +1,14 @@
 {
   "slug": "keep-heavy-state-out-of-global-data",
   "title": "Keep heavy state out of global data",
-  "alias": "",
-  "summary": "Per-call state lives server-side keyed by call_id; only a short AI-facing summary is written to global_data.",
-  "scenario": "",
+  "alias": "server-side store keyed by call_id",
+  "summary": "Per-call state lives server-side keyed by call_id. Only a count and a one-line summary go to global_data, and the handlers read the full record from the store.",
+  "scenario": "A mechanic phoning in a bike inspection, one finding at a time",
   "surfaces": [
     "python"
   ],
   "governed": true,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -20,7 +20,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#7 (state held across turns without the model tracking it)",
@@ -28,8 +28,17 @@
     ],
     "evidence": [
       "demo goair state_store.py:1-6, README Per-Call Dynamic Config",
-      "sdk function_result.py:247 update_global_data, :604 set_metadata"
+      "sdk function_result.py:247 update_global_data, :604 set_metadata",
+      "docs apis/rest/webhooks/ai-swaig-tool-webhook: call_id and global_data in every tool POST",
+      "verified 2026-09-02: recipes/keep-heavy-state-out-of-global-data/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "extract-structured-data-after-a-call",
+    "hide-fields-from-the-model"
+  ]
 }

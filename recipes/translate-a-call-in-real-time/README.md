@@ -57,7 +57,7 @@ cp ../.env.example .env          # set PUBLIC_URL and AGENT_NUMBER
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/translate/`.
+Point a phone number's SWML webhook at `https://<your-host>/translate`.
 
 ## Verify it
 

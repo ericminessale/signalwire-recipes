@@ -1172,6 +1172,44 @@ configure-an-agent-per-request. Facts that would have cost a round:
   Python string) while patching a verifier. The Edit tool, or a script file
   written with Write, for anything containing one.
 
+## Wave 3 of the fill-out (2026-09-02)
+
+Five more: inject-a-message-into-a-live-ai-call, place-an-outbound-ai-call,
+take-a-voicemail, commit-a-transaction-from-a-call and
+keep-heavy-state-out-of-global-data. What the round taught:
+
+- **The trailing-slash rule has three cases, not one.** Codex reviewed the
+  wave-2 commit and found the fix had broken eleven recipes: a Flask route is
+  strict, so `/greeting/` is a 404 there. `AgentBase` needs the slash,
+  Flask must not have it, and `SWMLService.serve()` answers both. The lint
+  now reads `python/app.py` to decide which rule applies. A corpus-wide
+  regex fix needs a corpus-wide classification first.
+- **`SWMLService.serve()` and `AgentServer` protect the document with basic
+  auth exactly as `AgentBase` does.** Six recipes gave a credential-free
+  webhook URL and no `SWML_BASIC_AUTH_*` in `.env.example`; codex caught one
+  and the extended lint rule caught the rest. The rule now triggers on any
+  `AgentBase` or `SWMLService` that calls `.serve(` or uses `AgentServer`.
+- **`calling.ai_message` is in the vendored REST spec** with `command`, `id`
+  and `params` required, `role` in `system|user|assistant`, `message_text`,
+  `reset{full_reset, system_prompt, user_prompt}` and `global_data`. The SDK's
+  `calling._execute` puts the call id at the top level as `id`. The
+  `Calling.CallRequest` body is a oneOf, so `assert_documented` cannot check
+  params; deref the variant by its command enum and check by hand.
+- **An outbound agent is two `ai.params`:** `direction: outbound` and
+  `wait_for_user: true`, plus `outbound_attention_timeout` (10000-600000).
+  `agent._render_swml()` gives a document that can travel inline in `dial`'s
+  `swml`; an agent with tools would need `url` and a public host instead.
+- **`record` is foreground** and sets `record_url` / `record_result`;
+  `status_url` receives the recording events. Its `terminators` default is
+  `#`; `format` is `wav|mp3|mp4`. Voicemail is `connect` -> `result.case.failed`
+  -> `play`, `record`, `play`, `hangup`.
+- **An out-of-enum tool argument still reaches the handler.** The SDK logs
+  `Argument validation failed` and calls the handler anyway, so a handler that
+  cares filters the value itself; the enum only shapes what the model is
+  offered.
+- **`.strip()` a heredoc is not enough; a heredoc with `\` is never safe.**
+  Nothing new, but it bit once more this wave.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

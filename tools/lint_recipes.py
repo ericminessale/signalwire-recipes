@@ -145,12 +145,27 @@ def check(d, fail):
         fail(slug, "README.md", "still contains _TODO")
     # An AgentBase in 3.0.1 registers its root only as /route/ and answers
     # 200 "null" to /route, so a webhook URL without the slash gets no
-    # document. 33 READMEs shipped that way (2026-09-02).
-    for m in re.finditer(r"<your-host>/[a-z0-9-]+`", md):
-        line = md[:m.start()].count("\n") + 1
-        fail(slug, f"README.md:{line}",
-             f"webhook URL {m.group(0)[:-1]} needs a trailing slash: the SDK "
-             "registers the agent root only at /route/")
+    # document. 33 READMEs shipped that way (2026-09-02). A Flask app is the
+    # opposite: its route is strict and /route/ is a 404, which codex caught
+    # after the first fix added the slash everywhere. SWMLService.serve()
+    # answers both, so only the two strict kinds are checked.
+    app_src = ""
+    if (d / "python" / "app.py").exists():
+        app_src = (d / "python" / "app.py").read_text(encoding="utf-8")
+    is_agent = "AgentBase" in app_src or "signalwire.prefabs" in app_src
+    is_flask = "Flask" in app_src and not is_agent
+    if is_agent:
+        for m in re.finditer(r"<your-host>/[a-z0-9-]+`", md):
+            line = md[:m.start()].count("\n") + 1
+            fail(slug, f"README.md:{line}",
+                 f"webhook URL {m.group(0)[:-1]} needs a trailing slash: the SDK "
+                 "registers the agent root only at /route/")
+    if is_flask:
+        for m in re.finditer(r"<your-host>/[a-z0-9-]+/`", md):
+            line = md[:m.start()].count("\n") + 1
+            fail(slug, f"README.md:{line}",
+                 f"webhook URL {m.group(0)[:-1]} has a trailing slash a strict "
+                 "Flask route answers with 404")
     # prose only: fenced code and inline code are the author's, not prose
     prose = re.sub(r"```.*?```", "", md, flags=re.S)
     prose = re.sub(r"`[^`]*`", "", prose)
@@ -188,7 +203,11 @@ def check(d, fail):
         app_py = d / "python" / "app.py"
         if app_py.exists() and app_py.stat().st_size:
             src = app_py.read_text(encoding="utf-8")
-            serves_agent = "AgentBase" in src and ".serve(" in src
+            # SWMLService.serve() and AgentServer protect the document the
+            # same way, which codex caught on a hunt recipe whose README URL
+            # carried no credentials (2026-09-02).
+            serves_agent = ("AgentBase" in src or "SWMLService" in src) and \
+                (".serve(" in src or "AgentServer" in src)
             declared = env_example.read_text(encoding="utf-8")
             if serves_agent and "SWML_BASIC_AUTH_PASSWORD" not in declared:
                 fail(slug, ".env.example",

@@ -56,7 +56,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Set the number's message handler to `https://<your-host>/sms/`.
+Set the number's message handler to `https://<your-host>/sms`.
 
 ## Verify it
 

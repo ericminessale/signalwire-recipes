@@ -51,7 +51,7 @@ TRANSFER_TO=+1555... python app.py            # temporary: the call comes back
 PERMANENT=true TRANSFER_TO=+1555... python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/transfer/`.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/transfer/`.
 
 ## Verify it
 

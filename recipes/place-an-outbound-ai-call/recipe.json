@@ -1,9 +1,9 @@
 {
   "slug": "place-an-outbound-ai-call",
   "title": "Place an outbound ai call",
-  "alias": "",
-  "summary": "Your backend dials a number with an AI agent attached and the agent waits for the callee to speak first.",
-  "scenario": "",
+  "alias": "dial + ai.params direction/wait_for_user",
+  "summary": "One REST dial carries the agent's SWML in the request, and two ai params make it an outbound conversation: direction outbound, and wait_for_user so the agent waits for the callee to speak first.",
+  "scenario": "A workshop calling a customer to say their bike is ready",
   "surfaces": [
     "python",
     "swml"
@@ -22,7 +22,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "t:ai-customer-winback-caller",
@@ -33,8 +33,19 @@
       "docs apis/rest/calls/call-commands (dial)",
       "docs swml/reference/calling/ai/params (direction)",
       "demo dental confirmation_runner.py:191-200 REST dial with a query-parameterised SWML URL; outbound_agent.py:31 wait_for_user",
-      "demo utility outbound_runner.py:78"
+      "demo utility outbound_runner.py:78",
+      "schema.json AIParams.direction enum inbound|outbound; wait_for_user boolean; outbound_attention_timeout 10000-600000",
+      "tools/openapi/rest.json Calling.CallCreateParamsSWML required from, swml",
+      "sdk agent_base.py _render_swml renders the agent document for inline use",
+      "verified 2026-09-02: recipes/place-an-outbound-ai-call/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "place-an-outbound-call"
+  ],
+  "related": [
+    "detect-an-answering-machine",
+    "give-an-agent-a-tool"
+  ]
 }

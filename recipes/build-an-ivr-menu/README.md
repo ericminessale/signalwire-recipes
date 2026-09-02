@@ -47,7 +47,7 @@ pip install -r requirements.txt
 SALES_NUMBER=+1555... SUPPORT_NUMBER=+1555... python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/ivr/`.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/ivr/`.
 
 ## Verify it
 

@@ -49,7 +49,7 @@ cp ../.env.example .env          # set AUDIO_WS
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/listen/`. The socket
+Point a phone number's SWML webhook at `https://<your-host>/listen`. The socket
 at `AUDIO_WS` has to be accepting connections before the call arrives.
 
 ## Verify it

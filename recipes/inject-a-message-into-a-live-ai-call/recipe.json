@@ -1,9 +1,9 @@
 {
   "slug": "inject-a-message-into-a-live-ai-call",
   "title": "Inject a message into a live ai call",
-  "alias": "",
-  "summary": "Your backend pushes a system message into a running AI conversation over REST, without interrupting the caller.",
-  "scenario": "",
+  "alias": "calling.ai_message",
+  "summary": "One REST command, calling.ai_message, pushes a system instruction, a global_data merge or a full reset into a conversation that is already running, addressed by call id.",
+  "scenario": "Your CRM finishes a lookup after the call started and tells the agent who is on the line",
   "surfaces": [
     "python"
   ],
@@ -20,7 +20,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "features Mid-call AI message injection",
@@ -30,8 +30,18 @@
       "docs apis/rest/calls/call-commands (calling.ai_message)",
       "sdk rest/namespaces/calling.py ai_message",
       "features Mid-call AI message injection",
-      "demo chess app.py:271-296 RestClient.calling.ai_message + functions_on_speaker_timeout polling (app.py:850-856)"
+      "demo chess app.py:271-296 RestClient.calling.ai_message + functions_on_speaker_timeout polling (app.py:850-856)",
+      "tools/openapi/rest.json Calling.CallRequest variant calling.ai_message: required command, id, params; params role enum system|user|assistant, message_text, reset{full_reset,system_prompt,user_prompt}, global_data",
+      "sdk rest/namespaces/calling.py:25-29 _execute puts call_id in body.id; :122 ai_message",
+      "verified 2026-09-02: recipes/inject-a-message-into-a-live-ai-call/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "change-the-agents-instructions-mid-call",
+    "whisper-to-an-agent-mid-call"
+  ]
 }

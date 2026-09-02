@@ -1,11 +1,12 @@
 {
   "slug": "take-a-voicemail",
   "title": "Take a voicemail",
-  "alias": "",
-  "summary": "When nobody answers, the caller hears a prompt, the message is recorded, and the recording URL reaches your webhook.",
-  "scenario": "",
+  "alias": "connect result.failed + record",
+  "summary": "When the bridge to the owner does not happen, connect's failed branch plays a prompt and record takes the message in the foreground. Recording events, with the download URL, go to status_url.",
+  "scenario": "A one-person shop whose number should take a message when the owner cannot pick up",
   "surfaces": [
-    "swml"
+    "swml",
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -20,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:voicemail",
@@ -29,8 +30,18 @@
     ],
     "evidence": [
       "docs swml/reference/calling/record (foreground, terminators, beep)",
-      "docs call-flow-builder/reference/nodes (Voicemail Recording)"
+      "docs call-flow-builder/reference/nodes (Voicemail Recording)",
+      "schema.json Record: beep, format wav|mp3|mp4, max_length, end_silence_timeout, terminators, status_url",
+      "docs swml/reference/record: foreground, record_url and record_result, status_url payload",
+      "verified 2026-09-02: recipes/take-a-voicemail/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "try-destinations-in-order"
+  ],
+  "related": [
+    "record-a-call",
+    "detect-an-answering-machine"
+  ]
 }

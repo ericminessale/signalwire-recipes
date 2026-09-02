@@ -50,7 +50,7 @@ pip install -r requirements.txt
 PUBLIC_URL=https://<your-host> AGENT_NUMBER=+1555... python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/transcribe/`.
+Point a phone number's SWML webhook at `https://<your-host>/transcribe`.
 
 ## Verify it
 

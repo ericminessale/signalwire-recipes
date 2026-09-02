@@ -61,7 +61,7 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 8080 with a
 tunnel such as ngrok and use that hostname. Point a number's SWML webhook at
-`https://<your-host>/hunt/`, call, and let the first destination ring out.
+`https://<user>:<password>@<your-host>/hunt/`, call, and let the first destination ring out.
 
 ## Verify it
 

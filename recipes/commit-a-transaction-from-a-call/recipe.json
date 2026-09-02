@@ -1,14 +1,14 @@
 {
   "slug": "commit-a-transaction-from-a-call",
   "title": "Commit a transaction from a call",
-  "alias": "",
-  "summary": "The agent collects, confirms, and then commits once through a single tool; nothing is written before confirmation.",
-  "scenario": "",
+  "alias": "confirm flag in global_data gates the commit",
+  "summary": "The agent collects, confirms, and then commits once through a single tool. Nothing reaches the order book before the caller's confirmation is on record, and a second commit on the same call returns the first order's id.",
+  "scenario": "A bicycle shop taking accessory orders by phone",
   "surfaces": [
     "python"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#1",
@@ -35,8 +35,17 @@
       "sdk contexts.py",
       "demo bobbystable",
       "demo holyguacamole",
-      "demo goair voyager.py:216-272 code-enforced confirmation before commit"
+      "demo goair voyager.py:216-272 code-enforced confirmation before commit",
+      "sdk function_result.py add_action('set_global_data') is the wire key; raw_data carries global_data and call_id",
+      "verified 2026-09-02: recipes/commit-a-transaction-from-a-call/verify.py"
     ]
   },
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "enforce-state-transitions-in-a-tool-handler",
+    "write-a-disposition-from-handler-owned-data"
+  ]
 }

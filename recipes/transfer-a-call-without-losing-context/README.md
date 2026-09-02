@@ -40,10 +40,12 @@ builds that action explicitly.
 ```bash
 cd python
 pip install -r requirements.txt
+cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 PUBLIC_URL=https://<your-host> python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/intake/`.
+Point a phone number's SWML webhook at
+`https://<user>:<password>@<your-host>/intake/`.
 
 ## Verify it
 

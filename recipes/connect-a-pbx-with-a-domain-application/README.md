@@ -45,13 +45,16 @@ cd python
 pip install -r requirements.txt
 export SIGNALWIRE_SPACE=... SIGNALWIRE_PROJECT_ID=... SIGNALWIRE_API_TOKEN=...
 export PBX_IPS=203.0.113.10 PBX_SIP_URI=sip:pbx.example.com:5060 PUBLIC_URL=https://<your-host>
+export SWML_BASIC_AUTH_USER=signalwire SWML_BASIC_AUTH_PASSWORD=choose-something-long
 python app.py setup      # prints the SIP domain for the PBX and the gateway address for SWML
 python app.py            # serves the inbound SWML at /from-pbx
 ```
 
 On the PBX, add a trunk to the printed `.dapp.signalwire.com` domain. Point a
 SignalWire number's SWML webhook at a document that connects to the gateway
-address (the `to_pbx` section of `swml/agent.yaml`).
+address (the `to_pbx` section of `swml/agent.yaml`). The served document sits
+behind the basic-auth credentials above, so a webhook URL into this app carries
+them as `https://<user>:<password>@<your-host>/from-pbx/`.
 
 ## Verify it
 

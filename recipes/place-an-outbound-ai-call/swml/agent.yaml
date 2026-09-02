@@ -1,0 +1,17 @@
+# Place an outbound AI call: the document the dial request carries. Two params
+# make the conversation outbound. direction forces the call's direction to the
+# assistant; wait_for_user makes the agent wait for the callee's first words.
+version: "1.0.0"
+sections:
+  main:
+    - ai:
+        prompt:
+          text: >
+            You are calling from Ridgeline Cycles to say the caller's bike is
+            ready for collection. Wait for them to speak, greet them, say the
+            bike is ready, ask when they would like to collect it, then say
+            goodbye.
+        params:
+          direction: "outbound"
+          wait_for_user: true
+          outbound_attention_timeout: 20000

@@ -51,8 +51,8 @@ pip install -r requirements.txt
 PUBLIC_URL=https://<your-host> QUEUE_NAME=support python app.py
 ```
 
-Point the callers' number at `https://<your-host>/caller/` and the agents'
-number at `https://<your-host>/agent/`.
+Point the callers' number at `https://<your-host>/caller` and the agents'
+number at `https://<your-host>/agent`.
 
 ## Verify it
 
