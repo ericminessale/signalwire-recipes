@@ -475,27 +475,42 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   letter-spacing:0;margin:0 0 10px;}
 
 /* a build card spans two recipe columns, so two sit in one recipe row */
-.bgrid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
-  border-radius:var(--r-lg);overflow:hidden;margin:20px 0 4px;
+.bgrid{display:grid;gap:0;margin:20px 0 4px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
-.buildcard{display:flex;flex-direction:column;gap:7px;min-width:0;scroll-margin-top:86px;
-  background:var(--page);padding:17px 19px 18px;color:inherit;
-  box-shadow:inset 2px 0 0 var(--fuchsia),inset 0 0 0 1px var(--line-2);
+/* A build is recipes stacked, so the card is a stack (Eric chose it from the
+   comparison page, 2026-09-02). The front sheet's edge is the home category's
+   colour; each sheet behind is another product line the build touches, in
+   category order, with no cap. The sheets are inline custom properties set by
+   the generator from vocab/categories/<key>.json `color`, so a new category
+   ships its own colour and a category without one gets a neutral edge.
+   Colour sits on edges only: a fill on this ground composites to mud. */
+.buildcard{display:block;min-width:0;scroll-margin-top:86px;color:inherit;
+  padding:14px calc(14px + var(--pad,0px)) calc(14px + var(--pad,0px)) 14px;}
+.buildcard .sheet{display:flex;flex-direction:column;gap:7px;padding:15px 17px 16px;
+  background:var(--surface);border:1px solid var(--s0,var(--line-2));
+  border-radius:var(--r-md);box-shadow:var(--sheets,none);
   transition:background 140ms ease;}
-.buildcard:hover{background:var(--surface);}
+.buildcard:hover .sheet{background:var(--raised);}
 .buildcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:-2px;}
-/* builds sit under the recipes they are assembled from, so the neutral rule
-   opens the block rather than closing it. full-width is deliberate: it
-   separates two blocks, not two cells */
 /* No rule of its own. The Builds heading already draws one the way every
    task group in the category does, and two lines 29px apart for one
-   boundary is one too many. The block still reads as different: its
-   cards are wider and carry the build rail. */
+   boundary is one too many. */
 .bsec{margin-top:34px;padding-top:6px;}
-.buildcard.planned{cursor:default;box-shadow:none;}
-.buildcard.planned:hover{background:var(--page);}
+/* a planned build is a sheet with nothing under it yet */
+.buildcard.planned{cursor:default;}
+.buildcard.planned .sheet,.buildcard.planned:hover .sheet{background:transparent;
+  border:1px dashed var(--line);box-shadow:none;}
 .buildcard.planned .bt,.buildcard.planned .bs{color:var(--fg-subtle);}
 .buildcard.planned .part.state{background:transparent;border:1px solid var(--line);color:var(--fg-subtle);}
+.buildcard .brow{display:flex;align-items:center;gap:10px;font-size:11.5px;
+  color:var(--fg-subtle);min-height:22px;}
+.buildcard .bicons{display:inline-flex;gap:5px;align-items:center;}
+.buildcard .bicons .fico{width:14px;height:14px;color:var(--fg-2);}
+.buildcard.planned .bicons .fico{color:var(--fg-subtle);opacity:.7;}
+.buildcard .bcount{font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums;}
+/* the one fuchsia mark on a build card: it exists */
+.buildcard .brepo{margin-left:auto;display:inline-flex;align-items:center;gap:6px;color:var(--fg-2);}
+.buildcard .brepo .dot{width:7px;height:7px;border-radius:50%;background:var(--fuchsia);display:inline-block;}
 .buildcard .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--fg-subtle);}
 .buildcard .bt{font-family:var(--head);font-weight:600;font-size:16px;
@@ -505,8 +520,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .buildcard .parts{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
 .buildcard .part{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);background:var(--raised);border-radius:var(--r-sm);padding:2px 6px;}
 .buildcard .part.more{color:var(--fg-muted);}
-.buildcard .also{color:var(--fg-subtle);margin-left:7px;text-transform:none;
-  letter-spacing:0;}
+.buildcard .also{color:var(--fg-subtle);}
 .chip.kind[aria-pressed="true"]{color:var(--fuchsia);
   border-color:rgba(var(--fuchsia-rgb),.35);}
 
@@ -527,21 +541,13 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .tgh::after{content:"";flex:1;height:1px;background:var(--line);}
 
 /* separators live on the cards, so an unfilled cell is just background */
-.grid,.bgrid{gap:0;background:transparent;border:none;
+.grid{gap:0;background:transparent;border:none;
   border-left:1px solid var(--line);border-radius:0;}
-.card,.buildcard{border-top:1px solid var(--line);
+.card{border-top:1px solid var(--line);
   border-right:1px solid var(--line);background:transparent;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.028);}
-.card:hover,.buildcard:hover{background:var(--surface);
+.card:hover{background:var(--surface);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
-/* The build rail marks a build that exists. The shared rule above flattened
-   every card onto --page and, being later, silently took the rail with it,
-   so AI Call Center read like its planned siblings again. Restated after it,
-   scoped to builds with a repository. */
-.buildcard:not(.planned){box-shadow:inset 2px 0 0 var(--fuchsia),
-  inset 0 1px 0 rgba(255,255,255,.028);}
-.buildcard:not(.planned):hover{box-shadow:inset 2px 0 0 var(--fuchsia),
-  inset 0 1px 0 rgba(255,255,255,.06);}
 
 /* lockup: official mark carries the wordmark */
 .eyebrow{display:inline-flex;align-items:center;gap:11px;}
@@ -1289,6 +1295,14 @@ def build_index(recipes, body_only=False):
     subs = V.get("subcategories", {})
     cat_of = {r["slug"]: r.get("category") for r in recipes}
     cat_label = {c["key"]: c["label"] for c in V["categories"]}
+    cat_order = {c["key"]: i for i, c in enumerate(V["categories"])}
+    _cat_color = {c["key"]: c.get("color") for c in V["categories"]}
+
+    def cat_rank(k):
+        return cat_order.get(k, len(cat_order))
+
+    def cat_color(k):
+        return _cat_color.get(k) or "var(--line-2)"
 
     builds = [r for r in recipes if r.get("kind") == "build"]
     plain = [r for r in recipes if r.get("kind") != "build"]
@@ -1329,22 +1343,45 @@ def build_index(recipes, body_only=False):
         more = len(b.get("composes", [])) - 3
         if more > 0:
             parts += '<span class="part more">+%d</span>' % more
-        planned = b.get("_planned")  # preview --all only
+        planned = b.get("_planned")  # a folder with no content, or no folder
         if planned:
             parts += '<span class="part state">%s</span>' % (
                 "no repository yet" if planned == "folder" else "planned")
+        # A build is recipes stacked, so the card is a stack: the front sheet
+        # is the home category and each sheet behind is another product line
+        # the build touches, in category order, no cap. Colours come from the
+        # category's vocabulary file; a category with no colour gets a neutral
+        # edge, so a new category still renders.
+        palette = sorted(touches(b) | set(b.get("products", [])), key=cat_rank)
+        home_cat = b.get("category")
+        behind = [k for k in palette if k != home_cat]
+        sheets = ",".join(
+            "%dpx %dpx 0 -1px var(--surface),%dpx %dpx 0 0 %s"
+            % (4 * (i + 1), 4 * (i + 1), 4 * (i + 1), 4 * (i + 1), cat_color(k))
+            for i, k in enumerate(behind))
+        style = "--s0:%s;--pad:%dpx" % (cat_color(home_cat), 4 * len(behind))
+        if sheets and not planned:
+            style += ";--sheets:%s" % sheets
+        glyphs = "".join(category_icon(k) for k in palette)
+        n = len(b.get("composes", []))
+        count = ("%d recipes" % n) if n else "planned"
+        mark = ("" if planned else
+                '<span class="brepo"><i class="dot" aria-hidden="true"></i>Repository</span>')
         return (
             '<a class="buildcard%s"%s data-kind="build" data-slug="%s" data-proj="%d" '
-            'data-cat="%s" data-hay="%s"%s>'
-            '%s'
+            'data-cat="%s" data-hay="%s"%s style="%s">'
+            '<span class="sheet">'
+            '<span class="brow"><span class="bicons" title="%s">%s</span>'
+            '<span class="bcount">%s</span>%s%s</span>'
             '<span class="bt">%s</span><span class="bs">%s</span>'
-            '<span class="parts">%s</span></a>'
+            '<span class="parts">%s</span></span></a>'
             % (" planned" if planned else "",
                "" if planned else ' href="r/%s.html"' % esc(b["slug"]),
                esc(b["slug"]), 0 if home else 1,
                " ".join(sorted(touches(b))), esc(hay(b)),
-               ' aria-disabled="true"' if planned else "",
-               ('<span class="lab">%s</span>' % also) if also else "",
+               ' aria-disabled="true"' if planned else "", style,
+               esc(", ".join(cat_label.get(k, k) for k in palette)), glyphs,
+               count, also, mark,
                esc(b["title"]), esc(b.get("summary", "")), parts)
         )
 
