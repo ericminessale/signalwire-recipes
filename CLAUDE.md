@@ -215,6 +215,13 @@ brand cheatsheet's abstractions and not invented:
   in `scratchpad/palette.py` if per-category colour ever comes back.
 - **The one fuchsia mark on a build card is the repository dot**: the thing
   worth standing out per card is that it exists.
+- **Refused on the render, 2026-09-02 (Eric: "dont like either")**: a fuchsia
+  trailing rule on the Builds heading, and turquoise mechanism lines on recipe
+  cards. Also declined before rendering: the SignalWire mark beside "Builds"
+  (the logo is a wordmark carrier, never ornament, and it would repeat six
+  times) and a fuchsia-to-periwinkle gradient (no gradients). The wish behind
+  all four was variety against an all-periwinkle index; it is still open, and
+  the answer is not one of these.
 
 ## Index interaction (decided 2026-08-26)
 
