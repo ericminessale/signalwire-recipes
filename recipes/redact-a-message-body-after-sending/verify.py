@@ -6,9 +6,9 @@ sent message's body, and the empty string is the only value the spec allows.
 Proof: with the HTTP layer replaced by a recorder, `redact` makes exactly one
 PATCH to the documented path for the id with the body `{"body": ""}`. The spec
 marks `body` required and its description says it must be an empty string.
-The operation's description says the call clears the body, puts queued and
+The operation's description says the call clears the body. It puts queued and
 initiated on the refused side and delivered, undelivered and failed on the
-eligible side, and says the original cannot be recovered. The 200 response
+eligible side. It says the original cannot be recovered. The 200 response
 schema carries the message fields the README names. Expected values live here,
 not in app.py.
 """
@@ -61,12 +61,11 @@ def main():
     assert "cannot be recovered" in desc, desc
     resp = op["responses"]["200"]["content"]["application/json"]["schema"]
     resp = spec["components"]["schemas"][resp["$ref"].split("/")[-1]] if "$ref" in resp else resp
-    assert {"id", "body", "status", "from", "to", "created_at"} <= set(resp["properties"])
+    assert {"id", "body", "status", "direction", "from", "to", "created_at"} <= set(resp["properties"])
 
-    print(f"ok: PATCH {PATH} with {{\"body\": \"\"}}; the spec requires body, allows "
-          f"only the empty string, says the call clears the body, puts queued and "
-          f"initiated on the refused side and delivered, undelivered and failed on the "
-          f"eligible side")
+    print(f"ok: PATCH {PATH} with {{\"body\": \"\"}}. The spec requires body and allows "
+          f"only the empty string. It says the call clears the body. Queued and initiated "
+          f"are refused; delivered, undelivered and failed are eligible.")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,12 @@
 """Register an E911 address for a number.
 
-Two REST calls. `POST /api/relay/rest/addresses` creates the emergency
+Two POSTs and one GET. `POST /api/relay/rest/addresses` creates the emergency
 address, with the nine fields the spec requires and `emergency_enabled` on.
-`POST /api/relay/rest/phone_numbers/{id}/e911_address` attaches it to a number
-by the address's id. The SDK wraps the first as `client.addresses.create`; the
-second has no wrapper in 3.0.1, so this module sends it through the same HTTP
-client the namespaces use.
+`GET /api/relay/rest/phone_numbers` finds the number's resource id.
+`POST /api/relay/rest/phone_numbers/{id}/e911_address` attaches the address to
+the number by the address's id. US addresses and US numbers only. The SDK wraps
+the first as `client.addresses.create`. The attach call has no wrapper in
+3.0.1, so this module sends it through the same HTTP client the namespaces use.
 
 Written against signalwire-sdk 3.0.1 (RestClient.addresses).
 """

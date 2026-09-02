@@ -1,8 +1,8 @@
 {
   "slug": "test-an-agent-offline-with-swaig-test",
-  "title": "Test an agent offline with swaig test",
+  "title": "Test an agent offline with swaig-test",
   "alias": "swaig-test --dump-swml / --list-tools / --exec",
-  "summary": "The SDK's swaig-test command loads an agent file and, with no number, tunnel or account, prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.",
+  "summary": "The SDK's swaig-test command loads an agent file with no number, tunnel or account. It prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.",
   "scenario": "Checking a shop-hours agent before it ever answers a call",
   "surfaces": [
     "python"

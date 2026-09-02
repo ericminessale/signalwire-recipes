@@ -40,6 +40,7 @@ def main():
     recipe.client.lookup._http = rec
 
     recipe.enrich(NUMBER)
+    assert len(rec.calls) == 1, rec.calls  # one helper, one request
     recipe.check(NUMBER)
     assert len(rec.calls) == 2, rec.calls
     rich, plain = rec.calls
@@ -66,12 +67,13 @@ def main():
     def obj(name):
         node = props[name]
         return schemas[node["$ref"].split("/")[-1]] if "$ref" in node else node
-    assert "linetype" in obj("carrier")["properties"], sorted(obj("carrier")["properties"])
+    carrier = {"lrn", "spid", "ocn", "lata", "city", "state", "jurisdiction", "lec", "linetype"}
+    assert carrier <= set(obj("carrier")["properties"]), sorted(obj("carrier")["properties"])
     assert "caller_id" in obj("cnam")["properties"], sorted(obj("cnam")["properties"])
 
     print(f"ok: GET {PATH}?include=carrier,cnam and once without a query; include is "
-          f"documented with those two values; the response schema carries carrier "
-          f"(with linetype), cnam (with caller_id) and the formatted fields")
+          f"documented with those two values; the response schema carries the nine "
+          f"carrier fields, cnam.caller_id and the formatted fields")
 
 
 if __name__ == "__main__":

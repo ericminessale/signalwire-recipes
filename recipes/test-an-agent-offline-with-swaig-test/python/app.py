@@ -1,10 +1,10 @@
 """Test an agent offline with swaig-test.
 
-`swaig-test` ships with the SDK. Pointed at this file it loads the agent,
+`swaig-test` ships with the SDK. Pointed at this file it loads the agent. It
 prints the SWML the platform would fetch, lists the tools, and runs any tool
-with the arguments you give it and fake call data, all without a number, a
-tunnel or an account. The agent below is ordinary; nothing in it knows about
-the CLI.
+with the arguments you give it and fake call data. None of that needs a
+number, a tunnel or an account. The agent below is ordinary; nothing in it
+knows about the CLI.
 
 Written against signalwire-sdk 3.0.1 (swaig-test, cli/test_swaig.py).
 """

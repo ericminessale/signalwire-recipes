@@ -69,8 +69,9 @@ asserts the following.
 - exactly one `PATCH` to the documented path for the id, with the body `{"body": ""}`
 - the spec documents the path and body, and its required list is exactly `body`
 - the spec's description of `body` says it must be an empty string
-- the spec's description of the operation says it clears the body, puts `queued` and `initiated` on the refused side, puts `delivered`, `undelivered` and `failed` on the eligible side, and says the original cannot be recovered
-- the spec's 200 response schema carries `id`, `body`, `status`, `from`, `to` and `created_at`
+- the spec's description of the operation says it clears the body and that the original cannot be recovered
+- that description puts `queued` and `initiated` on the refused side and `delivered`, `undelivered` and `failed` on the eligible side
+- the spec's 200 response schema carries `id`, `body`, `status`, `direction`, `from`, `to` and `created_at`
 
 ## Limitations
 

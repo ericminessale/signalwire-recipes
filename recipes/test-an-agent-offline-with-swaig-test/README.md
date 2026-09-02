@@ -1,6 +1,6 @@
 # Test an agent offline with swaig-test
 
-> The SDK's `swaig-test` command loads an agent file and, with no number, tunnel or account, prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.
+> The SDK's `swaig-test` command loads an agent file with no number, tunnel or account. It prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.
 
 **Scenario:** checking a shop-hours agent before it ever answers a call
 
@@ -71,7 +71,8 @@ and asserts the following.
 - `--list-tools` prints the tool's block: its description line, `Parameters:`, then `day (string) (required)` with its description, and no second tool
 - `--exec check_hours --day saturday` prints `RESULT:` and then the handler's exact response on the `FunctionResult:` line
 - `--exec check_hours --day someday` prints the handler's `INVALID` refusal the same way
-- the child process gets an environment with only the SDK path and the basic-auth pair, so no account credential is in reach
+- the child process gets an environment with only the SDK path and a fixed verifier-only basic-auth pair, so no account credential is in reach
+- the verifier refuses to run if a `python/.env` exists, because `load_dotenv()` in `app.py` would read it
 
 ## Limitations
 

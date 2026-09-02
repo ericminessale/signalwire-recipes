@@ -1,6 +1,6 @@
 # Verify a caller ID for outbound calls
 
-> Three REST requests register a number you own elsewhere as a verified caller ID, submit the code you heard, and redial the verification call if you missed it.
+> Three REST requests register a number you own elsewhere as a verified caller ID. You submit the code you heard, and redial the verification call if you missed it.
 
 **Scenario:** a shop that wants outbound calls to show its long-standing mobile number
 

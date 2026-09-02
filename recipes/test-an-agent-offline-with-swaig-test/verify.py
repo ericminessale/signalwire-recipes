@@ -24,10 +24,10 @@ sys.path.insert(0, str(HERE.parent.parent / "tools"))
 
 import verifylib as V  # noqa: E402
 
-# what a reader's .env supplies; without it the SDK generates a password that
-# exists only in this process and the number's webhook gets a 401
-os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
-os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
+# fixed, verifier-only credentials: never a reader's real pair, so nothing this
+# file prints can carry one
+os.environ["SWML_BASIC_AUTH_USER"] = "signalwire"
+os.environ["SWML_BASIC_AUTH_PASSWORD"] = "verify-only-password"
 
 APP = HERE / "python" / "app.py"
 SATURDAY = "On Saturday the shop is open 9 to 5."
@@ -46,8 +46,11 @@ def swaig_test(*args):
     # the same SDK this verifier loaded
     env["PYTHONPATH"] = str(pathlib.Path(signalwire.__file__).parent.parent)
     cmd = [sys.executable, "-m", "signalwire.cli.swaig_test_wrapper", str(APP), *args]
+    # a clean clone has no python/.env; app.py's load_dotenv() would read one if
+    # you created it, and this verifier refuses to run against it
+    assert not (HERE / "python" / ".env").exists(), "remove python/.env before verifying"
     r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=120,
-                       cwd=str(HERE))  # no .env here, so load_dotenv() finds nothing
+                       cwd=str(HERE))
     assert r.returncode == 0, (args, r.returncode, r.stderr[-800:])
     return r.stdout
 
@@ -68,7 +71,8 @@ def main():
     doc = json.loads(out[out.index("{"):])
     V.validate_swml(doc)
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
-    assert [f["function"] for f in ai["SWAIG"]["functions"]] == ["check_hours"], ai["SWAIG"]
+    names = [f["function"] for f in ai["SWAIG"]["functions"]]
+    assert names == ["check_hours"], names  # never echo SWAIG: its URLs carry credentials
 
     # the tool inventory: the tool's block, then its parameter, in that order
     out = swaig_test("--list-tools")

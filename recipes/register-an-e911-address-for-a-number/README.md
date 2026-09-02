@@ -1,8 +1,8 @@
 # Register an E911 address for a number
 
-> Two REST calls: create an emergency address with the nine fields the spec requires and `emergency_enabled` on, then attach it to a number by the address id.
+> Two POSTs and one GET: create an emergency address with the nine fields the spec requires, look up the number's id, and attach the address to the number.
 
-**Scenario:** a workshop that puts its street address behind the number its staff dial out on
+**Scenario:** a US workshop that puts its street address behind the number its staff dial out on
 
 ## What this demonstrates
 
@@ -67,9 +67,9 @@ python -c "import app; print(app.create_address('<label>', '<first name>', '<las
 python app.py +1XXXXXXXXXX <address_id>
 ```
 
-Fill every placeholder in the first command with your own dispatchable address.
-This creates an emergency location on your account, and a wrong one is worse
-than none. The spec's response schema for the address carries an `id`; pass it
+Fill every placeholder in the first command with your own dispatchable US
+address, and use a US number on your project in the second. This creates an
+emergency location on your account, and a wrong one is worse than none. The spec's response schema for the address carries an `id`; pass it
 to the second command with a number on your project.
 
 ## Verify it
@@ -98,9 +98,9 @@ API.
 There is no SDK method for the attach call in 3.0.1, so the recipe reaches for
 the shared HTTP client. A later SDK may add a wrapper.
 
-`country` defaults to `US`, the only country this recipe was written and
-verified for. Check the spec's `emergency_enabled` behaviour before using
-another value.
+This recipe is for US addresses and US numbers. `country` defaults to `US`, the
+only value it was written and verified with; check the spec's
+`emergency_enabled` behaviour before trying another.
 
 ## What to change first
 

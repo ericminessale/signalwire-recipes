@@ -1,10 +1,11 @@
 """Redact a message body after sending.
 
 One PATCH clears the stored body of a message in SignalWire's records. The
-spec allows exactly one value, an empty string; anything else is rejected with
-`body_must_be_empty`. The message id is the segment id the send returned, the
-same id `/api/messaging/logs` shows. Only a message in a terminal state,
-delivered, undelivered or failed, can be redacted; queued and initiated cannot.
+spec allows exactly one value, an empty string, and the platform rejects
+anything else with `body_must_be_empty`. The message id is the segment id the
+send returned, the same id `/api/messaging/logs` shows. The platform redacts
+only a message in a terminal state, delivered, undelivered or failed; it
+refuses queued and initiated.
 
 The SDK's REST client has no wrapper for this path in 3.0.1, so the request
 goes through the HTTP client the namespaces share.

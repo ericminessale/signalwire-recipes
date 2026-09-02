@@ -1,7 +1,8 @@
 """Prove the claim without a network.
 
-Claim: an emergency address is created with the fields the spec requires and
-`emergency_enabled` on, then attached to a number by id, in two REST calls.
+Claim: two POSTs and one GET create an emergency address with the fields the
+spec requires and `emergency_enabled` on, find the number's id, and attach the
+address to the number.
 
 Proof: with the HTTP layer replaced by a recorder, `create_address` makes one
 POST to the documented addresses path. Its body carries every field in the

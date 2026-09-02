@@ -64,7 +64,7 @@ Agents that answer, reason, and act on a live call.
 |---|---|---|
 | [Inject a message into a live ai call](inject-a-message-into-a-live-ai-call/) | One REST command, calling.ai_message, addresses a running call by id. Its params carry a system message, a global_data merge, or a reset with a new system prompt. | Python |
 | [Stream agent debug events](stream-agent-debug-events/) | Two params on the ai verb make the platform POST each debug event the level selects to your endpoint as it happens. The SDK routes every one to a handler you register. | Python, Markup |
-| [Test an agent offline with swaig test](test-an-agent-offline-with-swaig-test/) | The SDK's swaig-test command loads an agent file and, with no number, tunnel or account, prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it. | Python |
+| [Test an agent offline with swaig-test](test-an-agent-offline-with-swaig-test/) | The SDK's swaig-test command loads an agent file with no number, tunnel or account. It prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it. | Python |
 
 ### Routing & queueing
 
@@ -118,8 +118,8 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Issue a browser calling token that cannot dial anywhere](get-a-webrtc-token-with-restricted-dial-targets/) | Mint a short-lived browser token and restrict what it is allowed to call. | Python |
-| [Register an e911 address for a number](register-an-e911-address-for-a-number/) | Two REST calls: create an emergency address with the nine fields the spec requires and emergency_enabled on, then attach it to a number by the address id. | Python |
-| [Verify a caller id for outbound calls](verify-a-caller-id-for-outbound-calls/) | Three REST requests register a number you own elsewhere as a verified caller ID, submit the code you heard, and redial the verification call if you missed it. | Python |
+| [Register an e911 address for a number](register-an-e911-address-for-a-number/) | Two POSTs and one GET: create an emergency address with the nine fields the spec requires, look up the number's id, and attach the address to the number. | Python |
+| [Verify a caller id for outbound calls](verify-a-caller-id-for-outbound-calls/) | Three REST requests register a number you own elsewhere as a verified caller ID. You submit the code you heard, and redial the verification call if you missed it. | Python |
 
 ### Handoff
 
@@ -153,7 +153,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Buy a number and point it at your app](buy-a-number-and-point-it-at-your-app/) | Search by area code or pattern, purchase, and assign the number's call and message handlers, all over REST. | Python |
-| [Look up a callers carrier and name](look-up-a-callers-carrier-and-name/) | One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name. | Python |
+| [Look up a caller's carrier and name](look-up-a-callers-carrier-and-name/) | One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name. | Python |
 | [Translate a call in real time](translate-a-call-in-real-time/) | Each side speaks their own language on one bridge. | Python, Markup |
 
 ## Messaging
