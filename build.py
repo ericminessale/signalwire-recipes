@@ -482,16 +482,15 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .bgrid{display:grid;gap:0;margin:20px 0 4px;
   grid-template-columns:repeat(auto-fill,minmax(518px,1fr));}
 /* A build is recipes stacked, so the card is a stack (Eric chose it from the
-   comparison page, 2026-09-02). The front sheet's edge is the home category's
-   colour; each sheet behind is another product line the build touches, in
-   category order, with no cap. The sheets are inline custom properties set by
-   the generator from vocab/categories/<key>.json `color`, so a new category
-   ships its own colour and a category without one gets a neutral edge.
-   Colour sits on edges only: a fill on this ground composites to mud. */
+   comparison page, 2026-09-02). One sheet behind for every product line the
+   build touches beyond its home category, no cap, all in the one accent the
+   page already navigates with: the glyphs in the row say which categories,
+   the sheets say how many. `--sheets` is set inline by the generator and read
+   by the sheet, never the card. Colour on edges only, never a fill. */
 .buildcard{display:block;min-width:0;scroll-margin-top:86px;color:inherit;
   padding:14px calc(14px + var(--pad,0px)) calc(14px + var(--pad,0px)) 14px;}
 .buildcard .sheet{display:flex;flex-direction:column;gap:7px;padding:15px 17px 16px;
-  background:var(--surface);border:1px solid var(--s0,var(--line-2));
+  background:var(--surface);border:1px solid var(--accent);
   border-radius:var(--r-md);box-shadow:var(--sheets,none);
   transition:background 140ms ease;}
 .buildcard:hover .sheet{background:var(--raised);}
@@ -1300,13 +1299,9 @@ def build_index(recipes, body_only=False):
     cat_of = {r["slug"]: r.get("category") for r in recipes}
     cat_label = {c["key"]: c["label"] for c in V["categories"]}
     cat_order = {c["key"]: i for i, c in enumerate(V["categories"])}
-    _cat_color = {c["key"]: c.get("color") for c in V["categories"]}
 
     def cat_rank(k):
         return cat_order.get(k, len(cat_order))
-
-    def cat_color(k):
-        return _cat_color.get(k) or "var(--line-2)"
 
     builds = [r for r in recipes if r.get("kind") == "build"]
     plain = [r for r in recipes if r.get("kind") != "build"]
@@ -1351,19 +1346,18 @@ def build_index(recipes, body_only=False):
         if planned:
             parts += '<span class="part state">%s</span>' % (
                 "no repository yet" if planned == "folder" else "planned")
-        # A build is recipes stacked, so the card is a stack: the front sheet
-        # is the home category and each sheet behind is another product line
-        # the build touches, in category order, no cap. Colours come from the
-        # category's vocabulary file; a category with no colour gets a neutral
-        # edge, so a new category still renders.
+        # A build is recipes stacked, so the card is a stack: one sheet behind
+        # for every product line the build touches beyond its home category,
+        # no cap. All one accent: the glyphs in the row already say which
+        # categories, so the sheets only need to say how many.
         palette = sorted(touches(b) | set(b.get("products", [])), key=cat_rank)
         home_cat = b.get("category")
         behind = [k for k in palette if k != home_cat]
         sheets = ",".join(
-            "%dpx %dpx 0 -1px var(--surface),%dpx %dpx 0 0 %s"
-            % (4 * (i + 1), 4 * (i + 1), 4 * (i + 1), 4 * (i + 1), cat_color(k))
-            for i, k in enumerate(behind))
-        style = "--s0:%s;--pad:%dpx" % (cat_color(home_cat), 4 * len(behind))
+            "%dpx %dpx 0 -1px var(--surface),%dpx %dpx 0 0 var(--accent)"
+            % (4 * (i + 1), 4 * (i + 1), 4 * (i + 1), 4 * (i + 1))
+            for i in range(len(behind)))
+        style = "--pad:%dpx" % (4 * len(behind))
         if sheets and not planned:
             style += ";--sheets:%s" % sheets
         glyphs = "".join(category_icon(k) for k in palette)

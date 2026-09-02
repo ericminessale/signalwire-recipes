@@ -194,32 +194,27 @@ brand cheatsheet's abstractions and not invented:
 - **The rail is retired.** Eric: a left rail is "the kind of element you would
   use on one thing standing out and its immediately redundant when we
   cluster them". Six builds in a block each carrying the same mark said
-  nothing. Chosen from a comparison artifact of seven options rendered from
+  nothing. Chosen from a comparison artifact of eleven options rendered from
   the real data (`scratchpad/make_variants2.py`, published at
   claude.ai/code/artifact/f045b981-372b-4a4f-b666-9adc77f2c70c).
-- **A build is recipes stacked, so the card is a stack.** The front sheet's
-  edge is the home category's colour; each sheet behind is another product
-  line the build touches (composes' categories plus declared `products`), in
-  category order, **no cap** (Eric: "i dont think the cap is necessary"; the
-  comparison page shows one to five). The sheets are `--sheets` and `--s0`
-  inline properties the generator sets; the sheet reads them, the card does
-  not, because an inline `box-shadow` on the `<a>` painted the sheets on the
-  grid cell too (caught in the mock). A planned build is one dashed sheet
-  with nothing under it.
-- **Category colours live in `vocab/categories/<key>.json` as `color`**, one
-  rule: OKLCH lightness .78 and chroma .11 for all six, hue only moving
-  (`scratchpad/palette.py`; fax at .6 chroma on purpose, paper). Same weight
-  is what keeps six colours from reading as stickers. AI Agents `#a9b0fd`,
-  Voice `#51cec7`, Video `#6bc3f4`, Messaging `#8aca8b`, MFA `#f69a9a`, Fax
-  `#d1b288`. None is the brand fuchsia. A category with no `color` gets a
-  neutral edge, so the SYNTH guard still renders. **Eric's standing concern:
-  "the several colors wont match the brand"; judge it on the render**, and if
-  it fails the palette is one rule to retune, not six values.
-- **The colours are on builds only for now.** Featured tiles and category
-  headers stay one accent until Eric decides otherwise.
-- **Colour is on edges, never a fill**, and the one fuchsia mark on a build
-  card is the repository dot: the thing worth standing out per card is that
-  it exists.
+- **A build is recipes stacked, so the card is a stack.** One sheet behind for
+  every product line the build touches beyond its home category (composes'
+  categories plus declared `products`), **no cap** (Eric: "i dont think the
+  cap is necessary"). AI Call Center sits on one sheet, the docs guide on two.
+  `--sheets` and `--pad` are inline properties the generator sets; the sheet
+  reads them, the card does not, because an inline `box-shadow` on the `<a>`
+  painted the sheets on the grid cell too (caught in the mock). A planned
+  build is one dashed sheet with nothing under it.
+- **All one accent, periwinkle.** A colour-coded version (option E, six
+  category colours on one OKLCH rule, L .78 C .11) shipped for an hour and
+  was replaced the same day: Eric, "lets ship J, icons already tell the story
+  of variance". The glyphs in the card's top row say which categories, so the
+  sheets only say how many, and the builds block stays inside the palette the
+  rest of the page uses. The `color` field was removed from
+  `vocab/categories/*.json` rather than left unused; the palette rule is kept
+  in `scratchpad/palette.py` if per-category colour ever comes back.
+- **The one fuchsia mark on a build card is the repository dot**: the thing
+  worth standing out per card is that it exists.
 
 ## Index interaction (decided 2026-08-26)
 
