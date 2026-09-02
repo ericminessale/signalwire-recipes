@@ -41,7 +41,6 @@
   "subcategory": "other",
   "prerequisites": [],
   "related": [
-    "give-an-agent-a-tool",
-    "configure-an-agent-per-request"
+    "verify-a-caller-id-for-outbound-calls"
   ]
 }

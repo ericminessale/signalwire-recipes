@@ -43,6 +43,8 @@ CLI against the SDK it loaded.
 
 ## Run it
 
+Run the verifier first (below): it refuses to run once a `.env` exists.
+
 ```bash
 cd python
 pip install -r requirements.txt
@@ -72,7 +74,7 @@ and asserts the following.
 - `--exec check_hours --day saturday` prints `RESULT:` and then the handler's exact response on the `FunctionResult:` line
 - `--exec check_hours --day someday` prints the handler's `INVALID` refusal the same way
 - the child process gets an environment with only the SDK path and a fixed verifier-only basic-auth pair, so no account credential is in reach
-- the verifier refuses to run if a `python/.env` exists, because `load_dotenv()` in `app.py` would read it
+- the verifier refuses to run if a `.env` exists anywhere `load_dotenv()` searches: `python/`, the recipe folder, or a parent
 
 ## Limitations
 

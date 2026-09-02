@@ -1,14 +1,16 @@
 """Reconcile webhooks against the logs API.
 
-A status webhook can be missed: your host was down, a proxy timed out, a
-deploy was mid-flight. The voice and message logs are the record of what the
-platform did, so a scheduled pass over a time window catches anything your
-webhook handler never saw. `GET /api/voice/logs` and `GET /api/messaging/logs`
-take `created_after` and `created_before`; each voice log's events are one
-more GET away.
+Your host can miss a status webhook: it was down, a proxy timed out, a deploy
+was mid-flight. The voice and message logs list what the platform recorded. A
+scheduled pass over a time window walks every page of both lists and reports
+every entry your handler's store lacks, as candidates to reconcile.
+`GET /api/voice/logs` and `GET /api/messaging/logs` take `created_after` and
+`created_before`. Each voice log's events are one more GET away.
 
 Written against signalwire-sdk 3.0.1 (RestClient.logs).
 """
+from urllib.parse import parse_qsl, urlsplit
+
 from dotenv import load_dotenv
 from signalwire.rest import RestClient
 
@@ -24,21 +26,35 @@ client = RestClient()
 SEEN = set()
 
 
+def every_page(fetch, **params):
+    """Walk a list to its end. Each page's `links.next` is a URL whose query
+    carries the next page's parameters, so the walk re-issues the query it is
+    given; the spec's page_size maximum is 1000."""
+    entries = []
+    page = fetch(**params)
+    while True:
+        entries.extend(page.get("data", []))
+        nxt = (page.get("links") or {}).get("next")
+        if not nxt:
+            return entries
+        page = fetch(**dict(parse_qsl(urlsplit(nxt).query)))
+
+
 def voice_logs(since, until, page_size=200):
-    """Every voice log the platform kept for the window."""
-    return client.logs.voice.list(created_after=since, created_before=until,
-                                  page_size=page_size)
+    """Every voice log the platform kept for the window, all pages."""
+    return every_page(client.logs.voice.list, created_after=since,
+                      created_before=until, page_size=page_size)
 
 
 def message_logs(since, until, page_size=200):
-    """Every message log for the window."""
-    return client.logs.messages.list(created_after=since, created_before=until,
-                                     page_size=page_size)
+    """Every message log for the window, all pages."""
+    return every_page(client.logs.messages.list, created_after=since,
+                      created_before=until, page_size=page_size)
 
 
-def missed(logs):
-    """Log entries your webhook never recorded."""
-    return [entry for entry in logs.get("data", []) if entry.get("id") not in SEEN]
+def missed(entries):
+    """Entries your store lacks: the candidates to reconcile."""
+    return [entry for entry in entries if entry.get("id") not in SEEN]
 
 
 def events_for(log_id):

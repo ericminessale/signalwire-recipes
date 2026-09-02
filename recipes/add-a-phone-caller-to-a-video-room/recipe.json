@@ -1,11 +1,12 @@
 {
   "slug": "add-a-phone-caller-to-a-video-room",
   "title": "Add a phone caller to a video room",
-  "alias": "",
-  "summary": "A PSTN or SIP caller is dropped into a video room as an audio participant.",
-  "scenario": "",
+  "alias": "fabric conference_rooms create + join_room",
+  "summary": "You create a conference room over REST with the two fields the spec requires. A SWML join_room naming that room is the verb that puts the leg running the document into it.",
+  "scenario": "A workshop stand-up on video that the mechanic on the road joins by phone",
   "surfaces": [
-    "swml"
+    "swml",
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -21,13 +22,23 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [],
     "evidence": [
       "docs swml/reference/calling/join-room",
-      "docs compatibility-api/cxml/reference/voice (Connect Room)"
+      "docs compatibility-api/cxml/reference/voice (Connect Room)",
+      "tools/openapi/rest.json POST /api/fabric/resources/conference_rooms required name, enable_room_previews",
+      "schema.json JoinRoom: join_room.name required",
+      "sdk rest/namespaces/fabric.py conference_rooms CRUD",
+      "verified 2026-09-02: recipes/add-a-phone-caller-to-a-video-room/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "create-a-video-room-and-join-from-the-browser"
+  ],
+  "related": [
+    "build-a-conference-call"
+  ]
 }

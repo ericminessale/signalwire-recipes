@@ -1,9 +1,9 @@
 {
   "slug": "stream-call-audio-to-your-own-server",
   "title": "Stream call audio to your own server",
-  "alias": "",
-  "summary": "A bidirectional audio stream connects the call to your media server, which can also play audio back.",
-  "scenario": "",
+  "alias": "tap / stop_tap + calling.tap",
+  "summary": "tap sends a copy of a call's audio to a WebSocket or RTP destination of yours, and stop_tap ends it by control id. The same pair exists mid-call over REST as calling.tap and calling.tap.stop.",
+  "scenario": "A workshop that wants every support call's audio on its own server, live",
   "surfaces": [
     "swml",
     "python"
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:media-stream-custom-audio-mixer",
@@ -31,8 +31,19 @@
     "evidence": [
       "docs swml/reference/calling/stream (wss, authorization_bearer_token)",
       "docs compatibility-api/cxml/reference/voice (Connect Stream bidirectional)",
-      "docs apis/rest/webhooks (Stream status callback)"
+      "docs apis/rest/webhooks (Stream status callback)",
+      "schema.json Tap: uri required (rtp://, ws://, wss://), direction speak|listen|both, codec PCMU|PCMA, control_id; StopTap.control_id",
+      "tools/openapi/rest.json calling.tap variant: control_id, tap{type audio, params}, device oneOf ws{uri, codec}|rtp{addr, port, codec, ptime}; calling.tap.stop",
+      "sdk rest/namespaces/calling.py tap, tap_stop",
+      "verified 2026-09-02: recipes/stream-call-audio-to-your-own-server/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "record-a-call"
+  ],
+  "related": [
+    "start-live-transcription",
+    "listen-to-a-live-call"
+  ]
 }

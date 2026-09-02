@@ -1,47 +1,55 @@
 # Reconcile webhooks against the logs API
 
-> A pass over a time window of the voice and message logs finds the calls and messages your webhook handler never recorded, and fetches the event trail of each missed call.
+> A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, and fetches the event trail of each such call.
 
-**Scenario:** a nightly job that catches the status callbacks a deploy swallowed
+**Scenario:** a nightly job that finds the calls and messages your status handler has no record of
 
 ## What this demonstrates
 
-A webhook is a best effort at your door. The logs are the platform's record.
 `GET /api/voice/logs` and `GET /api/messaging/logs` take `created_after`,
-`created_before` and `page_size` in the vendored REST spec, and
-`GET /api/voice/logs/{id}/events` returns "an array of event entries for the
-log", each with `event_at`, `level`, `name` and `details`. The SDK wraps them as
-`client.logs.voice.list`, `client.logs.messages.list` and
-`client.logs.voice.list_events`. Diffing a window against what your handler
-stored is the whole reconciler.
+`created_before` and `page_size` in the vendored REST spec, and each page's
+`links.next` is the URL of the next one. `GET /api/voice/logs/{id}/events`
+returns "an array of event entries for the log", each with `event_at`, `level`,
+`name` and `details`. You reach them as `client.logs.voice.list`,
+`client.logs.messages.list` and `client.logs.voice.list_events`. You walk both
+lists to the end, diff them against the ids your handler stored, and every id
+the store lacks is a candidate to reconcile.
 
 ## How it works
 
 ```python
+def every_page(fetch, **params):
+    entries, page = [], fetch(**params)
+    while True:
+        entries.extend(page.get("data", []))
+        nxt = (page.get("links") or {}).get("next")
+        if not nxt:
+            return entries
+        page = fetch(**dict(parse_qsl(urlsplit(nxt).query)))
+
 def reconcile(since, until):
     report = {"voice": [], "messages": []}
     for entry in missed(voice_logs(since, until)):
         report["voice"].append({"log": entry, "events": events_for(entry["id"])})
     report["messages"] = missed(message_logs(since, until))
     return report
-
-def missed(logs):
-    return [entry for entry in logs.get("data", []) if entry.get("id") not in SEEN]
 ```
 
-What the platform receives for one pass with one missed call:
+What the platform receives for one pass over a two-page voice window:
 
 ```
 GET /api/voice/logs?created_after=...&created_before=...&page_size=200
-GET /api/voice/logs/<missed id>/events
+GET /api/voice/logs?page_token=...&page_size=200
+GET /api/voice/logs/<first unseen id>/events
+GET /api/voice/logs/<second unseen id>/events
 GET /api/messaging/logs?created_after=...&created_before=...&page_size=200
 ```
 
-`SEEN` stands in for whatever your webhook handler writes: a table of call and
-message ids. Anything in the window that is not in it is a callback you never
-processed. The events trail says what happened to that call. The spec bounds
-`page_size` to 1000; a window with more entries than that needs the `links`
-the list response carries for the next page.
+`every_page` re-issues the query string each `links.next` carries, so it follows
+whatever pagination the platform hands back. `SEEN` stands in for whatever your
+webhook handler writes: a table of call and message ids. An id in the window
+that your table lacks is an entry you have no record of. Why you have none is
+for you to work out, and the events trail is where you start.
 
 ## Run it
 
@@ -54,6 +62,7 @@ python app.py 2026-09-01T00:00:00Z 2026-09-02T00:00:00Z
 
 There is no server to expose; the script speaks to the REST API and exits.
 Replace `SEEN` with a lookup into wherever your webhook handler records ids.
+With it empty, the report lists every entry in the window.
 
 ## Verify it
 
@@ -63,27 +72,28 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-The verifier swaps the SDK's HTTP layer for a recorder that answers with fixture
-pages. It marks one call and one message as seen, runs a pass, and asserts the
-following.
+You swap the SDK's HTTP layer for a recorder that answers with fixtures. They
+are two voice pages joined by a `links.next` URL, one message page, and a trail
+per unseen call. You run a pass and assert the following.
 
-- the pass makes exactly three requests, in order: the voice list, the missed call's events, the message list
-- both lists carry `created_after`, `created_before` and `page_size` as documented query parameters, and the events request carries no query
-- all three paths are documented in the vendored spec
-- the report names the missed call with its event trail and the missed message, and nothing the handler saw
-- the spec bounds `page_size` between 1 and 1000, so the default of 200 is legal
+- the pass makes five requests in order: voice page one, voice page two, one events request per unseen call, the message page
+- page one and the message page carry the window parameters; page two carries exactly the query from the `links.next` URL; the events requests carry no query
+- the spec documents every path and parameter used
+- the report names both unseen calls, one of them from page two, each with its own trail, and both unseen messages, and nothing the store holds
+- the spec bounds `page_size` between 1 and 1000 on both lists, so 200 is legal
 
 ## Limitations
 
-The verifier proves the requests and the diff against fixtures; what the logs
-contain for a real window is the platform's record. Pagination is yours: the
-recipe reads one page.
+You prove the requests and the diff against fixtures; what the logs contain for
+a real window is the platform's record.
 
-A log entry's fields depend on its `type`; the spec's voice log is a oneOf over
-Relay, Fabric, video room, Dialogflow and discarded shapes, all with `id`.
+A log entry's fields depend on its `type`. The spec's voice log is a oneOf over
+Relay, Fabric, video room, Dialogflow and discarded shapes, and all of them
+carry `id`.
 
 ## What to change first
 
-Add `"call-missed"` to `SEEN` in the verifier's setup and run it. The request
-sequence assertion fails because no events request is made. That is the point:
-the reconciler only spends a request on what you did not already have.
+Delete the `while` loop in `every_page` so it returns the first page and run
+the verifier. The request sequence fails because page two is never fetched,
+and the report loses the call that sat on it. That is the point: a window is
+every page, not the first one.

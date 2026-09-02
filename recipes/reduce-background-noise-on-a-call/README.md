@@ -1,6 +1,6 @@
 # Reduce background noise on a call
 
-> `denoise` switches noise reduction on for a leg and `stop_denoise` switches it off, in SWML or mid-call over REST as `calling.denoise` and `calling.denoise.stop`. Neither touches the media path.
+> `denoise` switches noise reduction on for a leg and `stop_denoise` switches it off, in SWML or mid-call over REST as `calling.denoise` and `calling.denoise.stop`.
 
 **Scenario:** a caller leaving a message from a busy workshop floor
 
@@ -8,7 +8,7 @@
 
 Noise reduction is a switch, not a setting. In SWML, the `denoise` verb starts
 it and `stop_denoise` stops it; the bundled schema gives both an empty object
-and describes `denoise` as "start noise reduction. You can stop it at any time
+and describes `denoise` as "Start noise reduction. You can stop it at any time
 using `stop_denoise`". Over REST, the vendored spec has the same pair as call
 commands, `calling.denoise` and `calling.denoise.stop`, addressed to a live
 call by `id` with empty `params`. The SDK wraps those as `client.calling.denoise`
@@ -45,7 +45,7 @@ What the platform receives from `quiet`:
 ```
 
 `params` is empty because the spec's variant has no properties; `id` is the
-call id from a tool webhook or a status callback.
+call's id.
 
 ## Run it
 
@@ -76,7 +76,7 @@ asserts the following.
 
 - both surfaces run `answer`, `denoise`, `play`, `record`, `stop_denoise`, `play`, `hangup`, in that order, and render the same document
 - `denoise` and `stop_denoise` each carry an empty object, and the bundled schema gives both no parameters
-- `quiet` and `loud` each make one `POST` to the documented calling path
+- `quiet` and `loud` each make exactly one `POST` to the documented calling path, measured with a fresh recorder per helper
 - each body is exactly the command, the call `id` at the top level, and empty `params`
 - the spec's variants for both commands require `command`, `id` and `params` and define no param properties
 
@@ -84,9 +84,6 @@ asserts the following.
 
 The verifier proves the documents and the requests. What noise reduction does
 to the audio is the platform's processing on a live call.
-
-The SWML verbs act on the leg running the document. To quiet the far side of a
-bridge, run `denoise` on that leg or address its call id over REST.
 
 ## What to change first
 

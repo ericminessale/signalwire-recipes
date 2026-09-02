@@ -1,17 +1,18 @@
 """Prove the claim without a network.
 
 Claim: two POSTs and one GET create an emergency address with the fields the
-spec requires and `emergency_enabled` on, find the number's id, and attach the
-address to the number.
+spec requires, find the number's id, and attach the newly created address to
+the number.
 
-Proof: with the HTTP layer replaced by a recorder, `create_address` makes one
-POST to the documented addresses path. Its body carries every field in the
-spec's required list plus `emergency_enabled: true`. `attach` makes one POST
-to the number's documented e911 path with exactly `e911_address_id`. The
-verifier reads both required lists from the spec rather than assuming them,
-and every field sent is a documented property. `number_id` makes one GET to
-the numbers list and picks the matching id. Expected values live here, not in
-app.py.
+Proof: the HTTP layer is a recorder that answers the create with an id, the
+numbers list with two numbers, and the attach with nothing. `register` makes
+the three requests in that order, and the numbers list is filtered with the
+spec's `filter_number` query. The create body carries exactly the nine
+fields the spec requires plus `emergency_enabled: true` and the three optional
+fields passed, all documented. The spec's required set for the create equals
+the nine names this file expects. The attach body carries the id the create
+returned, which is the spec's whole required list for that call. Expected
+values live here, not in app.py.
 """
 import os
 import pathlib
@@ -29,15 +30,19 @@ os.environ.update({
 import verifylib as V  # noqa: E402
 
 ADDRESSES = "/api/relay/rest/addresses"
-NUMBER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+NUMBERS = "/api/relay/rest/phone_numbers"
+NUMBER, NUMBER_ID = "+15557654321", "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 ADDRESS_ID = "9b2e4c1a-7d3f-4e8b-a1c2-5d6e7f8a9b0c"
-E911 = f"/api/relay/rest/phone_numbers/{NUMBER_ID}/e911_address"
+E911 = f"{NUMBERS}/{NUMBER_ID}/e911_address"
+REQUIRED = {"label", "country", "first_name", "last_name", "street_number",
+            "street_name", "city", "state", "postal_code"}
 FIELDS = dict(label="Ridgeline Cycles workshop", first_name="Dana",
               last_name="Whitfield", street_number="1200", street_name="Harbor Way",
               city="Portland", state="OR", postal_code="97209")
+OPTIONAL = dict(address_type="Suite", address_number="4", auto_correct_address=True)
 
 
-def required_for(path, method):
+def schema_for(path, method):
     spec = V.spec("rest")
     schema = spec["paths"][path][method]["requestBody"]["content"]["application/json"]["schema"]
     if "$ref" in schema:
@@ -49,42 +54,46 @@ def main():
     V.sdk_banner()
     import app as recipe
 
-    rec = V.Recorder()
+    rec = V.Recorder(responses=[
+        {"id": ADDRESS_ID, "label": FIELDS["label"]},
+        {"data": [{"id": "other", "number": "+15550000000"},
+                  {"id": NUMBER_ID, "number": NUMBER}]},
+        {},
+    ])
     recipe.client.addresses._http = rec
+    recipe.client.phone_numbers._http = rec
 
-    recipe.create_address(**FIELDS, address_type="Suite", address_number="4")
-    recipe.client.phone_numbers._http = V.Recorder(
-        responses=[{"data": [{"id": "other", "number": "+15550000000"},
-                             {"id": NUMBER_ID, "number": "+15557654321"}]}])
-    assert recipe.number_id("+15557654321") == NUMBER_ID
-    (listing,) = recipe.client.phone_numbers._http.calls
-    assert (listing["method"], listing["path"]) == ("GET", "/api/relay/rest/phone_numbers"), listing
-    V.assert_documented("rest", "GET", "/api/relay/rest/phone_numbers", None)
-    recipe.attach(NUMBER_ID, ADDRESS_ID)
-    assert len(rec.calls) == 2, rec.calls
-    create, attach = rec.calls
+    recipe.register(NUMBER, **FIELDS, **OPTIONAL)
+    assert [(c["method"], c["path"]) for c in rec.calls] == [
+        ("POST", ADDRESSES), ("GET", NUMBERS), ("POST", E911)], \
+        [(c["method"], c["path"]) for c in rec.calls]
+    create, listing, attach = rec.calls
 
-    assert (create["method"], create["path"]) == ("POST", ADDRESSES), create
+    # the create: the spec's nine required fields are the nine this file names
+    required, props = schema_for(ADDRESSES, "post")
+    assert required == REQUIRED, sorted(required ^ REQUIRED)
     body = create["body"]
-    required, props = required_for(ADDRESSES, "post")
-    assert required <= set(body), sorted(required - set(body))
+    assert REQUIRED <= set(body), sorted(REQUIRED - set(body))
     assert set(body) <= props, sorted(set(body) - props)
-    assert body["emergency_enabled"] is True, body
-    assert body["country"] == "US", body
     assert {k: body[k] for k in FIELDS} == FIELDS, body
-    assert body["address_type"] == "Suite" and body["address_number"] == "4", body
+    assert body["country"] == "US" and body["emergency_enabled"] is True, body
+    assert {k: body[k] for k in OPTIONAL} == OPTIONAL, body
     V.assert_documented("rest", "POST", ADDRESSES, body)
 
-    assert (attach["method"], attach["path"]) == ("POST", E911), attach
+    # the lookup: one GET of the documented numbers list, filtered to the number
+    assert listing["params"] == {"filter_number": NUMBER}, listing
+    V.assert_documented("rest", "GET", NUMBERS, None, listing["params"])
+
+    # the attach: the id the create returned, and nothing else
     assert attach["body"] == {"e911_address_id": ADDRESS_ID}, attach
-    template = "/api/relay/rest/phone_numbers/{id}/e911_address"
-    required, props = required_for(template, "post")
-    assert required == {"e911_address_id"} and set(attach["body"]) == props, (required, props)
+    required, props = schema_for(NUMBERS + "/{id}/e911_address", "post")
+    assert required == {"e911_address_id"}, required
+    assert set(attach["body"]) <= props, sorted(set(attach["body"]) - props)
     V.assert_documented("rest", "POST", E911, attach["body"])
 
-    print(f"ok: POST {ADDRESSES} with the spec's {len(required_for(ADDRESSES, 'post')[0])} "
-          f"required fields plus emergency_enabled; GET the numbers list for the id; "
-          f"POST {template} with e911_address_id")
+    print(f"ok: POST {ADDRESSES} with the spec's nine required fields plus "
+          f"emergency_enabled and three options; GET {NUMBERS}; POST the number's "
+          f"e911_address with the id the create returned")
 
 
 if __name__ == "__main__":

@@ -2,8 +2,8 @@
   "slug": "run-an-agent-as-a-cloud-function",
   "title": "Run an agent as a cloud function",
   "alias": "AgentBase.run(event, context) in Lambda mode",
-  "summary": "The same agent file runs as an AWS Lambda handler. agent.run(event, context) returns the SWML for a request to the root and the tool result for a POST to /swaig, behind the same basic auth.",
-  "scenario": "A stock-lookup agent that should cost nothing between calls",
+  "summary": "The same agent file runs as an AWS Lambda handler. agent.run(event, context) returns the SWML for the root and the tool result for a POST to /swaig. Both sit behind the same basic auth.",
+  "scenario": "A request-driven stock-lookup agent",
   "surfaces": [
     "python"
   ],

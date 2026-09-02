@@ -2,12 +2,12 @@
 
 The same agent file serves from a laptop and runs as an AWS Lambda handler
 with one line of difference: `agent.run(event, context)`. `run()` reads the
-environment to pick a mode (`AWS_LAMBDA_FUNCTION_NAME` means Lambda,
+environment to pick a mode. `AWS_LAMBDA_FUNCTION_NAME` means Lambda,
 `FUNCTION_TARGET` or `K_SERVICE` mean Google Cloud Functions,
-`FUNCTIONS_WORKER_RUNTIME` means Azure, `GATEWAY_INTERFACE` means CGI) and
-falls back to a local server. In Lambda mode it returns the
-`{"statusCode", "headers", "body"}` dict API Gateway expects: the SWML for a
-request to the root, and the tool result for a POST to `/swaig`.
+`FUNCTIONS_WORKER_RUNTIME` means Azure and `GATEWAY_INTERFACE` means CGI.
+Nothing set means a local server. In Lambda mode it returns the
+`{"statusCode", "headers", "body"}` dict API Gateway expects. The body is the
+SWML for a request to the root, and the tool result for a POST to `/swaig`.
 
 Basic auth still applies: the event's `Authorization` header must carry the
 same credentials the SDK reads from `SWML_BASIC_AUTH_USER` and

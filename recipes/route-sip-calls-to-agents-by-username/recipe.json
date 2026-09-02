@@ -1,9 +1,9 @@
 {
   "slug": "route-sip-calls-to-agents-by-username",
   "title": "Route sip calls to agents by username",
-  "alias": "",
-  "summary": "Calls to different SIP usernames on one server land in different agents, decided by the SDK's SIP routing callback.",
-  "scenario": "",
+  "alias": "register_routing_callback + extract_sip_username",
+  "summary": "Calls to different SIP usernames on one domain land on different agents behind one AgentServer. A routing callback reads the username from the request body and the SDK answers with a 307 to that agent's route.",
+  "scenario": "A PBX trunk that sends sales@ and workshop@ to one webhook and expects two different agents",
   "surfaces": [
     "python"
   ],
@@ -21,13 +21,22 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "sip-migration",
     "folds": [],
     "evidence": [
       "sdk agent_base.py:612 enable_sip_routing, :656 register_sip_username",
-      "sdk agent_server.py:147 setup_sip_routing"
+      "sdk agent_server.py:147 setup_sip_routing",
+      "sdk core/mixins/web_mixin.py:1319 register_routing_callback mounts <route>/<path> and turns a returned route into a 307; swml_service.py extract_sip_username reads call.to",
+      "sdk agent_server.py:147 setup_sip_routing registers its callback after register() has copied the routes, so it mounts nothing in 3.0.1 (probe 2026-09-02: /sales/sip 404)",
+      "verified 2026-09-02: recipes/route-sip-calls-to-agents-by-username/verify.py"
     ]
   },
-  "subcategory": "routing"
+  "subcategory": "routing",
+  "prerequisites": [
+    "connect-a-pbx-with-a-domain-application"
+  ],
+  "related": [
+    "transfer-a-call-without-losing-context"
+  ]
 }

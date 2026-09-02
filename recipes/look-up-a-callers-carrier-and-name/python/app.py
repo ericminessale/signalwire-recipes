@@ -24,7 +24,7 @@ def enrich(e164):
 
 
 def check(e164):
-    """The base lookup data, without the carrier or CNAM extras."""
+    """The base lookup, without requesting the carrier or CNAM extras."""
     return client.lookup.phone_number(e164)
 
 

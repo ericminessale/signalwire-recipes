@@ -35,8 +35,8 @@ The spec's response schema carries `valid_number`, `e164`, the national and
 international formatted forms, `country_code`, `timezones` and `number_type`,
 plus two objects you ask for with `include`. `carrier` holds `lrn`, `spid`,
 `ocn`, `lata`, `city`, `state`, `jurisdiction`, `lec` and `linetype`; `cnam`
-holds `caller_id`. `check` leaves `include` off and returns the base data
-without the two extras the spec marks as possibly billable.
+holds `caller_id`. `check` leaves `include` off, so it requests neither of
+the two extras the spec marks as possibly billable.
 
 ## Run it
 
@@ -57,8 +57,8 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-The verifier swaps the SDK's HTTP layer for a recorder, calls both helpers, and
-asserts the following.
+You swap the SDK's HTTP layer for a recorder, call both helpers, and assert
+the following.
 
 - `enrich` makes exactly one `GET` to the documented lookup path for the number with `include=carrier,cnam` and nothing else
 - `check` then makes exactly one `GET` to the same path with no query

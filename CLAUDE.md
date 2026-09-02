@@ -1271,6 +1271,45 @@ reconcile-webhooks-against-the-logs-api.
   Two chains failed on `_TODO` and a missing `.env` block that were simply not
   written yet. Lint after the writes land, or lint the named folders only.
 
+## Wave 6 of the fill-out (2026-09-02)
+
+check-consent-before-an-outbound-call, route-sip-calls-to-agents-by-username,
+add-a-phone-caller-to-a-video-room, stream-call-audio-to-your-own-server and
+launch-a-prebuilt-video-conference.
+
+- **`AgentServer.setup_sip_routing()` mounts nothing in 3.0.1.** `register()`
+  calls `agent.as_router()` and `include_router` once; the SIP callback is
+  registered afterwards, so `/sales/sip` is a 404 in every call order. A probe
+  proved it. The working shape is `agent.register_routing_callback(fn,
+  path="/sip")` in the agent's `__init__`, before `server.register()`; the
+  callback's returned route becomes a 307. `SWMLService.extract_sip_username`
+  reads `call.to` (`sip:`, `tel:` or bare).
+- **A Lambda deployment needs `SWML_PROXY_URL_BASE`.** Without it the SDK
+  renders tool webhooks from a host the function does not have, the SWML
+  fetch works and every tool call fails (codex, on the wave-5 commit). The
+  verifier sets it and asserts the rendered `web_hook_url` starts with it.
+- **`GET /api/relay/rest/phone_numbers` takes `filter_number`.** An
+  unfiltered first page misses a number past the default 50; filter, then
+  compare exactly because the filter is a contains match.
+- **Contexts: `valid_contexts` on a step, `isolated` on a context, and the
+  entry context must be `default`.** The SDK's `Context.add_section` renders
+  the context's `pom`. All tools stay under `SWAIG.functions`; a step only
+  shapes what the model is offered, so never write "structurally
+  unavailable" (sol, twice).
+- **Video REST:** `POST /api/video/conferences` needs only `display_name`
+  and takes theme colours; `GET .../{id}/conference_tokens` lists
+  `{id, name, token, scopes}`. `POST /api/fabric/resources/conference_rooms`
+  requires `name` and `enable_room_previews`; SWML `join_room.name` is the
+  verb that puts a phone leg in.
+- **`tap` requires only `uri`** (`rtp://`, `ws://`, `wss://`), with
+  `direction speak|listen|both`, `codec PCMU|PCMA`, `control_id` for
+  `stop_tap`. REST `calling.tap` takes `control_id`, `tap{type: audio,
+  params}` and a `device` of type `ws` or `rtp`.
+- **Sol's recurring asks, now pre-empted in the brief template:** one request
+  per helper proven with a fresh recorder each; every quoted phrase asserted
+  in full; no "routes a call" for a document that only renders; prose in
+  second person.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

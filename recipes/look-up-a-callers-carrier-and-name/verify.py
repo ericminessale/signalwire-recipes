@@ -7,7 +7,7 @@ Proof: with the HTTP layer replaced by a recorder, `enrich` makes exactly one
 GET to the documented lookup path with `include` set to `carrier,cnam`.
 `check` makes one GET with no query at all. The vendored spec documents the
 path and the `include` parameter, and its description of `include` names
-exactly those two values. The spec's response schema carries `valid_number`,
+both values. The spec's response schema carries `valid_number`,
 `e164`, the formatted forms, `country_code`, `number_type`, a `carrier` object
 with `linetype` and a `cnam` object with `caller_id`. Expected values live
 here, not in app.py.

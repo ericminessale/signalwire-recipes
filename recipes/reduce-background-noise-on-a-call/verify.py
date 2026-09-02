@@ -7,10 +7,10 @@ Claim: noise reduction is switched on for a leg and off again, in SWML with
 Proof: both SWML surfaces validate against the bundled schema, run the same
 verbs in the same order, with `denoise` before the recording and
 `stop_denoise` after it, and both verbs carry an empty object because the
-schema gives them no parameters. With the HTTP layer replaced by a recorder,
-`quiet` and `loud` each make one POST to the documented calling path with the
-command, the call id at the top level and empty params, which is what the
-spec's variants require. Expected values live here, not in app.py.
+schema gives them no parameters. With a fresh recorder attached for each
+helper, `quiet` and `loud` each make exactly one POST to the documented
+calling path with the command, the call id at the top level and empty params,
+which is what the spec's variants require. Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -67,12 +67,15 @@ def main():
     check(y, "yaml")
     assert py == y, "python and yaml surfaces differ"
 
-    rec = V.Recorder()
-    recipe.client.calling._http = rec
-    recipe.quiet(CALL)
-    recipe.loud(CALL)
-    assert len(rec.calls) == 2, rec.calls
-    for call, command in zip(rec.calls, ("calling.denoise", "calling.denoise.stop")):
+    calls = []
+    for helper, command in ((recipe.quiet, "calling.denoise"),
+                            (recipe.loud, "calling.denoise.stop")):
+        rec = V.Recorder()  # a fresh recorder per helper: one helper, one request
+        recipe.client.calling._http = rec
+        helper(CALL)
+        assert len(rec.calls) == 1, (helper.__name__, rec.calls)
+        calls.append((rec.calls[0], command))
+    for call, command in calls:
         assert (call["method"], call["path"]) == ("POST", PATH), call
         assert call["body"] == {"command": command, "id": CALL, "params": {}}, call["body"]
         V.assert_documented("rest", "POST", PATH, None)

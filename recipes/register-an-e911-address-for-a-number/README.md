@@ -1,6 +1,6 @@
 # Register an E911 address for a number
 
-> Two POSTs and one GET: create an emergency address with the nine fields the spec requires, look up the number's id, and attach the address to the number.
+> Two POSTs and one GET create an emergency address with the nine fields the spec requires. They look up the number's id and attach the new address to the number.
 
 **Scenario:** a US workshop that puts its street address behind the number its staff dial out on
 
@@ -13,20 +13,15 @@ requires `label`, `country`, `first_name`, `last_name`, `street_number`,
 /api/relay/rest/phone_numbers/{id}/e911_address` with `e911_address_id` attaches
 the address to a number.
 
-The SDK wraps the first call as `client.addresses.create`. It has no wrapper for
-the second in 3.0.1. The recipe sends that request through the `HttpClient` that
-`RestClient` builds once and hands to every namespace
+The SDK wraps the first call as `client.addresses.create`. Its addresses
+namespace, `signalwire/rest/namespaces/addresses.py`, has no method for the
+attach path in 3.0.1. The recipe sends that request through the `HttpClient`
+that `RestClient` builds once and hands to every namespace
 (`signalwire/rest/client.py:74-85`).
 
 ## How it works
 
 ```python
-def create_address(label, first_name, last_name, street_number, street_name,
-                   city, state, postal_code, country="US", *, address_type=None,
-                   address_number=None, auto_correct_address=None):
-    body = dict(label=label, country=country, ..., emergency_enabled=True)
-    return client.addresses.create(**body)
-
 def number_id(e164):
     for item in client.phone_numbers.list().get("data", []):
         if item.get("number") == e164:
@@ -36,6 +31,10 @@ def attach(phone_number_id, address_id):
     return client.addresses._http.post(
         f"/api/relay/rest/phone_numbers/{phone_number_id}/e911_address",
         body={"e911_address_id": address_id})
+
+def register(e164, **address):
+    created = create_address(**address)          # the nine required fields, emergency_enabled on
+    return attach(number_id(e164), created["id"])
 ```
 
 What the platform receives:
@@ -54,8 +53,9 @@ POST /api/relay/rest/phone_numbers/<number id>/e911_address
 
 The spec lists `address_type` as an enum: Apartment, Basement, Building,
 Department, Floor, Office, Penthouse, Suite, Trailer or Unit. The number id is
-the `id` of the phone number resource, which `number_id` reads from
-`GET /api/relay/rest/phone_numbers`, not the number itself.
+the `id` of the phone number resource, not the number itself. `number_id` reads
+it from `GET /api/relay/rest/phone_numbers` with the spec's `filter_number`
+query, so a project with hundreds of numbers still answers on the first page.
 
 ## Run it
 
@@ -63,14 +63,13 @@ the `id` of the phone number resource, which `number_id` reads from
 cd python
 pip install -r requirements.txt
 cp ../.env.example .env          # then edit .env: your project id, API token and space
-python -c "import app; print(app.create_address('<label>', '<first name>', '<last name>', '<street number>', '<street name>', '<city>', '<state>', '<postal code>'))"
-python app.py +1XXXXXXXXXX <address_id>
+python -c "import app; print(app.register('+1XXXXXXXXXX', label='<label>', first_name='<first name>', last_name='<last name>', street_number='<street number>', street_name='<street name>', city='<city>', state='<state>', postal_code='<postal code>'))"
 ```
 
-Fill every placeholder in the first command with your own dispatchable US
-address, and use a US number on your project in the second. This creates an
-emergency location on your account, and a wrong one is worse than none. The spec's response schema for the address carries an `id`; pass it
-to the second command with a number on your project.
+Fill every placeholder with your own dispatchable US address and a US number on
+your project. This creates an emergency location on your account, and a wrong
+one is worse than none. `register` reads the `id` from the create response and
+attaches it; the two halves are also callable on their own.
 
 ## Verify it
 
@@ -80,14 +79,14 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-The verifier swaps the SDK's HTTP layer for a recorder, calls the helpers, and
-asserts the following.
+You swap the SDK's HTTP layer for a recorder. It answers the create with an id
+and the numbers list with two numbers. You call `register` and assert the
+following.
 
-- `create_address` makes one `POST` to the documented addresses path
-- its body contains every field in the spec's required list, which the verifier reads from the spec, plus `emergency_enabled: true` and the two optional fields passed
-- every field in that body is a documented property
-- `number_id` makes one `GET` to the documented numbers list and returns the id whose `number` matches
-- `attach` makes one `POST` to the number's documented e911 path with exactly `e911_address_id`, the spec's whole required list for that call
+- the flow makes three requests in order: `POST` the addresses path, `GET` the numbers list with `filter_number` set to the number, `POST` the number's e911 path
+- the spec's required set for the create is exactly the nine names the verifier expects
+- the create body carries those nine, `emergency_enabled: true` and the three optional fields, and every field is documented
+- the attach body is exactly `e911_address_id` with the id the create returned, which is the spec's whole required list for that call
 
 ## Limitations
 
@@ -98,9 +97,9 @@ API.
 There is no SDK method for the attach call in 3.0.1, so the recipe reaches for
 the shared HTTP client. A later SDK may add a wrapper.
 
-This recipe is for US addresses and US numbers. `country` defaults to `US`, the
-only value it was written and verified with; check the spec's
-`emergency_enabled` behaviour before trying another.
+This recipe was written for US addresses and US numbers and enforces neither.
+`country` defaults to `US`, the only value it was verified with; check the
+spec's `emergency_enabled` behaviour before trying another.
 
 ## What to change first
 

@@ -1,14 +1,14 @@
 """Prove the claim without a network.
 
 Claim: a tool result carries a SWML `user_event` whose `event` is the JSON
-object the handler chose, so the connected client receives the facts of what
-the handler did.
+object the handler chose. The bundled schema says that verb sends events to
+the connected client on the call.
 
 Proof: run the handler with a valid slot and compare the whole result. The
 action is a one-verb SWML document, `user_event` with the exact `event`
 object, and that document validates against the bundled schema, whose
 `user_event` requires `event`. An invalid slot returns a response and no
-action. The plain-SWML surface validates and fires its event before the `ai`
+action. The plain-SWML surface validates and places its event before the `ai`
 verb. Expected values live here, not in app.py.
 """
 import json
@@ -29,10 +29,9 @@ os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
 
 SLOTS = ["fri-10", "sat-09", "thu-14"]
 EXPECTED = {
-    "response": "Holding Thursday 2pm for the caller.",
+    "response": "Noted Thursday 2pm for the caller.",
     "action": [{"SWML": {"version": "1.0.0", "sections": {"main": [{"user_event": {
-        "event": {"type": "slot_held", "slot": "thu-14", "label": "Thursday 2pm",
-                  "held_for_seconds": 300}}}]}}}],
+        "event": {"type": "slot_selected", "slot": "thu-14", "label": "Thursday 2pm"}}}]}}}],
 }
 
 
@@ -48,7 +47,7 @@ def main():
     (fn,) = ai["SWAIG"]["functions"]
     assert fn["parameters"]["properties"]["slot"]["enum"] == SLOTS, fn
 
-    got = agent._execute_swaig_function("hold_slot", {"slot": "thu-14"}, call_id="c1")
+    got = agent._execute_swaig_function("select_slot", {"slot": "thu-14"}, call_id="c1")
     assert got == EXPECTED, json.dumps(got, indent=1)
     inline = got["action"][0]["SWML"]
     V.validate_swml(inline)
@@ -63,7 +62,7 @@ def main():
     else:
         raise AssertionError("a user_event without an event validated")
 
-    got = agent._execute_swaig_function("hold_slot", {"slot": "sun-08"}, call_id="c1")
+    got = agent._execute_swaig_function("select_slot", {"slot": "sun-08"}, call_id="c1")
     assert got["response"].startswith("INVALID") and "action" not in got, got
 
     y = V.load_yaml(HERE / "swml" / "agent.yaml")
@@ -71,9 +70,9 @@ def main():
     assert V.verb_names(y) == ["answer", "user_event", "ai"], V.verb_names(y)
     assert V.first(y, "user_event")["event"] == {"type": "call_answered", "agent": "booking"}
 
-    print(f"ok: hold_slot returns one SWML user_event with the exact event object; "
+    print(f"ok: select_slot returns one SWML user_event with the exact event object; "
           f"an event-less user_event fails the schema; an unknown slot sends nothing; "
-          f"the SWML surface fires call_answered before ai")
+          f"the SWML surface places call_answered before ai")
 
 
 if __name__ == "__main__":

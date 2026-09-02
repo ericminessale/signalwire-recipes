@@ -46,9 +46,11 @@ def swaig_test(*args):
     # the same SDK this verifier loaded
     env["PYTHONPATH"] = str(pathlib.Path(signalwire.__file__).parent.parent)
     cmd = [sys.executable, "-m", "signalwire.cli.swaig_test_wrapper", str(APP), *args]
-    # a clean clone has no python/.env; app.py's load_dotenv() would read one if
-    # you created it, and this verifier refuses to run against it
-    assert not (HERE / "python" / ".env").exists(), "remove python/.env before verifying"
+    # a clean clone has no .env anywhere load_dotenv() searches: python/, the
+    # recipe folder, and every parent up to the filesystem root. app.py would
+    # read one if you created it, and this verifier refuses to run against any.
+    for folder in [HERE / "python", HERE, *HERE.parents]:
+        assert not (folder / ".env").exists(), f"remove {folder / '.env'} before verifying"
     r = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=120,
                        cwd=str(HERE))
     assert r.returncode == 0, (args, r.returncode, r.stderr[-800:])

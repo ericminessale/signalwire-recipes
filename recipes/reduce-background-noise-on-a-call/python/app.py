@@ -1,7 +1,7 @@
 """Reduce background noise on a call.
 
-Two ways to switch noise reduction on and off for one leg, neither touching
-the media path you already have. In SWML, `denoise` starts it and
+Two ways to switch noise reduction on and off for one leg. In SWML, `denoise`
+starts it and
 `stop_denoise` stops it; both take no parameters. Over REST, the same pair are
 the call commands `calling.denoise` and `calling.denoise.stop`, addressed to a
 live call by id, so your backend can toggle it mid-call.

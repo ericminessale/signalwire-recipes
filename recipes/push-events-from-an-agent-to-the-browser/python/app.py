@@ -2,9 +2,9 @@
 
 A tool result can carry a SWML `user_event`, whose `event` is any JSON object.
 The bundled schema describes it as sending events "to the connected client on
-the call", which is how an agent talking to a Browser SDK client drives the
-page: the handler decides what happened and the event carries the facts, not
-the model's paraphrase of them.
+the call". A page running the Browser SDK and subscribed to user events can
+receive the structured event. The handler decides what happened, and the event
+carries the facts rather than the model's paraphrase of them.
 
 `FunctionResult.swml_user_event(event)` wraps the verb in a one-verb SWML
 document and adds it as a `SWML` action. The same event can also be pushed
@@ -29,12 +29,12 @@ class BookingAgent(AgentBase):
         self.prompt_add_section(
             "Role",
             "You book workshop slots for Ridgeline Cycles from a web page that "
-            "shows the available times. Use hold_slot when the caller picks one.",
+            "shows the available times. Use select_slot when the caller picks one.",
         )
 
     @AgentBase.tool(
-        name="hold_slot",
-        description="Hold a workshop slot the caller has chosen.",
+        name="select_slot",
+        description="Record which workshop slot the caller has chosen.",
         parameters={
             "type": "object",
             "properties": {"slot": {"type": "string", "enum": sorted(SLOTS),
@@ -42,15 +42,14 @@ class BookingAgent(AgentBase):
             "required": ["slot"],
         },
     )
-    def hold_slot(self, args, raw_data):
+    def select_slot(self, args, raw_data):
         slot = args.get("slot")
         if slot not in SLOTS:
             return FunctionResult("INVALID: that slot is not on the page.")
-        # the page gets the facts as data; the model gets a sentence
+        # the event carries the selection as data; the response is a sentence
         return FunctionResult(
-            f"Holding {SLOTS[slot]} for the caller."
-        ).swml_user_event({"type": "slot_held", "slot": slot,
-                           "label": SLOTS[slot], "held_for_seconds": 300})
+            f"Noted {SLOTS[slot]} for the caller."
+        ).swml_user_event({"type": "slot_selected", "slot": slot, "label": SLOTS[slot]})
 
 
 agent = BookingAgent()

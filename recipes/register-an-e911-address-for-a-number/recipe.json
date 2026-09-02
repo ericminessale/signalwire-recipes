@@ -2,7 +2,7 @@
   "slug": "register-an-e911-address-for-a-number",
   "title": "Register an e911 address for a number",
   "alias": "addresses create + phone_numbers e911_address",
-  "summary": "Two POSTs and one GET: create an emergency address with the nine fields the spec requires, look up the number's id, and attach the address to the number.",
+  "summary": "Two POSTs and one GET create an emergency address with the nine fields the spec requires. They look up the number's id and attach the new address to the number.",
   "scenario": "A US workshop that puts its street address behind the number its staff dial out on",
   "surfaces": [
     "python"

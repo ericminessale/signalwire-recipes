@@ -1,9 +1,9 @@
 {
   "slug": "check-consent-before-an-outbound-call",
   "title": "Check consent before an outbound call",
-  "alias": "",
-  "summary": "No outbound call is placed to a number without a recorded consent and inside the permitted calling window; the check runs in code before the dial.",
-  "scenario": "appointment reminder caller",
+  "alias": "consent check, then calling.dial",
+  "summary": "No outbound call is placed to a number without a consent record and inside the permitted local calling window. The check is code, and it runs before the dial, so a refused call is never a request.",
+  "scenario": "A workshop that calls customers when their bikes are ready, and only the ones who asked",
   "surfaces": [
     "python"
   ],
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "#14 (canonical: appointment reminder caller)",
@@ -31,8 +31,17 @@
     "evidence": [
       "docs platform/compliance (TCPA)",
       "docs apis/rest/calls/call-commands (dial)",
-      "the platform mechanism is thin here: the claim is the ordering (consent check, then dial); pair with handle-opt-outs-yourself"
+      "the platform mechanism is thin here: the claim is the ordering (consent check, then dial); pair with handle-opt-outs-yourself",
+      "tools/openapi/rest.json Calling.CallCreateParamsSWML required from, swml; the recorder proves no request precedes a refused check",
+      "verified 2026-09-02: recipes/check-consent-before-an-outbound-call/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "place-an-outbound-call"
+  ],
+  "related": [
+    "handle-opt-outs-yourself",
+    "place-an-outbound-ai-call"
+  ]
 }

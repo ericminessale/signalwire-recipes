@@ -1,12 +1,12 @@
 """Split one number into isolated personas.
 
-One agent, one number, three personas. The `default` context, where every
-call starts, finds out why the caller rang and can move to `sales`, `support`
-or `billing`. Each persona is
-its own context with `isolated` set, so entering it wipes the conversation
-history down to that context's prompt. Each persona's step names only its own
-tools in `functions`, so the sales tools do not exist while support is on the
-line, and vice versa. The structure, not the prompt, keeps them apart.
+One agent, three personas. The `default` context finds out why the caller
+rang and can move to `sales`, `support` or `billing`. Each persona is its own
+context with `isolated` set, so entering it wipes the conversation history
+down to that context's prompt. Each persona's step names only its own tool in
+`functions`, so the model is offered the sales tool only while sales is on the
+line. The structure, not the prompt, keeps them apart. The tools are stubs
+with fixed replies.
 
 Written against signalwire-sdk 3.0.1 (contexts and steps).
 """
@@ -19,12 +19,12 @@ from signalwire import AgentBase, FunctionResult
 load_dotenv()
 
 PERSONAS = {
-    "sales": ("You are the sales desk for Ridgeline Cycles. Quote prices and take "
-              "orders for bikes and accessories.", ["quote_price"]),
-    "support": ("You are the workshop support desk for Ridgeline Cycles. Book and "
-                "check repair appointments.", ["book_repair"]),
-    "billing": ("You are the billing desk for Ridgeline Cycles. Look up invoices "
-                "and arrange refunds.", ["look_up_invoice"]),
+    "sales": ("You are the sales desk for Ridgeline Cycles. Quote prices for bikes "
+              "and accessories.", ["quote_price"]),
+    "support": ("You are the workshop support desk for Ridgeline Cycles. Book "
+                "repair appointments.", ["book_repair"]),
+    "billing": ("You are the billing desk for Ridgeline Cycles. Look up invoices.",
+                ["look_up_invoice"]),
 }
 
 
