@@ -15,7 +15,9 @@ each tool runs.
 
 It exists to show that the browser recipes compose: a token minted for one
 address, events pushed to the page, state kept on the server, and a prompt
-reconfigured per call are one product when wired together.
+reconfigured per call are one product when wired together. A deployment is
+live at https://harbor-docs-5k2.pages.dev/ and the widget is the button in
+the corner.
 
 ## How it works
 

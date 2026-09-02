@@ -22,6 +22,7 @@
   ],
   "surfaces": [],
   "repo": "https://github.com/ericminessale/harbor-docs",
+  "demo_url": "https://harbor-docs-5k2.pages.dev/",
   "composes": [
     "ground-an-agent-in-your-docs",
     "push-events-from-an-agent-to-the-browser",

@@ -22,6 +22,7 @@ adding a recipe. The fields that matter to the generator:
 | `prerequisites`, `related`, `next` | authored forward edges, rendered as *Where this sits* |
 | `composes` | builds only: the recipes the application assembles |
 | `repo` | builds only: the repository; a build without one renders as planned |
+| `demo_url` | optional: where a build is deployed; renders "Try it live" as the page's primary action and the repository as a ghost button |
 | `plan` | planning state (`status`, `evidence`, `folds`); **never rendered** |
 | `tier`, `provenance`, `governed` | planning state; never rendered |
 
