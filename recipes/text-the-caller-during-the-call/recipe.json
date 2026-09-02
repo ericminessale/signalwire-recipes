@@ -1,15 +1,15 @@
 {
   "slug": "text-the-caller-during-the-call",
   "title": "Text the caller during the call",
-  "alias": "",
-  "summary": "A tool result sends an SMS to the caller while the voice call is still up; the model never handles the send.",
-  "scenario": "",
+  "alias": "FunctionResult.send_sms",
+  "summary": "A tool result carries a SWML send_sms, so the handler texts the caller while the voice call is still up. The model never sees a phone number.",
+  "scenario": "A workshop booking line that texts the agreed appointment time to the caller",
   "surfaces": [
     "python",
     "swml"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "messaging",
   "products": [
@@ -22,7 +22,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "messaging",
     "folds": [
       "t:ai-restaurant-reservation-voice-agent (SMS confirm)",
@@ -33,8 +33,18 @@
       "sdk function_result.py:741 send_sms",
       "demo barbiera agent.py:1071 send_sms with a short link",
       "demo cabby cabby.py:579,667",
-      "demo goair voyager.py:1830"
+      "demo goair voyager.py:1830",
+      "sdk function_result.py:741-800 send_sms builds a SWML document with one send_sms verb and hands it to execute_swml",
+      "docs apis/rest/webhooks/ai-swaig-tool-webhook: caller_id_num in the tool POST body",
+      "verified 2026-09-02: recipes/text-the-caller-during-the-call/verify.py"
     ]
   },
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "send-an-sms",
+    "hide-fields-from-the-model"
+  ]
 }

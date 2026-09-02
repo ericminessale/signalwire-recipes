@@ -62,7 +62,7 @@ cp ../.env.example .env
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/menu`. The SWML
+Point a phone number's SWML webhook at `https://<your-host>/menu/`. The SWML
 surface can be pasted into a hosted SWML Script instead.
 
 ## Verify it

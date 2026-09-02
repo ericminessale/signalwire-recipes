@@ -143,6 +143,14 @@ def check(d, fail):
             fail(slug, "README.md", f"no '## {want}' section")
     if "_TODO" in md:
         fail(slug, "README.md", "still contains _TODO")
+    # An AgentBase in 3.0.1 registers its root only as /route/ and answers
+    # 200 "null" to /route, so a webhook URL without the slash gets no
+    # document. 33 READMEs shipped that way (2026-09-02).
+    for m in re.finditer(r"<your-host>/[a-z0-9-]+`", md):
+        line = md[:m.start()].count("\n") + 1
+        fail(slug, f"README.md:{line}",
+             f"webhook URL {m.group(0)[:-1]} needs a trailing slash: the SDK "
+             "registers the agent root only at /route/")
     # prose only: fenced code and inline code are the author's, not prose
     prose = re.sub(r"```.*?```", "", md, flags=re.S)
     prose = re.sub(r"`[^`]*`", "", prose)

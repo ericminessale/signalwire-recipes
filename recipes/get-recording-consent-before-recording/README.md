@@ -62,7 +62,7 @@ python app.py
 ```
 
 Point a phone number's SWML webhook at
-`https://<user>:<password>@<your-host>/intake`, using the credentials you set.
+`https://<user>:<password>@<your-host>/intake/`, using the credentials you set.
 
 ## Verify it
 

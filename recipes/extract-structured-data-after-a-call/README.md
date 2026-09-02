@@ -51,7 +51,7 @@ cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/support`, using the credentials you set. Without them the request is refused.
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/support/`, using the credentials you set. Without them the request is refused.
 
 ## Verify it
 

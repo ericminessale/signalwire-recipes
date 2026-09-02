@@ -58,7 +58,7 @@ python app.py
 ```
 
 Point a supervisor-only number's SWML webhook at
-`https://<user>:<password>@<your-host>/supervisor`, and put the supervisors'
+`https://<user>:<password>@<your-host>/supervisor/`, and put the supervisors'
 own numbers in `SUPERVISORS`.
 
 ## Verify it

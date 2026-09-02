@@ -46,7 +46,7 @@ Alternatives with the same shape: the SDK's `datasphere` skill (webhook) or
    pip install -r requirements.txt
    SIGNALWIRE_SPACE=... SIGNALWIRE_PROJECT_ID=... SIGNALWIRE_API_TOKEN=... python app.py
    ```
-3. Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/docs`, using the credentials from your `.env`.
+3. Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/docs/`, using the credentials from your `.env`.
 
 ## Verify it
 

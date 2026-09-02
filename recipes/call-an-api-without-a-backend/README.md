@@ -45,7 +45,7 @@ cp ../.env.example .env          # set SWML_BASIC_AUTH_PASSWORD
 python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/catalogue`, using the credentials you set. Without them the request is refused. Open
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/catalogue/`, using the credentials you set. Without them the request is refused. Open
 Library needs no key, so it works as written.
 
 ## Verify it

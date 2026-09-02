@@ -41,7 +41,7 @@ pip install -r requirements.txt
 PUBLIC_URL=https://<your-host> python app.py
 ```
 
-Point the number's SWML webhook at `https://<your-host>/fax`.
+Point the number's SWML webhook at `https://<your-host>/fax/`.
 
 ## Verify it
 

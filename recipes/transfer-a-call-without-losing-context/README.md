@@ -43,7 +43,7 @@ pip install -r requirements.txt
 PUBLIC_URL=https://<your-host> python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<your-host>/intake`.
+Point a phone number's SWML webhook at `https://<your-host>/intake/`.
 
 ## Verify it
 

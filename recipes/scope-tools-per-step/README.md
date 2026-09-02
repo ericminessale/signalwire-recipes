@@ -44,7 +44,7 @@ pip install -r requirements.txt
 SUPPORT_ADDRESS=sip:support@yourspace.sip.signalwire.com python app.py
 ```
 
-Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/intake`, using the credentials from your `.env` (the agent
+Point a phone number's SWML webhook at `https://<user>:<password>@<your-host>/intake/`, using the credentials from your `.env` (the agent
 prints its URL and Basic Auth on start).
 
 ## Verify it

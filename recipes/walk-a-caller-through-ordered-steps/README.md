@@ -63,7 +63,7 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. Point a number's SWML webhook at
-`https://<user>:<password>@<your-host>/intake`.
+`https://<user>:<password>@<your-host>/intake/`.
 
 ## Verify it
 

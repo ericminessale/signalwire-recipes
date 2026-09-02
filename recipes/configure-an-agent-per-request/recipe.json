@@ -1,14 +1,14 @@
 {
   "slug": "configure-an-agent-per-request",
   "title": "Configure an agent per request",
-  "alias": "",
-  "summary": "One deployed agent serves many tenants; prompt, voice and tools are set per request from the query string or headers.",
-  "scenario": "",
+  "alias": "set_dynamic_config_callback",
+  "summary": "One deployed agent serves many tenants. A callback runs on every SWML request and configures an ephemeral copy from the query string or a header, so the deployed agent never changes.",
+  "scenario": "Two bicycle shops sharing one front-desk deployment",
   "surfaces": [
     "python"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -20,7 +20,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#31",
@@ -35,8 +35,17 @@
       "demo personal-assistant agent.py:241 multi-tenant routing by called number",
       "demo blackjack app.py:886-918 per-guest voice keyed on guest-<uuid> in on_swml_request",
       "demo cabby cabby.py:75 _per_call_config",
-      "demo veronica veronica.py:251 pre-call enrichment"
+      "demo veronica veronica.py:251 pre-call enrichment",
+      "sdk web_mixin.py:1287 on_swml_request returns the ephemeral marker; agent_base.py:780-815 callback runs on _create_ephemeral_copy()",
+      "sdk web_mixin.py:95-118 AgentBase root registered at /route/ only; catch-all returns None for /route (trailing-slash trap)",
+      "verified 2026-09-02: recipes/configure-an-agent-per-request/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "switch-language-mid-call"
+  ]
 }

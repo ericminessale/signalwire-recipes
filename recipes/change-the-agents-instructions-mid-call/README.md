@@ -58,7 +58,7 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. Point a number's SWML webhook at
-`https://<user>:<password>@<your-host>/front-desk`, say you are calling about a
+`https://<user>:<password>@<your-host>/front-desk/`, say you are calling about a
 refund, then ask about a repair. The billing prompt tells the model not to
 discuss repairs.
 

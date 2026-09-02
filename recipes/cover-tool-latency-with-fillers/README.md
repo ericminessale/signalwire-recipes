@@ -62,7 +62,7 @@ LOOKUP_DELAY_SECONDS=3 python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. Point a number's SWML webhook at
-`https://<user>:<password>@<your-host>/stock` and ask for part SK-2210. The delay
+`https://<user>:<password>@<your-host>/stock/` and ask for part SK-2210. The delay
 lets you hear the gap being covered. Set it back to 0 afterwards.
 
 ## Verify it

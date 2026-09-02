@@ -1122,6 +1122,50 @@ through verify, lint and two rounds of sol. Facts that cost a round:
   stands as a target, not a gate, and a recipe that needs the words to state
   its proof keeps them.
 
+## Wave 2 of the fill-out (2026-09-02)
+
+Five more: text-the-caller-during-the-call, write-a-disposition-from-handler-
+owned-data, stream-agent-debug-events, try-destinations-in-order and
+configure-an-agent-per-request. Facts that would have cost a round:
+
+- **An `AgentBase` root is registered only at `/route/`.** `include_router`
+  with a prefix turns `@router.get("/")` into `/front-desk/`, and the app is
+  built with `redirect_slashes=False`. `/front-desk` falls to a catch-all in
+  `web_mixin.py` that returns `None`, so the platform gets `200 null` and no
+  document. 33 READMEs said "point the webhook at `.../front-desk`" and every
+  one was wrong for an agent. `SWMLService.serve()` has its own catch-all that
+  handles the exact route, so plain SWML recipes were fine, but all URLs now
+  carry the slash and the lint refuses one without it.
+- **The verifier drives routes with `TestClient(agent.get_app())` and
+  `agent.route + "/"`.** The SDK's webhook URLs (`post_prompt_url`,
+  `debug_webhook_url`) end in a slash too; compare with `rstrip("/")`.
+- **`_render_swml()` and the routes call the dynamic-config callback on an
+  ephemeral copy** (`_create_ephemeral_copy`, deep-copies prompt, languages,
+  params, global_data). The deployed agent is unchanged after a request, which
+  the verifier proves by rendering it afterwards. The tool registry is not
+  copied, so per-request tools would leak; the recipe does not do that.
+- **The post-prompt POST carries `global_data`** when `action` is
+  `post_conversation` (docs: ai-post-prompt-callback). `on_summary(summary,
+  raw_data)` gets `post_prompt_data.parsed[0]`, or `raw` when parsed is
+  empty, and the whole body. Drive it with a POST to `/route/post_prompt`
+  behind basic auth; the response is `{"success": true}`.
+- **Debug events:** `enable_debug_events(level)` writes
+  `params.debug_webhook_url` (this agent's `/debug_events`) and
+  `debug_webhook_level` at render. The route is POST only, basic auth, reads
+  `label` or `action`, and calls the `on_debug_event` handler with
+  `(event_type, body)`.
+- **`caller_id_num` is in the SWAIG tool POST body** (docs:
+  ai-swaig-tool-webhook), so a handler can text the caller without the model
+  ever holding a number. `FunctionResult.send_sms` builds a one-verb SWML
+  document and hands it to `execute_swml`, so the action key is `SWML`.
+- **`connect` is a oneOf of four shapes**: single `to`, `serial`, `parallel`,
+  `serial_parallel`. `result.case` switches on `connect_result`, which is
+  `connected` or `failed` (docs: swml/reference/connect), and runs once the
+  peer leg has ended.
+- **Heredocs ate a backslash again** (a `\` line continuation inside a quoted
+  Python string) while patching a verifier. The Edit tool, or a script file
+  written with Write, for anything containing one.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

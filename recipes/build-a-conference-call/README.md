@@ -57,7 +57,7 @@ python app.py
 ```
 
 Point one number at `https://<your-host>/conference/host` and the others at
-`https://<your-host>/conference`.
+`https://<your-host>/conference/`.
 
 ## Verify it
 
