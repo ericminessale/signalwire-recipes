@@ -1,9 +1,9 @@
 {
   "slug": "stream-a-video-room-to-rtmp",
   "title": "Stream a video room to rtmp",
-  "alias": "",
-  "summary": "A room session is pushed to an RTMP destination and the stream is controlled over REST.",
-  "scenario": "",
+  "alias": "POST rooms/{id}/streams url + PUT/DELETE streams/{id}",
+  "summary": "One POST to a room's streams path with a url starts pushing its session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new url, and a DELETE by id answers 204.",
+  "scenario": "A workshop stand-up on video that a wider audience watches on a streaming platform",
   "surfaces": [
     "python"
   ],
@@ -22,15 +22,23 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "split from record-and-stream-a-video-room"
     ],
     "evidence": [
-      "docs apis/rest/video/streams/create-room-stream",
-      "Browser SDK v4 startRecording/startStreaming not cited: the v4 reference labels both unimplemented (sol round 5)"
+      "tools/openapi/rest.json POST /api/video/rooms/{id}/streams: url required, RTMP or RTMPS; 201 id, url, stream_type",
+      "tools/openapi/rest.json PUT /api/video/streams/{id}: url required; DELETE 204; GET rooms/{id}/streams",
+      "sdk rest/namespaces/video.py: rooms.create_stream, rooms.list_streams, streams.update, streams.delete",
+      "verified 2026-09-02: recipes/stream-a-video-room-to-rtmp/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "create-a-video-room-and-join-from-the-browser"
+  ],
+  "related": [
+    "launch-a-prebuilt-video-conference"
+  ]
 }

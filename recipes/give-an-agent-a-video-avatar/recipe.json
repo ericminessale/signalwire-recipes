@@ -1,9 +1,9 @@
 {
   "slug": "give-an-agent-a-video-avatar",
   "title": "Give an agent a video avatar",
-  "alias": "",
-  "summary": "On a video call the agent shows idle, listening and talking video loops that switch with its state.",
-  "scenario": "",
+  "alias": "ai.params video_idle_file / video_listening_file / video_talking_file",
+  "summary": "Three ai.params, video_idle_file, video_listening_file and video_talking_file, give an agent a face on a video call. The platform switches between the three clips with the agent's state.",
+  "scenario": "A bike shop's video front desk that shows a face rather than a blank tile",
   "surfaces": [
     "python",
     "swml"
@@ -22,15 +22,23 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "demo santa, cinebot, bobbystable, example (avatar files)"
     ],
     "evidence": [
-      "docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)",
-      "demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)"
+      "schema.json AIParams: video_idle_file, video_listening_file, video_talking_file, each 'Only works for calls that support video.'",
+      "docs swml/reference/calling/ai/params",
+      "sdk core/mixins/ai_config_mixin.py set_params merges into ai.params",
+      "verified 2026-09-02: recipes/give-an-agent-a-video-avatar/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "create-a-video-room-and-join-from-the-browser"
+  ]
 }

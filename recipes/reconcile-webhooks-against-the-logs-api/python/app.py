@@ -28,8 +28,8 @@ SEEN = set()
 
 def every_page(fetch, **params):
     """Walk a list to its end. Each page's `links.next` is a URL whose query
-    carries the next page's parameters, so the walk re-issues the query it is
-    given. The spec's page_size maximum is 1000."""
+    carries the next page's parameters, so the walk re-issues the query the URL
+    supplies. The spec's page_size maximum is 1000."""
     entries = []
     page = fetch(**params)
     while True:

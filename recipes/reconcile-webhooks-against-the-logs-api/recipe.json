@@ -33,7 +33,7 @@
       "docs apis/rest/voice-logs/list-voice-logs (events)",
       "docs apis/rest/message-logs/list-message-logs",
       "sdk rest/namespaces/logs.py",
-      "tools/openapi/rest.json GET /api/voice/logs and /api/messaging/logs: created_after, created_before, page_size 1-1000; GET /api/voice/logs/{id}/events -> Voice.LogEvent{event_at, level, name, details}",
+      "tools/openapi/rest.json GET /api/voice/logs and /api/messaging/logs: created_after, created_before, page_size 1-1000; GET /api/voice/logs/{id}/events -> Voice.LogEvent{event_at, level, name, details, project_id, log_id}",
       "sdk rest/namespaces/logs.py VoiceLogs.list/list_events, MessageLogs.list; client.logs (rest/client.py:103)",
       "verified 2026-09-02: recipes/reconcile-webhooks-against-the-logs-api/verify.py"
     ]

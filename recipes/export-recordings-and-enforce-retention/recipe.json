@@ -1,9 +1,9 @@
 {
   "slug": "export-recordings-and-enforce-retention",
   "title": "Export recordings and enforce retention",
-  "alias": "",
-  "summary": "Recordings land in your own object storage and are deleted from SignalWire on your schedule.",
-  "scenario": "",
+  "alias": "list recordings, copy the expired ones out, then DELETE",
+  "summary": "A pass lists every call recording across pages, copies each one older than your retention window to storage you control, and then deletes it from SignalWire. Nothing is deleted that was not copied first.",
+  "scenario": "A shop that must keep call recordings for a year in its own archive and nowhere else",
   "surfaces": [
     "python"
   ],
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "sol correction (S3-compatible storage is not our product)",
@@ -29,11 +29,19 @@
       "t:storage-voicemail-archive"
     ],
     "evidence": [
-      "docs compatibility-api/cxml/reference/voice/record (storageUrl)",
-      "docs apis/rest/recordings/list-call-recordings (delete)",
-      "docs platform/media-protection",
-      "platform-docs: external destination exists only in cXML, not SWML/REST"
+      "tools/openapi/rest.json GET /api/relay/rest/recordings (links.next pagination; every variant carries id, created_at, url, duration_in_seconds); DELETE /api/relay/rest/recordings/{id} 204",
+      "docs platform/media-protection: protected media requires API auth to fetch",
+      "docs compatibility-api/cxml/reference/voice/record (storageUrl) is the record-time alternative; SWML exposes none",
+      "sdk rest/namespaces/recordings.py list/get/delete",
+      "verified 2026-09-02: recipes/export-recordings-and-enforce-retention/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "record-a-call"
+  ],
+  "related": [
+    "reconcile-webhooks-against-the-logs-api",
+    "redact-a-message-body-after-sending"
+  ]
 }

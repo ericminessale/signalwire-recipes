@@ -9,8 +9,9 @@ number that withdrew consent, and a consented number at 21:30 local time each
 raise `NoConsent` naming the reason. The recorder sees no request. The same
 consented number at 19:00 local time makes exactly one POST to the documented
 calling path with exactly the expected body. That instant is 02:00 UTC, outside
-the window, so the zone that decides is the callee's. A naive clock raises.
-Expected values live here, not in app.py.
+the window, so the zone that decides is the callee's. Both ends of the window
+are closed, and with no `now` supplied the code reads a frozen clock. A naive
+clock raises. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -73,6 +74,48 @@ def main():
     else:
         raise AssertionError("a naive clock was accepted")
 
+    # both ends of the window are closed: the edges pass, one minute past fails
+    def la(hour, minute):
+        return datetime(2026, 9, 2, hour, minute, tzinfo=LA).astimezone(ZoneInfo("UTC"))
+
+    for hour, minute in ((9, 0), (20, 0)):
+        assert recipe.allowed(OK, la(hour, minute)) is None, (hour, minute)
+    for hour, minute in ((8, 59), (20, 1)):
+        reason = recipe.allowed(OK, la(hour, minute))
+        assert reason and f"{hour:02d}:{minute:02d}" in reason, (hour, minute, reason)
+        try:
+            recipe.place(OK, "hello", now=la(hour, minute))
+        except recipe.NoConsent:
+            pass
+        else:
+            raise AssertionError(f"{hour:02d}:{minute:02d} was dialled")
+    assert rec.calls == [], rec.calls
+
+    # with no `now`, the code reads the clock itself
+    class FrozenDatetime(datetime):
+        frozen = LATE
+
+        @classmethod
+        def now(cls, tz=None):
+            return cls.frozen.astimezone(tz) if tz else cls.frozen
+
+    real_datetime = recipe.datetime
+    recipe.datetime = FrozenDatetime
+    try:
+        try:
+            recipe.place(OK, "hello")
+        except recipe.NoConsent as e:
+            assert "21:30" in str(e), str(e)
+        else:
+            raise AssertionError("a frozen late clock was dialled")
+        assert rec.calls == [], rec.calls
+        FrozenDatetime.frozen = EVENING
+        recipe.place(OK, "Your bike is ready.")
+        assert len(rec.calls) == 1, rec.calls
+        rec.calls.clear()
+    finally:
+        recipe.datetime = real_datetime
+
     recipe.place(OK, "Your bike is ready.", now=EVENING)
     assert len(rec.calls) == 1, rec.calls
     (call,) = rec.calls
@@ -91,9 +134,9 @@ def main():
     assert set(schema.get("required", [])) <= set(params), schema.get("required")
     V.validate_swml(params["swml"])
 
-    print(f"ok: no record, withdrawn consent and 21:30 local each raised NoConsent with "
-          f"no request. The consented number at 19:00 local (02:00 UTC) made one POST "
-          f"{PATH} command=dial with the expected body and valid inline SWML.")
+    print(f"ok: no record, withdrawn consent, 21:30 local, 08:59 and 20:01 each raised "
+          f"NoConsent with no request; 09:00 and 20:00 pass. The consented number at 19:00 "
+          f"local (02:00 UTC) made one POST {PATH} command=dial with the expected body.")
 
 
 if __name__ == "__main__":

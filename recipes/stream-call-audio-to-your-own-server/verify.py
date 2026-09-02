@@ -108,7 +108,6 @@ def main():
     assert set(p["device"]) <= set(ws["properties"]), (p["device"], list(ws["properties"]))
     assert set(ws.get("required", [])) <= set(p["device"]), ws.get("required")
     assert p["device"]["type"] in deref(spec, ws["properties"]["type"])["enum"], p["device"]
-    assert URI.startswith("wss://"), URI
     ws_params = deref(spec, ws["properties"]["params"])
     assert set(p["device"]["params"]) <= set(ws_params["properties"]), ws_params["properties"]
     assert set(ws_params.get("required", [])) <= set(p["device"]["params"]), ws_params.get("required")

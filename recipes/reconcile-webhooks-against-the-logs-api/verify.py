@@ -117,9 +117,9 @@ def main():
         ps = next(p for p in spec["paths"][path]["get"]["parameters"] if p["name"] == "page_size")
         assert (ps["schema"]["minimum"], ps["schema"]["maximum"]) == (1, 1000), (path, ps["schema"])
 
-    print(f"ok: two voice pages and two message pages walked through links.next, one events "
-          f"request per unseen call; the report names both unseen calls and both unseen "
-          f"messages, one of each from a second page, the calls with trails")
+    print("ok: two voice pages and two message pages walked through links.next, one events "
+          "request per unseen call; the report names both unseen calls and both unseen "
+          "messages, one of each from a second page, the calls with trails")
 
 
 if __name__ == "__main__":

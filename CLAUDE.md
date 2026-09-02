@@ -1355,6 +1355,14 @@ streams, call status callbacks. Facts that cost a round or a fetch:
   nothing" with a real document instead of an error.
 - **Phone numbers list at `/api/relay/rest/phone_numbers`**, not
   `/api/phone_numbers`; `filter_number` is the query.
+- **Never commit a regenerated `recipes/README.md` from a tree that holds
+  folders the commit leaves out.** `gen_index.py` reads the working tree, so
+  426bd24 committed an index counting five wave-7 recipes whose files were
+  held back, and `--check` fails on a clean checkout (codex). Either commit
+  the folders with the index or regenerate after excluding them. A partial
+  commit and a generated file do not mix.
+- **`AIParams` accepts unknown keys.** A misspelt `video_idel_file` validates
+  and does nothing. A verifier pins the exact keys; the schema will not.
 
 ## Open work
 

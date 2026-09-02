@@ -1,11 +1,10 @@
 {
   "slug": "handle-opt-outs-yourself",
   "title": "Handle opt outs yourself",
-  "alias": "",
-  "summary": "SignalWire does not manage STOP; your handler records the opt-out and every later send checks it first.",
-  "scenario": "",
+  "alias": "inbound message webhook + send_sms + a checked record",
+  "summary": "Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request.",
+  "scenario": "A bike shop that texts repair updates and must stop the moment a customer says so",
   "surfaces": [
-    "swml",
     "python"
   ],
   "governed": false,
@@ -22,15 +21,25 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "messaging",
     "folds": [
       "t:sms-opt-out-management"
     ],
     "evidence": [
-      "docs platform/messaging FAQ: customers are responsible for handling inbound stop requests",
-      "docs platform/compliance (TCPA)"
+      "https://signalwire.com/docs/platform/messaging (fetched 2026-09-02): customers are responsible for handling inbound stop requests; no send again unless opted back in via Unstop",
+      "tools/openapi/rest.json webhooks inbound_message_webhook: message{from,to,body,type,...} required; the URL answers with SWML",
+      "schema.json SendSMS/SMSWithBody: to_number, from_number, body required; sections.main [] validates",
+      "tools/openapi/rest.json POST /api/messaging/messages: to, from required",
+      "sdk 3.0.1 has no messaging namespace; send goes through RestClient._http",
+      "verified 2026-09-02: recipes/handle-opt-outs-yourself/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "send-an-sms"
+  ],
+  "related": [
+    "redact-a-message-body-after-sending"
+  ]
 }

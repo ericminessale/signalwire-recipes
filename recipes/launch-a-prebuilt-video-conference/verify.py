@@ -1,8 +1,8 @@
 """Prove the claim without a network.
 
 Claim: one POST creates a themed video conference from a `display_name` and
-options the spec documents, and one GET lists the tokens the spec documents
-for it, each with a name, a token and scopes.
+options the spec documents. One GET lists the tokens the spec documents for
+it, each with a name, a token and scopes.
 
 Proof: the HTTP layer is a recorder that answers the create with an `id` and
 the token list with one token. `launch` makes one POST to the documented

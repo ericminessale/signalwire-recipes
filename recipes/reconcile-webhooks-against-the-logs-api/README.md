@@ -7,8 +7,8 @@
 ## What this demonstrates
 
 `GET /api/voice/logs` and `GET /api/messaging/logs` take `created_after`,
-`created_before` and `page_size` in the vendored REST spec, and each page's
-`links.next` is the URL of the next one. `GET /api/voice/logs/{id}/events`
+`created_before` and `page_size` in the vendored REST spec. When a page carries
+`links.next`, the recipe passes that URL's query to the same list method. `GET /api/voice/logs/{id}/events`
 answers with a `data` array of event entries. The spec requires `event_at`,
 `level`, `name`, `details`, `project_id` and `log_id` on each. You reach them as
 `client.logs.voice.list`,

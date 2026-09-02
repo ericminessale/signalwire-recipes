@@ -1,6 +1,6 @@
 # Route SIP calls to agents by username
 
-> Calls to different SIP usernames on one domain reach different agents behind one AgentServer. A routing callback reads the username from the request body, the SDK answers 307, and the redirected request serves that agent's SWML.
+> One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route, and a re-POST to that route serves that agent's SWML.
 
 **Scenario:** a PBX trunk that sends `sales@` and `workshop@` to one webhook and expects two different agents
 
@@ -67,11 +67,11 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. You also need a SIP domain
-application: create one in the Dashboard under SIP, or with
-`POST /api/relay/rest/domain_applications` from the vendored REST spec, and
-register your PBX or softphone against the domain it gives you. Point its call
-handler at a SWML script at `https://<user>:<password>@<your-host>/sales/sip/`;
-either agent's `/sip` path routes for both. Dial `sip:workshop@<your-domain>`
+application. Create one in the Dashboard under SIP, or with
+`POST /api/relay/rest/domain_applications` from the vendored REST spec. Register
+your PBX or softphone against the domain it gives you. Point its call handler
+at a SWML script at `https://<user>:<password>@<your-host>/sales/sip/`; either
+agent's `/sip` path routes for both. Dial `sip:workshop@<your-domain>`
 and `sip:sales@<your-domain>`.
 
 ## Verify it
@@ -86,7 +86,8 @@ The verifier builds the server, drives its FastAPI app with the test client, and
 asserts the following.
 
 - `extract_sip_username` returns the username of a `sip:` URI, the value after `tel:`, a bare value as itself, and `None` for a body with no call
-- each of the four usernames, POSTed to either agent's `/sip` path, answers 307 with the mapped agent's route, slash included, in `Location`
+- the app's `USERNAMES` equals the verifier's own map
+- each of the four usernames, POSTed to either agent's `/sip` path, answers 307 with the mapped agent's route, slash included, in `Location`; one of them arrives as `Workshop`
 - re-POSTing the same body to that `Location`, unchanged, answers 200 with the destination agent's SWML, which validates and names that desk
 - an unknown username and a `tel:` destination, POSTed to each agent's `/sip` path, answer 200 with that receiving agent's own SWML
 - the server refuses a POST without basic auth
@@ -102,8 +103,8 @@ two domains sharing a username share an agent.
 
 ## What to change first
 
-Add `"billing": "/sales/"` to `USERNAMES`, add the same entry to `ROUTES` in
-`verify.py`, and run it. The verifier walks its own map, so a username only the
-app knows is never exercised; the two maps grow together, and the dictionary is
-the router. To see the 3.0.1 ordering rule instead, register the callback after
+Add `"billing": "/sales/"` to `USERNAMES` and run the verifier. It fails at
+once, because it asserts its own `ROUTES` equals the app's map. Add the same
+entry to `ROUTES` and it passes again. The two maps grow together, and the
+dictionary is the router. To see the 3.0.1 ordering rule instead, register the callback after
 `server.register()`. Every `/sip` POST becomes a 404.

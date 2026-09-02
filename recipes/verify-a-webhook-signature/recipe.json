@@ -1,9 +1,9 @@
 {
   "slug": "verify-a-webhook-signature",
   "title": "Verify a webhook signature",
-  "alias": "signature check + idempotency",
-  "summary": "Reject forged webhooks and make your handler safe to call twice with the same event.",
-  "scenario": "The thing every tutorial skips",
+  "alias": "X-Signalwire-Signature = hex(HMAC(key, url + body))",
+  "summary": "A request whose X-Signalwire-Signature header does not match hex(HMAC-SHA1(signing_key, url + raw_body)) is refused with 403 before any route runs. A matching one, or a matching X-Signalwire-SHA256-Signature, is served.",
+  "scenario": "A public webhook that must never run a document for a request SignalWire did not send",
   "category": "voice",
   "products": [
     "voice",
@@ -14,8 +14,7 @@
     "webhooks"
   ],
   "surfaces": [
-    "python",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -24,16 +23,23 @@
   "subcategory": "governance",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "t:receive-sms-webhook (signature part)",
       "variant: SWAIG signature request"
     ],
     "evidence": [
-      "docs swml/guides/webhook-security (HMAC)",
-      "docs apis/rest/webhooks/swaig-signature-request",
-      "NEEDS VERIFICATION 2026-08-25: the signature scheme itself. The SDK implements no signature verification (no hmac import anywhere in 3.0.1), and docs/enum/platform-docs.md records only that an HMAC exists and where it is documented. Writing a verifier needs the header name, the exact signed payload and the key, and inventing any of the three would ship a security recipe that does not verify anything. Read signalwire.com/docs/swml/guides/webhook-security and capture one signed request first."
+      "https://signalwire.com/docs/swml/guides/webhook-security (fetched 2026-09-02): X-Signalwire-Signature HMAC-SHA1 hex on every signed request, X-Signalwire-SHA256-Signature on call requests; signed payload is url + raw body with no separator; key in Dashboard API Credentials",
+      "sdk 3.0.1 implements no verification (no hmac import); standard library here",
+      "verified 2026-09-02: recipes/verify-a-webhook-signature/verify.py"
     ]
-  }
+  },
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "handle-call-status-callbacks",
+    "protect-tool-webhooks-with-per-call-tokens"
+  ]
 }

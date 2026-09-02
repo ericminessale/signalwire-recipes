@@ -9,14 +9,17 @@
 The platform's part is one `dial` on `POST /api/calling/calls`. The recipe is
 the ordering around it. `place()` looks the number up in your consent store and
 converts the current time to the callee's zone with `zoneinfo`. It checks that
-time against a window. Each failed check raises `NoConsent` with the reason
-before the code reaches `client.calling.dial`. The verifier records no HTTP
-request for a refused call, because the code never builds one.
+time against a window. Each failed consent or window check raises `NoConsent`
+with the reason before the code reaches `client.calling.dial`. A clock with no
+time zone raises `ValueError` instead. The verifier records no HTTP request for
+a refused call, because the code never builds one.
 
 ## How it works
 
 ```python
 def allowed(number, now=None):
+    if now is not None and now.utcoffset() is None:
+        raise ValueError("now must carry a time zone")
     record = CONSENT.get(number)
     if not record:
         return "no consent on record"
@@ -34,7 +37,7 @@ def place(number, message, now=None):
     return client.calling.dial(**{"from": FROM, "to": number, "timeout": 25, "swml": ...})
 ```
 
-What the platform receives, and only when every check passed:
+What the platform receives, after every check passes:
 
 ```json
 {"command": "dial",
@@ -45,7 +48,7 @@ What the platform receives, and only when every check passed:
 
 The code judges the window in the callee's zone, which is part of the consent
 record. It refuses a callee in Los Angeles at 21:30 even when the server clock
-reads 04:30 tomorrow, and it allows one at 19:00 when the server reads 02:00.
+reads 04:30 tomorrow. It allows one at 19:00 when the server reads 02:00.
 `CONSENT` here is a dictionary. With counsel, decide which consent details your
 production store must retain.
 
@@ -61,7 +64,8 @@ python app.py +1XXXXXXXXXX       # the destination you added to CONSENT
 Before the first run, add the destination you have consent to call to
 `CONSENT` in `app.py`. Give it `consented` true and its time zone, then pass
 that same number. There is no server to expose; the script speaks to the REST
-API and exits. A refused number exits with the reason and no request.
+API and exits. For a refused number `place()` raises `NoConsent` with the
+reason, and the script exits with that message.
 
 ## Verify it
 
@@ -78,6 +82,8 @@ asserts the following.
 - a number that withdrew consent does the same
 - a consented number at 21:30 local time raises `NoConsent` naming the window and `21:30`
 - the window is the callee's: 02:00 UTC is outside a 09:00 to 20:00 window, and the same instant is 19:00 in Los Angeles and passes
+- the window is closed at both ends: 09:00 and 20:00 local pass, 08:59 and 20:01 raise, with no request for either refusal
+- with no `now` supplied, the code reads the clock itself: a frozen clock inside the window dials, one outside raises
 - a clock with no time zone raises `ValueError` rather than passing in the server's zone
 - the consented number in the window makes exactly one `POST` to the documented calling path
 - the body equals one expected object: `command: dial` and params of `from`, `to`, `timeout`, and the inline SWML with its three verbs in order
@@ -89,8 +95,8 @@ This is the ordering, not the law. Which hours count, what consent must say,
 and how long a record is good for are yours to decide with counsel, and vary by
 jurisdiction.
 
-The store is in memory. Pair with `handle-opt-outs-yourself` to record a STOP
-as a withdrawal.
+The store is in memory. `handle-opt-outs-yourself` is the messaging side of
+the same record.
 
 ## What to change first
 

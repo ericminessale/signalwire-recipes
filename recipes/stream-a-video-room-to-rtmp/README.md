@@ -1,28 +1,102 @@
-# Stream a video room to rtmp
+# Stream a video room to RTMP
 
-> A room session is pushed to an RTMP destination and the stream is controlled over REST.
+> One POST to a room's streams path with a `url` starts pushing its session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new `url`, and a DELETE by id answers `204`.
 
-**Scenario:** _not set_
+**Scenario:** a workshop stand-up on video that a wider audience watches on a streaming platform
 
 ## What this demonstrates
 
-_TODO: the pattern, in two sentences. This is the part that carries the argument._
+The vendored REST spec, `tools/openapi/rest.json`, documents
+`POST /api/video/rooms/{id}/streams` with one required field, `url`. Its
+description reads "RTMP or RTMPS URL. This must be the address of a server
+accepting incoming RTMP/RTMPS streams." The `201` response carries the stream's
+`id`, `url` and `stream_type`. You then address the stream by that id. The spec
+titles `PUT /api/video/streams/{id}` "Update stream" and requires the same
+`url`, and titles `DELETE /api/video/streams/{id}` "Delete stream", answering
+`204`. `GET /api/video/rooms/{id}/streams` lists a room's streams. You reach
+the four as `rooms.create_stream`, `streams.update`, `streams.delete` and
+`rooms.list_streams` under `client.video`.
 
-## Prerequisites
+## How it works
 
-- A SignalWire account and API token
-- A phone number on that account
+```python
+def start_stream(room_id, url=None):
+    url = url or RTMP_URL
+    return client.video.rooms.create_stream(room_id, url=url)
 
-## Setup
+def move_stream(stream_id, url):
+    return client.video.streams.update(stream_id, url=url)
 
-```bash
-cp .env.example .env    # add your credentials
+def stop_stream(stream_id):
+    return client.video.streams.delete(stream_id)
 ```
+
+What the platform receives:
+
+```http
+POST /api/video/rooms/<room_id>/streams
+{"url": "rtmps://live.example.com/app/stream-key"}
+
+PUT /api/video/streams/<stream_id>
+{"url": "rtmp://backup.example.com/app/stream-key"}
+
+DELETE /api/video/streams/<stream_id>
+```
+
+Keep the URL in `RTMP_URL` and out of the code: whoever holds it can push video
+to your streaming server. The room is one you already have; the spec documents the
+same `url` field on `POST /api/video/conferences/{id}/streams` for a prebuilt
+conference.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python_
+```bash
+cd python
+pip install -r requirements.txt
+cp ../.env.example .env          # then edit .env: credentials and RTMP_URL
+ROOM_ID="your-room-id"           # from create-a-video-room-and-join-from-the-browser
+python app.py start "$ROOM_ID"   # prints the stream, including its id
+STREAM_ID="id-returned-by-start"
+python app.py move "$STREAM_ID" rtmp://other.example.com/app/key
+python app.py stop "$STREAM_ID"
+python app.py list "$ROOM_ID"
+```
+
+You expose no server; the script speaks to the REST API and exits. Each
+subcommand checks its own arguments and prints the usage line otherwise.
+
+## Verify it
+
+No network, no account.
+
+```bash
+cd ..                     # back to the recipe folder
+python verify.py
+```
+
+You swap the SDK's HTTP layer for a recorder that answers the stream create
+with an id. You call the four helpers against a fixed room id and assert the
+following.
+
+- they make four requests in order: `POST` the stream, `PUT` the stream by id, `DELETE` the stream by id, `GET` the room's streams
+- the create and the move are exactly `{"url": ...}`; the delete and the list carry no body
+- the vendored spec documents every path and body, requires exactly `url` on the create and the update, and titles the `PUT` "Update stream" and the `DELETE` "Delete stream"
+- the spec describes `url` as an RTMP or RTMPS URL; the create's `201` schema carries `id`, `url` and `stream_type`; the delete answers `204` with no body
+- the spec requires the same `url` on the conference streams path
+- with `RTMP_URL` unset, `start_stream` stops before any request
+
+## Limitations
+
+You prove the requests and the documented shapes. Whether frames reach your
+RTMP server, when they start, and at what resolution are the platform's side of
+a live session.
+
+Creating the room is a different recipe,
+`create-a-video-room-and-join-from-the-browser`. This one starts from a room
+id.
 
 ## What to change first
 
-_TODO_
+Change `move_stream` to send `{"rtmp_url": url}` and run the verifier. The
+exact-body assertion fails first, and `assert_documented` would fail next: the
+spec knows one field here, and its name is `url`.

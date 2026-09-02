@@ -1,9 +1,9 @@
 {
   "slug": "handle-call-status-callbacks",
-  "title": "Handle call status callbacks and failures",
-  "alias": "status events + failure states",
-  "summary": "React to ringing, answered, busy, no-answer and failed without guessing at state.",
-  "scenario": "Knowing what actually happened to a call",
+  "title": "Handle call status callbacks",
+  "alias": "StatusCallbackEvent every stage + SequenceNumber",
+  "summary": "Asking for initiated, ringing, answered and completed in StatusCallbackEvent asks SignalWire to post those state changes of a call to your URL. Keyed by CallSid and ordered by SequenceNumber, the callbacks that arrive rebuild the call's life, with the duration when the completed one carries it.",
+  "scenario": "A shop that calls customers when repairs are done and wants a record of what happened to each call",
   "category": "voice",
   "products": [
     "voice"
@@ -13,8 +13,7 @@
     "observability"
   ],
   "surfaces": [
-    "python",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -23,13 +22,18 @@
   "subcategory": "observe",
   "plan": {
     "kind": "recipe",
-    "status": "stub",
+    "status": "verified",
     "lens": "voice",
     "folds": [],
     "evidence": [
-      "docs apis/rest/webhooks (SWML inbound call webhook, status callbacks)",
-      "compat Calls StatusCallbackEvent",
-      "NEEDS VERIFICATION 2026-08-25: the status-callback payload. Both OpenAPI specs document only *StatusCallbackMethod (the HTTP verb) and the status_events enum; neither publishes a body schema for what SignalWire POSTs to status_url. The claim is that the payload reconstructs the call's life, which cannot be written without inventing fields. Capture one real callback before writing this."
+      "tools/openapi/compat.json POST Calls: StatusCallback, StatusCallbackEvent (valid values initiated, ringing, answered, completed, ringing_forwarded, ringing_queued; default completed), StatusCallbackMethod",
+      "tools/openapi/compat.json webhooks voice_status_callback: required fields, CallStatus enum, CallDuration only on completed, SequenceNumber starting at 0, best-effort",
+      "sdk rest/namespaces/compat.py CompatCalls.create",
+      "verified 2026-09-02: recipes/handle-call-status-callbacks/verify.py"
     ]
-  }
+  },
+  "related": [
+    "reconcile-webhooks-against-the-logs-api",
+    "check-consent-before-an-outbound-call"
+  ]
 }

@@ -1,9 +1,9 @@
 {
   "slug": "record-a-video-room",
   "title": "Record a video room",
-  "alias": "",
-  "summary": "A room session is recorded and the recording is listed and downloadable over REST.",
-  "scenario": "",
+  "alias": "rooms record_on_start + room_recordings REST",
+  "summary": "record_on_start true on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a uri, a status and a duration, and a DELETE by recording id removes one.",
+  "scenario": "A workshop stand-up on video that the people who missed it watch later",
   "surfaces": [
     "python"
   ],
@@ -21,16 +21,26 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "split from record-and-stream-a-video-room",
       "t:video-webinar-recording-manager"
     ],
     "evidence": [
-      "docs apis/rest/video/room-recordings/list-room-recordings",
-      "Browser SDK v4 startRecording/startStreaming not cited: the v4 reference labels both unimplemented (sol round 5)"
+      "tools/openapi/rest.json POST /api/video/rooms record_on_start: 'Specifies whether to start recording a Room Session when one is started for this Room.'",
+      "tools/openapi/rest.json GET /api/video/room_sessions/{id}/recordings, GET/DELETE /api/video/room_recordings/{id}: id, room_session_id, status, duration, format, uri; 204",
+      "sdk rest/namespaces/video.py room_sessions.list_recordings, room_recordings.get/delete",
+      "Browser SDK v4 reference labels startRecording unimplemented (sol round 5)",
+      "verified 2026-09-02: recipes/record-a-video-room/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "create-a-video-room-and-join-from-the-browser"
+  ],
+  "related": [
+    "stream-a-video-room-to-rtmp",
+    "export-recordings-and-enforce-retention"
+  ]
 }

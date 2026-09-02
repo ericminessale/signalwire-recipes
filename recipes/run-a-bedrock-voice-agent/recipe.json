@@ -1,12 +1,11 @@
 {
   "slug": "run-a-bedrock-voice-agent",
   "title": "Run a bedrock voice agent",
-  "alias": "",
-  "summary": "An agent runs on Amazon Bedrock voice-to-voice by swapping the base class; SWAIG tools are unchanged.",
-  "scenario": "",
+  "alias": "BedrockAgent renders amazon_bedrock, same SWAIG",
+  "summary": "Swapping AgentBase for BedrockAgent changes the document's verb from ai to amazon_bedrock and nothing about the tools. The same SWAIG function, with the same schema, renders on both, and the same handler runs.",
+  "scenario": "A parts desk you want to try on Amazon Bedrock's voice-to-voice model without rewriting its tools",
   "surfaces": [
-    "python",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -19,13 +18,21 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [],
     "evidence": [
-      "sdk agents/bedrock.py:26,113",
-      "docs swml/reference/calling/amazon-bedrock"
+      "sdk agents/bedrock.py: BedrockAgent._render_swml replaces ai with amazon_bedrock, copying prompt (+voice_id, temperature, top_p), SWAIG, params, global_data, post_prompt",
+      "schema.json AmazonBedrock def",
+      "docs swml/reference/calling/amazon-bedrock",
+      "verified 2026-09-02: recipes/run-a-bedrock-voice-agent/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "start-from-a-prefab-agent"
+  ]
 }

@@ -22,8 +22,8 @@ load_dotenv()
 client = RestClient()
 FROM = os.getenv("SIGNALWIRE_PHONE_NUMBER", "+15550001111")
 
-# Your consent store: number -> (consented, time zone). A real one is a table
-# with the date, the channel and the wording the person agreed to.
+# Your consent store: number -> consented flag and time zone. Yours will carry
+# whatever your counsel says a consent record must hold.
 CONSENT = {
     "+15557654321": {"consented": True, "tz": "America/Los_Angeles"},
     "+15550009999": {"consented": False, "tz": "America/New_York"},

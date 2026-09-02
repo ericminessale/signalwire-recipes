@@ -2,7 +2,7 @@
   "slug": "route-sip-calls-to-agents-by-username",
   "title": "Route SIP calls to agents by username",
   "alias": "register_routing_callback + extract_sip_username",
-  "summary": "Calls to different SIP usernames on one domain reach different agents behind one AgentServer. A routing callback reads the username from the request body, the SDK answers 307, and the redirected request serves that agent's SWML.",
+  "summary": "One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route, and a re-POST to that route serves that agent's SWML.",
   "scenario": "A PBX trunk that sends sales@ and workshop@ to one webhook and expects two different agents",
   "surfaces": [
     "python"

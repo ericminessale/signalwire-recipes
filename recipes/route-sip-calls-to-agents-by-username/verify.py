@@ -1,8 +1,8 @@
 """Prove the claim without a network.
 
-Claim: calls to different SIP usernames on one domain reach different agents
-behind one AgentServer. A routing callback reads the username from the
-request body, the SDK answers 307, and the redirected request serves that
+Claim: one AgentServer routes SIP usernames on one domain to different agents.
+A routing callback reads the username from the request body and the SDK
+answers 307 with that agent's route. A re-POST to that route serves that
 agent's SWML.
 
 Proof: drive the server's own FastAPI app with the test client. A POST to
@@ -71,9 +71,12 @@ def main():
 
     # every username reaches its agent, from either agent's /sip path: a 307,
     # then the same body re-POSTed to Location serves that agent's document
+    assert recipe.USERNAMES == ROUTES, (recipe.USERNAMES, ROUTES)
     for username, route in ROUTES.items():
         for entry in ("/sales", "/support"):
-            payload = body(f"sip:{username}@pbx.example.com")
+            # one of them arrives with the case a phone might send
+            as_sent = username.capitalize() if username == "workshop" else username
+            payload = body(f"sip:{as_sent}@pbx.example.com")
             r = client.post(f"{entry}/sip", json=payload, headers=auth(), follow_redirects=False)
             assert (r.status_code, r.headers.get("location")) == (307, route), \
                 (username, entry, r.status_code, r.headers.get("location"))
