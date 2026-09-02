@@ -1,0 +1,42 @@
+{
+  "slug": "push-events-from-an-agent-to-the-browser",
+  "title": "Push events from an agent to the browser",
+  "alias": "",
+  "summary": "A SWML user_event fired by the agent arrives in the browser client's userVariables$ stream during the call.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "call-fabric"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "t:ai-assistant-client-side-tools-nextjs",
+      "demo chess (board moves by voice)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/user-event",
+      "docs browser-sdk/reference/webrtc-call (userVariables$)",
+      "sdk function_result.py:263 swml_user_event",
+      "demo holyguacamole EVENTS.md (best-documented user_event contract)",
+      "demo example app.py:409-446 swml_user_event; web/app.js subscribes user_event",
+      "demo techtarot app.py:570-588 raw SWML user_event variant"
+    ]
+  },
+  "subcategory": "tools"
+}

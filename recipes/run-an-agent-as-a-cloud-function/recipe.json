@@ -1,0 +1,39 @@
+{
+  "slug": "run-an-agent-as-a-cloud-function",
+  "title": "Run an agent as a cloud function",
+  "alias": "",
+  "summary": "The same agent file runs unchanged on AWS Lambda, Google Cloud Functions or Azure Functions.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "serverless"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "t:edge-ai-assistant-backend",
+      "t:edge-voice-agent-holds-call"
+    ],
+    "evidence": [
+      "sdk web_mixin.py:302 run()",
+      "sdk core/logging_config.py:44-72 mode detection",
+      "demo cloud-functions",
+      "sdk-surface: Cloudflare adapter ABSENT",
+      "demo cloud-functions aws/handler.py:107, gcloud/main.py:132, azure/function_app/__init__.py:106 (legacy SDK 1.0.8-1.0.10 - port before quoting)",
+      "demo utility handler.py:17-20 Mangum on Lambda"
+    ]
+  },
+  "subcategory": "other"
+}

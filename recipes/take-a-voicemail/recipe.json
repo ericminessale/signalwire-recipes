@@ -1,0 +1,36 @@
+{
+  "slug": "take-a-voicemail",
+  "title": "Take a voicemail",
+  "alias": "",
+  "summary": "When nobody answers, the caller hears a prompt, the message is recorded, and the recording URL reaches your webhook.",
+  "scenario": "",
+  "surfaces": [
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "recording"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "t:voicemail",
+      "t:ai-voicemail-transcription-forwarding",
+      "t:voicemail-smart-router"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/record (foreground, terminators, beep)",
+      "docs call-flow-builder/reference/nodes (Voicemail Recording)"
+    ]
+  },
+  "subcategory": "call-control"
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "let-a-browser-dial-your-agent-with-no-dashboard-setup",
+  "title": "Let a browser dial your agent with no dashboard setup",
+  "alias": "",
+  "summary": "On startup the agent registers its own SWML handler resource and mints guest tokens, so a browser can dial it with zero Dashboard configuration.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "call-fabric",
+    "tokens"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "demo example (the canonical shape 12 demos copy)"
+    ],
+    "evidence": [
+      "demo example app.py:139-240 (legacy SDK)",
+      "demo afterhours app.py:152-250 RestClient fabric.swml_webhooks + tokens.create_guest_token (3.x - quote this one)",
+      "sdk rest/namespaces/fabric.py"
+    ]
+  },
+  "subcategory": "tools"
+}

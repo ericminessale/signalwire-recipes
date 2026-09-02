@@ -1,0 +1,38 @@
+{
+  "slug": "check-consent-before-an-outbound-call",
+  "title": "Check consent before an outbound call",
+  "alias": "",
+  "summary": "No outbound call is placed to a number without a recorded consent and inside the permitted calling window; the check runs in code before the dial.",
+  "scenario": "appointment reminder caller",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "compliance",
+    "outbound"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "#14 (canonical: appointment reminder caller)",
+      "t:call-compliance",
+      "prerequisite: place-an-outbound-ai-call"
+    ],
+    "evidence": [
+      "docs platform/compliance (TCPA)",
+      "docs apis/rest/calls/call-commands (dial)",
+      "the platform mechanism is thin here: the claim is the ordering (consent check, then dial); pair with handle-opt-outs-yourself"
+    ]
+  },
+  "subcategory": "governance"
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "isolate-tenants-with-subprojects-and-scoped-tokens",
+  "title": "Isolate tenants with subprojects and scoped tokens",
+  "alias": "",
+  "summary": "Each tenant gets a subproject and a token scoped to it; a leaked token cannot reach another tenant's numbers or logs.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "multi-tenant",
+    "security"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "numbers-identity",
+    "folds": [
+      "sol gap #7"
+    ],
+    "evidence": [
+      "docs apis/rest/projects/create-subproject",
+      "docs apis/rest/project-tokens/create-token",
+      "docs apis/permissions (per-product scopes)",
+      "sdk rest/namespaces/project.py"
+    ]
+  },
+  "subcategory": "governance"
+}

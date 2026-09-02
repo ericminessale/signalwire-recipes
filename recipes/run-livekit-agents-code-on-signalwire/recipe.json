@@ -1,0 +1,34 @@
+{
+  "slug": "run-livekit-agents-code-on-signalwire",
+  "title": "Run livekit agents code on signalwire",
+  "alias": "",
+  "summary": "LiveKit-agents style code (Agent, AgentSession, function_tool) runs on SignalWire by changing the import.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "migration"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "sip-migration",
+    "folds": [
+      "t:migrate-from-vapi"
+    ],
+    "evidence": [
+      "sdk livewire/__init__.py:271,403,177,799",
+      "NEEDS VERIFICATION: plugin classes are no-op stubs (livewire/plugins.py:49-124); the claim must be scoped to what actually maps"
+    ]
+  },
+  "subcategory": "other"
+}

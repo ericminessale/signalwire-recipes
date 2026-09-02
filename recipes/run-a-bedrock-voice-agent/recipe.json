@@ -1,0 +1,31 @@
+{
+  "slug": "run-a-bedrock-voice-agent",
+  "title": "Run a bedrock voice agent",
+  "alias": "",
+  "summary": "An agent runs on Amazon Bedrock voice-to-voice by swapping the base class; SWAIG tools are unchanged.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [],
+    "evidence": [
+      "sdk agents/bedrock.py:26,113",
+      "docs swml/reference/calling/amazon-bedrock"
+    ]
+  },
+  "subcategory": "other"
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "text-the-caller-during-the-call",
+  "title": "Text the caller during the call",
+  "alias": "",
+  "summary": "A tool result sends an SMS to the caller while the voice call is still up; the model never handles the send.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging",
+    "ai-agents"
+  ],
+  "capabilities": [
+    "sms"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "t:ai-restaurant-reservation-voice-agent (SMS confirm)",
+      "t:ai-real-estate-showing-scheduler"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/send-sms",
+      "sdk function_result.py:741 send_sms",
+      "demo barbiera agent.py:1071 send_sms with a short link",
+      "demo cabby cabby.py:579,667",
+      "demo goair voyager.py:1830"
+    ]
+  },
+  "subcategory": "tools"
+}

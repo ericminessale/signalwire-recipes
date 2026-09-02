@@ -1,0 +1,36 @@
+{
+  "slug": "handle-opt-outs-yourself",
+  "title": "Handle opt outs yourself",
+  "alias": "",
+  "summary": "SignalWire does not manage STOP; your handler records the opt-out and every later send checks it first.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "opt-out",
+    "compliance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "t:sms-opt-out-management"
+    ],
+    "evidence": [
+      "docs platform/messaging FAQ: customers are responsible for handling inbound stop requests",
+      "docs platform/compliance (TCPA)"
+    ]
+  },
+  "subcategory": "governance"
+}

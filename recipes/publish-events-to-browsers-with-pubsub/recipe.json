@@ -1,0 +1,36 @@
+{
+  "slug": "publish-events-to-browsers-with-pubsub",
+  "title": "Publish events to browsers with pubsub",
+  "alias": "",
+  "summary": "Your server publishes JSON on a named channel and every subscribed browser receives it without polling.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "pubsub"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "sol gap #1"
+    ],
+    "evidence": [
+      "docs apis/rest/pubsub-tokens/create-pubsub-token",
+      "docs browser-sdk/v3 (PubSub.Client publish/subscribe)",
+      "NEEDS VERIFICATION: v4 exposes no PubSub client; recipe must target v3 or Fabric conversations"
+    ]
+  },
+  "subcategory": "tools"
+}

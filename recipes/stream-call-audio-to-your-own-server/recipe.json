@@ -1,0 +1,38 @@
+{
+  "slug": "stream-call-audio-to-your-own-server",
+  "title": "Stream call audio to your own server",
+  "alias": "",
+  "summary": "A bidirectional audio stream connects the call to your media server, which can also play audio back.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "media-streaming"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "t:media-stream-custom-audio-mixer",
+      "t:media-stream-voice-cloak",
+      "t:conversation-relay-voice-bot"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/stream (wss, authorization_bearer_token)",
+      "docs compatibility-api/cxml/reference/voice (Connect Stream bidirectional)",
+      "docs apis/rest/webhooks (Stream status callback)"
+    ]
+  },
+  "subcategory": "call-control"
+}

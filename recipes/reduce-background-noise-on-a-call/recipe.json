@@ -1,0 +1,31 @@
+{
+  "slug": "reduce-background-noise-on-a-call",
+  "title": "Reduce background noise on a call",
+  "alias": "",
+  "summary": "Noise reduction is switched on for a leg mid-call and off again, without touching the media path yourself.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [],
+    "evidence": [
+      "docs swml/reference/calling/denoise",
+      "docs apis/rest/calls/call-commands (calling.denoise)"
+    ]
+  },
+  "subcategory": "call-control"
+}

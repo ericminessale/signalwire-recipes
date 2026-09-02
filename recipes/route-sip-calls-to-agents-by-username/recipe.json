@@ -1,0 +1,33 @@
+{
+  "slug": "route-sip-calls-to-agents-by-username",
+  "title": "Route sip calls to agents by username",
+  "alias": "",
+  "summary": "Calls to different SIP usernames on one server land in different agents, decided by the SDK's SIP routing callback.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "ai-agents"
+  ],
+  "capabilities": [
+    "sip"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "sip-migration",
+    "folds": [],
+    "evidence": [
+      "sdk agent_base.py:612 enable_sip_routing, :656 register_sip_username",
+      "sdk agent_server.py:147 setup_sip_routing"
+    ]
+  },
+  "subcategory": "routing"
+}

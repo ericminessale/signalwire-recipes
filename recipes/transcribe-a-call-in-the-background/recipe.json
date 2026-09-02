@@ -1,0 +1,35 @@
+{
+  "slug": "transcribe-a-call-in-the-background",
+  "title": "Transcribe a call in the background",
+  "alias": "",
+  "summary": "The whole call is transcribed in the background and the transcript is posted to a status URL when it completes; the call is not slowed.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "transcription"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "distinct from start-live-transcription (no partials)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/transcribe, transcribe-stop",
+      "docs apis/rest/calls/call-commands (calling.transcribe)"
+    ]
+  },
+  "subcategory": "observe"
+}

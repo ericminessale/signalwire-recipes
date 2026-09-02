@@ -1,0 +1,38 @@
+{
+  "slug": "register-a-sip-endpoint-and-receive-calls",
+  "title": "Register a sip endpoint and receive calls",
+  "alias": "",
+  "summary": "A SIP credential resource registers from any softphone and receives calls to a number assigned to it.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "sip",
+    "call-fabric"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "sip-migration",
+    "folds": [
+      "t:sip-registration",
+      "t:setup-sip-trunk",
+      "t:configure-sip-codecs"
+    ],
+    "evidence": [
+      "docs platform/voice/sip/sip-credentials",
+      "docs apis/rest/sip-credentials/create-sip-credential",
+      "docs platform/voice/sip/trunking"
+    ]
+  },
+  "subcategory": "call-control"
+}

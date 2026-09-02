@@ -1,0 +1,37 @@
+{
+  "slug": "inject-a-message-into-a-live-ai-call",
+  "title": "Inject a message into a live ai call",
+  "alias": "",
+  "summary": "Your backend pushes a system message into a running AI conversation over REST, without interrupting the caller.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "features Mid-call AI message injection",
+      "variant: poll for application input during silence (functions_on_speaker_timeout)"
+    ],
+    "evidence": [
+      "docs apis/rest/calls/call-commands (calling.ai_message)",
+      "sdk rest/namespaces/calling.py ai_message",
+      "features Mid-call AI message injection",
+      "demo chess app.py:271-296 RestClient.calling.ai_message + functions_on_speaker_timeout polling (app.py:850-856)"
+    ]
+  },
+  "subcategory": "observe"
+}

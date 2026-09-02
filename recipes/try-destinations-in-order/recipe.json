@@ -1,0 +1,36 @@
+{
+  "slug": "try-destinations-in-order",
+  "title": "Try destinations in order",
+  "alias": "",
+  "summary": "connect tries a list of destinations serially or in parallel and falls through when one fails to answer.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "failover"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "t:sip-failover-routing",
+      "t:shift-fill-engine"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/connect (serial, parallel[])",
+      "sdk relay/call.py:604 connect(devices)"
+    ]
+  },
+  "subcategory": "routing"
+}

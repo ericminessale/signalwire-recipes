@@ -1,0 +1,40 @@
+{
+  "slug": "let-an-agent-see-the-callers-camera",
+  "title": "Let an agent see the callers camera",
+  "alias": "",
+  "summary": "On a video call the agent can request a frame from the caller's camera and answer about it.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "video"
+  ],
+  "capabilities": [
+    "vision",
+    "video"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "demo santa",
+      "demo chess"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/ai/params (enable_vision, vision_model, get_visual_input filler)",
+      "NEEDS VERIFICATION: exact tool the model calls and the image path",
+      "demo techtarot app.py:342-347,449 enable_vision + set_internal_fillers(get_visual_input)"
+    ]
+  },
+  "subcategory": "tools"
+}

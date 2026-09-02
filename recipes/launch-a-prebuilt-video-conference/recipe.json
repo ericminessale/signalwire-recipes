@@ -1,0 +1,32 @@
+{
+  "slug": "launch-a-prebuilt-video-conference",
+  "title": "Launch a prebuilt video conference",
+  "alias": "",
+  "summary": "A themed video conference with moderator and guest links exists after one REST call; no client code is written.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video"
+  ],
+  "capabilities": [
+    "video"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [],
+    "evidence": [
+      "docs apis/rest/video/video-conferences/create-video-conference (theme colors, record_on_start, enable_chat)",
+      "docs apis/rest/video/conference-tokens/get-conference-token"
+    ]
+  },
+  "subcategory": "call-control"
+}

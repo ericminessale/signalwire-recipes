@@ -1,0 +1,36 @@
+{
+  "slug": "port-a-number-in",
+  "title": "Port a number in",
+  "alias": "",
+  "summary": "Porting is a Dashboard form plus LOA with a manual FOC; here is what to prepare and what to expect.",
+  "scenario": "",
+  "surfaces": [],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "numbers"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "guide",
+    "status": "proposed",
+    "lens": "numbers-identity",
+    "folds": [
+      "t:number-porting-status-tracker",
+      "t:porting-order-tracker-dashboard",
+      "t:porting-loa-automation",
+      "sol correction: no porting API"
+    ],
+    "evidence": [
+      "docs platform/porting-into-signalwire",
+      "platform-docs: no Porting namespace in the REST spec"
+    ]
+  },
+  "subcategory": "other"
+}

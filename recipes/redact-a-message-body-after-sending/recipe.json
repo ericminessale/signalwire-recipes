@@ -1,0 +1,32 @@
+{
+  "slug": "redact-a-message-body-after-sending",
+  "title": "Redact a message body after sending",
+  "alias": "",
+  "summary": "A sent or received message's body is redacted in SignalWire's records over REST while the delivery record survives.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "compliance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [],
+    "evidence": [
+      "docs apis/rest/messages/update-message (PATCH redact)",
+      "compat Messages update (redact)"
+    ]
+  },
+  "subcategory": "governance"
+}

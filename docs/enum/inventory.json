@@ -3270,7 +3270,7 @@
         "ai-agents",
         "voice"
       ],
-      "task_group": null,
+      "task_group": "observe",
       "lens": "ai",
       "interfaces": [
         "swml",

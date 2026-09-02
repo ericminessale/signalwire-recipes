@@ -1,0 +1,37 @@
+{
+  "slug": "embed-a-call-widget-with-no-backend",
+  "title": "Embed a call widget with no backend",
+  "alias": "",
+  "summary": "A script tag and a Click-to-Call token put a working call button on any page; no server is involved.",
+  "scenario": "",
+  "surfaces": [
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "call-fabric",
+    "tokens"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "c:browser-call-widget (build stub with no repo; this is one claim, so a recipe)",
+      "t:click-to-call-webrtc-with-ai-assist"
+    ],
+    "evidence": [
+      "docs browser-sdk/guides/click-to-call-widget",
+      "docs browser-sdk/guides/web-components (<sw-call-widget>, <sw-click-to-call>)",
+      "docs apis/rest (POST /api/fabric/embeds/tokens)"
+    ]
+  },
+  "subcategory": "call-control"
+}

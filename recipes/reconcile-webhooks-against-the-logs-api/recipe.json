@@ -1,0 +1,39 @@
+{
+  "slug": "reconcile-webhooks-against-the-logs-api",
+  "title": "Reconcile webhooks against the logs api",
+  "alias": "",
+  "summary": "When a status webhook is missed, the voice and message logs API is the source of truth and can be diffed against your records.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "sol gap #3",
+      "t:call-analytics-dashboard-api",
+      "t:cdr-usage-analytics-dashboard",
+      "t:sms-delivery-receipts (reconciliation half)"
+    ],
+    "evidence": [
+      "docs apis/rest/voice-logs/list-voice-logs (events)",
+      "docs apis/rest/message-logs/list-message-logs",
+      "sdk rest/namespaces/logs.py"
+    ]
+  },
+  "subcategory": "observe"
+}

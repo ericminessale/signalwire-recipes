@@ -1,0 +1,39 @@
+{
+  "slug": "walk-a-caller-through-ordered-steps",
+  "title": "Walk a caller through ordered steps",
+  "alias": "",
+  "summary": "The caller cannot reorder or skip the questions; each step advances only when its criteria are met.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "contexts"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#4",
+      "variant: gather_info typed answers without tools",
+      "t:ai-hiring-phone-screen",
+      "t:ai-compliance-quiz-phone",
+      "t:ai-standup-facilitator-phone"
+    ],
+    "evidence": [
+      "sdk contexts.py:596 add_step, :252 set_valid_steps",
+      "sdk contexts.py:329 set_gather_info",
+      "gather_info variant is absent from the bundled schema.json (sdk-surface \u00a74); the claim does not depend on it"
+    ]
+  },
+  "subcategory": "governance"
+}

@@ -1,0 +1,42 @@
+{
+  "slug": "configure-an-agent-per-request",
+  "title": "Configure an agent per request",
+  "alias": "",
+  "summary": "One deployed agent serves many tenants; prompt, voice and tools are set per request from the query string or headers.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "multi-tenant"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#31",
+      "t:provisional-telnyx-voice-api-agents",
+      "t:white-label-appointment-platform",
+      "scenario: greet a known caller by ANI before they speak (cabby, veronica; FEATURES Returning-caller memory)"
+    ],
+    "evidence": [
+      "sdk web_mixin.py:1347 set_dynamic_config_callback",
+      "sdk agent_base.py:1263 ephemeral copy",
+      "features MCP gateway attached per request",
+      "demo personal-assistant agent.py:241 multi-tenant routing by called number",
+      "demo blackjack app.py:886-918 per-guest voice keyed on guest-<uuid> in on_swml_request",
+      "demo cabby cabby.py:75 _per_call_config",
+      "demo veronica veronica.py:251 pre-call enrichment"
+    ]
+  },
+  "subcategory": "other"
+}

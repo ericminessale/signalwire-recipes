@@ -1,0 +1,34 @@
+{
+  "slug": "test-an-agent-offline-with-swaig-test",
+  "title": "Test an agent offline with swaig test",
+  "alias": "",
+  "summary": "An agent's SWML and every tool can be exercised from the CLI with fake call data before it is ever deployed.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "testing"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "guide",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [],
+    "evidence": [
+      "sdk cli/test_swaig.py:222 (--dump-swml, --exec, --simulate-serverless)",
+      "features Swaig-test CLI",
+      "demo ginospizza test_flow.sh (131 swaig-test cases)",
+      "demo pathfinder (201 offline tests)"
+    ]
+  },
+  "subcategory": "observe"
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "ivr-pathfinder",
+  "title": "Ivr pathfinder",
+  "alias": "",
+  "summary": "An agent that dials a foreign phone tree, listens, presses the right digits and hands the reached human to you.",
+  "scenario": "",
+  "surfaces": [],
+  "governed": true,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "dtmf",
+    "outbound",
+    "governance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "build",
+    "status": "written",
+    "lens": "ai",
+    "folds": [
+      "t:outbound-hold-agent",
+      "candidate from signalwire-demos/pathfinder (3.x SDK, 201 offline tests)"
+    ],
+    "evidence": [
+      "repo github.com/signalwire-demos/pathfinder",
+      "composes: send-dtmf-to-an-external-ivr, require-verification-before-unlocking-tools (toggle gating), place-an-outbound-ai-call, record-a-call, stream-agent-debug-events - to verify"
+    ]
+  },
+  "kind": "build"
+}

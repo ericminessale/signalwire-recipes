@@ -1,0 +1,37 @@
+{
+  "slug": "send-a-whatsapp-template-message",
+  "title": "Send a whatsapp template message",
+  "alias": "",
+  "summary": "A template message is sent over the same messages endpoint with a whatsapp: From address.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "whatsapp"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "hold",
+    "status": "hold",
+    "lens": "messaging",
+    "folds": [
+      "sol gap #10",
+      "t:whatsapp-order-tracking-notifications",
+      "t:whatsapp-sms-bridge"
+    ],
+    "evidence": [
+      "docs platform/messaging/whatsapp",
+      "docs apis/rest/whatsapp/list-whatsapp-businesses",
+      "HOLD: early-access alpha, per-Space enablement request"
+    ]
+  },
+  "subcategory": "other"
+}

@@ -1,0 +1,35 @@
+{
+  "slug": "cover-tool-latency-with-fillers",
+  "title": "Cover tool latency with fillers",
+  "alias": "",
+  "summary": "While a slow tool runs, the caller hears a per-language filler or a wait file instead of silence.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "tool-calling"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "t:ai-assistant-filler-messages-demo"
+    ],
+    "evidence": [
+      "sdk tool_mixin.py:33 fillers, registry.py:43 wait_file",
+      "docs swml/reference/calling/ai/swaig/functions (fillers, wait_file)",
+      "demo housecall trenton.py:406 wait_file (legacy SDK 1.0.x - re-verify against 3.0.1)"
+    ]
+  },
+  "subcategory": "tools"
+}

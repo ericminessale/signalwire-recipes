@@ -1,0 +1,36 @@
+{
+  "slug": "stream-a-video-room-to-rtmp",
+  "title": "Stream a video room to rtmp",
+  "alias": "",
+  "summary": "A room session is pushed to an RTMP destination and the stream is controlled over REST.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video"
+  ],
+  "capabilities": [
+    "video",
+    "streaming",
+    "rtmp"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "split from record-and-stream-a-video-room"
+    ],
+    "evidence": [
+      "docs apis/rest/video/streams/create-room-stream",
+      "Browser SDK v4 startRecording/startStreaming not cited: the v4 reference labels both unimplemented (sol round 5)"
+    ]
+  },
+  "subcategory": "observe"
+}

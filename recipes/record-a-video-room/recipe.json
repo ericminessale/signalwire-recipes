@@ -1,0 +1,36 @@
+{
+  "slug": "record-a-video-room",
+  "title": "Record a video room",
+  "alias": "",
+  "summary": "A room session is recorded and the recording is listed and downloadable over REST.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video"
+  ],
+  "capabilities": [
+    "video",
+    "recording"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "split from record-and-stream-a-video-room",
+      "t:video-webinar-recording-manager"
+    ],
+    "evidence": [
+      "docs apis/rest/video/room-recordings/list-room-recordings",
+      "Browser SDK v4 startRecording/startStreaming not cited: the v4 reference labels both unimplemented (sol round 5)"
+    ]
+  },
+  "subcategory": "observe"
+}

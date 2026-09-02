@@ -1,0 +1,33 @@
+{
+  "slug": "protect-tool-webhooks-with-per-call-tokens",
+  "title": "Protect tool webhooks with per call tokens",
+  "alias": "",
+  "summary": "A tool webhook signed for one call cannot be replayed on another call or from outside a call.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "security"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [],
+    "evidence": [
+      "sdk agent_base.py:931-936 __token",
+      "sdk web_mixin.py:867-882 enforcement",
+      "sdk security/session_manager.py:92"
+    ]
+  },
+  "subcategory": "governance"
+}

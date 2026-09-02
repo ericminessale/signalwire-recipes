@@ -1,0 +1,33 @@
+{
+  "slug": "change-the-agents-instructions-mid-call",
+  "title": "Change the agents instructions mid call",
+  "alias": "",
+  "summary": "A tool result swaps the system prompt (or resets the conversation) on the same call, without a transfer.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "contexts"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [],
+    "evidence": [
+      "sdk function_result.py:699 switch_context",
+      "docs swml/guides/context-switch"
+    ]
+  },
+  "subcategory": "handoff"
+}

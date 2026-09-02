@@ -1,0 +1,34 @@
+{
+  "slug": "route-calls-by-dialed-number-or-time",
+  "title": "Route calls by dialed number or time",
+  "alias": "",
+  "summary": "One document serves many numbers: it branches on the dialed number and the time of day.",
+  "scenario": "",
+  "surfaces": [
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "t:multi-number-identity-router",
+      "t:texml-dynamic-call-router",
+      "t:call-forwarding"
+    ],
+    "evidence": [
+      "docs swml/reference/variables (call.to)",
+      "docs swml/reference/calling/switch, cond"
+    ]
+  },
+  "subcategory": "routing"
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "look-up-a-callers-carrier-and-name",
+  "title": "Look up a callers carrier and name",
+  "alias": "",
+  "summary": "One REST call returns carrier, line type and CNAM for a number, so a call can be enriched or screened before it is answered.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "identity",
+    "numbers"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "numbers-identity",
+    "folds": [
+      "t:cnam-caller-id-lookup-enrichment",
+      "t:number-lookup-fraud-screener",
+      "t:phone-number-lookup",
+      "t:sip-cnam-lookup",
+      "t:bulk-number-validation-cleaner"
+    ],
+    "evidence": [
+      "docs apis/rest/phone-numbers/lookup-phone-number (include=, billable)",
+      "sdk rest/namespaces/lookup.py"
+    ]
+  },
+  "subcategory": "other"
+}

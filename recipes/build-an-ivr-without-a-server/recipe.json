@@ -1,0 +1,36 @@
+{
+  "slug": "build-an-ivr-without-a-server",
+  "title": "Build an ivr without a server",
+  "alias": "",
+  "summary": "A Call Flow Builder flow deployed over REST answers, gathers and forwards with no code hosted anywhere.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "serverless"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "sol gap #9",
+      "t:ai-phone-tree-builder-from-description"
+    ],
+    "evidence": [
+      "docs call-flow-builder/reference/nodes (18 nodes)",
+      "docs apis/rest/call-flows/create-call-flow (versions, deploy)",
+      "resolved: POST /api/fabric/resources/call_flows documents flow_data and paired relayml (docs apis/rest/call-flows/create-call-flow); keep a check that the result stays editable in CFB"
+    ]
+  },
+  "subcategory": "routing"
+}

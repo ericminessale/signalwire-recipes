@@ -1,0 +1,33 @@
+{
+  "slug": "add-a-phone-caller-to-a-video-room",
+  "title": "Add a phone caller to a video room",
+  "alias": "",
+  "summary": "A PSTN or SIP caller is dropped into a video room as an audio participant.",
+  "scenario": "",
+  "surfaces": [
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video",
+    "voice"
+  ],
+  "capabilities": [
+    "video"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [],
+    "evidence": [
+      "docs swml/reference/calling/join-room",
+      "docs compatibility-api/cxml/reference/voice (Connect Room)"
+    ]
+  },
+  "subcategory": "call-control"
+}

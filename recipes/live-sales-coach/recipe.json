@@ -1,0 +1,40 @@
+{
+  "slug": "live-sales-coach",
+  "title": "Live sales coach",
+  "alias": "",
+  "summary": "A rep takes calls in the browser while a sidecar streams objection-handling insights beside the call.",
+  "scenario": "",
+  "surfaces": [
+    "swml",
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "sidecar",
+    "tap",
+    "recording"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "hold",
+    "status": "hold",
+    "lens": "ai",
+    "folds": [
+      "scenario #22",
+      "candidate build from signalwire-demos/sidecar"
+    ],
+    "evidence": [
+      "repo github.com/signalwire-demos/sidecar",
+      "HOLD: inherits the ai_sidecar re-test hold"
+    ]
+  },
+  "subcategory": "observe"
+}

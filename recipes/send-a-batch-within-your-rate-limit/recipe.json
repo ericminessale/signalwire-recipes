@@ -1,0 +1,35 @@
+{
+  "slug": "send-a-batch-within-your-rate-limit",
+  "title": "Send a batch within your rate limit",
+  "alias": "",
+  "summary": "A batch is paced to the account's messages-per-second and backlog limits so nothing is dropped.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "sms"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "t:send-bulk-sms",
+      "t:sms-marketing-campaign",
+      "t:emergency-mass-notification-system"
+    ],
+    "evidence": [
+      "docs platform/rate-limits (4 MPS 10DLC, 3 toll-free, 10k backlog)"
+    ]
+  },
+  "subcategory": "governance"
+}

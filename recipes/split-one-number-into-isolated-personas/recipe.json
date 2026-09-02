@@ -1,0 +1,37 @@
+{
+  "slug": "split-one-number-into-isolated-personas",
+  "title": "Split one number into isolated personas",
+  "alias": "",
+  "summary": "One number reaches sales, support or billing; each persona's tools are structurally unavailable to the others.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "contexts",
+    "governance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#3 (pattern it teaches: separate personas that structurally cannot use each other's tools)",
+      "t:omnichannel-ai-receptionist"
+    ],
+    "evidence": [
+      "sdk contexts.py:820 set_isolated, :192 set_functions per step, :353 swml_change_context",
+      "demo afterhours swml_change_context (emergency vs non-emergency)",
+      "per-persona voice dropped from the claim: languages are agent-level in the SDK"
+    ]
+  },
+  "subcategory": "governance"
+}

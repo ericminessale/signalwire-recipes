@@ -1,0 +1,36 @@
+{
+  "slug": "connect-freeswitch-to-signalwire",
+  "title": "Connect freeswitch to signalwire",
+  "alias": "",
+  "summary": "A FreeSWITCH Connector resource routes calls to your FreeSWITCH, and a dialplan extension can hand a call to a SignalWire AI agent.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "ai-agents"
+  ],
+  "capabilities": [
+    "sip",
+    "freeswitch"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "sip-migration",
+    "folds": [
+      "sol gap #8"
+    ],
+    "evidence": [
+      "docs apis/rest/freeswitch-connector/create-freeswitch-connector",
+      "docs platform/freeswitch/add-ai-to-freeswitch"
+    ]
+  },
+  "subcategory": "tools"
+}

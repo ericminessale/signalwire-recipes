@@ -1,0 +1,38 @@
+{
+  "slug": "outbound-notification-campaign",
+  "title": "Outbound notification campaign",
+  "alias": "",
+  "summary": "A list is worked over SMS first and voice second, paced to rate limits, with AMD on the calls and opt-outs honoured.",
+  "scenario": "",
+  "surfaces": [],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "outbound",
+    "amd",
+    "opt-out",
+    "sms"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "build",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "t:multi-channel-appointment-confirmation",
+      "t:payment-reminder-escalation",
+      "t:isv-notification-engine",
+      "features: outbound campaigns planned, not shipped"
+    ],
+    "evidence": [
+      "NEEDS A REPO"
+    ]
+  },
+  "kind": "build"
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "send-from-a-number-group-with-sticky-sender",
+  "title": "Send from a number group with sticky sender",
+  "alias": "",
+  "summary": "Sends go out from a pool, and each recipient always sees the same From number.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "sticky-sender",
+    "numbers"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "sol gap #6",
+      "t:number-warmup-reputation-builder"
+    ],
+    "evidence": [
+      "docs apis/rest/number-groups/create-number-group (sticky_sender)",
+      "sdk rest/namespaces/number_groups.py"
+    ]
+  },
+  "subcategory": "routing"
+}

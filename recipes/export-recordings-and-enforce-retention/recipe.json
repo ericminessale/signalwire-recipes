@@ -1,0 +1,39 @@
+{
+  "slug": "export-recordings-and-enforce-retention",
+  "title": "Export recordings and enforce retention",
+  "alias": "",
+  "summary": "Recordings land in your own object storage and are deleted from SignalWire on your schedule.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "recording",
+    "compliance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "voice",
+    "folds": [
+      "sol correction (S3-compatible storage is not our product)",
+      "t:cloud-storage-call-archive",
+      "t:storage-voicemail-archive"
+    ],
+    "evidence": [
+      "docs compatibility-api/cxml/reference/voice/record (storageUrl)",
+      "docs apis/rest/recordings/list-call-recordings (delete)",
+      "docs platform/media-protection",
+      "platform-docs: external destination exists only in cXML, not SWML/REST"
+    ]
+  },
+  "subcategory": "governance"
+}

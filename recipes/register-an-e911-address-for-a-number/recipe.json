@@ -1,0 +1,38 @@
+{
+  "slug": "register-an-e911-address-for-a-number",
+  "title": "Register an e911 address for a number",
+  "alias": "",
+  "summary": "An emergency address is created, validated and attached to a number over REST, and the status goes pending then active.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "e911",
+    "numbers",
+    "compliance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "numbers-identity",
+    "folds": [
+      "sol gap #6",
+      "t:e911-address-validator"
+    ],
+    "evidence": [
+      "docs platform/e911 (self-service, US only, test with 933)",
+      "docs apis/rest/e-911-addresses/create-address",
+      "sdk rest/namespaces/addresses.py"
+    ]
+  },
+  "subcategory": "governance"
+}

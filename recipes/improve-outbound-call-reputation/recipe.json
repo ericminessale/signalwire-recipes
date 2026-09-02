@@ -1,0 +1,36 @@
+{
+  "slug": "improve-outbound-call-reputation",
+  "title": "Improve outbound call reputation",
+  "alias": "",
+  "summary": "What attestation, CNAM and spam-label remediation you can get, and which of them require a ticket.",
+  "scenario": "",
+  "surfaces": [],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "identity",
+    "stir-shaken"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "guide",
+    "status": "proposed",
+    "lens": "numbers-identity",
+    "folds": [
+      "t:branded-caller-id-manager",
+      "t:number-reputation-monitor-auto-rotate",
+      "sol correction: CNAM set and A/B attestation are support-gated"
+    ],
+    "evidence": [
+      "docs platform/voice/stir-shaken (C by default; A/B via ticket)",
+      "docs platform/voice/how-to-set-caller-id-or-cnam (ticket)",
+      "docs platform/voice/resolving-spam-labels"
+    ]
+  },
+  "subcategory": "governance"
+}

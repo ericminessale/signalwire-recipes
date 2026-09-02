@@ -1,0 +1,37 @@
+{
+  "slug": "write-a-disposition-from-handler-owned-data",
+  "title": "Write a disposition from handler owned data",
+  "alias": "",
+  "summary": "The disposition your CRM receives is assembled from fields your tool handlers wrote during the call, not parsed from the transcript.",
+  "scenario": "lead qualification",
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance",
+    "post-prompt"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#13 (canonical: lead qualification)",
+      "t:ai-sales-demo-booking-agent"
+    ],
+    "evidence": [
+      "sdk function_result.py:247 update_global_data, :604 set_metadata (handler-owned state)",
+      "sdk agent_base.py:421 on_summary receives the post-prompt with global_data",
+      "sol round 5 P0: #13 requires handler-written data, #24 transcript analysis"
+    ]
+  },
+  "subcategory": "governance"
+}

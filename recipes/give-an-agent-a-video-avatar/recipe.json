@@ -1,0 +1,36 @@
+{
+  "slug": "give-an-agent-a-video-avatar",
+  "title": "Give an agent a video avatar",
+  "alias": "",
+  "summary": "On a video call the agent shows idle, listening and talking video loops that switch with its state.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "video"
+  ],
+  "capabilities": [
+    "video"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "demo santa, cinebot, bobbystable, example (avatar files)"
+    ],
+    "evidence": [
+      "docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)",
+      "demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)"
+    ]
+  },
+  "subcategory": "other"
+}

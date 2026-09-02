@@ -1,0 +1,36 @@
+{
+  "slug": "run-the-sdk-conformance-suite",
+  "title": "Run the sdk conformance suite",
+  "alias": "",
+  "summary": "107 SDK capabilities are asserted over a live WebRTC call, and the JSON key the platform receives is checked against the SDK method that produced it.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "testing",
+    "benchmark"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "tool",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "reference, not a rebuild: signalwire-demos/testbot"
+    ],
+    "evidence": [
+      "demo testbot catalog.py (107 capabilities / 16 suites; README says 99 - stale)",
+      "demo testbot README: update_global_data -> set_global_data, set_metadata -> set_meta_data, swml_change_step -> change_step, play_background_file -> playback_bg"
+    ]
+  },
+  "subcategory": "observe"
+}

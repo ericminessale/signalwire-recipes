@@ -1,0 +1,40 @@
+{
+  "slug": "place-an-outbound-ai-call",
+  "title": "Place an outbound ai call",
+  "alias": "",
+  "summary": "Your backend dials a number with an AI agent attached and the agent waits for the callee to speak first.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "outbound"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "t:ai-customer-winback-caller",
+      "t:ai-medical-appointment-prep-caller",
+      "t:multi-language-customer-survey"
+    ],
+    "evidence": [
+      "docs apis/rest/calls/call-commands (dial)",
+      "docs swml/reference/calling/ai/params (direction)",
+      "demo dental confirmation_runner.py:191-200 REST dial with a query-parameterised SWML URL; outbound_agent.py:31 wait_for_user",
+      "demo utility outbound_runner.py:78"
+    ]
+  },
+  "subcategory": "call-control"
+}

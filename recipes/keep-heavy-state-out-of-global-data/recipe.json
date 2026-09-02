@@ -1,0 +1,35 @@
+{
+  "slug": "keep-heavy-state-out-of-global-data",
+  "title": "Keep heavy state out of global data",
+  "alias": "",
+  "summary": "Per-call state lives server-side keyed by call_id; only a short AI-facing summary is written to global_data.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": true,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "governance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#7 (state held across turns without the model tracking it)",
+      "#19 (the dealer cannot be talked out of a bust)"
+    ],
+    "evidence": [
+      "demo goair state_store.py:1-6, README Per-Call Dynamic Config",
+      "sdk function_result.py:247 update_global_data, :604 set_metadata"
+    ]
+  },
+  "subcategory": "governance"
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "start-from-a-prefab-agent",
+  "title": "Start from a prefab agent",
+  "alias": "",
+  "summary": "A complete survey or receptionist agent runs from a prefab class and a dozen lines of configuration.",
+  "scenario": "survey prefab",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "prefabs"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#17 (canonical: survey prefab)",
+      "t:ai-receptionist-with-booking-tools"
+    ],
+    "evidence": [
+      "sdk prefabs/receptionist.py:21",
+      "sdk prefabs/survey.py:23",
+      "sdk prefabs/info_gatherer.py:24"
+    ]
+  },
+  "subcategory": "other"
+}

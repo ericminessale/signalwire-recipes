@@ -1,0 +1,40 @@
+{
+  "slug": "move-a-twiml-app-by-changing-the-endpoint",
+  "title": "Move a twiml app by changing the endpoint",
+  "alias": "",
+  "summary": "A TwiML application using the supported cXML subset runs on SignalWire by changing the API base URL.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "migration"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "sip-migration",
+    "folds": [
+      "launch #10",
+      "t:migrate-from-twilio",
+      "sol: single highest-intent search with nothing for it"
+    ],
+    "evidence": [
+      "docs compatibility-api (verbatim migration claim)",
+      "docs compatibility-api/cxml/reference/voice (18 verbs)",
+      "docs compatibility-api/rest/client-sdks",
+      "platform-docs D.4: VirtualAgent deprecated; no unsupported-TwiML page found",
+      "NEEDS VERIFICATION: a compatibility smoke matrix over the 18 documented verbs before this can launch; VirtualAgent is deprecated and no unsupported-TwiML page exists"
+    ]
+  },
+  "subcategory": "other"
+}

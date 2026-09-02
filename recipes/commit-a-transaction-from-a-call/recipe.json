@@ -1,0 +1,42 @@
+{
+  "slug": "commit-a-transaction-from-a-call",
+  "title": "Commit a transaction from a call",
+  "alias": "",
+  "summary": "The agent collects, confirms, and then commits once through a single tool; nothing is written before confirmation.",
+  "scenario": "",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "tool-calling",
+    "contexts"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "#1",
+      "t:ai-restaurant-reservation-voice-agent",
+      "t:ai-event-rsvp-phone-line",
+      "t:restaurant-reservation-waitlist",
+      "scenario drive-thru (holyguacamole) - the commit half"
+    ],
+    "evidence": [
+      "sdk tool_mixin.py:26 define_tool",
+      "sdk contexts.py",
+      "demo bobbystable",
+      "demo holyguacamole",
+      "demo goair voyager.py:216-272 code-enforced confirmation before commit"
+    ]
+  },
+  "subcategory": "tools"
+}

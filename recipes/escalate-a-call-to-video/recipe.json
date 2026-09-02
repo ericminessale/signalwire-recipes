@@ -1,0 +1,35 @@
+{
+  "slug": "escalate-a-call-to-video",
+  "title": "Escalate a call to video",
+  "alias": "",
+  "summary": "A voice call between two Fabric addresses adds video mid-call from the browser; the call does not drop.",
+  "scenario": "",
+  "surfaces": [
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "video",
+  "products": [
+    "video"
+  ],
+  "capabilities": [
+    "call-fabric",
+    "video"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [
+      "launch #11 (browser -> subscriber -> video/chat) split: this is the video half"
+    ],
+    "evidence": [
+      "docs browser-sdk/reference/webrtc-call (81 members)",
+      "NEEDS VERIFICATION: mid-call audio->video upgrade API on a v4 Call"
+    ]
+  },
+  "subcategory": "call-control"
+}

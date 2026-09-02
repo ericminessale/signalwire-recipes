@@ -1594,7 +1594,7 @@ A template message is sent over the same messages endpoint with a whatsapp: From
 
 A rep takes calls in the browser while a sidecar streams objection-handling insights beside the call.
 
-- kind **hold** · status **hold** · category **AI Agents** (ai-agents, voice) · task group **—** · lens AI Agents & Automation
+- kind **hold** · status **hold** · category **AI Agents** (ai-agents, voice) · task group **Monitoring** · lens AI Agents & Automation
 - interfaces: swml, rest, browser-sdk · capabilities: sidecar, tap, recording
 - folds: scenario #22; candidate build from signalwire-demos/sidecar
 - evidence:

@@ -1,0 +1,38 @@
+{
+  "slug": "stream-agent-debug-events",
+  "title": "Stream agent debug events",
+  "alias": "",
+  "summary": "Every barge, step change and LLM error on a live call arrives at your /debug_events endpoint in real time.",
+  "scenario": "",
+  "surfaces": [
+    "python",
+    "swml"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents"
+  ],
+  "capabilities": [
+    "observability"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "ai",
+    "folds": [
+      "t:webhook-debugger-ai-assistant"
+    ],
+    "evidence": [
+      "sdk ai_config_mixin.py:419 enable_debug_events",
+      "sdk agent_base.py:432 on_debug_event",
+      "docs apis/rest/webhooks (AI debug webhook)",
+      "docs platform/ai/analytics",
+      "demo pathfinder agent.py:191-214 debug_webhook_url/debug_webhook_level"
+    ]
+  },
+  "subcategory": "observe"
+}

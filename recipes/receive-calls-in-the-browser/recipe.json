@@ -1,0 +1,35 @@
+{
+  "slug": "receive-calls-in-the-browser",
+  "title": "Receive calls in the browser",
+  "alias": "",
+  "summary": "A subscriber registers from the browser and rings when their address is dialed from a phone or another client.",
+  "scenario": "",
+  "surfaces": [
+    "typescript",
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "call-fabric",
+    "tokens"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "proposed",
+    "lens": "video",
+    "folds": [],
+    "evidence": [
+      "docs browser-sdk/reference/signalwire (register/unregister)",
+      "docs apis/rest/subscribers/create-subscriber",
+      "demo sidecar static/app.js:171-409 client.register(), isRegistered$, session.incomingCalls$, call.answer(); POST /api/fabric/subscribers/tokens"
+    ]
+  },
+  "subcategory": "call-control"
+}

@@ -1,0 +1,36 @@
+{
+  "slug": "get-toll-free-messaging-verified",
+  "title": "Get toll free messaging verified",
+  "alias": "",
+  "summary": "Toll-free sending is gated on a verification form reviewed by Carrier Ops; short codes go through sales.",
+  "scenario": "",
+  "surfaces": [],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "messaging",
+  "products": [
+    "messaging"
+  ],
+  "capabilities": [
+    "compliance"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "guide",
+    "status": "proposed",
+    "lens": "messaging",
+    "folds": [
+      "t:toll-free-sms",
+      "t:toll-free-sms-campaign-manager",
+      "t:shortcode-sms",
+      "t:hosted-messaging-campaign-manager (hosted messaging is a form too)"
+    ],
+    "evidence": [
+      "docs platform/messaging/toll-free-numbers",
+      "docs platform/phone-numbers#short-codes",
+      "docs platform/messaging/hosted-messaging"
+    ]
+  },
+  "subcategory": "governance"
+}
