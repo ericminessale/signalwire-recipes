@@ -129,7 +129,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 #q::placeholder{color:var(--fg-subtle);}
 #q:focus-visible{outline:2px solid var(--fuchsia);outline-offset:1px;border-color:var(--fuchsia);}
 .chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:var(--r-md);
-  display:inline-flex;align-items:center;gap:7px;
+  display:inline-flex;align-items:baseline;gap:7px;
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
 /* Selection is the one state that answers "what am I looking at", so it
@@ -473,7 +473,10 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 /* the count is a pill, the same object the task-group strip uses, centred on
    the label's box. A bare numeral on the baseline read as too low and a
    numeral raised 1px read as an exponent (Eric, 2026-09-02); a pill has its
-   own edges, so where it sits is not a question. */
+   own edges, so where it sits is not a question. Flex aligns the two on
+   their text baselines, not their boxes: Lexend sits low in its box and the
+   mono digits sit high in theirs, so a box-centred pill put the digits above
+   the letters, measured in pixels on the live page. */
 .chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);line-height:1.4;
   background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:1px 5px;}
 .catbody{padding-top:4px;}
@@ -1516,6 +1519,10 @@ def build_index(recipes, body_only=False):
 </div>
 <script>%s</script>""" % (LOGO, hero_cta, chips, featured,
                           "".join(sections), JS)
+    if not body_only:
+        n_planned = sum(1 for r in recipes if r.get("_planned"))
+        if n_planned:
+            body = notice_html(len(recipes) - n_planned, len(recipes), n_planned) + body
     return body if body_only else page(
         "SignalWire Recipes", body,
         desc=("Working code for every part of a call. Clone a folder, add your "
@@ -2029,6 +2036,22 @@ show(location.hash ? location.hash.slice(1) : 'index');
 PREVIEW_CSS = ""
 
 
+def notice_html(n_written, n_total, n_planned):
+    """The line above the hero: how much is written, and the way to see the
+    rest. Planned rows are hidden by default (Eric, 2026-09-02) and the button
+    is a text control, because a notice this quiet should not look like a
+    setting. Shared by the preview and the public index, which used to render
+    unwritten folders as ordinary cards with nothing to say about it."""
+    return (
+        '<div class="pvbanner"><div class="pvb"><span class="pvt">'
+        "<b>%d</b> of <b>%d</b> recipes are written."
+        "</span>"
+        '<button type="button" class="pvtog" id="pvtog" aria-pressed="true" '
+        'data-n="%d"><span class="pvl">Show %d planned</span></button>'
+        "</div></div>" % (n_written, n_total, n_planned, n_planned)
+    )
+
+
 def build_preview(recipes):
     """One file, index plus every showable recipe, navigable without a server."""
     written = [r for r in recipes if has_content(r)]
@@ -2073,12 +2096,7 @@ def build_preview(recipes):
 
     n_planned = sum(1 for r in live if r.get("_planned"))
     parts = [
-        '<div class="pvbanner"><div class="pvb"><span class="pvt">'
-        "<b>%d</b> of <b>%d</b> recipes are written."
-        "</span>"
-        '<button type="button" class="pvtog" id="pvtog" aria-pressed="true" '
-        'data-n="%d"><span class="pvl">Show %d planned</span></button>'
-        "</div></div>" % (len(written), len(live), n_planned, n_planned),
+        notice_html(len(written), len(live), n_planned),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
     for r in live:
@@ -2123,12 +2141,22 @@ def main():
         shutil.rmtree(SITE)
     (SITE / "r").mkdir(parents=True)
 
-    (SITE / "index.html").write_text(build_index(recipes), encoding="utf-8")
+    # A folder with no content is a planned row: greyed, hidden until asked
+    # for, no page of its own. The public build used to render all of them as
+    # ordinary cards linking to pages with nothing on them, so the live site
+    # and the preview disagreed about what was real (Eric, on Vercel,
+    # 2026-09-02).
     for r in recipes:
+        if not has_content(r):
+            r["_planned"] = "folder"
+    written = [r for r in recipes if not r.get("_planned")]
+
+    (SITE / "index.html").write_text(build_index(recipes), encoding="utf-8")
+    for r in written:
         (SITE / "r" / f"{r['slug']}.html").write_text(build_detail(r), encoding="utf-8")
         (SITE / "r" / f"{r['slug']}.md").write_text(build_md(r), encoding="utf-8")
-    (SITE / "llms.txt").write_text(build_llms(recipes), encoding="utf-8")
-    (SITE / "sitemap.xml").write_text(build_sitemap(recipes), encoding="utf-8")
+    (SITE / "llms.txt").write_text(build_llms(written), encoding="utf-8")
+    (SITE / "sitemap.xml").write_text(build_sitemap(written), encoding="utf-8")
     (SITE / "robots.txt").write_text(build_robots(), encoding="utf-8")
     (SITE / "404.html").write_text(build_404(), encoding="utf-8")
 
@@ -2137,8 +2165,9 @@ def main():
     check_noindex()
     check_advertised_urls()
     print(
-        f"build: {len(recipes)} recipes -> site/  "
-        f"({launch} launch tier, {len(recipes)*2+3} files)"
+        f"build: {len(written)} of {len(recipes)} recipes written -> site/  "
+        f"({launch} launch tier, {len(written)*2+3} files, "
+        f"{len(recipes) - len(written)} planned rows hidden on the index)"
     )
     return 0
 

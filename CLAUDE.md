@@ -339,6 +339,14 @@ brand cheatsheet's abstractions and not invented:
   asserts the default is hidden, normalises to "showing" before its painted-count
   arithmetic, and restores the state afterwards. Hard rule 10 still governs any
   switch that comes back.
+- **The public build hides the same rows (2026-09-02).** It used to render
+  every folder as an ordinary card, stubs included, linking to pages with
+  nothing on them, while the preview greyed them. Eric was looking at Vercel,
+  not the artifact, and found no toggle and no greying. Now `main()` marks a
+  folder without content `_planned`, the index carries the notice line and
+  the button, and detail pages, `sitemap.xml` and `llms.txt` cover written
+  folders only. Inventory-only rows (no folder) stay preview-only. **Vercel is
+  what Eric shows people now**; check the live site, not only the artifact.
 - **Featured cards are `.fcard`, never `.card`.** They duplicate recipes that
   also appear below, so the moment they answer to `.card` the chip counts, the
   category counts and `tools/qc.py`'s own toggle check all inflate by six.

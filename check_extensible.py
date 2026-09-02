@@ -93,6 +93,17 @@ def guard_synthetic():
         rdir = ROOT / "recipes" / "zz-synthetic-probe"
         (rdir / "zzlang").mkdir(parents=True, exist_ok=True)
         made.append(rdir)
+        # This fixture is the definition of what a new folder must contain. A
+        # folder is written, and gets a page, when its README carries the claim
+        # section and its declared surface has a non-empty entry file; anything
+        # less is a planned row, greyed on the index (build.has_content).
+        (rdir / "README.md").write_text(
+            "# Synthetic probe\n\n## What this demonstrates\n\n"
+            "A never-before-seen category and surface render with no generator "
+            "change.\n",
+            encoding="utf-8",
+        )
+        (rdir / "zzlang" / "main.zz").write_text("probe = true\n", encoding="utf-8")
         (rdir / "recipe.json").write_text(
             json.dumps(
                 {
