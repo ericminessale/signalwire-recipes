@@ -1,11 +1,11 @@
 {
   "slug": "embed-a-call-widget-with-no-backend",
   "title": "Embed a call widget with no backend",
-  "alias": "",
-  "summary": "A script tag and a Click-to-Call token put a working call button on any page; no server is involved.",
-  "scenario": "",
+  "alias": "<sw-click-to-call token destination> + embeds/tokens",
+  "summary": "A sw-click-to-call element with a Click to Call token from the Dashboard and a destination address puts a call button on a page. No server of yours is in the call path.",
+  "scenario": "A bike shop's website that wants a talk-to-the-workshop button without standing up anything to answer it",
   "surfaces": [
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -21,17 +21,22 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "c:browser-call-widget (build stub with no repo; this is one claim, so a recipe)",
       "t:click-to-call-webrtc-with-ai-assist"
     ],
     "evidence": [
-      "docs browser-sdk/guides/click-to-call-widget",
-      "docs browser-sdk/guides/web-components (<sw-call-widget>, <sw-click-to-call>)",
-      "docs apis/rest (POST /api/fabric/embeds/tokens)"
+      "https://signalwire.com/docs/browser-sdk/guides/click-to-call-widget (fetched 2026-09-02): script tag + <sw-click-to-call token destination label>; token from Dashboard Tools > Click to Call; routes through embeds.signalwire.com",
+      "tools/openapi/rest.json POST /api/fabric/embeds/tokens: token required (Click to Call Token); 201 token",
+      "sdk rest/namespaces/fabric.py FabricTokens.create_embed_token",
+      "verified 2026-09-02: recipes/embed-a-call-widget-with-no-backend/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "related": [
+    "call-from-a-browser",
+    "let-a-browser-dial-your-agent-with-no-dashboard-setup"
+  ]
 }

@@ -1,9 +1,9 @@
 {
   "slug": "move-a-twiml-app-by-changing-the-endpoint",
   "title": "Move a twiml app by changing the endpoint",
-  "alias": "",
-  "summary": "A TwiML application using the supported cXML subset runs on SignalWire by changing the API base URL.",
-  "scenario": "",
+  "alias": "compat client on /api/laml/2010-04-01 + the same cXML handler",
+  "summary": "A TwiML app moves to SignalWire by changing the REST base and the credentials. The compat client posts the same Calls body to the LaML path on your Space, and your cXML handler serves the same document it served before.",
+  "scenario": "A shop's Twilio voice app, a Say and a Hangup behind one URL, moving without a rewrite",
   "surfaces": [
     "python"
   ],
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "sip-migration",
     "folds": [
       "launch #10",
@@ -29,12 +29,18 @@
       "sol: single highest-intent search with nothing for it"
     ],
     "evidence": [
-      "docs compatibility-api (verbatim migration claim)",
-      "docs compatibility-api/cxml/reference/voice (18 verbs)",
-      "docs compatibility-api/rest/client-sdks",
-      "platform-docs D.4: VirtualAgent deprecated; no unsupported-TwiML page found",
-      "NEEDS VERIFICATION: a compatibility smoke matrix over the 18 documented verbs before this can launch; VirtualAgent is deprecated and no unsupported-TwiML page exists"
+      "https://signalwire.com/docs/compatibility-api: update the base URL from api.twilio.com to your-space.signalwire.com; handlers work without modification (docs/enum/platform-docs.md D)",
+      "sdk rest/namespaces/compat.py CompatNamespace base /api/laml/2010-04-01/Accounts/{project}",
+      "tools/openapi/compat.json POST /Accounts/{AccountSid}/Calls: To, From required; Url",
+      "verified 2026-09-02: recipes/move-a-twiml-app-by-changing-the-endpoint/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "handle-call-status-callbacks",
+    "build-an-ivr-without-a-server"
+  ]
 }

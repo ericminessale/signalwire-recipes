@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-93 of 121 folders are written and verified. The rest are planned and carry a stub.
+96 of 121 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -13,8 +13,8 @@ and without a network.
 ## Contents
 
 - [AI Agents](#ai-agents) (35)
-- [Voice](#voice) (41)
-- [Messaging](#messaging) (8)
+- [Voice](#voice) (43)
+- [Messaging](#messaging) (9)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
 - [Fax](#fax) (2)
@@ -112,6 +112,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Call from a browser](call-from-a-browser/) | Place a call from a web page into the same flow a phone reaches. | TypeScript, Python |
 | [Connect a PBX with a Domain Application](connect-a-pbx-with-a-domain-application/) | An IP-authenticated Domain Application takes inbound SIP from your PBX and a SIP Gateway carries calls back to it. | Python, Markup |
 | [Detect an answering machine](detect-an-answering-machine/) | Tell a human from a voicemail greeting before you start talking. | Python |
+| [Embed a call widget with no backend](embed-a-call-widget-with-no-backend/) | A sw-click-to-call element with a Click to Call token from the Dashboard and a destination address puts a call button on a page. No server of yours is in the call path. | Python |
 | [Place an outbound call](place-an-outbound-call/) | Dial a number from your own code and follow the call through to completion. | Python |
 | [Receive calls in the browser](receive-calls-in-the-browser/) | A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML connect to that address is the document that rings the registered browser. | Python |
 | [Record a call](record-a-call/) | Start a recording and pick it up from the completion webhook. | Python, Markup |
@@ -172,6 +173,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 |---|---|---|
 | [Buy a number and point it at your app](buy-a-number-and-point-it-at-your-app/) | Search by area code or pattern, purchase, and assign the number's call and message handlers, all over REST. | Python |
 | [Look up a caller's carrier and name](look-up-a-callers-carrier-and-name/) | One GET returns a number's validity, formatting, country and type. include=carrier,cnam adds the carrier record and the caller-ID name. | Python |
+| [Move a twiml app by changing the endpoint](move-a-twiml-app-by-changing-the-endpoint/) | A TwiML app moves to SignalWire by changing the REST base and the credentials. The compat client posts the same Calls body to the LaML path on your Space, and your cXML handler serves the same document it served before. | Python |
 | [Translate a call in real time](translate-a-call-in-real-time/) | Each side speaks their own language on one bridge. | Python, Markup |
 
 ## Messaging
@@ -197,6 +199,7 @@ SMS, MMS, and chat on the same agent.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
+| [Publish events to browsers with pubsub](publish-events-to-browsers-with-pubsub/) | A PubSub token grants read or write on named channels for a number of minutes, and your server mints one per member with the role your sign-in decided. The browser never holds the project API token. | Python |
 | [Text the caller during the call](text-the-caller-during-the-call/) | A tool result carries a SWML send_sms, so the handler texts the caller while the voice call is still up. The model never sees a phone number. | Python, Markup |
 
 ### Other
@@ -260,7 +263,7 @@ Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields
 
 These folders exist and are scaffolded. They have no working code yet.
 
-`call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `redact-pii-from-logs-and-transcripts`, `run-an-ai-sidecar-on-a-live-call`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `voice-support-line`
+`call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `live-sales-coach`, `measure-voice-ai-latency`, `outbound-notification-campaign`, `port-a-number-in`, `put-an-agent-in-a-web-chat-widget`, `redact-pii-from-logs-and-transcripts`, `run-an-ai-sidecar-on-a-live-call`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `voice-support-line`
 
 ---
 
