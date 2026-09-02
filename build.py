@@ -416,19 +416,13 @@ a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turq);}
-.pvbanner{max-width:1560px;margin:0 auto;padding:14px 32px 0;}
-/* A preview notice, not a feature: one muted line, right-aligned, and a text
-   button. Planned rows are hidden by default now that most of the corpus is
-   written (Eric, 2026-09-02); the plate and the switch went with the old
-   default, because a control this quiet should not look like a setting. */
-.pvbanner .pvb{display:flex;align-items:center;justify-content:flex-start;gap:14px;
-  flex-wrap:wrap;font-size:12.5px;color:var(--fg-muted);}
-.pvbanner b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums;}
-.pvtog{font-family:var(--body);font-size:12.5px;color:var(--fg);cursor:pointer;
-  background:transparent;border:0;padding:4px 0;
-  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-3);}
-.pvtog:hover{color:var(--fg);text-decoration-color:currentColor;}
-.pvtog:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
+.showhid{margin-left:auto;display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--body);font-size:12.5px;color:var(--fg-muted);cursor:pointer;
+  padding:6px 0 6px 14px;white-space:nowrap;}
+.showhid:hover{color:var(--fg);}
+.showhid input{width:14px;height:14px;margin:0;cursor:pointer;
+  accent-color:rgb(var(--select-rgb));}
+.showhid input:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 [data-view][hidden]{display:none;}
 
 /* collapsed category still shows its shape: name, count, task groups */
@@ -470,15 +464,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .tg .cn{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);
   background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:2px 5px;}
 .tg:hover .cn{color:var(--fg-2);}
-/* the count is a pill, the same object the task-group strip uses, centred on
-   the label's box. A bare numeral on the baseline read as too low and a
-   numeral raised 1px read as an exponent (Eric, 2026-09-02); a pill has its
-   own edges, so where it sits is not a question. Flex aligns the two on
-   their text baselines, not their boxes: Lexend sits low in its box and the
-   mono digits sit high in theirs, so a box-centred pill put the digits above
-   the letters, measured in pixels on the live page. */
-.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);line-height:1.4;
-  background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:1px 5px;}
+/* the count sits on the label's baseline: flex aligns the two on their text
+   baselines, not their boxes. Lexend sits low in its box and the mono digits
+   sit high in theirs, so a box-centred count read as an exponent; a pill
+   behind it was a box inside a box (Eric, 2026-09-02). */
+.chip .cn{font-family:var(--mono);font-size:11px;color:var(--fg-subtle);}
 .catbody{padding-top:4px;}
 .tgroup{margin-top:22px;}
 .tgh{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--fg-muted);
@@ -686,11 +676,11 @@ const chips=[...document.querySelectorAll('.chip')];
 const allChip=chips.find(c=>c.dataset.f==='all');
 function active(){return chips.filter(c=>c.getAttribute('aria-pressed')==='true'
   &&c.dataset.f!=='all').map(c=>c.dataset.f);}
-const tog=document.getElementById('pvtog');  // preview --all only
+const tog=document.getElementById('pvtog');  // present when planned rows exist
 function apply(){
   const t=q.value.trim().toLowerCase();
   const on=active();
-  const hideUnbuilt=!!tog&&tog.getAttribute('aria-pressed')==='true';
+  const hideUnbuilt=!!tog&&!tog.checked;
   const kinds=on.filter(f=>f.startsWith('kind:')).map(f=>f.slice(5));
   const cs=on.filter(f=>!f.startsWith('kind:'));
   let n=0;
@@ -946,13 +936,7 @@ document.querySelectorAll('.tg').forEach(chip=>{
 });
 
 q.addEventListener('input',apply);
-if(tog)tog.addEventListener('click',()=>{
-  const was=tog.getAttribute('aria-pressed')==='true';
-  tog.setAttribute('aria-pressed',was?'false':'true');
-  const lab=tog.querySelector('.pvl');
-  if(lab)lab.textContent=was?'Hide planned':'Show '+tog.dataset.n+' planned';
-  apply();
-});
+if(tog)tog.addEventListener('change',apply);
 chips.forEach(c=>c.addEventListener('click',()=>{
   const was=c.getAttribute('aria-pressed')==='true';
   chips.forEach(o=>o.setAttribute('aria-pressed','false'));
@@ -1398,6 +1382,11 @@ def build_index(recipes, body_only=False):
             'aria-pressed="false">Builds <span class="cn">%d</span></button>'
             % len(builds)
         )
+    if any(r.get("_planned") for r in recipes):
+        # Planned rows are hidden until asked for. A checkbox, not a switch and
+        # not a notice: it sits with the other filters because it is one.
+        chips += ('<label class="showhid" for="pvtog">'
+                  '<input type="checkbox" id="pvtog"> Show hidden</label>')
 
     feat_items = sorted(
         (r for r in recipes if r.get("featured") and r.get("feature_line")),
@@ -1519,10 +1508,6 @@ def build_index(recipes, body_only=False):
 </div>
 <script>%s</script>""" % (LOGO, hero_cta, chips, featured,
                           "".join(sections), JS)
-    if not body_only:
-        n_planned = sum(1 for r in recipes if r.get("_planned"))
-        if n_planned:
-            body = notice_html(len(recipes) - n_planned, len(recipes), n_planned) + body
     return body if body_only else page(
         "SignalWire Recipes", body,
         desc=("Working code for every part of a call. Clone a folder, add your "
@@ -2036,22 +2021,6 @@ show(location.hash ? location.hash.slice(1) : 'index');
 PREVIEW_CSS = ""
 
 
-def notice_html(n_written, n_total, n_planned):
-    """The line above the hero: how much is written, and the way to see the
-    rest. Planned rows are hidden by default (Eric, 2026-09-02) and the button
-    is a text control, because a notice this quiet should not look like a
-    setting. Shared by the preview and the public index, which used to render
-    unwritten folders as ordinary cards with nothing to say about it."""
-    return (
-        '<div class="pvbanner"><div class="pvb"><span class="pvt">'
-        "<b>%d</b> of <b>%d</b> recipes are written."
-        "</span>"
-        '<button type="button" class="pvtog" id="pvtog" aria-pressed="true" '
-        'data-n="%d"><span class="pvl">Show %d planned</span></button>'
-        "</div></div>" % (n_written, n_total, n_planned, n_planned)
-    )
-
-
 def build_preview(recipes):
     """One file, index plus every showable recipe, navigable without a server."""
     written = [r for r in recipes if has_content(r)]
@@ -2094,9 +2063,7 @@ def build_preview(recipes):
     if not live:
         raise SystemExit("no recipe has content yet - nothing to preview")
 
-    n_planned = sum(1 for r in live if r.get("_planned"))
     parts = [
-        notice_html(len(written), len(live), n_planned),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
     for r in live:

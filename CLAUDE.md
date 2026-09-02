@@ -347,6 +347,13 @@ brand cheatsheet's abstractions and not invented:
   the button, and detail pages, `sitemap.xml` and `llms.txt` cover written
   folders only. Inventory-only rows (no folder) stay preview-only. **Vercel is
   what Eric shows people now**; check the live site, not only the artifact.
+- **The control is a checkbox labelled "Show hidden", at the right end of the
+  chip strip (Eric, 2026-09-02).** The notice line and its text button are
+  gone; Eric wanted the two words and a box, beside the filters, because it is
+  one. `#pvtog` is the `<input>`; the script reads `checked` on `change`.
+- **Chip counts are bare numerals on the label's baseline.** The pill behind
+  them was a box inside a box (Eric). `align-items:baseline` on the chip is
+  what fixed the "exponent" read; the background never was the fix.
 - **Featured cards are `.fcard`, never `.card`.** They duplicate recipes that
   also appear below, so the moment they answer to `.card` the chip counts, the
   category counts and `tools/qc.py`'s own toggle check all inflate by six.
