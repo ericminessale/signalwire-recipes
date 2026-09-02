@@ -105,7 +105,7 @@ with its test client. It asserts the following.
 ## Limitations
 
 The spec calls status callbacks "advisory, best-effort notifications" whose
-"delivery can be delayed or fail silently", and says not to gate time-critical
+"delivery can be delayed or fail silently". It says not to gate time-critical
 actions on receiving one. A timeline is a record, not a trigger.
 
 The store is a dictionary in the process. Swap `CALLS` for your database before

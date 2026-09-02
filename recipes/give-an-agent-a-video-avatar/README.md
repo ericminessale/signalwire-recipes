@@ -7,10 +7,11 @@
 ## What this demonstrates
 
 The bundled schema documents three parameters under `ai.params`.
-`video_idle_file` is the "URL of a video file to play when AI is idle",
-`video_listening_file` the one "to play when AI is listening to the user speak",
-and `video_talking_file` the one "to play when AI is talking". Each carries the
-note "Only works for calls that support video." You supply three looping clips
+`video_idle_file` is the "URL of a video file to play when AI is idle".
+`video_listening_file` is the one "to play when AI is listening to the user
+speak". `video_talking_file` is the one "to play when AI is talking". Each
+carries the note "Only works for calls that support video". You supply three
+looping clips
 and three URLs; the platform decides which one plays. Nothing about the prompt,
 the tools or the voice changes.
 
@@ -55,7 +56,7 @@ python app.py
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. A video call is what shows the
 face, so point a Fabric address or a video-capable client at
-`https://<user>:<password>@<your-host>/face/`; a phone call runs the same agent
+`https://<user>:<password>@<your-host>/face/`. A phone call runs the same agent
 with no video.
 
 ## Verify it

@@ -9,8 +9,8 @@ the token list with one token. `launch` makes one POST to the documented
 conferences path. Its body equals one expected object, whose keys are all
 documented and include `display_name`, the spec's one required field, and the
 spec's 200 schema carries `id`. `tokens` makes one GET to the documented
-conference tokens path for that id and returns the recorder's token object
-whole. The spec's token schema carries `name`, `token` and `scopes`. Expected
+conference tokens path for that id and returns the recorder's whole page,
+links and data. The spec's token schema carries `name`, `token` and `scopes`. Expected
 values live here, not in app.py.
 """
 import os
@@ -31,6 +31,10 @@ import verifylib as V  # noqa: E402
 CONFERENCES = "/api/video/conferences"
 CID = "4a1f0a5e-6f2b-4c3d-9e8f-0b1c2d3e4f5a"
 TOKENS = f"{CONFERENCES}/{CID}/conference_tokens"
+# the whole documented page: links and data
+TOKEN_PAGE = {"links": {"self": f"https://example.signalwire.com{TOKENS}"},
+              "data": [{"id": "t1", "name": "moderator", "token": "x",
+                        "scopes": ["conference.moderator"]}]}
 
 
 def deref(spec, node):
@@ -43,17 +47,14 @@ def main():
     V.sdk_banner()
     import app as recipe
 
-    rec = V.Recorder(responses=[{"id": CID, "display_name": "Workshop stand-up"},
-                                {"data": [{"id": "t1", "name": "moderator", "token": "x",
-                                           "scopes": ["conference.moderator"]}]}])
+    rec = V.Recorder(responses=[{"id": CID, "display_name": "Workshop stand-up"}, TOKEN_PAGE])
     recipe.client.video.conferences._http = rec
 
     conf = recipe.launch("Workshop stand-up", name="workshop-standup", record_on_start=True,
                          join_from="2026-09-03T09:00:00Z", join_until="2026-09-03T10:00:00Z")
     assert conf["id"] == CID
     listed = recipe.tokens(conf["id"])
-    assert listed["data"] == [{"id": "t1", "name": "moderator", "token": "x",
-                               "scopes": ["conference.moderator"]}], listed
+    assert listed == TOKEN_PAGE, listed
     assert len(rec.calls) == 2, rec.calls
     create, toks = rec.calls
 

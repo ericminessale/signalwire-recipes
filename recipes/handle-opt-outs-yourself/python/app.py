@@ -12,15 +12,18 @@ The inbound webhook is the SWML inbound message webhook: SignalWire POSTs a
 JSON body whose `message` carries `from`, `to` and `body`, and expects a SWML
 document back. A STOP gets a one-verb document, `send_sms`, confirming the
 opt-out; START or UNSTOP gets one confirming the return. Anything else gets an
-empty document, which sends nothing.
+empty document, which sends nothing. The handler accepts the webhook only with
+SignalWire's signature over it, because a forged START would undo a real STOP.
 
 Written against signalwire-sdk 3.0.1 (RestClient) and Flask.
 """
+import hashlib
+import hmac
 import os
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, abort, jsonify, request
 from signalwire.rest import RestClient
 
 # the SDK does not read .env for you
@@ -35,8 +38,17 @@ client = RestClient()
 http = client._http
 
 FROM = os.getenv("SMS_FROM")
-if not FROM:
-    raise SystemExit("SMS_FROM is required: the purchased number your sends go out from")
+SIGNING_KEY = os.getenv("SIGNALWIRE_SIGNING_KEY")
+INBOUND_URL = os.getenv("INBOUND_URL")
+for name, value in (("SMS_FROM", FROM), ("SIGNALWIRE_SIGNING_KEY", SIGNING_KEY),
+                    ("INBOUND_URL", INBOUND_URL)):
+    if not value:
+        raise SystemExit(f"{name} is required; see .env.example")
+
+# the platform signs its webhooks: hex(HMAC(signing_key, url + raw_body)), SHA-256
+# on call requests, SHA-1 on every signed request (docs/swml/guides/webhook-security)
+DIGESTS = {"X-Signalwire-SHA256-Signature": hashlib.sha256,
+           "X-Signalwire-Signature": hashlib.sha1}
 
 # the single words this handler honours, compared whole after trim and lowercase
 STOP_WORDS = {"stop", "stopall", "unsubscribe", "cancel", "end", "quit"}
@@ -55,6 +67,18 @@ class OptedOut(Exception):
 
 def keyword(body):
     return (body or "").strip().lower()
+
+
+def signed(headers, url, raw_body, key=None):
+    """True only when a signature header is present and matches. A forged STOP
+    or START would otherwise rewrite the record, so this runs first."""
+    key = key or SIGNING_KEY
+    for header, digest in DIGESTS.items():
+        sent = headers.get(header)
+        if sent:
+            expected = hmac.new(key.encode(), url.encode() + raw_body, digest).hexdigest()
+            return hmac.compare_digest(sent, expected)
+    return False
 
 
 def reply(from_number, to_number, body):
@@ -88,6 +112,17 @@ def send(to, body):
 
 
 app = Flask(__name__)
+
+
+@app.before_request
+def gate():
+    """Only SignalWire may report a STOP or a START."""
+    if request.path == "/inbound":
+        url = INBOUND_URL
+        if request.query_string:
+            url += "?" + request.query_string.decode()
+        if not signed(request.headers, url, request.get_data()):
+            abort(403)
 
 
 @app.post("/inbound")

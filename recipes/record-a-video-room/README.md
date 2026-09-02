@@ -9,7 +9,7 @@
 Recording is a property of the room, not a button in the call. The vendored
 REST spec's `POST /api/video/rooms` takes `record_on_start`, a boolean it
 describes as "Specifies whether to start recording a Room Session when one is
-started for this Room." From then on the recordings are REST objects.
+started for this Room". From then on the recordings are REST objects.
 `GET /api/video/room_sessions/{id}/recordings` lists a session's, and each
 carries `status`, `duration`, `format`, `size_in_bytes` and a `uri` to fetch.
 `GET /api/video/room_recordings/{id}` reads one, and
@@ -94,6 +94,6 @@ documented switch.
 ## What to change first
 
 Drop `record_on_start=True` from `create_room` and run the verifier. The
-exact-body assertion fails, and nothing else would: the spec's own default is
+exact-body assertion fails, and nothing else would. The spec's own default is
 not to record, so a room without the switch produces sessions and no
 recordings.

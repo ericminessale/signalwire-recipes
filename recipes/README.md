@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-83 of 121 folders are written and verified. The rest are planned and carry a stub.
+86 of 121 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -12,8 +12,8 @@ and without a network.
 
 ## Contents
 
-- [AI Agents](#ai-agents) (32)
-- [Voice](#voice) (35)
+- [AI Agents](#ai-agents) (33)
+- [Voice](#voice) (37)
 - [Messaging](#messaging) (7)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
@@ -81,6 +81,7 @@ Agents that answer, reason, and act on a live call.
 | [Cover tool latency with fillers](cover-tool-latency-with-fillers/) | The slow tool renders a filler phrase, and a wait file when you host one, while each language carries its own filler pool. | Python |
 | [Extract structured data after a call](extract-structured-data-after-a-call/) | Get typed fields out of a finished conversation instead of parsing a transcript. | Python |
 | [Give an agent a tool](give-an-agent-a-tool/) | Let the model call your function, and decide what it gets back. | Python |
+| [Let an agent see the callers camera](let-an-agent-see-the-callers-camera/) | enable_vision true in ai.params lets the agent read the caller's camera through the platform's get_visual_input function. vision_model picks the model, and an internal filler for get_visual_input covers the look. | Python |
 | [Push events from an agent to the browser](push-events-from-an-agent-to-the-browser/) | A tool result carries a SWML user_event whose event is any JSON object the handler chooses. The bundled schema describes the verb as sending events to the connected client on the call. | Python, Markup |
 | [Write a reusable agent skill](write-a-reusable-agent-skill/) | Package a capability once and load it into any agent with one line. | Python |
 
@@ -142,8 +143,9 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Barge into a live call](barge-into-a-live-call/) | Join an in-progress call with full audio, and leave without tearing it down. | Python |
 | [Handle call status callbacks](handle-call-status-callbacks/) | Asking for initiated, ringing, answered and completed in StatusCallbackEvent asks SignalWire to post those state changes of a call to your URL. Keyed by CallSid and ordered by SequenceNumber, the callbacks that arrive rebuild the call's life, with the duration when the completed one carries it. | Python |
 | [Listen to a live call](listen-to-a-live-call/) | Attach to a call in progress and hear both sides without joining it. | Python |
-| [Reconcile webhooks against the logs api](reconcile-webhooks-against-the-logs-api/) | A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, and fetches the event trail of each such call. | Python |
+| [Reconcile webhooks against the logs api](reconcile-webhooks-against-the-logs-api/) | A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, by the id the logs carry, and fetches the event trail of each such voice log. | Python |
 | [Start live transcription and consume the webhook](start-live-transcription/) | Turn on transcription for a call and receive the text as it is spoken. | Python, Markup |
+| [Transcribe a call in the background](transcribe-a-call-in-the-background/) | calling.transcribe starts transcribing a live call in the background by control_id, and calling.transcribe.stop ends it. The transcript lands on your status_url as a documented callback whose params.text holds the text when there is any. | Python |
 | [Whisper to an agent mid-call](whisper-to-an-agent-mid-call/) | One-way audio that only the agent's leg can hear. | Python |
 
 ### Routing & queueing
@@ -154,7 +156,8 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Collect speech input and branch on it](collect-speech-input-and-branch/) | Ask an open question, recognise the answer, and take a different path for each. | Python, Markup |
 | [Offer a callback instead of a hold](offer-a-callback-instead-of-a-hold/) | Take the number, drop the call, and ring back with the context intact. | Python |
 | [Queue a call until an agent is free](queue-a-call-until-an-agent-is-free/) | Callers wait in a named queue with hold audio and are bridged in order as agents connect to it. | Markup, Python |
-| [Route SIP calls to agents by username](route-sip-calls-to-agents-by-username/) | One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route, and a re-POST to that route serves that agent's SWML. | Python |
+| [Route SIP calls to agents by username](route-sip-calls-to-agents-by-username/) | One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route. A re-POST to that route serves that agent's SWML. | Python |
+| [Route calls by dialed number or time](route-calls-by-dialed-number-or-time/) | One SWML webhook serves several numbers. The handler reads the dialed number from the documented inbound call webhook and the clock in that line's zone, and returns the document for that number at that hour. | Python |
 | [Try destinations in order](try-destinations-in-order/) | One connect carries a serial list to dial in order, or a parallel list to dial at once. result runs when the bridge ends, and its failed branch is the failure path. | Markup, Python |
 
 ### Other
@@ -173,7 +176,7 @@ SMS, MMS, and chat on the same agent.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Handle opt outs yourself](handle-opt-outs-yourself/) | Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. | Python |
+| [Handle opt outs yourself](handle-opt-outs-yourself/) | Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. The handler accepts the webhook only with SignalWire's signature over it. | Python |
 | [Redact a message body after sending](redact-a-message-body-after-sending/) | One PATCH with body "" clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible. | Python |
 | [Register a 10DLC brand and campaign](register-a-10dlc-brand-and-campaign/) | A brand and campaign are registered over REST, numbers are assigned to the campaign, and the status webhook reports carrier approval. | Python |
 
@@ -250,7 +253,7 @@ Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields
 
 These folders exist and are scaffolded. They have no working code yet.
 
-`build-an-ivr-without-a-server`, `call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `hand-off-from-ai-to-a-human-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `let-a-browser-dial-your-agent-with-no-dashboard-setup`, `let-an-agent-see-the-callers-camera`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `receive-calls-in-the-browser`, `redact-pii-from-logs-and-transcripts`, `register-a-sip-endpoint-and-receive-calls`, `route-calls-by-dialed-number-or-time`, `run-an-ai-sidecar-on-a-live-call`, `run-livekit-agents-code-on-signalwire`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-batch-within-your-rate-limit`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `transcribe-a-call-in-the-background`, `voice-support-line`
+`build-an-ivr-without-a-server`, `call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `hand-off-from-ai-to-a-human-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `let-a-browser-dial-your-agent-with-no-dashboard-setup`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `receive-calls-in-the-browser`, `redact-pii-from-logs-and-transcripts`, `register-a-sip-endpoint-and-receive-calls`, `run-an-ai-sidecar-on-a-live-call`, `run-livekit-agents-code-on-signalwire`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-batch-within-your-rate-limit`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `voice-support-line`
 
 ---
 

@@ -23,8 +23,9 @@ STOCK = {"brake pads": 12, "chain": 4, "tubes": 0}
 
 PARAMETERS = {
     "type": "object",
-    "properties": {"part": {"type": "string",
-                            "description": "The part the caller asked about, as they said it."}},
+    "properties": {"part": {
+        "type": "string",
+        "description": "The part the caller asked about, as they said it."}},
     "required": ["part"],
 }
 

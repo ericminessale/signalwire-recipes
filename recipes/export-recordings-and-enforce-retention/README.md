@@ -69,8 +69,8 @@ python verify.py          # from the recipe folder, not python/
 ```
 
 You swap the SDK's HTTP layer for a recorder that answers with two pages of
-recordings, two past a 30-day window and one inside it, and the media fetcher
-for a fake that records its URLs. You run a pass and assert the following.
+recordings, two past a 30-day window and one inside it. You swap the media
+fetcher for a fake that records its URLs. You run a pass and assert the following.
 
 - the pass makes `GET`, `GET`, `DELETE`, `DELETE` in that order; page two carries exactly the query from `links.next`
 - the fetcher was asked for exactly the two expired URLs, and each copy sits in the export directory under its id with the file's own extension

@@ -80,7 +80,7 @@ following.
 - `launch` makes one `POST` to the documented conferences path
 - its body equals one expected object: `display_name`, `name`, `record_on_start`, `quality`, `layout`, the two primary colours, `join_from` and `join_until`
 - every key in that body is a documented property, the spec's required list is exactly `display_name`, and the `200` schema carries `id`
-- `tokens` makes one `GET` to the documented conference tokens path for the id the create returned, with no query, and returns the recorder's token object whole
+- `tokens` makes one `GET` to the documented conference tokens path for the id the create returned, with no query, and returns the recorder's whole page, `links` and `data`
 - the spec's token schema carries `id`, `name`, `token` and `scopes`
 
 ## Limitations

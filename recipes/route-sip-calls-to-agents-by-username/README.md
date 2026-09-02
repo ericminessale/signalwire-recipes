@@ -1,6 +1,6 @@
 # Route SIP calls to agents by username
 
-> One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route, and a re-POST to that route serves that agent's SWML.
+> One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route. A re-POST to that route serves that agent's SWML.
 
 **Scenario:** a PBX trunk that sends `sales@` and `workshop@` to one webhook and expects two different agents
 
@@ -48,8 +48,8 @@ Location: /support/
 ```
 
 RFC 9110 defines 307 so that a client following it must not change the
-request method (https://www.rfc-editor.org/rfc/rfc9110#section-15.4.8). The
-verifier does that step by hand: it re-POSTs the same body to `Location`
+request method. The section is https://www.rfc-editor.org/rfc/rfc9110#section-15.4.8.
+The verifier does that step by hand: it re-POSTs the same body to `Location`
 verbatim, and the support agent serves its SWML. The routes in `USERNAMES` end
 in a slash on purpose. An AgentBase serves its root only at `/route/`, so a
 `Location` of `/support` lands on a 404. A username the map does not know
@@ -70,7 +70,7 @@ tunnel such as ngrok and use that hostname. You also need a SIP domain
 application. Create one in the Dashboard under SIP, or with
 `POST /api/relay/rest/domain_applications` from the vendored REST spec. Register
 your PBX or softphone against the domain it gives you. Point its call handler
-at a SWML script at `https://<user>:<password>@<your-host>/sales/sip/`; either
+at a SWML script at `https://<user>:<password>@<your-host>/sales/sip/`. Either
 agent's `/sip` path routes for both. Dial `sip:workshop@<your-domain>`
 and `sip:sales@<your-domain>`.
 

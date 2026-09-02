@@ -95,8 +95,8 @@ a live call. The spec calls the callback best-effort, so a transcript that
 never arrives is a case your job has to expect.
 
 SWML has a `transcribe` verb for the same job at document time, but it is
-absent from the 3.0.1 bundled schema, so this recipe cannot prove it offline
-and uses the REST command instead.
+absent from the 3.0.1 bundled schema. This recipe cannot prove it offline, so
+it uses the REST command instead.
 
 ## What to change first
 

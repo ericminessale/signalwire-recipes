@@ -19,7 +19,8 @@ load_dotenv()
 
 BASE = os.getenv("AVATAR_BASE_URL")
 if not BASE:
-    raise SystemExit("AVATAR_BASE_URL is required: where idle.mp4, listening.mp4 and talking.mp4 live")
+    raise SystemExit("AVATAR_BASE_URL is required: where idle.mp4, listening.mp4 and "
+                     "talking.mp4 live")
 
 AVATAR = {
     "video_idle_file": f"{BASE}/idle.mp4",

@@ -6,9 +6,9 @@ names the group as `MessagingServiceSid` and carries no `From`.
 
 Proof: the HTTP layer is a recorder. `create_pool` makes one POST to the
 documented number groups path with exactly `name` and `sticky_sender: true`.
-For each number it then makes one GET of the phone numbers list filtered to
-it, and one POST to the documented memberships path with the exact number's
-id, not the near miss listed first. `send`, twice to the same recipient, makes
+Before that it makes one GET of the phone numbers list per number, filtered
+to it, and afterwards one POST to the documented memberships path with the
+exact number's id, not the near miss listed first. `send`, twice to the same recipient, makes
 two POSTs to the documented compat messages path, each equal to a literal body
 naming the group as `MessagingServiceSid`. The spec requires `name` on the
 group, `phone_number_id` on the membership and only `To` on the message. It
@@ -55,12 +55,15 @@ def main():
     V.sdk_banner()
     import app as recipe
 
-    responses = [{"id": GID, "name": "repair-updates", "sticky_sender": True, "phone_number_count": 0}]
+    responses = []
     for e164, nid in POOL.items():
         # a near miss first, so a prefix match would pick the wrong id
-        responses += [{"data": [{"id": "near-miss", "number": e164 + "9"},
-                                {"id": nid, "number": e164}]},
-                      {"id": f"m-{nid[-1]}", "number_group_id": GID, "phone_number": e164}]
+        responses.append({"data": [{"id": "near-miss", "number": e164 + "9"},
+                                   {"id": nid, "number": e164}]})
+    responses.append({"id": GID, "name": "repair-updates", "sticky_sender": True,
+                      "phone_number_count": 0})
+    for e164, nid in POOL.items():
+        responses.append({"id": f"m-{nid[-1]}", "number_group_id": GID, "phone_number": e164})
     responses += [{"sid": "msg-1", "status": "queued"}, {"sid": "msg-2", "status": "queued"}]
     rec = V.Recorder(responses=responses)
     for ns in (recipe.client.number_groups, recipe.client.phone_numbers,
@@ -73,16 +76,16 @@ def main():
     recipe.send(group_id, TO, "Reminder: your bike is ready.")
 
     memberships = f"{GROUPS}/{GID}/number_group_memberships"
-    expected = [("POST", GROUPS)]
-    for _ in POOL:
-        expected += [("GET", NUMBERS), ("POST", memberships)]
-    expected += [("POST", MESSAGES), ("POST", MESSAGES)]
+    # every lookup before the group exists, then the group, then the memberships
+    expected = [("GET", NUMBERS)] * len(POOL) + [("POST", GROUPS)]
+    expected += [("POST", memberships)] * len(POOL) + [("POST", MESSAGES), ("POST", MESSAGES)]
     assert [(c["method"], c["path"]) for c in rec.calls] == expected, \
         [(c["method"], c["path"]) for c in rec.calls]
 
-    create, *middle, first, second = rec.calls
+    lookups, create, adds = rec.calls[:len(POOL)], rec.calls[len(POOL)], rec.calls[len(POOL) + 1:-2]
+    first, second = rec.calls[-2:]
     assert create["body"] == {"name": "repair-updates", "sticky_sender": True}, create
-    for (e164, nid), (lookup, add) in zip(POOL.items(), zip(middle[::2], middle[1::2])):
+    for (e164, nid), lookup, add in zip(POOL.items(), lookups, adds):
         assert lookup["params"] == {"filter_number": e164}, lookup
         assert add["body"] == {"phone_number_id": nid}, add
     assert first["body"] == {"To": TO, "Body": "Your bike is ready.",
@@ -94,8 +97,8 @@ def main():
     spec = V.spec("rest")
     V.assert_documented("rest", "POST", GROUPS, create["body"])
     V.assert_documented("rest", "POST", f"{GROUPS}/{{NumberGroupId}}/number_group_memberships",
-                        middle[1]["body"])
-    V.assert_documented("rest", "GET", NUMBERS, None, middle[0]["params"])
+                        adds[0]["body"])
+    V.assert_documented("rest", "GET", NUMBERS, None, lookups[0]["params"])
     V.assert_documented("compat", "POST", first["path"], first["body"])
     assert body_schema(spec, GROUPS)["required"] == ["name"]
     sticky = deref(spec, body_schema(spec, GROUPS)["properties"]["sticky_sender"])

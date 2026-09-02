@@ -1,11 +1,10 @@
 {
   "slug": "transcribe-a-call-in-the-background",
   "title": "Transcribe a call in the background",
-  "alias": "",
-  "summary": "The whole call is transcribed in the background and the transcript is posted to a status URL when it completes; the call is not slowed.",
-  "scenario": "",
+  "alias": "calling.transcribe + transcribe status callback",
+  "summary": "calling.transcribe starts transcribing a live call in the background by control_id, and calling.transcribe.stop ends it. The transcript lands on your status_url as a documented callback whose params.text holds the text when there is any.",
+  "scenario": "A shop that wants the text of each support call filed against the ticket, without the caller hearing anything change",
   "surfaces": [
-    "swml",
     "python"
   ],
   "governed": false,
@@ -21,15 +20,25 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "distinct from start-live-transcription (no partials)"
     ],
     "evidence": [
-      "docs swml/reference/calling/transcribe, transcribe-stop",
-      "docs apis/rest/calls/call-commands (calling.transcribe)"
+      "tools/openapi/rest.json calling.transcribe variant: control_id required, status_url; calling.transcribe.stop: control_id",
+      "tools/openapi/rest.json webhooks transcribe_status_callback: event_type completed|failed, params.text omitted when none",
+      "sdk rest/namespaces/calling.py transcribe, transcribe_stop",
+      "SWML transcribe verb is absent from the 3.0.1 bundled schema, so the recipe uses REST",
+      "verified 2026-09-02: recipes/transcribe-a-call-in-the-background/verify.py"
     ]
   },
-  "subcategory": "observe"
+  "subcategory": "observe",
+  "prerequisites": [
+    "record-a-call"
+  ],
+  "related": [
+    "handle-call-status-callbacks",
+    "reconcile-webhooks-against-the-logs-api"
+  ]
 }

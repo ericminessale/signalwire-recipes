@@ -1,8 +1,8 @@
 """Prove the claim without a network.
 
 Claim: a pass over a time window walks every page of the voice and message
-logs. It reports every entry your handler's store lacks, and fetches the event
-trail of each such call.
+logs. It reports every entry your handler's store lacks, by the id the logs
+carry, and fetches the event trail of each such voice log.
 
 Proof: the HTTP layer is a recorder that answers with fixtures: two voice
 pages, two message pages, and a trail per unseen call. In each list, page
@@ -14,6 +14,7 @@ their trails and the unseen messages, including one call and one message that
 sat on a second page. The spec bounds `page_size` at exactly 1 and 1000 on
 both lists. Expected values live here, not in app.py.
 """
+import copy
 import os
 import pathlib
 import sys
@@ -60,8 +61,10 @@ def main():
     import app as recipe
 
     recipe.SEEN.update({"call-seen", "msg-seen"})
-    rec = V.Recorder(responses=[VOICE_PAGE_1, VOICE_PAGE_2, TRAILS["call-missed-1"],
-                                TRAILS["call-missed-2"], MESSAGE_PAGE_1, MESSAGE_PAGE_2])
+    # deep copies, so a handler that mutated a response could not also move the expectation
+    rec = V.Recorder(responses=copy.deepcopy([VOICE_PAGE_1, VOICE_PAGE_2, TRAILS["call-missed-1"],
+                                              TRAILS["call-missed-2"], MESSAGE_PAGE_1,
+                                              MESSAGE_PAGE_2]))
     for ns in (recipe.client.logs.voice, recipe.client.logs.messages):
         ns._http = rec
 

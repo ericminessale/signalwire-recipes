@@ -2,8 +2,9 @@
 
 One POST creates a themed video conference. A second GET lists the tokens the
 spec documents for it, each with a `name`, a `token` and its `scopes`. You
-pass a `display_name` and, if you want them, a layout, a quality, a join
-window and the primary theme colour. You get back an `id`, which is what the
+pass a `display_name`; `launch` always sends a layout, a quality and the
+primary theme colour, which you may override, and adds a join window and a
+`name` only when you give them. You get back an `id`, which is what the
 token listing takes. The reference calls these conferences prebuilt, with no
 code required, so nothing here is a Browser SDK client of your own.
 

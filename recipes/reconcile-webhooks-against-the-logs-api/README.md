@@ -1,6 +1,6 @@
 # Reconcile webhooks against the logs API
 
-> A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, and fetches the event trail of each such call.
+> A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, by the id the logs carry, and fetches the event trail of each such voice log.
 
 **Scenario:** a nightly job that finds the calls and messages your status handler has no record of
 
@@ -88,6 +88,12 @@ assert the following.
 
 ## Limitations
 
+The diff is by id: the pass compares each log entry's `id` with the ids your
+handler stored. The message status callback documents its `id` as the message's
+identifier. For calls, the vendored specs do not document which callback field
+equals the voice log's `id`. Check that mapping against your own account before
+trusting the report on the voice side.
+
 You prove the requests and the diff against fixtures; what the logs contain for
 a real window is the platform's record.
 
@@ -97,7 +103,7 @@ carry `id`.
 
 ## What to change first
 
-Delete the `while` loop in `every_page` so it returns the first page and run
-the verifier. The request sequence fails because the pass never fetches a
-second page, and the report loses the call and the message that sat on one.
-That is the point: a window is every page, not the first one.
+Replace the body of `every_page` with `return fetch(**params).get("data", [])`
+and run the verifier. The request sequence fails because the pass never fetches
+a second page, and the report loses the voice log and the message that sat on
+one. A window is every page, not the first one.

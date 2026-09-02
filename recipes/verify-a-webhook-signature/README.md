@@ -40,7 +40,7 @@ def gate():
 ```
 
 Two choices matter. The URL comes from `WEBHOOK_URL`, the address you gave
-SignalWire, not from the request: a tunnel or a proxy rewrites what Flask sees,
+SignalWire, not from the request. A tunnel or a proxy rewrites what Flask sees,
 and the platform signed the one you configured. The guide says the URL includes
 the query string, so the hook appends the request's. And `compare_digest` does
 the comparison in constant time.

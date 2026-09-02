@@ -2,7 +2,8 @@
 
 Claim: your webhook handler records a STOP from the inbound message webhook
 and confirms it with a `send_sms` document. Every later send checks that
-record before it makes a request, so a refused send is never a request.
+record before it makes a request, so a refused send is never a request. The
+handler accepts the webhook only with SignalWire's signature over it.
 
 Proof: drive the Flask app with its test client. A webhook payload shaped
 like the spec's inbound message webhook, with every required field, carries a
@@ -15,6 +16,9 @@ exactly the expected body, and `POST /send` answers 202. "START" clears the
 record and `send` works again. A body that is not a keyword answers with an
 empty document and records nothing. Expected values live here, not in app.py.
 """
+import hashlib
+import hmac
+import json
 import os
 import pathlib
 import sys
@@ -27,6 +31,8 @@ os.environ.update({
     "SIGNALWIRE_API_TOKEN": "PT-test",
     "SIGNALWIRE_SPACE": "example.signalwire.com",
     "SMS_FROM": "+15550001111",
+    "SIGNALWIRE_SIGNING_KEY": "PSK_verifier_only",
+    "INBOUND_URL": "https://hooks.example.com/inbound",
 })
 
 import verifylib as V  # noqa: E402
@@ -81,12 +87,31 @@ def main():
     rec = V.Recorder(responses=[{"id": "msg-1", "status": "queued"}])
     recipe.http = rec
 
+    def signed_post(body, sender=CUSTOMER, key="PSK_verifier_only", headers=None):
+        raw = json.dumps(payload(body, sender)).encode()
+        if headers is None:
+            sig = hmac.new(key.encode(), b"https://hooks.example.com/inbound" + raw,
+                           hashlib.sha1).hexdigest()
+            headers = {"X-Signalwire-Signature": sig}
+        return client.post("/inbound", data=raw,
+                           headers={"Content-Type": "application/json", **headers})
+
     def post(body, sender=CUSTOMER):
-        r = client.post("/inbound", json=payload(body, sender))
+        r = signed_post(body, sender)
         assert r.status_code == 200, (body, r.status_code, r.data[:100])
         doc = r.get_json()
         V.validate_swml(doc)
         return doc
+
+    # only SignalWire may report a STOP or a START: no signature, or a forged
+    # one, changes nothing
+    recipe.OPT_OUTS[OTHER] = "2026-09-01T00:00:00+00:00"
+    for headers in ({}, {"X-Signalwire-Signature": "not-a-signature"}):
+        r = signed_post("START", OTHER, headers=headers)
+        assert r.status_code == 403, (headers, r.status_code)
+    assert signed_post("START", OTHER, key="attacker").status_code == 403
+    assert OTHER in recipe.OPT_OUTS, "a forged START cleared a record"
+    recipe.OPT_OUTS.pop(OTHER)
 
     # a plain message: empty document, nothing recorded
     doc = post("thanks, see you saturday")
@@ -141,7 +166,8 @@ def main():
     post("please stop calling", sender=OTHER)
     assert OTHER not in recipe.OPT_OUTS, "a sentence containing stop is not a STOP"
 
-    print(f"ok: STOP from {CUSTOMER} answered with one send_sms confirmation and recorded; "
+    print(f"ok: an unsigned or forged START is 403 and changes nothing; STOP from {CUSTOMER} "
+          f"answered with one send_sms confirmation and recorded; "
           f"send to it raised OptedOut with no request; send to {OTHER} made one POST "
           f"{MESSAGES}; START cleared the record")
 

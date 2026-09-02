@@ -38,7 +38,8 @@ TRANSCRIPTS = {}
 
 def start(call_id):
     """Begin transcribing a live call. The transcript lands on STATUS_URL."""
-    return client.calling.transcribe(call_id, control_id=CONTROL_ID, status_url=STATUS_URL)
+    return client.calling.transcribe(call_id, control_id=CONTROL_ID,
+                                     status_url=STATUS_URL)
 
 
 def stop(call_id):

@@ -28,7 +28,8 @@ load_dotenv()
 
 SIGNING_KEY = os.getenv("SIGNALWIRE_SIGNING_KEY")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-for name, value in (("SIGNALWIRE_SIGNING_KEY", SIGNING_KEY), ("WEBHOOK_URL", WEBHOOK_URL)):
+REQUIRED = (("SIGNALWIRE_SIGNING_KEY", SIGNING_KEY), ("WEBHOOK_URL", WEBHOOK_URL))
+for name, value in REQUIRED:
     if not value:
         raise SystemExit(f"{name} is required; see .env.example")
 

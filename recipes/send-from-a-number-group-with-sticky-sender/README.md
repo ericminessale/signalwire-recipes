@@ -9,14 +9,14 @@
 Three documented pieces. `POST /api/relay/rest/number_groups` creates the
 group. The vendored REST spec requires `name` and documents `sticky_sender` as
 a boolean, default false. Its description is "Whether the number group uses the
-same 'From' number for outbound requests to a number, or chooses a random one."
+same 'From' number for outbound requests to a number, or chooses a random one".
 `POST /api/relay/rest/number_groups/{id}/number_group_memberships` adds a
 member by `phone_number_id`, its one required field. Then the compat create
-message takes the group in place of a number. The reference at
+message takes the group in place of a number.
 https://signalwire.com/docs/compatibility-api/rest/messages/create-message
 describes `MessagingServiceSid` as "The ID of a number group to use when
-sending the message." It adds "Either From or MessagingServiceSid must be
-provided."
+sending the message". It adds "Either From or MessagingServiceSid must be
+provided".
 
 The SDK wraps the first two as `client.number_groups.create` and
 `add_membership`, and the send as `client.compat.messages.create`.
@@ -25,9 +25,10 @@ The SDK wraps the first two as `client.number_groups.create` and
 
 ```python
 def create_pool(name, numbers):
+    ids = [number_id(e164) for e164 in numbers]          # resolve first, so a bad number fails early
     group = client.number_groups.create(name=name, sticky_sender=True)
-    for e164 in numbers:
-        client.number_groups.add_membership(group["id"], phone_number_id=number_id(e164))
+    for phone_number_id in ids:
+        client.number_groups.add_membership(group["id"], phone_number_id=phone_number_id)
     return group["id"]
 
 def send(group_id, to, body):
@@ -62,8 +63,10 @@ python app.py pool repair-updates +1XXXXXXXXXX +1XXXXXXXXXY    # prints the grou
 python app.py send <group_id> +1YYYYYYYYYY "Your bike is ready."
 ```
 
-There is no server to expose; the script speaks to the REST API and exits. Send
-twice to one recipient and compare the From numbers in the messaging log.
+A pool is two or more numbers on your project; with one number there is nothing
+to pick from. There is no server to expose; the script speaks to the REST API
+and exits. Send twice to one recipient and compare the From numbers in the
+messaging log.
 
 ## Verify it
 
@@ -80,7 +83,8 @@ You build a two-number pool and send twice to one recipient, and assert the
 following.
 
 - the group create is one `POST` to the documented path with exactly `name` and `sticky_sender: true`
-- each number costs one `GET` of the phone numbers list with exactly `filter_number`, then one `POST` to the documented memberships path
+- every number is looked up before the group is created, one `GET` of the phone numbers list each with exactly `filter_number`
+- each number then costs one `POST` to the documented memberships path
 - that membership body is exactly the id of the exact number, not the near miss the lookup listed first
 - both sends are `POST`s to the documented compat messages path, each equal to one literal body: `To`, its own `Body`, and a `MessagingServiceSid` equal to the group id
 - the spec requires `name` on the group, `phone_number_id` on the membership, and only `To` on the message

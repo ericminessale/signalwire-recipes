@@ -33,10 +33,14 @@ def number_id(e164):
 
 
 def create_pool(name, numbers):
-    """A sticky-sender group holding `numbers`. Returns the group id."""
+    """A sticky-sender group holding `numbers`. Returns the group id.
+
+    Every number is resolved before the group exists, so a number that is not
+    on the project fails the call without leaving a half-built group behind."""
+    ids = [number_id(e164) for e164 in numbers]
     group = client.number_groups.create(name=name, sticky_sender=True)
-    for e164 in numbers:
-        client.number_groups.add_membership(group["id"], phone_number_id=number_id(e164))
+    for phone_number_id in ids:
+        client.number_groups.add_membership(group["id"], phone_number_id=phone_number_id)
     return group["id"]
 
 

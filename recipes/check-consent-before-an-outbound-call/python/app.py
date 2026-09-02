@@ -39,8 +39,8 @@ class NoConsent(Exception):
 
 def allowed(number, now=None):
     """The decision. Returns None when the call may go ahead, else a reason.
-    `now` is for tests and must carry a zone; a naive clock would be read in
-    the server's zone, which is the mistake this recipe exists to avoid."""
+    `now` is for tests and must carry a zone. A naive clock would read in the
+    server's zone, which is the mistake this recipe exists to avoid."""
     if now is not None and now.utcoffset() is None:
         raise ValueError("now must carry a time zone")
     record = CONSENT.get(number)

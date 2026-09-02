@@ -62,10 +62,10 @@ python app.py +1XXXXXXXXXX       # the destination you added to CONSENT
 ```
 
 Before the first run, add the destination you have consent to call to
-`CONSENT` in `app.py`. Give it `consented` true and its time zone, then pass
+`CONSENT` in `app.py`. Give it `consented` set to `True` and its time zone, then pass
 that same number. There is no server to expose; the script speaks to the REST
 API and exits. For a refused number `place()` raises `NoConsent` with the
-reason, and the script exits with that message.
+reason.
 
 ## Verify it
 
@@ -95,8 +95,8 @@ This is the ordering, not the law. Which hours count, what consent must say,
 and how long a record is good for are yours to decide with counsel, and vary by
 jurisdiction.
 
-The store is in memory. `handle-opt-outs-yourself` is the messaging side of
-the same record.
+The store is in memory. `handle-opt-outs-yourself` handles the messaging
+opt-out with a record of its own.
 
 ## What to change first
 

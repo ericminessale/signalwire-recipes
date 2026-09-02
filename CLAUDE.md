@@ -1363,6 +1363,23 @@ streams, call status callbacks. Facts that cost a round or a fetch:
   commit and a generated file do not mix.
 - **`AIParams` accepts unknown keys.** A misspelt `video_idel_file` validates
   and does nothing. A verifier pins the exact keys; the schema will not.
+- **`tools/lint_recipes.py` takes slugs, not paths.** Given
+  `recipes/<slug>` it lints nothing and prints `lint: 0 recipe folders
+  clean`, which read as a pass for a whole wave. Twenty-two problems shipped
+  in f99418b that way, six of them code lines over 90 characters (codex).
+  Pass `<slug>`, and read the count.
+- **`python tools/lint_recipes.py | tail -1 &&` masks the exit code.** The
+  pipeline's status is `tail`'s. Every gate chain in this session had that
+  shape, so the lint never stopped a commit. Use `set -o pipefail`, or run
+  the lint bare and let its own exit code speak.
+- **Do not write into the tree while a gate-and-commit chain runs.** The
+  index was regenerated at the start of the chain and `git add -A` ran at
+  the end; a recipe written in between was committed with an index that did
+  not count it (codex, f99418b). Wave writing waits for the commit.
+- **A public webhook that mutates compliance state must check the
+  platform's signature.** The opt-out handler cleared a record on any POST
+  saying START, so anyone could undo a real STOP (codex, f99418b). The
+  signature check from `verify-a-webhook-signature` sits in front of it now.
 
 ## Open work
 

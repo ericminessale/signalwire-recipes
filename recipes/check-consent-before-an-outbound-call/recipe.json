@@ -26,7 +26,7 @@
     "folds": [
       "#14 (canonical: appointment reminder caller)",
       "t:call-compliance",
-      "prerequisite: place-an-outbound-ai-call"
+      "prerequisite: place-an-outbound-call"
     ],
     "evidence": [
       "docs platform/compliance (TCPA)",

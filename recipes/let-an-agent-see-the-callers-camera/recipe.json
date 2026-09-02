@@ -1,13 +1,11 @@
 {
   "slug": "let-an-agent-see-the-callers-camera",
   "title": "Let an agent see the callers camera",
-  "alias": "",
-  "summary": "On a video call the agent can request a frame from the caller's camera and answer about it.",
-  "scenario": "",
+  "alias": "ai.params enable_vision + vision_model + a get_visual_input filler",
+  "summary": "enable_vision true in ai.params lets the agent read the caller's camera through the platform's get_visual_input function. vision_model picks the model, and an internal filler for get_visual_input covers the look.",
+  "scenario": "A workshop desk on a video call that wants to see the worn part before it gives advice",
   "surfaces": [
-    "python",
-    "swml",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -24,17 +22,25 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "demo santa",
       "demo chess"
     ],
     "evidence": [
-      "docs swml/reference/calling/ai/params (enable_vision, vision_model, get_visual_input filler)",
-      "NEEDS VERIFICATION: exact tool the model calls and the image path",
-      "demo techtarot app.py:342-347,449 enable_vision + set_internal_fillers(get_visual_input)"
+      "schema.json AIParams enable_vision (names get_visual_input), vision_model consts gpt-4o-mini|gpt-4.1-mini|gpt-4.1-nano",
+      "schema.json SWAIGInternalFiller includes get_visual_input; SWAIGNativeFunction does not",
+      "sdk core/mixins/ai_config_mixin.py set_params, set_internal_fillers",
+      "verified 2026-09-02: recipes/let-an-agent-see-the-callers-camera/verify.py"
     ]
   },
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "give-an-agent-a-video-avatar",
+    "cover-tool-latency-with-fillers"
+  ]
 }

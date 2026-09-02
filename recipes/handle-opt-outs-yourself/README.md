@@ -8,12 +8,12 @@
 
 SignalWire does not manage opt-outs for you. The platform messaging page says
 "Customers are responsible for handling inbound stop requests and removing
-those customers from subscriber lists." It adds that messages should not go
-out again "unless they have opted back in via an Unstop request"
-(https://signalwire.com/docs/platform/messaging). So the record lives on your
+those customers from subscriber lists". It adds that messages should not go
+out again "unless they have opted back in via an Unstop request". The page is
+https://signalwire.com/docs/platform/messaging. So the record lives on your
 side, and two pieces of your code keep it. One is the handler that receives
-the inbound message webhook. The other is the send path that consults the
-record before it builds a request.
+the inbound message webhook, behind the platform's signature. The other is the
+send path that consults the record before it builds a request.
 
 The vendored REST spec documents the inbound message webhook. SignalWire POSTs
 a JSON body whose `message` object carries `from`, `to`, `body`, `type` and
@@ -47,8 +47,12 @@ What the handler returns for a STOP:
                 "body": "You are unsubscribed from Ridgeline Cycles messages. Reply START to opt back in."}}]}}
 ```
 
-The keyword compares whole, after trim and lowercase, so "please stop calling"
-is a message and "Stop" is an opt-out. The confirmation goes out through the
+Before any of that runs, a `before_request` hook checks SignalWire's signature
+over the request, `hex(HMAC(signing_key, url + raw_body))` in
+`X-Signalwire-Signature`, and answers 403 without it. Anyone can reach a public
+webhook, and a forged START would undo a real STOP. The check is the one
+`verify-a-webhook-signature` explains. The keyword compares whole, after trim
+and lowercase, so "can you stop calling" is a message and "Stop" is an opt-out. The confirmation goes out through the
 document rather than through `send`, because it is the one message an opted-out
 number should still receive. Anything that is not a keyword gets an empty
 document, which sends nothing and records nothing.
@@ -58,13 +62,14 @@ document, which sends nothing and records nothing.
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # then edit .env: credentials and SMS_FROM
+cp ../.env.example .env          # then edit .env: credentials, SMS_FROM, the signing key and INBOUND_URL
 python app.py
 ```
 
 The webhook needs a public HTTPS URL. For a local run, expose port 8080 with a
 tunnel such as ngrok and use that hostname. Set the number's message handler to
-a SWML script at `https://<your-host>/inbound`. Text STOP to it, then ask the
+a SWML script at `https://<your-host>/inbound`, and put that same URL in
+`INBOUND_URL`. Text STOP to it, then ask the
 same process to send, and read the 403:
 
 ```bash
@@ -88,6 +93,7 @@ The verifier drives the Flask app with its test client and swaps the SDK's HTTP
 layer for a recorder. It asserts the following.
 
 - the fixture carries every field the spec's inbound message webhook requires, at both levels, and no field the spec lacks
+- an inbound webhook with no signature, or a wrong one, is refused with 403 and records nothing, even when its body says START
 - a plain message answers with a document that validates and holds no verbs, and records nothing
 - " Stop " answers with a document whose one verb is `send_sms` from the receiving number to the sender with the exact confirmation text, and the handler records the sender
 - `send` to that number raises `OptedOut` naming it, and the recorder saw no request; `POST /send` for it answers 403 with the reason
