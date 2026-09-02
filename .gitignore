@@ -21,6 +21,7 @@ docs/_sol_*.log
 # inventory.json and its renderer stay because scaffold.py seeds from them.
 docs/*
 !docs/INVENTORY.md
+!docs/team/
 !docs/enum/
 docs/enum/*
 !docs/enum/inventory.json

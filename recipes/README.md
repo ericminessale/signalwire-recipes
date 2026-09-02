@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-96 of 121 folders are written and verified. The rest are planned and carry a stub.
+97 of 122 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -258,6 +258,12 @@ A build is an application you deploy and operate, assembled from the recipes abo
 A complete contact centre: AI triage, priority queues, live human agents in the browser, and supervisor listen, whisper and barge.
 
 Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields from the model](hide-fields-from-the-model/), [Transfer a call without losing context](transfer-a-call-without-losing-context/), [Brief the human before the bridge completes](brief-the-human-before-the-bridge-completes/), [Hand off from AI to a human agent](hand-off-from-ai-to-a-human-agent/), [Listen to a live call](listen-to-a-live-call/), [Whisper to an agent mid-call](whisper-to-an-agent-mid-call/), [Offer a callback instead of a hold](offer-a-callback-instead-of-a-hold/), [Translate a call in real time](translate-a-call-in-real-time/), [Ground an agent in your own documents](ground-an-agent-in-your-docs/)
+
+### [Docs site voice guide](docs-site-voice-guide/)
+
+A voice and video agent in a floating widget on a documentation site. It answers from the docs through a hosted search tool, navigates the reader to the right page and scrolls them to the right section, and knows which page they are on.
+
+Composes: [Ground an agent in your own documents](ground-an-agent-in-your-docs/), [Push events from an agent to the browser](push-events-from-an-agent-to-the-browser/), [Give an agent a video avatar](give-an-agent-a-video-avatar/), [Cover tool latency with fillers](cover-tool-latency-with-fillers/), [Let a browser dial your agent with no dashboard setup](let-a-browser-dial-your-agent-with-no-dashboard-setup/), [Call from a browser](call-from-a-browser/), [Inject a message into a live ai call](inject-a-message-into-a-live-ai-call/), [Configure an agent per request](configure-an-agent-per-request/), [Keep heavy state out of global data](keep-heavy-state-out-of-global-data/), [Run an agent as a cloud function](run-an-agent-as-a-cloud-function/)
 
 ## Planned
 
