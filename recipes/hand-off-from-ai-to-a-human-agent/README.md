@@ -1,33 +1,106 @@
 # Hand off from AI to a human agent
 
-> Put the caller in a queue and hand the human everything the AI already collected.
+> The agent's tool writes its notes under the call's id and hands the call to a named queue with `enter_queue`. The human's side reads the next queue member over REST, whose documented fields include that same `call_id`, and finds the notes by it.
 
-**Technical:** `queue handoff with intake`
-**Scenario:** The hybrid contact centre pattern
+**Scenario:** a bike shop front desk that takes the name and the problem, then puts the caller through to a person who already knows both
 
 ## What this demonstrates
 
-_TODO: the pattern, in two sentences. This is the part that carries the argument._
+Three documented pieces, joined by one id. The SWAIG tool webhook carries the
+call's `call_id`, so the handler can key its notes by it. `enter_queue` puts the
+caller in a named queue. The bundled schema requires `queue_name` and
+`transfer_after_bridge` on it. It describes the verb as placing the call where
+"it will wait to be connected to an available agent or resource". The vendored REST
+spec's `GET /api/relay/rest/queues/{queue_id}/members/next` "Retrieves the next
+member in the queue without dequeuing", and the member carries `call_id`,
+`position` and `wait_time`. The human takes the call with a `connect` whose `to`
+is `queue:support`, one of the forms the schema lists for `connect.to`.
 
-## Prerequisites
+## How it works
 
-- A SignalWire account and API token
-- A phone number on that account
+```python
+def hand_off(self, args, raw_data):
+    call_id = raw_data["call_id"]
+    NOTES[call_id] = {"caller_name": args["caller_name"], "issue": args["issue"],
+                      "from": raw_data.get("caller_id_num")}
+    result = FunctionResult("Thanks. I am putting you through to a person now.")
+    result.action.append({"SWML": ENQUEUE, "transfer": "true"})   # the documented shape
+    return result
 
-## Setup
-
-```bash
-cp .env.example .env    # add your credentials
+def brief(queue_id):
+    member = client.queues.get_next_member(queue_id)
+    return {"call_id": member["call_id"], ..., "notes": NOTES.get(member["call_id"])}
 ```
+
+What the platform receives from the tool, then what the human's phone runs:
+
+```json
+{"response": "Thanks. I am putting you through to a person now.",
+ "action": [{"SWML": {"version": "1.0.0", "sections": {"main": [
+               {"enter_queue": {"queue_name": "support", "transfer_after_bridge": "false"}}]}},
+             "transfer": "true"}]}
+
+{"version": "1.0.0", "sections": {"main": [{"answer": {}}, {"connect": {"to": "queue:support"}}]}}
+```
+
+`transfer_after_bridge` is a string the schema requires; `"false"` means carry
+on in this document after the bridge, and there is nothing after it. The
+`transfer: "true"` beside the SWML is what the tool webhook documents for a
+call that leaves the agent. `FunctionResult.execute_swml(transfer=True)` would
+put that flag inside the document, so the action is built by hand. `NOTES` is
+a dictionary, the stand-in for whatever the human's screen reads from. The
+screen asks for the next member, takes its `call_id`, and shows the notes filed
+under it.
 
 ## Run it
 
-_TODO per surface. Surfaces declared: python_
+```bash
+cd python
+pip install -r requirements.txt
+cp ../.env.example .env          # then edit .env: credentials, the basic-auth pair, QUEUE_NAME
+python app.py                    # the agent, on port 3000
+python app.py brief              # in another shell: who is next, and what the agent learned
+```
+
+The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
+tunnel such as ngrok and use that hostname. Point the shop's number at
+`https://<user>:<password>@<your-host>/triage/`. The schema says a queue that
+does not exist is created on first use, so the first hand-off creates
+`support`. Serve `take().get_document()` from any SWML webhook and point the
+human's number at it; the human dials in and is bridged to the caller.
+
+## Verify it
+
+No network, no account.
+
+```bash
+cd ..                     # back to the recipe folder
+python verify.py
+```
+
+The verifier executes the tool offline, swaps the SDK's HTTP layer for a
+recorder, and asserts the following.
+
+- the rendered agent has one function, `hand_off`, requiring `caller_name` and `issue`
+- executing it with a tool webhook body that carries `call_id` and `caller_id_num` returns the exact response and one action
+- that action's SWML validates, holds exactly one `enter_queue` with `queue_name: support` and `transfer_after_bridge: "false"`, and carries `transfer: "true"`
+- the notes sit under the call id with the name, the issue and the number, and nothing else
+- `find_queue` makes one `GET` of the documented queues list and picks the queue by `friendly_name`
+- `brief` makes one `GET` of the documented next-member path, with no body or query, and returns the member's position, wait and the notes for its `call_id`
+- the spec documents `call_id`, `position` and `wait_time` on the member and describes the read as "without dequeuing"
+- the human's document validates and connects to `queue:support`; the schema requires `queue_name` and `transfer_after_bridge` and lists the `queue:` form for `connect.to`
+
+## Limitations
+
+You prove the documents, the tool result and the requests. Who the platform
+bridges to whom, and how long the caller waits, are the platform's side of a
+live call. The next-member read does not dequeue; the bridge does.
+
+The notes are in the agent's process. Put them in a store the human's screen
+can read, keyed by `call_id`, before anything depends on it.
 
 ## What to change first
 
-_TODO_
-
-## Related
-
-_TODO_
+Key `NOTES` by `args["caller_name"]` instead of `call_id` and run the verifier.
+The `brief` assertion fails, because the queue member carries a call id and no
+name. The id is the only field both sides hold.

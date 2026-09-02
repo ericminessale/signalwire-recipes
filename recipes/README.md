@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-88 of 121 folders are written and verified. The rest are planned and carry a stub.
+93 of 121 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -12,9 +12,9 @@ and without a network.
 
 ## Contents
 
-- [AI Agents](#ai-agents) (34)
-- [Voice](#voice) (38)
-- [Messaging](#messaging) (7)
+- [AI Agents](#ai-agents) (35)
+- [Voice](#voice) (41)
+- [Messaging](#messaging) (8)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
 - [Fax](#fax) (2)
@@ -95,6 +95,7 @@ Agents that answer, reason, and act on a live call.
 | [Run a bedrock voice agent](run-a-bedrock-voice-agent/) | Swapping AgentBase for BedrockAgent renders amazon_bedrock instead of ai, with the prompt carrying three Bedrock settings. The SWAIG function renders with the same schema on both, and the handler you register on each returns the same reply. | Python |
 | [Run an agent as a cloud function](run-an-agent-as-a-cloud-function/) | The same agent file runs as an AWS Lambda handler. agent.run(event, context) returns the SWML for the root and the tool result for a POST to /swaig. Both sit behind the same basic auth. | Python |
 | [Run an agent from one YAML file](run-an-agent-from-one-yaml-file/) | A complete working agent with nothing installed and no server of your own. | Markup |
+| [Run livekit agents code on signalwire](run-livekit-agents-code-on-signalwire/) | LiveKit-agents-shaped code, an Agent with instructions and a function_tool, an AgentSession and an rtc_session entrypoint, renders a SignalWire agent through signalwire.livewire. The instructions become the prompt, the tool becomes a SWAIG function, and the same Python function runs when the tool is called. | Python |
 | [Start from a prefab agent](start-from-a-prefab-agent/) | A complete receptionist or survey agent runs from a prefab class and a short configuration block. | Python |
 | [Switch language mid-call](switch-language-mid-call/) | Change the conversation language, with a voice that suits it. | Python, Markup |
 
@@ -112,8 +113,10 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Connect a PBX with a Domain Application](connect-a-pbx-with-a-domain-application/) | An IP-authenticated Domain Application takes inbound SIP from your PBX and a SIP Gateway carries calls back to it. | Python, Markup |
 | [Detect an answering machine](detect-an-answering-machine/) | Tell a human from a voicemail greeting before you start talking. | Python |
 | [Place an outbound call](place-an-outbound-call/) | Dial a number from your own code and follow the call through to completion. | Python |
+| [Receive calls in the browser](receive-calls-in-the-browser/) | A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML connect to that address is the document that rings the registered browser. | Python |
 | [Record a call](record-a-call/) | Start a recording and pick it up from the completion webhook. | Python, Markup |
 | [Reduce background noise on a call](reduce-background-noise-on-a-call/) | denoise switches noise reduction on for a leg and stop_denoise switches it off, in SWML or mid-call over REST as calling.denoise and calling.denoise.stop. | Markup, Python |
+| [Register a sip endpoint and receive calls](register-a-sip-endpoint-and-receive-calls/) | A subscriber's SIP credential is a username and password any softphone registers with, created with one POST. A SWML connect to the subscriber's Fabric address is the document that rings it. | Python |
 | [Send DTMF to someone else's IVR](send-dtmf-to-an-external-ivr/) | Drive another company's phone tree from your own code. | Python |
 | [Stream call audio to your own server](stream-call-audio-to-your-own-server/) | tap sends a copy of a call's audio to a WebSocket or RTP destination of yours, and stop_tap ends it by control id. The same pair exists mid-call over REST as calling.tap and calling.tap.stop. | Markup, Python |
 | [Take a voicemail](take-a-voicemail/) | When the bridge to the owner does not happen, connect's failed branch plays a prompt and record takes the message in the foreground. Recording events, with the download URL, go to status_url. | Markup, Python |
@@ -135,6 +138,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Brief the human before the bridge completes](brief-the-human-before-the-bridge-completes/) | Compose a bounded summary, play it to the agent, then join the caller. | Python |
+| [Hand off from AI to a human agent](hand-off-from-ai-to-a-human-agent/) | The agent's tool writes its notes under the call's id and hands the call to a named queue with enter_queue. The human's side reads the next queue member over REST, whose documented fields include that same call_id, and finds the notes by it. | Python |
 | [Transfer a call](transfer-a-call/) | Move a live caller to another number or address. | Python, Markup |
 
 ### Monitoring
@@ -181,6 +185,7 @@ SMS, MMS, and chat on the same agent.
 | [Handle opt outs yourself](handle-opt-outs-yourself/) | Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. The handler accepts the webhook only with SignalWire's signature over it. | Python |
 | [Redact a message body after sending](redact-a-message-body-after-sending/) | One PATCH with body "" clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible. | Python |
 | [Register a 10DLC brand and campaign](register-a-10dlc-brand-and-campaign/) | A brand and campaign are registered over REST, numbers are assigned to the campaign, and the status webhook reports carrier approval. | Python |
+| [Send a batch within your rate limit](send-a-batch-within-your-rate-limit/) | A batch goes out one message per interval for the number type's documented rate, and a batch bigger than the documented backlog is refused before any request. Nothing is sent faster than the platform would deliver it. | Python |
 
 ### Routing & queueing
 
@@ -255,7 +260,7 @@ Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields
 
 These folders exist and are scaffolded. They have no working code yet.
 
-`call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `hand-off-from-ai-to-a-human-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `receive-calls-in-the-browser`, `redact-pii-from-logs-and-transcripts`, `register-a-sip-endpoint-and-receive-calls`, `run-an-ai-sidecar-on-a-live-call`, `run-livekit-agents-code-on-signalwire`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-batch-within-your-rate-limit`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `voice-support-line`
+`call-an-mcp-server-from-a-live-call`, `connect-freeswitch-to-signalwire`, `control-a-call-from-your-own-process-over-relay`, `dental-receptionist-with-outbound-confirmations`, `drive-thru-order-taker`, `embed-a-call-widget-with-no-backend`, `escalate-a-call-to-video`, `expose-an-agent-as-an-mcp-server`, `get-toll-free-messaging-verified`, `governed-intake-agent`, `improve-outbound-call-reputation`, `ivr-pathfinder`, `live-sales-coach`, `measure-voice-ai-latency`, `move-a-twiml-app-by-changing-the-endpoint`, `outbound-notification-campaign`, `port-a-number-in`, `publish-events-to-browsers-with-pubsub`, `put-an-agent-in-a-web-chat-widget`, `redact-pii-from-logs-and-transcripts`, `run-an-ai-sidecar-on-a-live-call`, `run-the-same-agent-over-text`, `run-the-sdk-conformance-suite`, `send-a-whatsapp-template-message`, `send-text-and-read-conversation-history-in-the-browser`, `sms-support-desk`, `take-a-payment-without-the-model-seeing-the-card`, `voice-support-line`
 
 ---
 

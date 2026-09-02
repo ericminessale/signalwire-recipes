@@ -1434,6 +1434,43 @@ serverless IVR as a call flow. Facts that cost a round:
   verifiers, and the review debt is listed under *Open work*. Do not launch
   audits before the reset; they burn the log and return nothing.
 
+## Wave 10 of the fill-out (2026-09-02)
+
+Five more, written after codex went dark and so verified by their own
+verifiers and the gate alone: the AI-to-human hand-off, LiveKit-shaped code
+on `signalwire.livewire`, a browser subscriber, a subscriber SIP credential,
+and a paced batch send.
+
+- **`FunctionResult.execute_swml(transfer=True)` puts `transfer` inside the
+  SWML dict**, confirmed again: the documented action is `{"SWML": doc,
+  "transfer": "true"}` as siblings, which `FunctionResult.connect` builds by
+  appending to `result.action`. Build it the same way by hand.
+- **`enter_queue` needs `queue_name` and `transfer_after_bridge`** (a string;
+  `"false"` carries on in the document), and `connect.to` takes
+  `queue:<name>`. The queue member from `GET .../members/next` carries the
+  `call_id` the SWAIG tool webhook carried, which is the only join between
+  the agent's notes and the human's screen.
+- **LiveWire (`signalwire.livewire`) in 3.0.1 has three edges.** `run_app`
+  runs `ctx._agent` and nothing sets it, so the entrypoint must assign
+  `session._build_sw_agent()` itself. The LiveKit default
+  `max_endpointing_delay=3.0` renders `attention_timeout: 3000`, below the
+  schema's 10,000 minimum, and the agent is built with
+  `schema_validation=False` so it never fails; set 15.0. `session.say()`
+  before the build is dropped when `instructions` are set, because
+  `set_prompt_text` beats `prompt_add_section`.
+- **The subscriber SIP credential is the usable create.** The top-level
+  `POST /api/fabric/resources/sip_endpoints` schema requires `id` and
+  `calling_handler_resource_id` on create, which a create cannot supply; the
+  subscriber form requires `username` and `password` only.
+- **The rate limits page is the authority for MPS**
+  (`signalwire.com/docs/platform/rate-limits.md`, fetched 2026-09-02): 10DLC
+  4 MPS, toll-free 3, short code 10, a 10,000-message queue, and past that
+  "SignalWire will stop adding to the Messaging queue". The spec says nothing
+  about throughput.
+- **A recorder can prove ordering by wrapping its own method**: the export
+  verifier replaced `rec.delete` with a function that checks the file is on
+  disk at that instant, which is a stronger proof than request order.
+
 ## Open work
 
 - **Review debt from the codex outage (2026-09-02).** `codex review` is owed

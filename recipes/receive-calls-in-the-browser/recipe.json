@@ -1,11 +1,10 @@
 {
   "slug": "receive-calls-in-the-browser",
   "title": "Receive calls in the browser",
-  "alias": "",
-  "summary": "A subscriber registers from the browser and rings when their address is dialed from a phone or another client.",
-  "scenario": "",
+  "alias": "subscriber + subscriber token + connect to its address",
+  "summary": "A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML connect to that address is the document that rings the registered browser.",
+  "scenario": "A workshop mechanic who takes the shop's calls at a laptop, with no desk phone",
   "surfaces": [
-    "typescript",
     "python"
   ],
   "governed": false,
@@ -22,14 +21,22 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [],
     "evidence": [
-      "docs browser-sdk/reference/signalwire (register/unregister)",
-      "docs apis/rest/subscribers/create-subscriber",
-      "demo sidecar static/app.js:171-409 client.register(), isRegistered$, session.incomingCalls$, call.answer(); POST /api/fabric/subscribers/tokens"
+      "tools/openapi/rest.json POST /api/fabric/resources/subscribers: email required; GET {id}/addresses: name, channels",
+      "tools/openapi/rest.json POST /api/fabric/subscribers/tokens: reference required; subscriber_id, token, refresh_token",
+      "schema.json ConnectDeviceSingle.to lists a Call Fabric Resource address",
+      "verified 2026-09-02: recipes/receive-calls-in-the-browser/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "call-from-a-browser"
+  ],
+  "related": [
+    "let-a-browser-dial-your-agent-with-no-dashboard-setup",
+    "register-a-sip-endpoint-and-receive-calls"
+  ]
 }

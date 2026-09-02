@@ -1,9 +1,9 @@
 {
   "slug": "run-livekit-agents-code-on-signalwire",
   "title": "Run livekit agents code on signalwire",
-  "alias": "",
-  "summary": "LiveKit-agents style code (Agent, AgentSession, function_tool) runs on SignalWire by changing the import.",
-  "scenario": "",
+  "alias": "signalwire.livewire Agent / AgentSession / function_tool",
+  "summary": "LiveKit-agents-shaped code, an Agent with instructions and a function_tool, an AgentSession and an rtc_session entrypoint, renders a SignalWire agent through signalwire.livewire. The instructions become the prompt, the tool becomes a SWAIG function, and the same Python function runs when the tool is called.",
+  "scenario": "A front desk you wrote for livekit-agents that you want on SignalWire without rewriting the tool",
   "surfaces": [
     "python"
   ],
@@ -20,15 +20,23 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "sip-migration",
     "folds": [
       "t:migrate-from-vapi"
     ],
     "evidence": [
-      "sdk livewire/__init__.py:271,403,177,799",
-      "NEEDS VERIFICATION: plugin classes are no-op stubs (livewire/plugins.py:49-124); the claim must be scoped to what actually maps"
+      "sdk livewire/__init__.py: Agent, AgentSession._build_sw_agent, function_tool, AgentServer.rtc_session, run_app runs ctx._agent",
+      "3.0.1 edges: default max_endpointing_delay renders attention_timeout 3000 below the schema minimum 10000; session.say() before the build is dropped when instructions are set",
+      "verified 2026-09-02: recipes/run-livekit-agents-code-on-signalwire/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "run-a-bedrock-voice-agent",
+    "give-an-agent-a-tool"
+  ]
 }

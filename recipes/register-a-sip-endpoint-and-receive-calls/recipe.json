@@ -1,9 +1,9 @@
 {
   "slug": "register-a-sip-endpoint-and-receive-calls",
   "title": "Register a sip endpoint and receive calls",
-  "alias": "",
-  "summary": "A SIP credential resource registers from any softphone and receives calls to a number assigned to it.",
-  "scenario": "",
+  "alias": "subscriber SIP credential + connect to its address",
+  "summary": "A subscriber's SIP credential is a username and password any softphone registers with, created with one POST. A SWML connect to the subscriber's Fabric address is the document that rings it.",
+  "scenario": "A shop that wants the workshop's desk phone on a SIP softphone, reached from the main number",
   "surfaces": [
     "python"
   ],
@@ -21,7 +21,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "sip-migration",
     "folds": [
       "t:sip-registration",
@@ -29,10 +29,19 @@
       "t:configure-sip-codecs"
     ],
     "evidence": [
-      "docs platform/voice/sip/sip-credentials",
-      "docs apis/rest/sip-credentials/create-sip-credential",
-      "docs platform/voice/sip/trunking"
+      "tools/openapi/rest.json POST /api/fabric/resources/subscribers/{fabric_subscriber_id}/sip_endpoints: username, password required; caller_id, send_as, ciphers, codecs, encryption",
+      "tools/openapi/rest.json POST /api/fabric/resources/subscribers: email required; GET {id}/addresses",
+      "sdk rest/namespaces/fabric.py SubscribersResource.create_sip_endpoint",
+      "schema.json ConnectDeviceSingle.to lists a Call Fabric Resource address",
+      "verified 2026-09-02: recipes/register-a-sip-endpoint-and-receive-calls/verify.py"
     ]
   },
-  "subcategory": "call-control"
+  "subcategory": "call-control",
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "receive-calls-in-the-browser",
+    "route-sip-calls-to-agents-by-username"
+  ]
 }
