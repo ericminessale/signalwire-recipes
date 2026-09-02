@@ -10,7 +10,7 @@ The bundled schema describes `tap`'s `uri` as the "destination of the tap media
 stream: rtp://IP:port, ws://example.com, or wss://example.com". `direction` is
 `speak` "for what party says", `listen` "for what party hears", or `both`.
 `codec` is PCMU or PCMA. `control_id` is the "identifier for this tap to use
-with `stop_tap`". Only `uri` is required. The vendored REST spec has the same
+with `stop_tap`". The bundled schema requires only `uri`. The vendored REST spec has the same
 operation as the call command `calling.tap`. It takes a `tap` configuration of
 type `audio` and a `device` of type `ws` or `rtp`, and `calling.tap.stop` ends
 it. The SDK wraps those as `client.calling.tap` and `client.calling.tap_stop`.
@@ -32,8 +32,8 @@ it. The SDK wraps those as `client.calling.tap` and `client.calling.tap_stop`.
 - hangup: {}
 ```
 
-The document taps both directions, bridges the call, then stops the tap by its
-control id. The Python surface builds the same document with `SWMLService` and
+The document carries `tap` for both directions, then `connect`, then
+`stop_tap` with the same control id. The Python surface builds the same document with `SWMLService` and
 adds the REST pair:
 
 ```python
@@ -72,7 +72,8 @@ python app.py
 of the tap media stream. The webhook needs a public HTTPS URL. For a local run, expose port 8080 with a
 tunnel such as ngrok and use that hostname. Point a number's SWML webhook at
 `https://<user>:<password>@<your-host>/tap/` and call. To fork a call that is
-already up, call `start_tap(call_id)` from a Python shell.
+already up, run `python -c "from app import start_tap; print(start_tap('<call_id>'))"`
+from the `python/` folder.
 
 ## Verify it
 
@@ -83,15 +84,15 @@ cd ..                     # back to the recipe folder
 python verify.py
 ```
 
-It validates both surfaces, swaps the SDK's HTTP layer for a recorder, and
-asserts the following.
+When you run it, you validate both surfaces, swap the SDK's HTTP layer for a
+recorder, and assert the following.
 
-- both surfaces run `answer`, `tap`, `connect`, `stop_tap`, `hangup` and render the same document
+- both surfaces contain `answer`, `tap`, `connect`, `stop_tap`, `hangup` in order and render the same document
 - the `tap` object is exactly the wss URI, `both`, `PCMU` and the control id, and `stop_tap` repeats that id
 - the bundled schema requires `uri` on `tap` and nothing else
-- `start_tap` and `stop_tap` each make one `POST` to the documented calling path with the call `id`
-- the `calling.tap` params are documented, carry the spec's required ones, and hold a `ws` device with the URI and an `audio` tap of both directions
-- the `calling.tap.stop` params are exactly the control id, and documented
+- `start_tap` and `stop_tap` each make one `POST` to the documented calling path, and each body equals one expected object
+- the vendored REST spec documents every `calling.tap` param and its nested `tap` and `ws` device, including their required fields and the `type` and `direction` enums
+- the `calling.tap.stop` params are exactly the control id, and the vendored REST spec documents them and requires nothing more
 
 ## Limitations
 

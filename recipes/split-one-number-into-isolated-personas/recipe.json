@@ -2,7 +2,7 @@
   "slug": "split-one-number-into-isolated-personas",
   "title": "Split one number into isolated personas",
   "alias": "isolated contexts + per-step functions",
-  "summary": "The rendered contexts point the default context's valid_contexts at sales, support and billing. Each persona is an isolated context, and its step offers the model only that desk's tool.",
+  "summary": "The default context's step lists sales, support and billing in valid_contexts and names no tools. Each persona is an isolated context, and its step offers the model only that desk's tool.",
   "scenario": "A bicycle shop with one number and three desks that must not blur into each other",
   "surfaces": [
     "python"
@@ -24,7 +24,7 @@
     "status": "verified",
     "lens": "ai",
     "folds": [
-      "#3 (pattern it teaches: separate personas that are offered only their own tool)",
+      "#3 (pattern it teaches: separate personas whose steps each name one tool)",
       "t:omnichannel-ai-receptionist"
     ],
     "evidence": [

@@ -3,12 +3,14 @@
 A tool result can carry a SWML `user_event`, whose `event` is any JSON object.
 The bundled schema describes it as sending events "to the connected client on
 the call". A page running the Browser SDK and subscribed to user events can
-receive the structured event. The handler decides what happened, and the event
-carries the facts rather than the model's paraphrase of them.
+receive the structured event. The handler validates the supplied slot id and
+chooses the event payload, so the event carries the handler's fields rather
+than the model's paraphrase of them.
 
 `FunctionResult.swml_user_event(event)` wraps the verb in a one-verb SWML
-document and adds it as a `SWML` action. The same event can also be pushed
-from your backend with the REST command `calling.user_event`.
+document and adds it as a `SWML` action. Your backend can push the same shape
+with the REST command `calling.user_event`, whose spec variant requires
+`params.event` (tools/openapi/rest.json, Calling.CallRequest).
 
 Written against signalwire-sdk 3.0.1.
 """

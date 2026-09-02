@@ -1,10 +1,10 @@
 """Stream call audio to your own server.
 
 `tap` sends a copy of the call's audio to a destination of yours. The bundled
-schema takes a `uri` of `rtp://IP:port`, `ws://` or `wss://`, a `direction` of
-`speak`, `listen` or `both`, a `codec` of PCMU or PCMA, and a `control_id` that
-`stop_tap` uses to end it. Over REST the same operation is the call command
-`calling.tap`, with a `device` of type `ws` or `rtp`.
+schema gives it a `uri` of `rtp://IP:port`, `ws://` or `wss://` and a
+`direction` of `speak`, `listen` or `both`. `codec` is PCMU or PCMA, and
+`stop_tap` ends the tap by its `control_id`. Over REST the same operation is
+the call command `calling.tap`, with a `device` of type `ws` or `rtp`.
 
 Written against signalwire-sdk 3.0.1 (SWMLService, RestClient.calling).
 """

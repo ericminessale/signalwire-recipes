@@ -1,6 +1,6 @@
 # Push an event to the connected client in plain SWML: `user_event` carries
-# any JSON object to the client on the call. Here it fires as the call is
-# answered, before the AI takes over.
+# any JSON object to the client on the call. This document places it after
+# `answer` and before `ai`.
 version: "1.0.0"
 sections:
   main:

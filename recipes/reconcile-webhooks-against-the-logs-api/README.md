@@ -9,8 +9,9 @@
 `GET /api/voice/logs` and `GET /api/messaging/logs` take `created_after`,
 `created_before` and `page_size` in the vendored REST spec, and each page's
 `links.next` is the URL of the next one. `GET /api/voice/logs/{id}/events`
-returns "an array of event entries for the log", each with `event_at`, `level`,
-`name` and `details`. You reach them as `client.logs.voice.list`,
+answers with a `data` array of event entries. The spec requires `event_at`,
+`level`, `name`, `details`, `project_id` and `log_id` on each. You reach them as
+`client.logs.voice.list`,
 `client.logs.messages.list` and `client.logs.voice.list_events`. You walk both
 lists to the end, diff them against the ids your handler stored, and every id
 the store lacks is a candidate to reconcile.
@@ -73,14 +74,17 @@ python verify.py          # from the recipe folder, not python/
 ```
 
 You swap the SDK's HTTP layer for a recorder that answers with fixtures. They
-are two voice pages joined by a `links.next` URL, one message page, and a trail
-per unseen call. You run a pass and assert the following.
+are two voice pages, two message pages, and a trail per unseen call. In each
+list, page one's `links.next` URL points at page two. You run a pass and
+assert the following.
 
-- the pass makes five requests in order: voice page one, voice page two, one events request per unseen call, the message page
-- page one and the message page carry the window parameters; page two carries exactly the query from the `links.next` URL; the events requests carry no query
+- the pass makes six requests in order: voice page one, voice page two, one events request per unseen call, message page one, message page two
+- page one of each list carries the window parameters, and page two of each carries exactly the query from its `links.next` URL
+- the events requests carry no query, and each event in a trail carries every field the spec requires
 - the spec documents every path and parameter used
-- the report names both unseen calls, one of them from page two, each with its own trail, and both unseen messages, and nothing the store holds
-- the spec bounds `page_size` between 1 and 1000 on both lists, so 200 is legal
+- the report names both unseen calls, each with its own trail, and both unseen messages, and nothing the store holds
+- one of the calls and one of the messages come from a second page
+- the spec bounds `page_size` at exactly 1 and 1000 on both lists
 
 ## Limitations
 
@@ -94,6 +98,6 @@ carry `id`.
 ## What to change first
 
 Delete the `while` loop in `every_page` so it returns the first page and run
-the verifier. The request sequence fails because page two is never fetched,
-and the report loses the call that sat on it. That is the point: a window is
-every page, not the first one.
+the verifier. The request sequence fails because the pass never fetches a
+second page, and the report loses the call and the message that sat on one.
+That is the point: a window is every page, not the first one.

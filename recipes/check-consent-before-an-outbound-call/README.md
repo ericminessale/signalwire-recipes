@@ -1,6 +1,6 @@
 # Check consent before an outbound call
 
-> No outbound call is placed to a number without a consent record and inside the permitted local calling window. The check is code, and it runs before the `dial`, so a refused call is never a request.
+> You place an outbound call only when the number has affirmative consent on record. The current time must also be inside the permitted window in the callee's time zone. The check is code, and it runs before the `dial`, so a refused call is never a request.
 
 **Scenario:** a workshop that calls customers when their bikes are ready, and only the ones who asked
 
@@ -9,9 +9,9 @@
 The platform's part is one `dial` on `POST /api/calling/calls`. The recipe is
 the ordering around it. `place()` looks the number up in your consent store and
 converts the current time to the callee's zone with `zoneinfo`. It checks that
-time against a window. Any failure raises `NoConsent` with the reason, and
-`client.calling.dial` is never reached. The person you did not have consent to
-call never hears a ring, and your logs never show a request.
+time against a window. Each failed check raises `NoConsent` with the reason
+before the code reaches `client.calling.dial`. The verifier records no HTTP
+request for a refused call, because the code never builds one.
 
 ## How it works
 
@@ -43,11 +43,11 @@ What the platform receives, and only when every check passed:
               {"answer": {}}, {"play": {"url": "say:Your bike is ready."}}, {"hangup": {}}]}}}}
 ```
 
-The window is judged in the callee's zone, which is part of the consent record.
-A caller in Los Angeles at 21:30 is refused even when it is 04:30 tomorrow on
-the server. `CONSENT` here is a dictionary. Yours is a table with the date, the
-channel and the wording the person agreed to, because that is what a regulator
-asks for.
+The code judges the window in the callee's zone, which is part of the consent
+record. It refuses a callee in Los Angeles at 21:30 even when the server clock
+reads 04:30 tomorrow, and it allows one at 19:00 when the server reads 02:00.
+`CONSENT` here is a dictionary. With counsel, decide which consent details your
+production store must retain.
 
 ## Run it
 
@@ -55,11 +55,13 @@ asks for.
 cd python
 pip install -r requirements.txt
 cp ../.env.example .env          # then edit .env: your project id, API token, space and number
-python app.py +1XXXXXXXXXX       # a number in CONSENT with consented true
+python app.py +1XXXXXXXXXX       # the destination you added to CONSENT
 ```
 
-There is no server to expose; the script speaks to the REST API and exits. A
-refused number exits with the reason and no request.
+Before the first run, add the destination you have consent to call to
+`CONSENT` in `app.py`. Give it `consented` true and its time zone, then pass
+that same number. There is no server to expose; the script speaks to the REST
+API and exits. A refused number exits with the reason and no request.
 
 ## Verify it
 
@@ -73,11 +75,13 @@ The verifier swaps the SDK's HTTP layer for a recorder, fixes the clock, and
 asserts the following.
 
 - a number with no record raises `NoConsent` saying so, and the recorder sees no request
-- a number whose consent was withdrawn does the same
-- a consented number at 21:30 local time does the same, with the local time in the reason
-- the window is the callee's: the same instant is 10:00 in Los Angeles and passes
-- the consented number in the window makes exactly one `POST` to the documented calling path with `command: dial`
-- the dial params are documented properties of the SWML dial variant, the required ones are present, and the inline SWML validates
+- a number that withdrew consent does the same
+- a consented number at 21:30 local time raises `NoConsent` naming the window and `21:30`
+- the window is the callee's: 02:00 UTC is outside a 09:00 to 20:00 window, and the same instant is 19:00 in Los Angeles and passes
+- a clock with no time zone raises `ValueError` rather than passing in the server's zone
+- the consented number in the window makes exactly one `POST` to the documented calling path
+- the body equals one expected object: `command: dial` and params of `from`, `to`, `timeout`, and the inline SWML with its three verbs in order
+- those params are documented properties of the SWML dial variant, the required ones are present, and the inline SWML validates
 
 ## Limitations
 
@@ -90,6 +94,6 @@ as a withdrawal.
 
 ## What to change first
 
-Swap the order in `place()` so `dial` runs before `allowed()`, and run the
-verifier. The first refusal assertion fails because a request was recorded,
-which is the failure this recipe exists to prevent.
+Change `WINDOW` to `(time(9, 0), time(22, 0))` and run the verifier. The
+21:30 refusal no longer happens and that assertion fails. The window is a value
+you set, and the verifier pins the one this recipe chose.

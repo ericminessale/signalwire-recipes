@@ -11,8 +11,9 @@ SWML document and adds it as a `SWML` action on the tool result. The bundled
 schema says `user_event` "allows the user to set and send events to the
 connected client on the call". It notes the verb is "commonly used with the
 browser-sdk" and that "the event object can be any valid JSON object". The
-handler decides what happened. The result carries the `event` as data and a
-`response` string as text, and the verifier asserts both exactly.
+handler validates the supplied slot id and chooses the event payload. The
+result carries the `event` as data and a `response` string as text, and the
+verifier asserts both exactly.
 
 ## How it works
 
@@ -35,13 +36,16 @@ The function result the platform receives:
 ```
 
 `user_event` requires `event`; the schema rejects the verb without one. The
-`slot` parameter carries an `enum` of the ids on the page. The handler refuses
-anything else with no action, so the page never hears about a selection that
-did not happen. Nothing here reserves the slot; the event reports a choice.
+`slot` parameter carries an `enum` of the ids on the page. The handler returns
+no action for an id outside `SLOTS`. A valid id the model supplies wrongly
+still emits the event: the check bounds the ids, not the model's accuracy.
+Nothing here reserves the slot; the event reports a choice.
 
 The `swml/` surface places a `user_event` in a plain document before the `ai`
 verb. Your backend can push the same shape mid-call with the REST command
-`calling.user_event`. Its params take `event`.
+`calling.user_event`. The vendored REST spec's variant for that command
+requires `command`, `id` and `params`, and `event` is the one required key in
+`params`. The verifier reads that from the spec.
 
 ## Run it
 
@@ -78,6 +82,7 @@ It renders and validates the SWML, runs the handler, and asserts the following.
 - that inline document validates against the bundled schema
 - a `user_event` with no `event` fails the schema
 - an unknown slot returns `INVALID` with no action
+- the REST spec's `calling.user_event` variant requires `command`, `id` and `params`, with `event` the one required key in `params`
 - the plain-SWML surface validates and its verbs are `answer`, `user_event`, `ai`, with the exact event
 
 ## Limitations

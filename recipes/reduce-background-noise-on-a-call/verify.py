@@ -4,13 +4,13 @@ Claim: noise reduction is switched on for a leg and off again, in SWML with
 `denoise` and `stop_denoise`, and mid-call over REST with the commands
 `calling.denoise` and `calling.denoise.stop`.
 
-Proof: both SWML surfaces validate against the bundled schema, run the same
-verbs in the same order, with `denoise` before the recording and
-`stop_denoise` after it, and both verbs carry an empty object because the
-schema gives them no parameters. With a fresh recorder attached for each
-helper, `quiet` and `loud` each make exactly one POST to the documented
-calling path with the command, the call id at the top level and empty params,
-which is what the spec's variants require. Expected values live here, not in app.py.
+Proof: both SWML surfaces validate against the bundled schema and run the
+same verbs in the same order, `denoise` before the recording and `stop_denoise`
+after it. Both verbs carry an empty object, because the schema gives them no
+parameters. With a fresh recorder attached for each helper, `quiet` and `loud`
+each make exactly one POST to the documented calling path. Each body carries
+the command, the call id at the top level and empty params, which is what the
+spec's variants require. Expected values live here, not in app.py.
 """
 import os
 import pathlib

@@ -1,16 +1,17 @@
 """Prove the claim without a network.
 
 Claim: one POST creates a themed video conference from a `display_name` and
-options the spec documents, and one GET lists the tokens the platform minted
+options the spec documents, and one GET lists the tokens the spec documents
 for it, each with a name, a token and scopes.
 
-Proof: with the HTTP layer replaced by a recorder that answers the create with
-an `id`, `launch` makes one POST to the documented conferences path. Its body
-carries `display_name`, the spec's one required field, and only documented
-properties, with the theme colours in the documented fields. `tokens` makes
-one GET to the documented conference tokens path for that id. The spec's
-token schema carries `name`, `token` and `scopes`. Expected values live here,
-not in app.py.
+Proof: the HTTP layer is a recorder that answers the create with an `id` and
+the token list with one token. `launch` makes one POST to the documented
+conferences path. Its body equals one expected object, whose keys are all
+documented and include `display_name`, the spec's one required field, and the
+spec's 200 schema carries `id`. `tokens` makes one GET to the documented
+conference tokens path for that id and returns the recorder's token object
+whole. The spec's token schema carries `name`, `token` and `scopes`. Expected
+values live here, not in app.py.
 """
 import os
 import pathlib
@@ -47,10 +48,12 @@ def main():
                                            "scopes": ["conference.moderator"]}]}])
     recipe.client.video.conferences._http = rec
 
-    conf = recipe.launch("Workshop stand-up", name="workshop-standup", record_on_start=True)
+    conf = recipe.launch("Workshop stand-up", name="workshop-standup", record_on_start=True,
+                         join_from="2026-09-03T09:00:00Z", join_until="2026-09-03T10:00:00Z")
     assert conf["id"] == CID
     listed = recipe.tokens(conf["id"])
-    assert listed["data"][0]["name"] == "moderator"
+    assert listed["data"] == [{"id": "t1", "name": "moderator", "token": "x",
+                               "scopes": ["conference.moderator"]}], listed
     assert len(rec.calls) == 2, rec.calls
     create, toks = rec.calls
 
@@ -59,10 +62,17 @@ def main():
     body = create["body"]
     schema = deref(spec, spec["paths"][CONFERENCES]["post"]["requestBody"]["content"]["application/json"]["schema"])
     assert schema["required"] == ["display_name"], schema.get("required")
-    assert body["display_name"] == "Workshop stand-up", body
+    # the whole body, as one expected object
+    assert body == {"display_name": "Workshop stand-up", "name": "workshop-standup",
+                    "record_on_start": True, "quality": "720p", "layout": "grid-responsive",
+                    "light_primary": "#F72A72", "dark_primary": "#F72A72",
+                    "join_from": "2026-09-03T09:00:00Z",
+                    "join_until": "2026-09-03T10:00:00Z"}, body
     assert set(body) <= set(schema["properties"]), sorted(set(body) - set(schema["properties"]))
-    assert body["name"] == "workshop-standup" and body["record_on_start"] is True, body
-    assert body["light_primary"] == body["dark_primary"] == "#F72A72", body
+    created = spec["paths"][CONFERENCES]["post"]["responses"]["200"]["content"]["application/json"]["schema"]
+    if "$ref" in created:
+        created = spec["components"]["schemas"][created["$ref"].split("/")[-1]]
+    assert "id" in created["properties"], sorted(created["properties"])
     V.assert_documented("rest", "POST", CONFERENCES, body)
 
     assert (toks["method"], toks["path"]) == ("GET", TOKENS), toks

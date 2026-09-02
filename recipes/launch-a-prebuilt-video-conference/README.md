@@ -1,31 +1,35 @@
 # Launch a prebuilt video conference
 
-> One POST creates a themed video conference from a `display_name` and the options the spec documents. One GET lists the tokens the platform minted for it, each with a name, a token and scopes.
+> One POST creates a themed video conference from a `display_name` and the options the spec documents. One GET lists the tokens the spec documents for it, each with a name, a token and scopes.
 
-**Scenario:** a workshop that wants a video room with its own colours, with nothing to build
+**Scenario:** a workshop that wants a video room in its own colours without building a room UI
 
 ## What this demonstrates
 
-`POST /api/video/conferences` creates a prebuilt conference: the hosted room UI,
-themed with the colour fields the vendored REST spec lists (`light_primary`,
-`dark_primary`, backgrounds, foregrounds, success and negative). `display_name`
-is the one required field; `name`, `quality`, `layout`, `record_on_start`,
-`join_from`, `join_until` and `enable_chat` are among the options. The response
-carries an `id`. `GET /api/video/conferences/{id}/conference_tokens` lists the
-tokens the platform minted for it; the spec's token schema carries `name`,
-`token` and `scopes`. The SDK wraps the two as `client.video.conferences.create`
-and `client.video.conferences.list_conference_tokens`.
+You `POST /api/video/conferences` to create a prebuilt conference, themed with
+the colour fields the vendored REST spec lists. Those are `light_primary`,
+`dark_primary`, and the background, foreground, success and negative colours
+for each theme. `display_name` is the one required field. `name`, `quality`,
+`layout`, `record_on_start`, `join_from`, `join_until` and `enable_chat` are
+among the options. The spec's `200` response schema carries the `id` you pass to
+`GET /api/video/conferences/{id}/conference_tokens`, which lists its tokens.
+The spec's token schema carries `name`, `token` and `scopes`. You reach both
+as `client.video.conferences.create` and
+`client.video.conferences.list_conference_tokens`. The SignalWire reference
+describes these conferences as a prebuilt UI with no code required
+(https://signalwire.com/docs/apis/rest/video/video-conferences/create-video-conference).
 
 ## How it works
 
 ```python
 def launch(display_name, *, name=None, record_on_start=False, quality="720p",
-           layout="grid-responsive", primary="#F72A72"):
+           layout="grid-responsive", primary="#F72A72", join_from=None, join_until=None):
     body = {"display_name": display_name, "record_on_start": record_on_start,
             "quality": quality, "layout": layout,
             "light_primary": primary, "dark_primary": primary}
-    if name:
-        body["name"] = name
+    for key, value in (("name", name), ("join_from", join_from), ("join_until", join_until)):
+        if value:
+            body[key] = value
     return client.video.conferences.create(**body)
 
 def tokens(conference_id):
@@ -38,14 +42,16 @@ What the platform receives:
 POST /api/video/conferences
 {"display_name": "Workshop stand-up", "name": "workshop-standup",
  "record_on_start": true, "quality": "720p", "layout": "grid-responsive",
- "light_primary": "#F72A72", "dark_primary": "#F72A72"}
+ "light_primary": "#F72A72", "dark_primary": "#F72A72",
+ "join_from": "2026-09-03T09:00:00Z", "join_until": "2026-09-03T10:00:00Z"}
 
 GET /api/video/conferences/<id>/conference_tokens
 ```
 
-The tokens are what you hand out. Each carries `scopes`, "a list of
-permissions", which is how a moderator's token differs from a guest's. Reset
-one with `POST /api/video/conference_tokens/{id}/reset` when it leaks.
+You pass the `id` from the create response to the token listing. Each token
+carries `scopes`, which the spec describes as "a list of permissions". The spec also
+documents `POST /api/video/conference_tokens/{id}/reset`, titled "Reset
+conference token", for a token you need to invalidate.
 
 ## Run it
 
@@ -56,8 +62,8 @@ cp ../.env.example .env          # then edit .env: your project id, API token an
 python app.py "Workshop stand-up" workshop-standup
 ```
 
-There is no server to expose; the script speaks to the REST API and exits. It
-prints the conference and then its tokens.
+There is no server to expose; the script speaks to the REST API and exits. You
+see the conference, then its tokens.
 
 ## Verify it
 
@@ -67,25 +73,27 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-You swap the SDK's HTTP layer for a recorder that answers the create with an id,
-call both helpers, and assert the following.
+You swap the SDK's HTTP layer for a recorder that answers the create with an id
+and the token list with one token. You call both helpers and assert the
+following.
 
 - `launch` makes one `POST` to the documented conferences path
-- the spec's required list is exactly `display_name`, present, and every other field sent is a documented property
-- the body carries the name, `record_on_start: true`, and the same colour in `light_primary` and `dark_primary`
-- `tokens` makes one `GET` to the documented conference tokens path for the id the create returned, with no query
+- its body equals one expected object: `display_name`, `name`, `record_on_start`, `quality`, `layout`, the two primary colours, `join_from` and `join_until`
+- every key in that body is a documented property, the spec's required list is exactly `display_name`, and the `200` schema carries `id`
+- `tokens` makes one `GET` to the documented conference tokens path for the id the create returned, with no query, and returns the recorder's token object whole
 - the spec's token schema carries `id`, `name`, `token` and `scopes`
 
 ## Limitations
 
-You prove the requests and the documented shapes. Which tokens the platform
-mints, and what scopes each carries, appear in the live response.
+You prove the requests and the documented shapes. Which tokens a real
+conference has, and what each one's `scopes` hold, appear only in the live
+response.
 
-The prebuilt UI is the platform's. For your own room UI, see
-`create-a-video-room-and-join-from-the-browser`.
+The conference UI is the platform's, per the reference above. For a room UI you
+build yourself, see `create-a-video-room-and-join-from-the-browser`.
 
 ## What to change first
 
-Remove `display_name` from the body and run the verifier. The required-field
-assertion fails, which is the point: it is the one thing a conference cannot do
-without.
+Remove `display_name` from the body and run the verifier. The exact-body
+assertion fails, and the spec's required list says why: it is the one thing a
+conference cannot do without.

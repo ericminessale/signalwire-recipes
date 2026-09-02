@@ -4,8 +4,8 @@ One agent, three personas. The `default` context finds out why the caller
 rang and can move to `sales`, `support` or `billing`. Each persona is its own
 context with `isolated` set, so entering it wipes the conversation history
 down to that context's prompt. Each persona's step names only its own tool in
-`functions`, so the model is offered the sales tool only while sales is on the
-line. The structure, not the prompt, keeps them apart. The tools are stubs
+`functions`, so the platform offers the model the sales tool only while sales
+is on the line. The structure, not the prompt, keeps them apart. The tools are stubs
 with fixed replies.
 
 Written against signalwire-sdk 3.0.1 (contexts and steps).

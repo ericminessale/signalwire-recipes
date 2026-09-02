@@ -22,7 +22,7 @@ sys.path.insert(0, str(HERE / "python"))
 
 import verifylib as V  # noqa: E402
 
-# what a reader's .env supplies; without it the SDK generates a password that
+# what your .env supplies; without it the SDK generates a password that
 # exists only in this process and the number's webhook gets a 401
 os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
 os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
@@ -70,9 +70,27 @@ def main():
     assert V.verb_names(y) == ["answer", "user_event", "ai"], V.verb_names(y)
     assert V.first(y, "user_event")["event"] == {"type": "call_answered", "agent": "booking"}
 
-    print(f"ok: select_slot returns one SWML user_event with the exact event object; "
-          f"an event-less user_event fails the schema; an unknown slot sends nothing; "
-          f"the SWML surface places call_answered before ai")
+    # the REST route to the same verb, as the vendored spec documents it
+    spec = V.spec("rest")
+    schemas = spec["components"]["schemas"]
+
+    def deref(node):
+        while isinstance(node, dict) and "$ref" in node:
+            node = schemas[node["$ref"].split("/")[-1]]
+        return node
+
+    variants = [deref(x) for x in schemas["Calling.CallRequest"]["oneOf"]]
+    ue = next(x for x in variants
+              if "calling.user_event" in (deref(x["properties"]["command"]).get("enum") or []))
+    assert set(ue["required"]) == {"command", "id", "params"}, ue.get("required")
+    params = deref(ue["properties"]["params"])
+    assert params["required"] == ["event"], params.get("required")
+    assert deref(params["properties"]["event"])["type"] == "object", params["properties"]
+
+    print(f"ok: select_slot returns one SWML user_event with the exact event object. "
+          f"An event-less user_event fails the schema. An unknown slot sends nothing. "
+          f"The SWML surface places call_answered before ai. The REST calling.user_event "
+          f"variant requires params.event.")
 
 
 if __name__ == "__main__":

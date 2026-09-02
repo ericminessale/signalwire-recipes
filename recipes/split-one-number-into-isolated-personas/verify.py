@@ -1,9 +1,9 @@
 """Prove the claim without a network.
 
-Claim: the rendered contexts point the default context's `valid_contexts` at
-sales, support and billing. Each persona is an isolated context, and its step
-offers the model only that desk's tool. The three tools are stubs with fixed
-replies.
+Claim: the default context's step lists sales, support and billing in
+`valid_contexts` and names no tools. Each persona is an isolated context, and
+its step offers the model only that desk's tool. The three tools are stubs with
+fixed replies.
 
 Proof: render the document and read `ai.prompt.contexts`. The default context's
 step names no functions and lists exactly the three personas in
@@ -34,9 +34,8 @@ PERSONAS = {"sales": "quote_price", "support": "book_repair", "billing": "look_u
 
 def main():
     V.sdk_banner()
-    from app import FrontDoorAgent
+    from app import agent  # the module-level agent app.py serves
 
-    agent = FrontDoorAgent()
     V.assert_basic_auth_from_env(agent)
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)

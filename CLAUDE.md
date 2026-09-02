@@ -1310,6 +1310,52 @@ launch-a-prebuilt-video-conference.
   in full; no "routes a call" for a document that only renders; prose in
   second person.
 
+## Wave 7 of the fill-out (2026-09-02)
+
+Five more: opt-outs, sticky sender, subprojects and scoped tokens, room RTMP
+streams, call status callbacks. Facts that cost a round or a fetch:
+
+- **A routing callback's `Location` must end in a slash.** An AgentBase root
+  is registered at `/route/` only, so a 307 to `/support` lands on a 404 when
+  the platform re-POSTs. `USERNAMES` maps to `/support/`, and the verifier
+  follows `Location` verbatim rather than appending the slash for it. Codex
+  and sol found it the same hour; the verifier had been hiding it with `+ "/"`.
+- **The live docs are fetchable as Markdown.** `signalwire.com/docs/<path>`
+  404s under WebFetch; `signalwire.com/docs/<path>.md` returns the page. The
+  compat create-message reference at
+  `docs/compatibility-api/rest/messages/create-message.md` says
+  `MessagingServiceSid` is "The ID of a number group to use when sending the
+  message", which the vendored compat spec only calls a UUID. Cite the URL
+  when the vendored spec is narrower than the page.
+- **Both OpenAPI specs carry `webhooks` with payload schemas.** `rest.json`
+  documents the SWML inbound call and inbound message webhooks, message status
+  and the AI webhooks; `compat.json` documents the voice status callback (every
+  `AudioIn*` stat is required), SMS status and recording callbacks. The
+  NEEDS VERIFICATION note on `handle-call-status-callbacks` ("neither publishes
+  a body schema") was stale: the body schema is
+  `webhooks["subpackage_calls.voice_status_callback"]`. Check `spec["webhooks"]`
+  before declaring a payload undocumented.
+- **The compat voice callback is documented as JSON only**, while the platform
+  has historically posted form-encoded. The handler accepts both
+  (`request.get_json(silent=True) or request.form.to_dict()`) and the verifier
+  sends one of each.
+- **`SWML_PROXY_URL_BASE` is deployment-only.** Shipped uncommented in the
+  Lambda recipe's `.env.example`, it followed `cp` into a local `.env` and sent
+  every local tool call to API Gateway (codex, 176cbcc). Commented out, with
+  the reason.
+- **Two device variants can share one `type` enum.** Picking the `ws` tap
+  device by its `type` enum selected `rtp`, because `Calling.TapDeviceType`
+  is shared; pick by the field that differs (`params.uri`).
+- **A 3.0.1 `RestClient` has no messaging namespace and no subprojects
+  wrapper.** Sends and `POST /api/projects` go through `client._http`, the
+  pattern the redact recipe set; `client.project.tokens` and
+  `client.number_groups` exist. The compat namespace is scoped to the project
+  id (`/api/laml/2010-04-01/Accounts/<project>/...`) and posts JSON.
+- **`sections.main: []` validates**, so a messaging webhook can answer "do
+  nothing" with a real document instead of an error.
+- **Phone numbers list at `/api/relay/rest/phone_numbers`**, not
+  `/api/phone_numbers`; `filter_number` is the query.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they

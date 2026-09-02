@@ -3,9 +3,9 @@
 The platform mechanism here is thin on purpose: one `dial`. The recipe is the
 ordering around it. `place()` looks the number up in your consent store and
 checks the local clock at the callee's zone before it calls
-`client.calling.dial`. No record, or a record that was withdrawn, or a time
-outside the window, and there is no request at all. The decision is code, and
-it runs before the dial rather than being something the caller hears.
+`client.calling.dial`. No record, a withdrawn record, or a time outside the
+window, and the code builds no request at all. The decision is code, and it
+runs before the dial.
 
 Written against signalwire-sdk 3.0.1 (RestClient.calling).
 """
@@ -38,7 +38,11 @@ class NoConsent(Exception):
 
 
 def allowed(number, now=None):
-    """The decision. Returns None when the call may go ahead, else a reason."""
+    """The decision. Returns None when the call may go ahead, else a reason.
+    `now` is for tests and must carry a zone; a naive clock would be read in
+    the server's zone, which is the mistake this recipe exists to avoid."""
+    if now is not None and now.utcoffset() is None:
+        raise ValueError("now must carry a time zone")
     record = CONSENT.get(number)
     if not record:
         return "no consent on record"

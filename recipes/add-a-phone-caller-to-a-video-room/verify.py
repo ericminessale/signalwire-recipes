@@ -5,11 +5,12 @@ requires, and a SWML `join_room` naming that room is the verb that puts the
 leg running the document into it.
 
 Proof: with the HTTP layer replaced by a recorder, `create_room` makes one
-POST to the documented conference rooms path whose body carries the spec's
-required fields, `name` and `enable_room_previews`, and only documented ones.
-Both SWML surfaces validate, run answer, play, join_room, hangup, and carry
-the same room name in `join_room.name`, the verb's one required field per the
-bundled schema. Expected values live here, not in app.py.
+POST to the documented conference rooms path. Its body equals one expected
+object, carries the spec's required fields, `name` and `enable_room_previews`,
+and only documented ones.
+Both SWML surfaces validate and contain answer, play, join_room, hangup in
+order. Both carry the same room name in `join_room.name`, the verb's one
+required field per the bundled schema. Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -55,7 +56,9 @@ def main():
     assert set(schema["required"]) == {"name", "enable_room_previews"}, schema["required"]
     assert set(schema["required"]) <= set(body), body
     assert set(body) <= set(schema["properties"]), sorted(set(body) - set(schema["properties"]))
-    assert body["name"] == ROOM, body
+    # the whole body, as one expected object
+    assert body == {"name": ROOM, "display_name": "Workshop stand-up",
+                    "enable_room_previews": False, "max_members": 10}, body
     V.assert_documented("rest", "POST", ROOMS, body)
 
     py = recipe.build().get_document()

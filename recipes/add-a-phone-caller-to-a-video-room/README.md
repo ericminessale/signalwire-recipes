@@ -70,9 +70,9 @@ The verifier swaps the SDK's HTTP layer for a recorder, validates both surfaces,
 and asserts the following.
 
 - `create_room` makes one `POST` to the documented conference rooms path
-- the spec's required list for that call is exactly `name` and `enable_room_previews`, both present, and every field sent is documented
-- the body's `name` is the room the document joins
-- both surfaces run `answer`, `play`, `join_room`, `hangup`, `join_room` carries exactly `{"name": "workshop-standup"}`, and the two documents are equal
+- the spec's required list for that call is exactly `name` and `enable_room_previews`, both present, and the spec documents every field sent
+- the body equals one expected object: `name`, `display_name`, `enable_room_previews` false and `max_members` 10, and `name` is the room the document joins
+- both surfaces contain `answer`, `play`, `join_room`, `hangup` in order, `join_room` carries exactly `{"name": "workshop-standup"}`, and the two documents are equal
 - the bundled schema requires `name` on `join_room` and nothing else
 
 ## Limitations
@@ -80,13 +80,13 @@ and asserts the following.
 The verifier proves the request and the document. What the phone participant
 hears, and how the room lays them out, are the platform's side of a live call.
 
-Browser participants join through the Browser SDK with a token; that path is
+This recipe covers the phone leg only. For browser participants, see
 `create-a-video-room-and-join-from-the-browser`.
 
 ## What to change first
 
-Change `ROOM_NAME` in `.env` and the `name` in `swml/agent.yaml` to another
-room, then run the verifier without changing its expected value. The REST body
-assertion fails first, then the two `join_room` checks. That is the point: the
-REST body and the verb name the same room, and the verifier holds all three to
-one value.
+Change the `name` in `swml/agent.yaml` to another room and run the verifier.
+The REST body and the Python document pass, because the verifier's preset
+`ROOM_NAME` takes precedence over `.env`. The YAML `join_room` check fails
+against the verifier's fixed room. The verifier holds the REST body and both
+documents to one value, and a surface that drifts fails on its own.

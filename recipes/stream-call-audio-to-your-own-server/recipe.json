@@ -29,9 +29,8 @@
       "t:conversation-relay-voice-bot"
     ],
     "evidence": [
-      "docs swml/reference/calling/stream (wss, authorization_bearer_token)",
-      "docs compatibility-api/cxml/reference/voice (Connect Stream bidirectional)",
-      "docs apis/rest/webhooks (Stream status callback)",
+      "docs swml/reference/calling/tap and stop-tap",
+      "docs apis/rest/calls/call-commands (calling.tap, calling.tap.stop)",
       "schema.json Tap: uri required (rtp://, ws://, wss://), direction speak|listen|both, codec PCMU|PCMA, control_id; StopTap.control_id",
       "tools/openapi/rest.json calling.tap variant: control_id, tap{type audio, params}, device oneOf ws{uri, codec}|rtp{addr, port, codec, ptime}; calling.tap.stop",
       "sdk rest/namespaces/calling.py tap, tap_stop",

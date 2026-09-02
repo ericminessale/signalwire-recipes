@@ -1,6 +1,6 @@
 # Split one number into isolated personas
 
-> The rendered contexts point the default context's valid_contexts at sales, support and billing. Each persona is an isolated context, and its step offers the model only that desk's tool.
+> The default context's step lists sales, support and billing in valid_contexts and names no tools. Each persona is an isolated context, and its step offers the model only that desk's tool.
 
 **Scenario:** a bicycle shop with one number and three desks that must not blur into each other
 
@@ -10,10 +10,10 @@ Contexts do two jobs here. `isolated: true` on a persona context means, per the
 bundled schema, that entering it "resets conversation history to only the
 system prompt". The support desk does not inherit what the caller told sales.
 `functions` on each persona's step names only that desk's tool. All three tools
-stay registered under `SWAIG.functions`. The step decides which one the model is
-offered on a given turn, and a step is not a security boundary. The `default`
-context names no tools and lists the three personas in `valid_contexts`. The
-schema requires a context by that name.
+stay registered under `SWAIG.functions`. The step decides which one the platform
+offers the model on a given turn, and a step is not a security boundary. The
+`default` context's step names no tools and lists the three personas in
+`valid_contexts`. The schema requires a context by that name.
 
 The [contexts reference](https://developer.signalwire.com/swml/methods/ai/prompt/contexts/)
 documents contexts and steps; `isolated` is the context field the schema adds
@@ -43,10 +43,10 @@ What the platform receives for the support persona, trimmed:
                         "valid_contexts": ["default"], "end": true, ...}]}}
 ```
 
-The model moves between contexts with the `change_context` tool the platform
-offers it, limited to the names in `valid_contexts`. Entering support wipes the
-history and offers `book_repair` alone. `quote_price` and `look_up_invoice` are
-not in that step's `functions`, so the platform does not offer them there.
+The platform offers the model a `change_context` tool, and `valid_contexts`
+limits it to the names listed. Entering support wipes the history, and the step
+offers `book_repair` alone. That step's `functions` omits `quote_price` and
+`look_up_invoice`, so the platform does not offer them there.
 
 ## Run it
 
@@ -74,7 +74,7 @@ It renders and validates the SWML, reads `ai.prompt.contexts`, and asserts the
 following.
 
 - the contexts are exactly `default`, `sales`, `support` and `billing`
-- the default context's step names no functions and lists exactly the three personas in `valid_contexts`, and it is not isolated
+- the default context's step names no functions and lists exactly the three personas in `valid_contexts`, and it omits `isolated`
 - each persona context carries `isolated: true` and a `Role` section naming its desk
 - each persona has one step whose `functions` is exactly its own tool, with `valid_contexts` back to `default` and `end: true`
 - no persona step names another persona's tool, checked before the exact list
@@ -83,16 +83,18 @@ following.
 
 ## Limitations
 
-A step is not a security boundary. `functions` shapes what the model is offered;
-a handler that must not run for the wrong desk checks state itself.
+A step is not a security boundary. `functions` shapes which tools the platform
+offers the model; a handler that must not run for the wrong desk checks state
+itself.
 
 Isolation wipes what the caller already said, per the schema's description of
-`isolated`. What the next desk needs to know has to reach it some other way.
+`isolated`. You carry what the next desk needs to know some other way.
 
 The three tools are stubs with fixed replies, which the verifier asserts.
 
 ## What to change first
 
 Add `"quote_price"` to the support step's `functions` and run the verifier. The
-cross-persona assertion fails first. That is the point: what a desk offers is
-exactly the list on its step, and nothing else decides it.
+cross-persona assertion fails first, because the support step now names another
+persona's tool. What a desk offers is exactly the list on its step, and nothing
+else decides it.

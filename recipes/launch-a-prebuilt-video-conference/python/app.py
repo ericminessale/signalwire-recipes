@@ -1,11 +1,11 @@
 """Launch a prebuilt video conference.
 
-One POST creates a themed video conference, and a second GET lists the tokens
-the platform minted for it, each with a `name`, a `token` and its `scopes`.
-The prebuilt conference is the hosted room UI: you pass a `display_name` and,
-if you want them, a layout, a quality, a join window and the light and dark
-theme colours, and get back an `id` to hand out. Nothing here is a Browser SDK
-client of your own.
+One POST creates a themed video conference. A second GET lists the tokens the
+spec documents for it, each with a `name`, a `token` and its `scopes`. You
+pass a `display_name` and, if you want them, a layout, a quality, a join
+window and the primary theme colour. You get back an `id`, which is what the
+token listing takes. The reference calls these conferences prebuilt, with no
+code required, so nothing here is a Browser SDK client of your own.
 
 Written against signalwire-sdk 3.0.1 (RestClient.video.conferences).
 """
@@ -21,13 +21,16 @@ client = RestClient()
 
 
 def launch(display_name, *, name=None, record_on_start=False, quality="720p",
-           layout="grid-responsive", primary="#F72A72"):
-    """Create the conference. `display_name` is the spec's one required field."""
+           layout="grid-responsive", primary="#F72A72", join_from=None, join_until=None):
+    """Create the conference. `display_name` is the spec's one required field;
+    the rest are its documented options."""
     body = {"display_name": display_name, "record_on_start": record_on_start,
             "quality": quality, "layout": layout,
             "light_primary": primary, "dark_primary": primary}
-    if name:
-        body["name"] = name
+    optional = (("name", name), ("join_from", join_from), ("join_until", join_until))
+    for key, value in optional:
+        if value:
+            body[key] = value
     return client.video.conferences.create(**body)
 
 

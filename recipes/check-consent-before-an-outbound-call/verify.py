@@ -1,21 +1,22 @@
 """Prove the claim without a network.
 
-Claim: no outbound call is placed to a number without a consent record and
-inside the permitted local calling window, and the check runs in code before
-the dial.
+Claim: you place an outbound call only when the number has affirmative
+consent on record. The current time must also be inside the permitted window
+in the callee's time zone. The check runs in code before the dial.
 
-Proof: with the HTTP layer replaced by a recorder, `place()` for a number with
-no record, a number whose consent was withdrawn, and a consented number at
-21:30 local time each raise `NoConsent` naming the reason, and the recorder
-sees no request. The same consented number at 10:00 local time makes exactly
-one POST to the documented calling path with `command: dial` and documented
-params. The window is checked in the callee's zone, not the server's. Expected
-values live here, not in app.py.
+Proof: the HTTP layer is a recorder. `place()` for a number with no record, a
+number that withdrew consent, and a consented number at 21:30 local time each
+raise `NoConsent` naming the reason. The recorder sees no request. The same
+consented number at 19:00 local time makes exactly one POST to the documented
+calling path with exactly the expected body. That instant is 02:00 UTC, outside
+the window, so the zone that decides is the callee's. A naive clock raises.
+Expected values live here, not in app.py.
 """
+import json
 import os
 import pathlib
 import sys
-from datetime import datetime
+from datetime import datetime, time
 from zoneinfo import ZoneInfo
 
 HERE = pathlib.Path(__file__).parent
@@ -32,9 +33,16 @@ import verifylib as V  # noqa: E402
 
 PATH = "/api/calling/calls"
 OK, WITHDRAWN, UNKNOWN = "+15557654321", "+15550009999", "+15550001234"
-# 04:30 UTC is 21:30 the previous evening in Los Angeles; 17:00 UTC is 10:00
+# 04:30 UTC is 21:30 the previous evening in Los Angeles, outside the window;
+# 02:00 UTC is 19:00 there, inside it, while 02:00 itself is outside. The
+# second instant only passes if the callee's zone is the one that decides.
+LA = ZoneInfo("America/Los_Angeles")
+WINDOW = (time(9, 0), time(20, 0))
 LATE = datetime(2026, 9, 2, 4, 30, tzinfo=ZoneInfo("UTC"))
-MORNING = datetime(2026, 9, 2, 17, 0, tzinfo=ZoneInfo("UTC"))
+EVENING = datetime(2026, 9, 2, 2, 0, tzinfo=ZoneInfo("UTC"))
+assert LATE.astimezone(LA).time() == time(21, 30)
+assert EVENING.astimezone(LA).time() == time(19, 0)
+assert not WINDOW[0] <= EVENING.time() <= WINDOW[1], "the instant must be outside the window in UTC"
 
 
 def main():
@@ -44,9 +52,9 @@ def main():
     rec = V.Recorder()
     recipe.client.calling._http = rec
 
-    for number, when, reason in [(UNKNOWN, MORNING, "no consent on record"),
-                                 (WITHDRAWN, MORNING, "consent withdrawn"),
-                                 (OK, LATE, "outside the calling window")]:
+    for number, when, reason in [(UNKNOWN, EVENING, "no consent on record"),
+                                 (WITHDRAWN, EVENING, "consent withdrawn"),
+                                 (OK, LATE, "outside the calling window, it is 21:30")]:
         try:
             recipe.place(number, "hello", now=when)
         except recipe.NoConsent as e:
@@ -55,18 +63,28 @@ def main():
             raise AssertionError(f"{number} at {when} was dialled")
         assert rec.calls == [], rec.calls  # the check ran before any request
 
-    # the window is the callee's local time: 17:00 UTC is 10:00 in Los Angeles
-    assert recipe.allowed(OK, MORNING) is None
+    # the window is the callee's local time: 02:00 UTC is 19:00 in Los Angeles
+    assert recipe.allowed(OK, EVENING) is None
     assert "21:30" in recipe.allowed(OK, LATE)
+    try:
+        recipe.allowed(OK, EVENING.replace(tzinfo=None))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("a naive clock was accepted")
 
-    recipe.place(OK, "Your bike is ready.", now=MORNING)
+    recipe.place(OK, "Your bike is ready.", now=EVENING)
     assert len(rec.calls) == 1, rec.calls
     (call,) = rec.calls
     assert (call["method"], call["path"]) == ("POST", PATH), call
     body = call["body"]
-    assert body["command"] == "dial", body
+    # the whole request, not a field of it
+    assert body == {"command": "dial", "params": {
+        "from": "+15550001111", "to": OK, "timeout": 25,
+        "swml": {"version": "1.0.0", "sections": {"main": [
+            {"answer": {}}, {"play": {"url": "say:Your bike is ready."}}, {"hangup": {}}]}},
+    }}, json.dumps(body, indent=1)
     params = body["params"]
-    assert params["to"] == OK and params["from"] == "+15550001111", params
     V.assert_documented("rest", "POST", PATH, None)
     schema = V.spec("rest")["components"]["schemas"]["Calling.CallCreateParamsSWML"]
     assert set(params) <= set(schema["properties"]), sorted(set(params) - set(schema["properties"]))
@@ -74,8 +92,8 @@ def main():
     V.validate_swml(params["swml"])
 
     print(f"ok: no record, withdrawn consent and 21:30 local each raised NoConsent with "
-          f"no request; the consented number at 10:00 local made one POST {PATH} "
-          f"command=dial with documented params and valid inline SWML")
+          f"no request. The consented number at 19:00 local (02:00 UTC) made one POST "
+          f"{PATH} command=dial with the expected body and valid inline SWML.")
 
 
 if __name__ == "__main__":

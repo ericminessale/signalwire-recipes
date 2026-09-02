@@ -2,12 +2,12 @@
 
 One AgentServer, two agents, one SIP domain. A routing callback registered on
 each agent reads the SIP username out of the platform's request body with
-`SWMLService.extract_sip_username` and answers with the route of the agent
-that owns it. The SDK turns that answer into a 307 redirect, so
-`sip:workshop@your-domain` lands on the support agent and `sip:sales@...` on
-sales, from one webhook path.
+`SWMLService.extract_sip_username`. It answers with the route of the agent
+that owns the username. The SDK turns that answer into a 307 redirect, so
+`sip:workshop@your-domain` reaches the support agent and `sip:sales@...`
+reaches sales, from one webhook path.
 
-In 3.0.1 the callback has to be registered on each agent before
+In 3.0.1 you have to register the callback on each agent before
 `server.register()`, because that call copies the agent's routes into the app
 once. `AgentServer.setup_sip_routing()` registers its callback after that copy
 and mounts nothing, so this recipe does the registration itself.
@@ -22,9 +22,9 @@ from signalwire import AgentBase, AgentServer, SWMLService
 # the SDK does not read .env for you
 load_dotenv()
 
-# SIP username -> agent route. The domain part of the URI is ignored.
-USERNAMES = {"sales": "/sales", "orders": "/sales", "support": "/support",
-             "workshop": "/support"}
+# SIP username -> agent route. The router ignores the domain part of the URI.
+USERNAMES = {"sales": "/sales/", "orders": "/sales/", "support": "/support/",
+             "workshop": "/support/"}
 SIP_PATH = "/sip"
 
 
