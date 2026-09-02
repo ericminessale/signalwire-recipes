@@ -215,6 +215,15 @@ brand cheatsheet's abstractions and not invented:
   in `scratchpad/palette.py` if per-category colour ever comes back.
 - **The one fuchsia mark on a build card is the repository dot**: the thing
   worth standing out per card is that it exists.
+- **Slugs name the mechanism, builds included (2026-09-02).** The Harbor demo
+  shipped as `docs-site-voice-guide`, which names nothing a developer searches
+  for and could read as a pointer to docs about voice. Eric: "the entire point
+  of this project is to seo optimize technical tasks... the sell is embedding
+  signalwire voice ai into a web page." It is
+  `embed-a-state-aware-voice-agent-in-your-web-page` now, title "Embed a
+  state-aware voice agent in your web page". A build gets a product name only
+  when it is a product (AI Call Center); a demo of a capability is named for
+  the capability.
 - **A featured build reads as a build (2026-09-02).** Featuring the docs guide
   showed the band knew only recipes: it got the AI Agents tile and label.
   Eric: "It is not ai agents, its a build that features ai agents and voice."

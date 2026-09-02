@@ -1434,7 +1434,7 @@ An agent that dials a foreign phone tree, listens, presses the right digits and 
   - repo github.com/signalwire-demos/pathfinder
   - composes: send-dtmf-to-an-external-ivr, require-verification-before-unlocking-tools (toggle gating), place-an-outbound-ai-call, record-a-call, stream-agent-debug-events - to verify
 
-### `docs-site-voice-guide`
+### `embed-a-state-aware-voice-agent-in-your-web-page`
 
 A voice and video agent in a floating widget on a documentation site: it answers from the docs, navigates the reader to the right page and scrolls to the right section.
 
@@ -1443,7 +1443,7 @@ A voice and video agent in a floating widget on a documentation site: it answers
 - evidence:
   - repo github.com/ericminessale/harbor-docs (site); agent in SignalWire AI Agent Automated Testing Protocol/agents/docs-bot, no repository of its own yet
   - live at harbor-docs-5k2.pages.dev
-  - composes verified against agent.py on 2026-09-02, see recipes/docs-site-voice-guide/recipe.json
+  - composes verified against agent.py on 2026-09-02, see recipes/embed-a-state-aware-voice-agent-in-your-web-page/recipe.json
 
 ## Guides — 4
 

@@ -259,7 +259,7 @@ A complete contact centre: AI triage, priority queues, live human agents in the 
 
 Composes: [Scope an agent's tools per step](scope-tools-per-step/), [Hide fields from the model](hide-fields-from-the-model/), [Transfer a call without losing context](transfer-a-call-without-losing-context/), [Brief the human before the bridge completes](brief-the-human-before-the-bridge-completes/), [Hand off from AI to a human agent](hand-off-from-ai-to-a-human-agent/), [Listen to a live call](listen-to-a-live-call/), [Whisper to an agent mid-call](whisper-to-an-agent-mid-call/), [Offer a callback instead of a hold](offer-a-callback-instead-of-a-hold/), [Translate a call in real time](translate-a-call-in-real-time/), [Ground an agent in your own documents](ground-an-agent-in-your-docs/)
 
-### [Docs site voice guide](docs-site-voice-guide/)
+### [Embed a state-aware voice agent in your web page](embed-a-state-aware-voice-agent-in-your-web-page/)
 
 A voice and video agent in a floating widget on a documentation site. It answers from the docs through a hosted search tool, navigates the reader to the right page and scrolls them to the right section, and knows which page they are on.
 

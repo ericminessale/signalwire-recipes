@@ -1,4 +1,4 @@
-# Docs site voice guide
+# Embed a state-aware voice agent in your web page
 
 > A voice and video agent in a floating widget on a documentation site. It answers from the docs through a hosted search tool, navigates the reader to the right page and scrolls them to the right section, and knows which page they are on.
 
