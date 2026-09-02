@@ -1483,10 +1483,28 @@ and a paced batch send.
   `let-a-browser-dial-your-agent-with-no-dashboard-setup` (r2),
   `build-an-ivr-without-a-server` (r2). Each had its last verdict applied
   and verifies and lints clean; run the round when codex is back (Sep 6).
-- Stubs still unwritten after wave 9: `hand-off-from-ai-to-a-human-agent`,
-  `measure-voice-ai-latency`, `call-an-mcp-server-from-a-live-call` (hold),
-  the three stub builds, and the `proposed` rows without a folder. Write
-  them through the protocol above (`docs/INVENTORY.md`).
+- **Corpus after wave 11 (2026-09-02): 96 of 121 folders written**, all
+  passing `python verify.py` and the lint. Waves 10 and 11 (eight recipes)
+  went in on the gate alone because codex was down; they are on the review
+  debt list too.
+- **The 25 unwritten folders, and why each waits.** Seven builds and
+  bigger applications (`dental-receptionist-with-outbound-confirmations`,
+  `drive-thru-order-taker`, `ivr-pathfinder`, `outbound-notification-campaign`,
+  `governed-intake-agent`, `sms-support-desk`, `voice-support-line`) need a
+  repository, not a folder. Six are on hold on platform grounds (the two chat
+  rows, `expose-an-agent-as-an-mcp-server`, `call-an-mcp-server-from-a-live-call`,
+  `run-an-ai-sidecar-on-a-live-call`, `live-sales-coach`,
+  `take-a-payment-without-the-model-seeing-the-card`, `send-a-whatsapp-template-message`).
+  Four cannot be proven offline against what is vendored:
+  `redact-pii-from-logs-and-transcripts` (no `redact_prompt` in the 3.0.1
+  schema), `send-text-and-read-conversation-history-in-the-browser` (no
+  conversations paths in the REST spec), `escalate-a-call-to-video` and
+  `measure-voice-ai-latency` (live behaviour only). Three are process rows
+  with nothing to verify (`get-toll-free-messaging-verified`,
+  `port-a-number-in`, `improve-outbound-call-reputation`). The rest need a
+  fact first: `connect-freeswitch-to-signalwire` (what the connector `token`
+  is), `control-a-call-from-your-own-process-over-relay` (a Relay client
+  proof), `run-the-sdk-conformance-suite` (a live WebRTC run).
 - Three stub builds (`voice-support-line`, `sms-support-desk`,
   `governed-intake-agent`) need repositories or retirement; `ai-call-center`'s
   `composes` must be re-verified against its code.
