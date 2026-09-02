@@ -44,12 +44,12 @@ self.set_params({"languages_enabled": True})
 ```
 
 Pass both `speech_fillers` and `function_fillers`. With only one, the SDK writes
-the deprecated single `fillers` key on the language. Set `languages_enabled`, or
-the platform ignores the list.
+the deprecated single `fillers` key on the language, and the verifier shows it.
+Set `languages_enabled`, or the platform ignores the list.
 
-This app does not host audio. It attaches `wait_file` only when `WAIT_FILE_URL`
-points at a file the platform can fetch. A relative path would render as an
-absolute URL on a server that does not serve it.
+The app does not host audio. You attach `wait_file` by setting `WAIT_FILE_URL`
+to a file the platform can fetch; with it unset, the function renders without
+either wait key.
 
 ## Run it
 
@@ -78,6 +78,7 @@ the following.
 
 - `check_stock` carries the exact `fillers` phrase, the wait file URL unchanged, and `wait_file_loops`
 - with no `WAIT_FILE_URL`, neither wait file key is present
+- a language given only `speech_fillers` renders the deprecated `fillers` key instead
 - both languages carry the exact `speech_fillers` and `function_fillers` arrays, and no deprecated `fillers` key
 - `languages_enabled` is on
 - the schema rejects a two-language `fillers` dict on the function

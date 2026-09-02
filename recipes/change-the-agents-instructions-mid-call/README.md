@@ -38,12 +38,14 @@ The function result the platform receives:
 ```
 
 `consolidate` asks the platform to summarise the conversation so far into the new
-context. `full_reset` drops the history instead; `start_over` uses it. Both are
-fields of the documented action object.
+context. `full_reset` drops the history instead. `start_over` uses it and hands
+back the prompt the call opened with. Both are fields of the documented action
+object.
 
 With `system_prompt` alone the SDK emits the prompt as a bare string. The bundled
 schema documents `context_switch` as an object, so every switch in this recipe
-passes `consolidate` or `full_reset` and gets the object form.
+passes `consolidate` or `full_reset` and gets the object form. The verifier
+shows both shapes.
 
 ## Run it
 
@@ -73,18 +75,21 @@ following.
 
 - each result equals its expected payload exactly: the response text and one `context_switch` object
 - `become_billing` and `become_workshop` carry the new `system_prompt` with `consolidate: true`
-- `start_over` carries `full_reset: true`
+- `start_over` carries `full_reset: true` with the same prompt the rendered document opens with
 - no key at any depth of any result is `SWML`, `transfer` or `connect`
+- `switch_context(system_prompt=...)` on its own emits the bare-string form
 
 ## Limitations
 
 The switch replaces the prompt, not the toolset. Every tool on the agent stays
-registered after the switch. To change which tools exist, use contexts and steps,
-where `set_functions` scopes them per step.
+registered after the switch. To scope tools, use contexts and steps. Each step's
+`functions` field names the tools it offers, per the
+[steps reference](https://developer.signalwire.com/swml/methods/ai/prompt/contexts/steps/).
 
-`consolidate` is a summary the platform writes. A fact the specialist must have
-exactly, such as an account number, should travel in `global_data` from a tool
-handler rather than be trusted to survive summarisation.
+`consolidate` is a summary the platform writes, not a record. This recipe does
+not carry state across the switch. For a fact that must survive verbatim, see
+`enforce-state-transitions-in-a-tool-handler` under *Where this sits*, where a
+handler writes `global_data`.
 
 ## What to change first
 

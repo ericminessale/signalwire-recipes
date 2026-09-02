@@ -2,7 +2,7 @@
   "slug": "walk-a-caller-through-ordered-steps",
   "title": "Walk a caller through ordered steps",
   "alias": "valid_steps + one tool per step",
-  "summary": "Each step names one tool, every step but the last names one next step, so the model is never offered a way to skip ahead or double back.",
+  "summary": "Every step names one tool. Each step but the last names only its successor, so the next_step tool the model is offered has no backward or skip target.",
   "scenario": "Opening a roadside assistance request, three questions in order",
   "surfaces": [
     "python"
@@ -32,10 +32,9 @@
     "evidence": [
       "sdk contexts.py:596 add_step, :252 set_valid_steps",
       "sdk contexts.py:329 set_gather_info",
-      "gather_info variant is absent from the bundled schema.json (sdk-surface §4); the claim does not depend on it",
+      "gather_info variant is absent from the bundled schema.json (sdk-surface section 4); the claim does not depend on it",
       "sdk contexts.py:490-533 Step.to_dict renders step_criteria, functions, valid_steps, end",
       "sdk contexts.py:1215-1262 ContextBuilder.validate refuses an unknown valid_steps target",
-      "gather_info absent from the bundled schema.json (0 occurrences); recipe avoids it",
       "verified 2026-09-01: recipes/walk-a-caller-through-ordered-steps/verify.py"
     ]
   },

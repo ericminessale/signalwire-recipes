@@ -69,7 +69,7 @@ class ClaimIntakeAgent(AgentBase):
 
     @AgentBase.tool(
         name="save_location",
-        description="Record where the vehicle is, once the caller has said.",
+        description="Record where the vehicle is, after the caller says.",
         parameters={
             "type": "object",
             "properties": {

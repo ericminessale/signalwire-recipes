@@ -6,11 +6,11 @@ nonce, signed with a key that lives only in your process. The SDK refuses a
 token minted for another call, for another function, after expiry, or with a
 character changed.
 
-The SDK checks a token only when one is present. A request that omits it is
-not refused by the token layer, and the basic-auth credentials that would
-refuse it are embedded in the same URL an attacker captured. So this agent adds
-one rule of its own, on the app the SDK builds: a request to the tool endpoint
-with no token is refused before any handler runs.
+The SDK checks a token only when one is present. A request that omits it, or
+sends an empty one, is not refused by the token layer, and the basic-auth
+credentials that would refuse it are embedded in the same URL an attacker
+captured. So this agent adds one rule of its own, on the app the SDK builds: a
+request to the tool endpoint with no token is refused before any handler runs.
 
 Written against signalwire-sdk 3.0.1.
 """
@@ -24,8 +24,9 @@ from signalwire import AgentBase, FunctionResult
 # the SDK does not read .env for you
 load_dotenv()
 
-# How long a token stays valid after the document is served. Fifteen minutes
-# is the SDK default; a call that can run longer needs a longer window.
+# How long a token stays valid after the document is served. The SDK default
+# is an hour (token_expiry_secs=3600); this recipe shortens it to fifteen
+# minutes. A call that can run longer needs a longer window.
 TOKEN_TTL_SECONDS = int(os.getenv("TOKEN_TTL_SECONDS", "900"))
 
 ACCOUNTS = {"48815": {"name": "Dana Whitfield", "balance": 42.10}}
@@ -101,9 +102,11 @@ def build():
     @app.middleware("http")
     async def require_token(request: Request, call_next):
         # The SDK validates a token when one is present. This closes the gap
-        # where a request carries none: it never reaches a handler.
+        # where a request carries none, or an empty one: it never reaches a
+        # handler. `not ...get()` refuses both; a key check alone would let
+        # `?__token=` through, and the SDK treats an empty value as absent.
         if request.url.path.rstrip("/") == tool_path and request.method == "POST":
-            if "__token" not in request.query_params:
+            if not request.query_params.get("__token"):
                 return JSONResponse(
                     status_code=403,
                     content={"response": "A per-call token is required."},

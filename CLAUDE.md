@@ -1092,6 +1092,30 @@ through verify, lint and two rounds of sol. Facts that cost a round:
   subclassing" about a prefab without reading its `__init__`.
 - **Substring asserts on a prefab's response are tautologies in waiting.**
   `"valid" in response` accepts "invalid". Compare the exact string.
+- **`token_expiry_secs` defaults to 3600, not 900.** A README said fifteen
+  minutes was the SDK default; `AgentBase.__init__` says an hour. Read the
+  signature before stating a default. There is no `secret_key` argument on
+  `AgentBase` either: the `SessionManager` is built with only the expiry, so
+  replicas cannot share a signing key without subclassing.
+- **A key check is not a value check.** `"__token" not in query_params` let
+  `?__token=` through, and the SDK treats an empty token as absent, so the
+  guard the recipe exists to add had a hole shaped exactly like the SDK's.
+  Test `not params.get(key)`, and the verifier posts both the missing and the
+  empty form.
+- **The SDK's render-time error is capturable.** `_render_swml()` logs the
+  swallowed ContextBuilder error through structlog as `ai_verb_config_error`;
+  `structlog.testing.capture_logs()` returns it as a dict, so a verifier can
+  assert the log line names the bad step and the raised
+  `SchemaValidationError` says `Missing required field 'prompt'`. Redirecting
+  stdout/stderr or a `logging` handler sees nothing.
+- **`SurveyAgent` fills a missing rating `scale` with 5** and raises
+  `ValueError` only for a multiple choice without `options` or an unknown
+  type. A README claimed it raised for both; the verifier now asserts what it
+  does.
+- **Two redundant assertions are one assertion.** Exact adjacency
+  (`valid_steps == [next]`) already rules out backward and skip edges; a
+  second loop asserting those cannot fail once the first passes. Sol reads a
+  verifier for what can fail, not for what it mentions.
 - **Prose length ran 420-520 words this wave**, above the 230-380 guidance,
   because each *Verify it* carries a bulleted list of assertions and each
   *Run it* now carries the tunnel sentence. Sol did not object; the guidance

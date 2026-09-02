@@ -1,18 +1,19 @@
 """Prove the claim without a network.
 
-Claim: a receptionist and a survey agent each render from a prefab class and a
-dozen lines of configuration, with the prefab supplying the prompt, the tools
-and their handlers, and the voice; and your configuration becomes the
-constraints the handlers apply.
+Claim: a receptionist and a survey agent each render from a prefab class and
+configuration. The prefab supplies the prompt, the tools and their handlers,
+and for the receptionist the voice. Your configuration becomes the constraints
+the handlers apply.
 
-Proof: build both from app.py's configuration, render and validate each
-document, and assert the tools the prefab registered, the prompt it wrote, the
-voice it set, and the configuration it carried into global_data with the
-question types and scale intact. Then run the handlers and compare exact
-results: the receptionist's transfer emits a connect verb for the configured
-number with `transfer: "true"`, its department enum refuses one not
-configured, and the survey's validator applies the question's scale. Expected
-values live here, not in app.py.
+Proof: build both from app.py's configuration, then render and validate each
+document. Assert the tools the prefab registered, the prompt it wrote, the
+receptionist's voice, and the questions in global_data with types and scale
+intact. Run the handlers and compare exact results. The transfer emits a
+connect verb for the configured number with `transfer: "true"`; an unlisted
+department is refused; the validator applies the question's scale. Two
+constructor behaviours are asserted too: a rating without `scale` defaults to
+five, and a multiple choice without `options` raises. Expected values live
+here, not in app.py.
 """
 import json
 import os
@@ -117,11 +118,31 @@ def main():
     assert run("validate_response", "4") == VALID
     assert run("log_response", "4") == LOGGED
 
+    # what the constructor does with an incomplete question, and with the
+    # fourth type this recipe's survey does not use
+    from signalwire.prefabs import SurveyAgent
+    lax = SurveyAgent(survey_name="s", name="lax", route="/lax", questions=[
+        {"id": "r", "type": "rating", "text": "Rate it."},
+        {"id": "c", "type": "multiple_choice", "text": "Which shop?",
+         "options": ["north", "south"]}])
+    qs = ai_of(lax)["global_data"]["questions"]
+    assert qs[0]["scale"] == 5, "no default scale"
+    assert qs[1]["type"] == "multiple_choice", qs
+    assert qs[1]["options"] == ["north", "south"], qs
+    try:
+        SurveyAgent(survey_name="s", name="bad", route="/bad",
+                    questions=[{"id": "c", "type": "multiple_choice", "text": "Pick."}])
+    except ValueError as e:
+        assert "options" in str(e), e
+    else:
+        raise AssertionError("a multiple choice question without options was accepted")
+
     print(f"ok: receptionist renders {RECEPTION_TOOLS} with voice "
           f"{RECEPTION_VOICE}, transfers to {WORKSHOP_NUMBER} with transfer=true "
           f"and refuses an unlisted department; survey renders {SURVEY_TOOLS} "
           f"over {[q[0] for q in QUESTIONS]} and refuses a rating of 7 on a "
-          f"5-point scale")
+          f"5-point scale; a rating without scale defaults to 5 and a multiple "
+          f"choice without options raises")
 
 
 if __name__ == "__main__":

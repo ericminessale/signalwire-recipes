@@ -38,6 +38,7 @@
   ],
   "related": [
     "scope-tools-per-step",
-    "transfer-a-call-without-losing-context"
+    "transfer-a-call-without-losing-context",
+    "enforce-state-transitions-in-a-tool-handler"
   ]
 }

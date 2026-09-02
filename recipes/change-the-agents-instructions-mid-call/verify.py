@@ -38,7 +38,11 @@ WORKSHOP = (
     "You are now the workshop coordinator for Ridgeline Cycles. Book, move "
     "or check repair appointments. Do not discuss billing."
 )
-RESET = "You answer the phone for a bicycle shop. Ask how you can help."
+FRONT_DESK = (
+    "You answer the phone for a bicycle shop. Find out whether the caller "
+    "needs billing or the workshop, then hand over using the matching tool. "
+    "Do not answer their question yourself."
+)
 
 EXPECTED = {
     "become_billing": {
@@ -51,7 +55,7 @@ EXPECTED = {
     },
     "start_over": {
         "response": "Starting over.",
-        "action": [{"context_switch": {"system_prompt": RESET, "full_reset": True}}],
+        "action": [{"context_switch": {"system_prompt": FRONT_DESK, "full_reset": True}}],
     },
 }
 MOVES_THE_CALL = {"SWML", "transfer", "connect"}
@@ -72,6 +76,7 @@ def keys_anywhere(node, found=None):
 
 def main():
     V.sdk_banner()
+    from signalwire import FunctionResult
     from app import FrontDeskAgent
 
     agent = FrontDeskAgent()
@@ -79,21 +84,31 @@ def main():
     doc = json.loads(agent._render_swml())
     V.validate_swml(doc)
     ai = next(v for v in doc["sections"]["main"] if "ai" in v)["ai"]
-    names = [f["function"] for f in ai["SWAIG"]["functions"]]
-    assert names == list(EXPECTED), names
+    names = sorted(f["function"] for f in ai["SWAIG"]["functions"])
+    assert names == sorted(EXPECTED), names
+    # start_over restores the prompt the call opened with
+    role = next(s for s in ai["prompt"]["pom"] if s["title"] == "Role")
+    assert role["body"] == FRONT_DESK, role
 
     for tool, want in EXPECTED.items():
         got = agent._execute_swaig_function(tool, {}, call_id="c1")
-        # the whole payload, not a field of it
-        assert got == want, (tool, json.dumps(got, indent=1))
-        # the object form: the schema documents context_switch as an object
-        assert isinstance(got["action"][0]["context_switch"], dict), got
+        # checked before the exact comparison, so each can fail on its own:
         # nothing in the result, at any depth, moves the call elsewhere
         assert not (keys_anywhere(got) & MOVES_THE_CALL), (tool, keys_anywhere(got))
+        # the object form: the schema documents context_switch as an object
+        assert isinstance(got["action"][0]["context_switch"], dict), got
+        # then the whole payload, not a field of it
+        assert got == want, (tool, json.dumps(got, indent=1))
+
+    # system_prompt alone emits the bare-string shorthand, which is why every
+    # switch above passes consolidate or full_reset
+    bare = FunctionResult("x").switch_context(system_prompt="p").to_dict()
+    assert bare["action"] == [{"context_switch": "p"}], bare
 
     print(f"ok: {list(EXPECTED)} each emit exactly one context_switch object "
-          f"with the expected system_prompt; two consolidate, one full_reset; "
-          f"no key at any depth is SWML, transfer or connect")
+          f"with the expected system_prompt; two consolidate, one full_reset "
+          f"back to the opening prompt; no key at any depth is SWML, transfer "
+          f"or connect; system_prompt alone emits a bare string")
 
 
 if __name__ == "__main__":

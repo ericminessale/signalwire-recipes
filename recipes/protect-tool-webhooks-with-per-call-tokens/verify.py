@@ -2,8 +2,8 @@
 
 Claim: every tool webhook request must carry a token minted for that call and
 that function. The endpoint refuses a token from another call, for another
-function, altered, or expired, and refuses a request with no token at all.
-None of those refusals runs a handler.
+function, altered, or expired, and refuses a request with no token or an empty
+one. None of those refusals runs a handler.
 
 Proof: drive the agent's own HTTP app with FastAPI's test client, the way the
 platform would. Render the document for call A, take the token off the refund
@@ -34,6 +34,7 @@ os.environ["TOKEN_TTL_SECONDS"] = "900"
 # Expected values live here, not imported from app.py.
 TOOLS = ["get_balance", "issue_refund"]
 REFUND_OK = "Refunded 42.10 to the card on file for Dana Whitfield."
+BALANCE_OK = "Dana Whitfield has a balance of 42.10."
 SDK_REFUSAL = "security token for this function is invalid or expired"
 
 
@@ -70,6 +71,7 @@ def main():
         assert "__token" in q, f"{name} rendered without a token"
         tokens[name] = q["__token"][0]
     assert tokens["get_balance"] != tokens["issue_refund"], "one token per function"
+    # neither tool sets secure=; the tokens are the default
     refund = tokens["issue_refund"]
 
     def post(token, call_id, function="issue_refund", auth=True):
@@ -90,11 +92,20 @@ def main():
     assert status == 200 and body["response"] == REFUND_OK, (status, body)
     assert runs == ["issue_refund"], runs
 
+    # --- the other tool's token works for its own function, and only there --
+    balance = tokens["get_balance"]
+    del runs[:]
+    status, body = post(balance, "call-A", "get_balance")
+    assert status == 200 and body["response"] == BALANCE_OK, (status, body)
+    assert runs == ["get_balance"], runs
+
     # --- every refusal, and none of them runs anything -----------------------
     del runs[:]
     for label, token, call_id, function in [
         ("another call", refund, "call-B", "issue_refund"),
         ("another function", refund, "call-A", "get_balance"),
+        ("the other tool's token on this one", balance, "call-A", "issue_refund"),
+        ("the other tool's token on another call", balance, "call-B", "get_balance"),
         ("altered", refund[:-4] + ("AAAA" if not refund.endswith("AAAA") else "BBBB"),
          "call-A", "issue_refund"),
     ]:
@@ -114,14 +125,16 @@ def main():
     # --- the gap the recipe closes: no token at all ---------------------------
     # The SDK checks a token only when one is present. The agent's own
     # middleware refuses the request before any handler.
-    status, body = post(None, "call-A")
-    assert status == 403, (status, body)
-    assert body == {"response": "A per-call token is required."}, body
-    assert runs == [], runs
+    for token in (None, ""):  # absent, and present but empty
+        status, body = post(token, "call-A")
+        assert status == 403, (repr(token), status, body)
+        assert body == {"response": "A per-call token is required."}, body
+        assert runs == [], runs
 
-    print(f"ok: {TOOLS} carry per-call tokens; the endpoint ran issue_refund "
+    print(f"ok: {TOOLS} carry per-call tokens; the endpoint ran each handler "
           f"once for its own token and refused another call, another function, "
-          f"an altered token, an expired token and no token, running nothing")
+          f"an altered token, an expired token, no token and an empty token, "
+          f"running nothing")
 
 
 if __name__ == "__main__":

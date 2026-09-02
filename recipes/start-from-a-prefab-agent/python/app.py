@@ -1,9 +1,8 @@
 """Start from a prefab agent.
 
-The SDK ships complete agents as classes. You pass configuration, not a prompt:
-the prefab writes its own prompt sections, registers its own tools with their
-handlers, sets its own voice parameters and, for the receptionist, its own
-transfer. The two below are a dozen lines of configuration each.
+The SDK ships complete agents as classes. You pass configuration, not a prompt.
+The prefab writes its prompt sections and registers its tools with their
+handlers. The receptionist also sets its voice and wires its transfer.
 
   ReceptionistAgent  greets, records who is calling and why, transfers to a
                      department by name
@@ -24,7 +23,7 @@ from signalwire.prefabs import ReceptionistAgent, SurveyAgent
 load_dotenv()
 
 # Every department the receptionist may transfer to. `name` becomes an enum on
-# the transfer tool, so the model cannot name a department that is not here.
+# the transfer tool's argument, and the handler refuses a name that is not here.
 DEPARTMENTS = [
     {"name": "sales", "description": "Pricing, availability and new orders",
      "number": os.getenv("SALES_NUMBER", "+15551230001")},

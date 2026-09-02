@@ -1,6 +1,6 @@
 # Walk a caller through ordered steps
 
-> Every step names one tool, and every step but the last names one next step, so the model is never offered a way to skip ahead or double back.
+> Every step names one tool. Each step but the last names only its successor, so the `next_step` tool the model is offered has no backward or skip target.
 
 **Scenario:** recording a roadside assistance request, three questions in order
 
@@ -14,8 +14,8 @@ is the sentence the runtime judges before it advances. The
 documents all three. Each step below names exactly one tool, and each step but the
 last names only the step after it, so the flow is a line.
 
-Tool handlers accept the answers and write them to `global_data`. The model
-proposes an answer; your handler decides whether it counts.
+Tool handlers accept the answers and write them to `global_data`. Your handler
+decides whether an answer counts before anything is written.
 
 ## How it works
 
@@ -43,14 +43,14 @@ step that does not declare `functions` inherits the previous step's set. It call
 that the most common bug in multi-step agents.
 
 The handler judges the answer. A location under six characters returns
-`INCOMPLETE` and writes nothing. A usable one emits `set_global_data`. The last
-handler records the problem; nothing is dispatched, and the caller is told the
-request is recorded.
+`INCOMPLETE` and writes nothing; a vehicle needs at least two words. A usable
+answer emits `set_global_data`. The last handler records the problem and tells
+the model to say the request is recorded. This recipe dispatches nothing.
 
 The SDK closes the flow at build time. A `valid_steps` entry naming a step that
 does not exist fails the context builder's `validate()`. The SDK catches that
-error during render and logs it, so what you see is a schema error about a
-missing prompt. The message naming the step is in the log.
+error during render and logs it as `ai_verb_config_error`, so what you see is a
+schema error about a missing prompt. The line naming the step is in the log.
 
 ## Run it
 
@@ -75,11 +75,13 @@ python verify.py          # from the recipe folder, not python/
 
 It renders and validates the SWML, then asserts the following.
 
-- the three steps appear in order; each names one `functions` entry, and each but the last names one `valid_steps` entry
-- no step can reach an earlier step or skip one
+- the three steps appear in order; each names one `functions` entry and carries the exact `step_criteria` sentence
+- each step but the last names only its successor in `valid_steps`, so `next_step` has no backward or skip target
 - the last step carries `end` and no `valid_steps`
-- an inadequate answer returns `INCOMPLETE` with no action; a usable one emits `set_global_data`
-- a step naming a destination that does not exist fails `validate()` and cannot render
+- an inadequate answer returns `INCOMPLETE` with no action; a usable one emits `set_global_data`, tested at the five and six character boundary and at one and two words
+- `gather_info` does not appear in the SDK's bundled schema
+- the last handler's reply tells the model to say the request is recorded
+- a step naming a destination that does not exist fails `validate()`, logs `ai_verb_config_error` naming it, and the render raises a schema error for the missing prompt
 
 ## Limitations
 
@@ -88,8 +90,8 @@ and `valid_steps` shapes the tool it is offered. What the verifier proves is the
 document: one tool per step, one edge per step. Anything that must not happen
 early belongs in a handler.
 
-`gather_info` is a shorter way to write a sequence. It is absent from the 3.0.1
-schema and does not validate offline, so this recipe does not use it.
+The verifier shows `gather_info` is absent from the SDK's bundled schema, so a
+document using it cannot be validated offline. This recipe does not use it.
 
 ## What to change first
 

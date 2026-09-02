@@ -19,6 +19,12 @@ from signalwire import AgentBase, FunctionResult
 # the SDK does not read .env for you
 load_dotenv()
 
+FRONT_DESK_PROMPT = (
+    "You answer the phone for a bicycle shop. Find out whether the caller "
+    "needs billing or the workshop, then hand over using the matching tool. "
+    "Do not answer their question yourself."
+)
+
 BILLING_PROMPT = (
     "You are now the billing specialist for Ridgeline Cycles. The caller has "
     "already been identified. Answer questions about invoices, refunds and "
@@ -36,12 +42,7 @@ class FrontDeskAgent(AgentBase):
 
     def __init__(self):
         super().__init__(name="front-desk", route="/front-desk")
-        self.prompt_add_section(
-            "Role",
-            "You answer the phone for a bicycle shop. Find out whether the "
-            "caller needs billing or the workshop, then hand over using the "
-            "matching tool. Do not answer their question yourself.",
-        )
+        self.prompt_add_section("Role", FRONT_DESK_PROMPT)
 
     @AgentBase.tool(
         name="become_billing",
@@ -83,11 +84,10 @@ class FrontDeskAgent(AgentBase):
         parameters={"type": "object", "properties": {}},
     )
     def start_over(self, args, raw_data):
-        # full_reset=True: the history is dropped, not summarised.
+        # full_reset=True: the history is dropped, not summarised, and the
+        # front desk's own instructions come back.
         return FunctionResult("Starting over.").switch_context(
-            system_prompt="You answer the phone for a bicycle shop. Ask how "
-                          "you can help.",
-            full_reset=True,
+            system_prompt=FRONT_DESK_PROMPT, full_reset=True
         )
 
 

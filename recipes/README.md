@@ -34,7 +34,7 @@ Agents that answer, reason, and act on a live call.
 | [Protect tool webhooks with per call tokens](protect-tool-webhooks-with-per-call-tokens/) | Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all. | Python |
 | [Require verification before unlocking tools](require-verification-before-unlocking-tools/) | The account tools do not exist in the model's world until a handler says the caller passed. | Python |
 | [Scope an agent's tools per step](scope-tools-per-step/) | At each point in the conversation the model can only see the tools you allowed there. | Python |
-| [Walk a caller through ordered steps](walk-a-caller-through-ordered-steps/) | Each step names one tool, every step but the last names one next step, so the model is never offered a way to skip ahead or double back. | Python |
+| [Walk a caller through ordered steps](walk-a-caller-through-ordered-steps/) | Every step names one tool. Each step but the last names only its successor, so the next_step tool the model is offered has no backward or skip target. | Python |
 
 ### Handoff
 
@@ -70,7 +70,7 @@ Agents that answer, reason, and act on a live call.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Run an agent from one YAML file](run-an-agent-from-one-yaml-file/) | A complete working agent with nothing installed and no server of your own. | Markup |
-| [Start from a prefab agent](start-from-a-prefab-agent/) | A complete receptionist or survey agent runs from a prefab class and a dozen lines of configuration. | Python |
+| [Start from a prefab agent](start-from-a-prefab-agent/) | A complete receptionist or survey agent runs from a prefab class and a short configuration block. | Python |
 | [Switch language mid-call](switch-language-mid-call/) | Change the conversation language, with a voice that suits it. | Python, Markup |
 
 ## Voice

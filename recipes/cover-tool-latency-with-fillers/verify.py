@@ -109,6 +109,21 @@ def main():
     assert "wait_file" not in fn2 and "wait_file_loops" not in fn2, fn2
     assert fn2["fillers"] == EXPECT_FUNCTION_FILLER, fn2
 
+    # the trap the README warns about: one kind of filler alone writes the
+    # deprecated single `fillers` key on the language entry
+    from signalwire import AgentBase
+
+    class OneKind(AgentBase):
+        def __init__(self):
+            super().__init__(name="one-kind", route="/one-kind")
+            self.prompt_add_section("Role", "test")
+            self.add_language("English", "en-US", "rime.spore",
+                              speech_fillers=["Right."])
+
+    one = json.loads(OneKind()._render_swml())
+    lang = next(v for v in one["sections"]["main"] if "ai" in v)["ai"]["languages"][0]
+    assert "fillers" in lang and "speech_fillers" not in lang, lang
+
     print(f"ok: check_stock carries fillers {fn['fillers']} and wait_file "
           f"looped x{fn['wait_file_loops']} when WAIT_FILE_URL is set, neither "
           f"key when it is not; {sorted(langs)} carry the exact pools; a "
