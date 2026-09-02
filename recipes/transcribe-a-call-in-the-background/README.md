@@ -96,6 +96,7 @@ with its test client. It asserts the following.
 - an unsigned callback, and one signed with another key, are refused with 403 and store nothing
 - a read without the bearer token is refused with 401
 - an unknown call reads as pending; after the signed callbacks, the completed call reads back its text and the failed one reads back no text
+- a status URL configured with its own query string is signed as that URL, once; a signature over the query appended twice is refused
 
 ## Limitations
 

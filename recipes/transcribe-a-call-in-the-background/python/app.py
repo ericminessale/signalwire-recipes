@@ -92,8 +92,10 @@ app = Flask(__name__)
 
 @app.post("/transcripts")
 def status():
+    # SignalWire signs the URL it was given. A configured URL that already
+    # carries a query is that URL; one without takes the request's query.
     url = STATUS_URL
-    if request.query_string:
+    if "?" not in STATUS_URL and request.query_string:
         url += "?" + request.query_string.decode()
     if not signed(request.headers, url, request.get_data()):
         abort(403)

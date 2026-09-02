@@ -51,9 +51,17 @@ def build(service=None):
     return service
 
 
+# The spec pairs relayml with flow_data: provide both or omit both. flow_data is
+# the Call Flow Builder's canvas state and is opaque to the API, so a flow
+# authored in code sends a small descriptor rather than a canvas.
+FLOW_DATA = {"generated_by": "signalwire-recipes",
+             "recipe": "build-an-ivr-without-a-server"}
+
+
 def deploy(title="Ridgeline Cycles IVR"):
     """Create the call flow from the document. Returns the resource."""
-    return client.fabric.call_flows.create(title=title, relayml=build().get_document())
+    return client.fabric.call_flows.create(
+        title=title, relayml=build().get_document(), flow_data=FLOW_DATA)
 
 
 def number_id(e164):
@@ -67,7 +75,7 @@ def number_id(e164):
 def point_number(resource_id, e164):
     """Route a number's calls to the call flow."""
     return client.fabric.resources.assign_phone_route(
-        resource_id, phone_route_id=number_id(e164), handler="calls")
+        resource_id, phone_route_id=number_id(e164), handler="calling")
 
 
 if __name__ == "__main__":

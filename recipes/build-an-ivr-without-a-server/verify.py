@@ -13,7 +13,7 @@ number, and defaults to the fallback. `add_verb` raises on a prompt with no
 the documented call flows path with exactly `title` and that document as
 `relayml`. `point_number` makes one GET of the phone numbers list filtered to
 the number. It then makes one POST to the documented phone routes path with
-exactly `phone_route_id` and `handler: calls`. The spec requires `title` on
+exactly `phone_route_id` and `handler: calling`. The spec requires `title` on
 the flow and both fields on the route. Expected values live here, not in
 app.py.
 """
@@ -92,9 +92,11 @@ def main():
     assert [(c["method"], c["path"]) for c in rec.calls] == expected, \
         [(c["method"], c["path"]) for c in rec.calls]
     create, lookup, route = rec.calls
-    assert create["body"] == {"title": "Ridgeline Cycles IVR", "relayml": doc}, create["body"]
+    assert create["body"] == {"title": "Ridgeline Cycles IVR", "relayml": doc,
+                              "flow_data": {"generated_by": "signalwire-recipes",
+                                            "recipe": "build-an-ivr-without-a-server"}}, create["body"]
     assert lookup["params"] == {"filter_number": MAIN}, lookup
-    assert route["body"] == {"phone_route_id": NID, "handler": "calls"}, route["body"]
+    assert route["body"] == {"phone_route_id": NID, "handler": "calling"}, route["body"]
 
     spec = V.spec("rest")
     V.assert_documented("rest", "POST", FLOWS, create["body"])
@@ -102,11 +104,18 @@ def main():
     V.assert_documented("rest", "POST", "/api/fabric/resources/{id}/phone_routes", route["body"])
     flow_schema = body_schema(spec, FLOWS)
     assert flow_schema["required"] == ["title"], flow_schema["required"]
-    assert "SWML document this Call Flow should execute" in \
-        deref(spec, flow_schema["properties"]["relayml"])["description"]
+    relayml_desc = deref(spec, flow_schema["properties"]["relayml"])["description"]
+    assert "SWML document this Call Flow should execute" in relayml_desc
+    # the pair rule the first version of this recipe misread: both or neither
+    assert "provide both fields together or omit both" in relayml_desc, relayml_desc
+    assert "provide both fields together or omit both" in \
+        deref(spec, flow_schema["properties"]["flow_data"])["description"]
     route_schema = body_schema(spec, "/api/fabric/resources/{id}/phone_routes")
     assert set(route_schema["required"]) == {"phone_route_id", "handler"}, route_schema["required"]
-    assert "calls" in deref(spec, route_schema["properties"]["handler"])["description"]
+    # the enum, not the prose: the description says "calls", the enum says calling
+    handler_enum = deref(spec, route_schema["properties"]["handler"])["enum"]
+    assert handler_enum == ["calling", "messaging"], handler_enum
+    assert route["body"]["handler"] in handler_enum
 
     # the bundled schema's word on the two verbs the IVR turns on
     defs = V.swml_schema()["$defs"]
@@ -115,7 +124,7 @@ def main():
 
     print(f"ok: the IVR validates (answer, prompt 1 digit, switch on prompt_value to two desks, "
           f"hangup); POST {FLOWS} carries it as relayml; the number {MAIN} is routed with "
-          f"handler=calls")
+          f"handler=calling, and relayml travels with flow_data")
 
 
 if __name__ == "__main__":

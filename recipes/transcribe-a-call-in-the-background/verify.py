@@ -122,6 +122,25 @@ def main():
     # only SignalWire's signature gets a callback stored
     assert post(done, headers={}).status_code == 403
     assert post(done, key="attacker").status_code == 403
+    # a configured URL that already carries a query is signed as that URL, once;
+    # the first version appended the request's query again and refused the
+    # genuine callback (codex, wave 9 review)
+    recipe.STATUS_URL = "https://example.com/transcripts?src=recipe"
+    try:
+        raw = json.dumps(done).encode()
+        once = hmac.new(b"PSK_verifier_only", b"https://example.com/transcripts?src=recipe" + raw,
+                        hashlib.sha1).hexdigest()
+        twice = hmac.new(b"PSK_verifier_only",
+                         b"https://example.com/transcripts?src=recipe?src=recipe" + raw,
+                         hashlib.sha1).hexdigest()
+        hdr = {"Content-Type": "application/json"}
+        assert client.post("/transcripts?src=recipe", data=raw,
+                           headers={**hdr, "X-Signalwire-Signature": twice}).status_code == 403
+        assert client.post("/transcripts?src=recipe", data=raw,
+                           headers={**hdr, "X-Signalwire-Signature": once}).status_code == 204
+        recipe.TRANSCRIPTS.clear()  # the pending-state assertions below start clean
+    finally:
+        recipe.STATUS_URL = "https://example.com/transcripts"
     assert client.get(f"/transcripts/{CALL}", headers=READ).get_json()["status"] == "pending"
     for e in (done, failed):
         r = post(e)

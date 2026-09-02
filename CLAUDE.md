@@ -1555,6 +1555,21 @@ and a paced batch send.
   verifier replaced `rec.delete` with a function that checks the file is on
   disk at that instant, which is a stronger proof than request order.
 
+## Codex review round, 2026-09-02 (debt from the outage)
+
+- **`relayml` and `flow_data` travel together or not at all.** The spec says
+  so on both properties; the IVR recipe sent `relayml` alone and its README
+  had read the rule backwards. `flow_data` is opaque builder state, so a flow
+  authored in code sends a small descriptor beside the document.
+- **Assert the enum, not the prose.** `PhoneRouteAssignRequest.handler` is
+  `UsedForType`, enum `calling` / `messaging`; its description says "incoming
+  `calls` or `messages`". The recipe sent `calls` and the verifier passed
+  because it checked that "calls" appeared in the description. When a schema
+  has an enum, the verifier reads the enum and checks the sent value is in it.
+- **Sign the callback URL once.** A configured status URL that already has a
+  query string is the URL SignalWire signs; appending the request's query to
+  it again computed the HMAC over `...?x=1?x=1` and refused genuine callbacks.
+
 ## Open work
 
 - **Review debt from the codex outage (2026-09-02).** `codex review` is owed

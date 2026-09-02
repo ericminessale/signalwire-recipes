@@ -1,6 +1,6 @@
 # Build an IVR without a server
 
-> A call flow is a SWML document you hand to the platform, described in the spec as the document the flow should execute, so no server of yours serves it. One POST creates it from a `title` and a `relayml` document. One POST points a number at it by `phone_route_id` with the `calls` handler.
+> A call flow is a SWML document you hand to the platform, described in the spec as the document the flow should execute, so no server of yours serves it. One POST creates it from a `title`, a `relayml` document and the `flow_data` the spec pairs with it. One POST points a number at it by `phone_route_id` with the `calling` handler.
 
 **Scenario:** a bike shop that wants "press 1 for sales, 2 for the workshop" on its main number and nothing to keep running
 
@@ -11,7 +11,8 @@ field, `title`, and takes `relayml`, "The calling SWML document this Call Flow
 should execute". That sentence is the serverless part: the flow executes the
 document, and nothing of yours serves it.
 `POST /api/fabric/resources/{id}/phone_routes` requires `phone_route_id` and
-`handler`, which "Sets the handler to handle incoming `calls` or `messages`".
+`handler`, an enum of `calling` and `messaging`. Its prose says "incoming
+`calls` or `messages`"; the enum is what the API accepts.
 The document has four top-level verbs. They are `answer`, a `prompt` whose
 schema requires `play` and collects one digit, a `switch` whose schema requires
 `variable` and `case`, and `hangup`. You reach the REST calls as
@@ -33,7 +34,7 @@ def deploy(title="Ridgeline Cycles IVR"):
 
 def point_number(resource_id, e164):
     return client.fabric.resources.assign_phone_route(
-        resource_id, phone_route_id=number_id(e164), handler="calls")
+        resource_id, phone_route_id=number_id(e164), handler="calling")
 ```
 
 What the platform receives:
@@ -51,7 +52,7 @@ POST /api/fabric/resources/call_flows
    {"hangup": {}}]}}}
 
 POST /api/fabric/resources/<resource_id>/phone_routes
-{"phone_route_id": "<id of your number>", "handler": "calls"}
+{"phone_route_id": "<id of your number>", "handler": "calling"}
 ```
 
 `prompt_value` holds the digit the prompt collected, so `switch` reads it by
@@ -91,8 +92,8 @@ recorder. It asserts the following.
 - `add_verb` raises `SchemaValidationError` for a `prompt` with no `play`, and the document keeps its four verbs
 - `deploy` makes one `POST` to the documented call flows path with exactly `title` and that document as `relayml`
 - `point_number` makes one `GET` of the phone numbers list with exactly `filter_number` and picks the exact match over a near miss
-- it then makes one `POST` to the documented phone routes path with exactly `phone_route_id` and `handler: calls`
-- the spec requires exactly `title` on the flow and exactly `phone_route_id` and `handler` on the route
+- it then makes one `POST` to the documented phone routes path with exactly `phone_route_id` and `handler: calling`, and asserts `calling` is in the spec's enum
+- the spec requires exactly `title` on the flow and exactly `phone_route_id` and `handler` on the route, and says `relayml` and `flow_data` travel together or not at all
 - the spec describes `relayml` as the SWML document the flow should execute
 - the bundled schema requires `play` on `prompt`, and `variable` and `case` on `switch`
 
@@ -101,9 +102,10 @@ recorder. It asserts the following.
 You prove the document and the requests. What the caller hears, and whether a
 desk answers, are the platform's side of a live call.
 
-The script does not send `flow_data`, the Call Flow Builder's own canvas
-state. The spec says it is optional and must be paired with `relayml`, so a
-flow deployed this way has no diagram to edit in the Dashboard.
+`flow_data` is the Call Flow Builder's own canvas state, opaque to the API.
+The spec says to send it with `relayml` or send neither, so the script sends a
+small descriptor beside the document. A flow deployed this way has no diagram
+to edit in the Dashboard; the document is the source.
 
 ## What to change first
 
