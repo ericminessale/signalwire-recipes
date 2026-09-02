@@ -674,6 +674,8 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fcard .fm{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-top:auto;}
 .fcard .fn{font-family:var(--mono);font-size:11px;color:var(--fg-muted);}
 .fcard .fc{font-size:11.5px;color:var(--fg-subtle);margin-left:auto;}
+.fcard.build .fc{display:inline-flex;align-items:center;gap:6px;color:var(--fg-2);}
+.fcard.build .fc .dot{width:7px;height:7px;border-radius:50%;background:var(--fuchsia);display:inline-block;}
 /* A planned card has nothing behind it, so it does not get the lift. */
 .fcard.planned{cursor:default;background:var(--surface);box-shadow:none;
   border-color:var(--line);}
@@ -1448,10 +1450,15 @@ def build_index(recipes, body_only=False):
             # tile per product line it touches, the word Build where the
             # category label sits, and the same stack the builds block draws.
             cats = sorted(touches(r) | set(r.get("products", [])), key=cat_rank)
-            behind = [k for k in cats if k != r.get("category")]
+            # the featured card is shorter than a build card and sits in a
+            # clipped track, so the stack is two sheets at most here (Eric:
+            # three "doesnt fit in its space"); the tiles still say what it
+            # touches, and the fuchsia dot says it is a build that exists
+            behind = [k for k in cats if k != r.get("category")][:1]
             tiles = "".join('<span class="ftile">%s</span>' % category_icon(k)
                             for k in cats)
-            label = "Build"
+            label = ('<i class="dot" aria-hidden="true"></i>Build' if not planned
+                     else "Build")
             if behind and not planned:
                 style = ' style="--sheets:%s"' % ",".join(
                     "%dpx %dpx 0 -1px var(--surface),%dpx %dpx 0 0 var(--accent)"
@@ -1471,7 +1478,7 @@ def build_index(recipes, body_only=False):
                esc(r["slug"]), esc(hay(r)),
                ' aria-disabled="true"' if planned else "", style,
                tiles, esc(r["feature_line"]), esc(r["title"]),
-               esc("planned" if planned else label))
+               "planned" if planned else (label if is_build else esc(label)))
         )
 
     featured = ""
