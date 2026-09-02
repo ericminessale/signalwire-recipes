@@ -331,6 +331,14 @@ brand cheatsheet's abstractions and not invented:
   generator edit.
 - **The band is a front door, not a result.** Any search or category chip
   replaces it. With the unbuilt hidden, its planned cards go and the band stays.
+- **Planned rows are hidden by default (Eric, 2026-09-02).** With 97 of 122
+  written, greyed placeholders were most of what a first scroll showed. The
+  banner is one muted right-aligned line, "97 of 122 recipes are written", and
+  a text button, "Show 25 planned" / "Hide planned". The plate and the switch
+  are gone; a control that quiet should not look like a setting. `tools/qc.py`
+  asserts the default is hidden, normalises to "showing" before its painted-count
+  arithmetic, and restores the state afterwards. Hard rule 10 still governs any
+  switch that comes back.
 - **Featured cards are `.fcard`, never `.card`.** They duplicate recipes that
   also appear below, so the moment they answer to `.card` the chip counts, the
   category counts and `tools/qc.py`'s own toggle check all inflate by six.

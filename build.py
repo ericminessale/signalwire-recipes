@@ -415,24 +415,19 @@ a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turq);}
-.pvbanner{max-width:1560px;margin:0 auto;padding:18px 32px 0;}
-.pvbanner .pvb{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-lg);
-  padding:11px 15px;font-size:12.5px;color:var(--fg-muted);
-  display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-.pvbanner .pvt{flex:1;min-width:260px;}
-.pvbanner b{color:var(--fg-2);font-weight:500;font-variant-numeric:tabular-nums;}
-.pvtog{font-family:var(--body);font-size:12px;color:var(--fg-2);cursor:pointer;
-  background:var(--raised);border:1px solid var(--line-2);border-radius:var(--r-md);
-  padding:5px 11px;display:inline-flex;align-items:center;gap:7px;}
-.pvtog:hover{border-color:var(--fg-subtle);}
+.pvbanner{max-width:1560px;margin:0 auto;padding:14px 32px 0;}
+/* A preview notice, not a feature: one muted line, right-aligned, and a text
+   button. Planned rows are hidden by default now that most of the corpus is
+   written (Eric, 2026-09-02); the plate and the switch went with the old
+   default, because a control this quiet should not look like a setting. */
+.pvbanner .pvb{display:flex;align-items:center;justify-content:flex-end;gap:14px;
+  flex-wrap:wrap;font-size:12px;color:var(--fg-subtle);}
+.pvbanner b{color:var(--fg-muted);font-weight:500;font-variant-numeric:tabular-nums;}
+.pvtog{font-family:var(--body);font-size:12px;color:var(--fg-muted);cursor:pointer;
+  background:transparent;border:0;padding:4px 0;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-3);}
+.pvtog:hover{color:var(--fg);text-decoration-color:currentColor;}
 .pvtog:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
-.pvtog .sw{position:relative;width:22px;height:13px;border-radius:var(--r-md);flex:none;
-  background:var(--line-2);transition:background 140ms ease;}
-.pvtog .sw i{position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;
-  background:var(--fg-2);transition:transform 140ms ease;}
-.pvtog[aria-pressed="true"]{color:var(--fg);border-color:var(--fg-subtle);}
-.pvtog[aria-pressed="true"] .sw{background:var(--fg-2);}
-.pvtog[aria-pressed="true"] .sw i{transform:translateX(9px);background:var(--page);}
 [data-view][hidden]{display:none;}
 
 /* collapsed category still shows its shape: name, count, task groups */
@@ -945,7 +940,8 @@ q.addEventListener('input',apply);
 if(tog)tog.addEventListener('click',()=>{
   const was=tog.getAttribute('aria-pressed')==='true';
   tog.setAttribute('aria-pressed',was?'false':'true');
-  const lab=tog.querySelector('.pvl'); if(lab)lab.textContent=was?'Hide the unbuilt':'Show the unbuilt';
+  const lab=tog.querySelector('.pvl');
+  if(lab)lab.textContent=was?'Hide planned':'Show '+tog.dataset.n+' planned';
   apply();
 });
 chips.forEach(c=>c.addEventListener('click',()=>{
@@ -2072,12 +2068,11 @@ def build_preview(recipes):
     n_planned = sum(1 for r in live if r.get("_planned"))
     parts = [
         '<div class="pvbanner"><div class="pvb"><span class="pvt">'
-        "Not every recipe is built yet. <b>%d</b> of <b>%d</b> are written and "
-        "runnable; the rest are planned and shown greyed."
+        "<b>%d</b> of <b>%d</b> recipes are written."
         "</span>"
-        '<button type="button" class="pvtog" id="pvtog" aria-pressed="false">'
-        '<span class="sw"><i></i></span><span class="pvl">Hide the unbuilt</span></button>'
-        "</div></div>" % (len(written), len(live)),
+        '<button type="button" class="pvtog" id="pvtog" aria-pressed="true" '
+        'data-n="%d"><span class="pvl">Show %d planned</span></button>'
+        "</div></div>" % (len(written), len(live), n_planned, n_planned),
         '<div data-view="index">%s</div>' % build_index(live, body_only=True),
     ]
     for r in live:
