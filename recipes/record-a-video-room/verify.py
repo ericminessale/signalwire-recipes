@@ -4,14 +4,15 @@ Claim: `record_on_start: true` on a room makes the platform record each of its
 sessions. A session's recordings list over REST, each with a `uri`, a `status`
 and a `duration`, and a DELETE by recording id removes one.
 
-Proof: with the HTTP layer replaced by a recorder, the four helpers make four
-requests in order: POST the room with exactly `name`, `display_name` and
-`record_on_start: true`, GET the session's recordings, GET one recording, and
-DELETE it. Every path and body is documented. The spec requires `name` on the
-room and describes `record_on_start` as starting a recording when a session
-starts. Its recording schema carries `uri`, `status`, `duration`, `format` and
-`room_session_id`, and the delete answers 204. Expected values live here, not
-in app.py.
+Proof: the HTTP layer is a recorder. The five helpers make five requests in
+order. They POST the room with exactly `name`, `display_name` and
+`record_on_start: true`, then GET the sessions, GET the session's recordings,
+GET one recording, and DELETE it. Every path and body is documented. The spec
+requires `name` on the room and describes `record_on_start` as starting a
+recording when a session starts. Its recording schema carries `uri`, `status`,
+`duration`, `format` and `room_session_id`, the room response carries
+`active_session`, and the delete answers 204. Expected values live here, not in
+app.py.
 """
 import os
 import pathlib
@@ -63,27 +64,31 @@ def main():
     entry = {"id": REC, "room_session_id": SESSION, "status": "completed", "duration": 1812.4,
              "format": "mp4", "uri": URI, "size_in_bytes": 190_000_000}
     rec = V.Recorder(responses=[{"id": "room-1", "name": "workshop-standup", "record_on_start": True},
+                                {"data": [{"id": SESSION, "room_id": "room-1"}], "links": {}},
                                 {"data": [entry], "links": {}}, entry, {}])
     for ns in (recipe.client.video.rooms, recipe.client.video.room_sessions,
                recipe.client.video.room_recordings):
         ns._http = rec
 
     recipe.create_room()
-    listed = recipe.recordings_of(SESSION)
+    found = recipe.sessions()
+    listed = recipe.recordings_of(found["data"][0]["id"])
     one = recipe.recording(listed["data"][0]["id"])
     recipe.delete_recording(one["id"])
 
-    expected = [("POST", ROOMS), ("GET", f"{SESSIONS}/{SESSION}/recordings"),
+    expected = [("POST", ROOMS), ("GET", SESSIONS), ("GET", f"{SESSIONS}/{SESSION}/recordings"),
                 ("GET", f"{RECORDINGS}/{REC}"), ("DELETE", f"{RECORDINGS}/{REC}")]
     assert [(c["method"], c["path"]) for c in rec.calls] == expected, \
         [(c["method"], c["path"]) for c in rec.calls]
-    room, listing, get, delete = rec.calls
+    room, *rest_calls = rec.calls
     assert room["body"] == {"name": "workshop-standup", "display_name": "Workshop stand-up",
                             "record_on_start": True}, room
-    assert listing["params"] is None and get["body"] is None and delete["body"] is None
+    for c in rest_calls:
+        assert c["body"] is None and c["params"] is None, c
 
     spec = V.spec("rest")
     V.assert_documented("rest", "POST", ROOMS, room["body"])
+    V.assert_documented("rest", "GET", SESSIONS, None)
     V.assert_documented("rest", "GET", f"{SESSIONS}/{{id}}/recordings", None)
     V.assert_documented("rest", "GET", f"{RECORDINGS}/{{id}}", None)
     V.assert_documented("rest", "DELETE", f"{RECORDINGS}/{{id}}", None)
@@ -95,21 +100,29 @@ def main():
     assert switch["type"] == "boolean", switch
     assert "start recording a Room Session when one is started" in switch["description"], switch["description"]
 
-    # and on what a recording is
+    # the room object carries the session pointer the README names
+    _, room_props = response(spec, ROOMS, "post")
+    assert "active_session" in room_props, sorted(room_props)
+
+    # the sessions list is where the id comes from, and the fixture is shaped like it
+    code, session_props = response(spec, SESSIONS, "get")
+    assert code == "200" and "id" in session_props, (code, sorted(session_props))
+    assert set(found["data"][0]) <= set(session_props), sorted(set(found["data"][0]) - set(session_props))
+
+    # and on what a recording is, on the list and on the get
     for path, method in ((f"{SESSIONS}/{{id}}/recordings", "get"), (f"{RECORDINGS}/{{id}}", "get")):
         code, props = response(spec, path, method)
         assert code == "200", (path, code)
         assert {"id", "room_session_id", "status", "duration", "format", "uri"} <= set(props), \
             (path, sorted(props))
-    assert set(entry) <= set(props), sorted(set(entry) - set(props))
+        assert set(entry) <= set(props), (path, sorted(set(entry) - set(props)))
+        params = [p["name"] for p in spec["paths"][path]["get"].get("parameters", [])
+                  if p.get("in") == "query"]
+        assert "media_ttl" in params, (path, params)
     code, props = response(spec, f"{RECORDINGS}/{{id}}", "delete")
     assert code == "204" and props == {}, (code, props)
-    # the list takes media_ttl, which the recipe leaves at the platform default
-    params = [p["name"] for p in spec["paths"][f"{SESSIONS}/{{id}}/recordings"]["get"].get("parameters", [])
-              if p.get("in") == "query"]
-    assert "media_ttl" in params, params
 
-    print(f"ok: POST {ROOMS} record_on_start=true, GET the session's recordings, GET and DELETE "
+    print(f"ok: POST {ROOMS} record_on_start=true, GET the sessions and the session's recordings, GET and DELETE "
           f"{RECORDINGS}/{REC[:8]}...; the spec documents the switch, the recording fields "
           f"and the 204")
 

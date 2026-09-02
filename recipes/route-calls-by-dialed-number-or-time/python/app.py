@@ -1,11 +1,11 @@
 """Route calls by dialed number or time.
 
 One SWML webhook serves several numbers. SignalWire fetches the document with
-the inbound call webhook the vendored REST spec documents: a JSON body whose
-`call` carries `to`, "The number/URI of the destination of this call", and
-`to_number`, present for phone calls. Your handler reads the dialed number,
-looks up that line, checks the clock in the line's own time zone, and returns
-the document for that number at that hour. Open, the caller hears a greeting
+the inbound call webhook the vendored REST spec documents. Its JSON body has a
+`call` that carries `to`, "The number/URI of the destination of this call", and
+`to_number` for phone calls. Your handler reads the dialed number and looks up
+that line. It checks the clock in the line's own time zone and returns the
+document for that number at that hour. Open, the caller hears a greeting
 and is connected; closed, they hear the hours and the call ends.
 
 Written against signalwire-sdk 3.0.1 (SWMLService) and Flask.
@@ -45,13 +45,12 @@ def is_open(line, now):
     """The line's hours, judged in the line's own zone."""
     local = now.astimezone(ZoneInfo(line["tz"]))
     start, end = line["open"]
-    return start <= local.time() <= end
+    return start <= local.time() < end   # the closing minute is closed
 
 
 def document(to, now):
     """The SWML for this number at this moment."""
     service = SWMLService(name="front", route="/swml")
-    service.reset_document()
     service.add_verb("answer", {})
     line = LINES.get(to)
     if not line:

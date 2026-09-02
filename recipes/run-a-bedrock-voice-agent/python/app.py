@@ -1,13 +1,12 @@
 """Run a Bedrock voice agent.
 
-`BedrockAgent` is `AgentBase` with one change at render time: the document's
-verb is `amazon_bedrock` instead of `ai`. The SDK's `agents/bedrock.py`
-renders the base document, then rebuilds the verb with the same `prompt`
-(plus a `voice_id`, `temperature` and `top_p` inside it), the same `SWAIG`,
-`params`, `global_data` and post-prompt settings. So the tools you define,
-their schemas and the handlers that run are the same on both agents. This
-file configures one parts desk twice, once on each base class, from one
-function.
+`BedrockAgent` renders `amazon_bedrock` where `AgentBase` renders `ai`. The
+SDK's `agents/bedrock.py` renders the base document, then rebuilds the verb
+with the same `prompt` plus `voice_id`, `temperature` and `top_p` inside it,
+and copies `SWAIG`, `params`, `global_data` and the post-prompt settings. So
+the SWAIG functions render the same on both, and one `configure()` registers
+the same handler on each agent. This file configures one parts desk twice,
+once on each base class, from that one function.
 
 Written against signalwire-sdk 3.0.1 (AgentBase, BedrockAgent).
 """
@@ -52,7 +51,6 @@ def configure(agent):
         description="Check whether a bike part is in stock before promising it.",
         parameters=PARAMETERS,
         handler=check_stock,
-        secure=False,
     )
     return agent
 
@@ -61,8 +59,10 @@ def build(kind="bedrock"):
     """`ai` for the standard agent, `bedrock` for the same desk on Bedrock."""
     if kind == "ai":
         return configure(AgentBase(name="parts", route="/parts"))
-    return configure(BedrockAgent(name="parts", route="/parts",
-                                  voice_id=os.getenv("BEDROCK_VOICE_ID", "matthew")))
+    if kind == "bedrock":
+        return configure(BedrockAgent(name="parts", route="/parts",
+                                      voice_id=os.getenv("BEDROCK_VOICE_ID", "matthew")))
+    raise SystemExit(f"AGENT_KIND must be ai or bedrock, not {kind!r}")
 
 
 agent = build(os.getenv("AGENT_KIND", "bedrock"))

@@ -2,8 +2,8 @@
   "slug": "transcribe-a-call-in-the-background",
   "title": "Transcribe a call in the background",
   "alias": "calling.transcribe + transcribe status callback",
-  "summary": "calling.transcribe starts transcribing a live call in the background by control_id, and calling.transcribe.stop ends it. The transcript lands on your status_url as a documented callback whose params.text holds the text when there is any.",
-  "scenario": "A shop that wants the text of each support call filed against the ticket, without the caller hearing anything change",
+  "summary": "calling.transcribe starts transcribing a live call in the background by control_id, and calling.transcribe.stop ends it. SignalWire may then send the documented transcript callback to your status_url, whose params.text holds the text when there is any.",
+  "scenario": "You want each support call's text filed against its ticket",
   "surfaces": [
     "python"
   ],
@@ -39,6 +39,7 @@
   ],
   "related": [
     "handle-call-status-callbacks",
-    "reconcile-webhooks-against-the-logs-api"
+    "reconcile-webhooks-against-the-logs-api",
+    "verify-a-webhook-signature"
   ]
 }

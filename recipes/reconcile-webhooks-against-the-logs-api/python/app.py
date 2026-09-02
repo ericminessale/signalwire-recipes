@@ -21,9 +21,10 @@ load_dotenv()
 # SIGNALWIRE_SPACE from the environment (signalwire/rest/client.py).
 client = RestClient()
 
-# What your webhook handler recorded, keyed by call or message id. A real one
-# is a table; the reconciler only needs membership.
-SEEN = set()
+# What your webhook handler recorded, one set per product so a voice id and a
+# message id that happen to match cannot hide each other. A real one is a
+# table; the reconciler only needs membership.
+SEEN = {"voice": set(), "messages": set()}
 
 
 def every_page(fetch, **params):
@@ -52,9 +53,9 @@ def message_logs(since, until, page_size=200):
                       created_before=until, page_size=page_size)
 
 
-def missed(entries):
-    """Entries your store lacks: the candidates to reconcile."""
-    return [entry for entry in entries if entry.get("id") not in SEEN]
+def missed(entries, product):
+    """Entries your store lacks for this product: the candidates to reconcile."""
+    return [entry for entry in entries if entry.get("id") not in SEEN[product]]
 
 
 def events_for(log_id):
@@ -66,9 +67,9 @@ def reconcile(since, until):
     """One pass: list the window, diff against what you saw, fetch the trail
     of each missed call."""
     report = {"voice": [], "messages": []}
-    for entry in missed(voice_logs(since, until)):
+    for entry in missed(voice_logs(since, until), "voice"):
         report["voice"].append({"log": entry, "events": events_for(entry["id"])})
-    report["messages"] = missed(message_logs(since, until))
+    report["messages"] = missed(message_logs(since, until), "messages")
     return report
 
 

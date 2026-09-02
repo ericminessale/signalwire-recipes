@@ -76,7 +76,7 @@ URL that answers with valid cXML. Then read the life of the call from the
 running server:
 
 ```bash
-curl https://<your-host>/calls/<CallSid>
+curl "https://YOUR_HOST/calls/CALL_SID"
 ```
 
 ## Verify it
@@ -96,8 +96,9 @@ with its test client. It asserts the following.
 - the callback method is in the spec's enum
 - each of four fixture callbacks carries every field the spec's voice status callback requires, no field it lacks, and a `CallStatus` from its enum
 - the spec says `CallDuration` is only on the completed event and `SequenceNumber` starts at 0
-- the four arrive in the order 3, 0, 2, 1, one of them form-encoded, and each is answered `204`
+- the four arrive in the order 3, 0, 2, 1, one of them form-encoded, and the handler answers each with `204`
 - the timeline is initiated, ringing, in-progress, completed in sequence order, with the duration from the completed event and the parties from the payload
+- all 24 arrival orders of the four callbacks give that same complete timeline, compared whole against one expected object
 - a call with one `initiated` event has no duration yet, and an unknown call has an empty timeline
 - a completed callback without `CallDuration` ends the timeline with `completed` and no duration
 - `GET /calls/<CallSid>` on the server returns the same timeline as JSON
@@ -113,6 +114,7 @@ anything depends on it.
 
 ## What to change first
 
-Change `record` to key by arrival, appending to a list instead of indexing by
-`SequenceNumber`, and run the verifier. The step-order assertion fails on the
-fixture's shuffled arrival, which is the failure this recipe exists to prevent.
+In `record`, replace `int(payload["SequenceNumber"])` with
+`len(CALLS[payload["CallSid"]])`, so the key is the arrival position, and run
+the verifier. The step-order assertion fails on the fixture's shuffled arrival,
+which is the failure this recipe exists to prevent.

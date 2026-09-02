@@ -1,6 +1,6 @@
 # Let an agent see the caller's camera
 
-> `enable_vision: true` in `ai.params` lets the agent read the caller's camera through the platform's `get_visual_input` function. `vision_model` picks the model, and an internal filler for `get_visual_input` covers the look.
+> `enable_vision: true` in `ai.params` turns on the platform's `get_visual_input` function for the agent. `vision_model` names the model, and an internal filler under `get_visual_input` gives the agent something to say for it.
 
 **Scenario:** a workshop desk on a video call that wants to see the worn part before it gives advice
 
@@ -9,12 +9,13 @@
 The bundled schema documents `enable_vision` as "Enables visual input
 processing for the AI Agent. When set to `true`, the AI Agent will be able to
 utilize visual processing capabilities, while leveraging the `get_visual_input`
-function". Its default is false. `vision_model` picks the model, and the schema
-says "Allowed values are `gpt-4o-mini`, `gpt-4.1-mini`, and `gpt-4.1-nano`".
+function". Its default is false. `vision_model` names the model. The schema
+says "Allowed values are `gpt-4o-mini`, `gpt-4.1-mini`, and `gpt-4.1-nano`",
+and its type also admits any other string.
 You do not define `get_visual_input`. The schema lists it among the internal
 fillers, not among the functions you register, and not among the native
-functions you can switch on. What you can give it is a filler, the phrase the
-agent says while it looks.
+functions you can switch on. What you can give it is a filler, a phrase filed
+under its name.
 
 ## How it works
 
@@ -35,9 +36,9 @@ What the platform receives, inside the `ai` verb:
                                                               "One moment while I look at that."]}}}
 ```
 
-The prompt tells the agent to look before it answers. The SDK warns at
-registration if you name a filler the schema does not know, which is the check
-that keeps `get_visual_input` spelt right.
+The prompt tells the agent to look before it answers and to describe what it
+sees. The SDK warns at registration if you name a filler the schema does not
+know, which is the check that keeps `get_visual_input` spelt right.
 
 ## Run it
 
@@ -51,8 +52,7 @@ python app.py
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. Point a video-capable client or
 Fabric address at `https://<user>:<password>@<your-host>/eyes/`, hold a part
-up to the camera and ask about it. A phone call runs the same agent with no
-camera to look at.
+up to the camera and ask about it.
 
 ## Verify it
 
@@ -66,10 +66,11 @@ python verify.py
 The verifier renders the agent's document, validates it, and asserts the
 following.
 
-- `ai.params` carries `enable_vision: true` and `vision_model: gpt-4o-mini`
+- `ai.params` carries `enable_vision: true` and the `vision_model` the environment set, `gpt-4.1-nano`, which is not the app's default
 - `SWAIG.internal_fillers` is exactly `get_visual_input` with the two phrases, and no function named `get_visual_input` is registered
+- the prompt tells the agent to look before it answers and to describe what it sees
 - the schema's `enable_vision` description names `get_visual_input` and its default is false
-- the schema's allowed `vision_model` values are exactly the three above, and the one sent is among them
+- the schema's `vision_model` is exactly three named values plus any string
 - the schema lists `get_visual_input` among the internal fillers and not among the native functions
 
 ## Limitations
@@ -77,12 +78,12 @@ following.
 You prove the document and the schema. When the agent looks, what the model
 sees, and how it describes it are the platform's side of a live video call.
 
-The schema lists three allowed models; which one to use is a quality and cost
-decision this recipe does not make for you.
+The schema names three models and admits any string; which one to use is a
+quality and cost decision this recipe does not make for you.
 
 ## What to change first
 
-Change `VISION_MODEL` in `.env` to `gpt-5-vision` and run the agent. The
-document renders, because `vision_model` also accepts any string, and the
-platform decides what to do with a name outside the documented three. The
-verifier pins one of the documented values for that reason.
+Change `VISION_MODEL` in `.env` to `gpt-4.1-mini` and run the agent. The
+document renders with that model in `ai.params`, because the environment is
+where the name comes from. The verifier sets `gpt-4.1-nano` for the same
+reason, and fails if the app ignores the variable.

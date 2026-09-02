@@ -1,8 +1,8 @@
 # Verify a webhook signature
 
-> A request whose `X-Signalwire-Signature` header does not match hex(HMAC-SHA1(signing_key, url + raw_body)) is refused with 403 before any route runs. A matching one, or a matching `X-Signalwire-SHA256-Signature`, is served.
+> The gate refuses, with 403 and before any route runs, a request whose signature header does not match hex(HMAC(signing_key, url + raw_body)). `X-Signalwire-SHA256-Signature` decides when present; otherwise `X-Signalwire-Signature`, the SHA-1 one, does.
 
-**Scenario:** a public webhook that must never run a document for a request SignalWire did not send
+**Scenario:** a public webhook that must never run a document for a request SignalWire did not sign
 
 ## What this demonstrates
 
@@ -16,7 +16,7 @@ find the key in the Dashboard under API Credentials, as Signing Key
 (https://signalwire.com/docs/swml/guides/webhook-security).
 
 The check runs in a Flask `before_request` hook, so it runs before routing. A
-request that fails it never reaches your code, not even a 404.
+request that fails it never reaches a route handler, not even a 404.
 
 ## How it works
 
@@ -27,8 +27,10 @@ def expected(key, url, raw_body, digest):
 def verify(headers, url, raw_body, key=None):
     key = key or SIGNING_KEY
     for header, digest in DIGESTS.items():          # SHA-256 first, then SHA-1
-        sent = headers.get(header)
-        if sent:
+        if header in headers:                       # presence selects the digest
+            sent = headers[header]
+            if not HEX.fullmatch(sent):             # not hex: refuse, do not compare
+                return False
             return hmac.compare_digest(sent, expected(key, url, raw_body, digest))
     return False
 
@@ -40,10 +42,13 @@ def gate():
 ```
 
 Two choices matter. The URL comes from `WEBHOOK_URL`, the address you gave
-SignalWire, not from the request. A tunnel or a proxy rewrites what Flask sees,
-and the platform signed the one you configured. The guide says the URL includes
-the query string, so the hook appends the request's. And `compare_digest` does
-the comparison in constant time.
+SignalWire, not from the request. A tunnel or a proxy can present Flask with a
+different host, and the platform signed the one you configured. The guide says
+the URL includes the query string, so the hook appends the request's. And
+`hmac.compare_digest` is the comparison Python's `hmac` documentation describes
+as "designed to prevent timing analysis". When both headers arrive, presence of
+the SHA-256 header selects it. An empty or wrong SHA-256 then fails rather than
+falling back to SHA-1.
 
 ## Run it
 
@@ -73,9 +78,11 @@ The verifier drives the Flask app with its test client and a signing key of its
 own. It asserts the following.
 
 - a body signed with SHA-1 over `url + body` is served, and the reply is a SWML document that validates with `answer`, `play`, `hangup`
-- a body signed with SHA-256 alone is served, and when both headers arrive the SHA-256 one decides
-- the two hex digests are 40 and 64 characters
-- no header, a body altered by one byte, a signature from another key, a signature over `url + "\n" + body`, a wrong SHA-256 and an empty header are each refused with 403
+- a body signed with SHA-256 alone is served
+- when both headers arrive the SHA-256 one decides: a valid SHA-1 beside a wrong or empty SHA-256 is refused
+- no header, a body altered by one byte, and a signature from another key are each refused with 403
+- the gate refuses a signature over `url + "\n" + body`, a wrong SHA-256, an empty header, and a header that is not hex, each with 403
+- the same valid signed request, sent twice, is served twice: the gate does not stop a replay
 - a request with a query string is served only when the signature covers the query string
 - an unknown path is 403, not 404, because the gate runs before routing
 - `verify()` on its own agrees with the app, so you can call it outside Flask
@@ -85,6 +92,12 @@ own. It asserts the following.
 The verifier signs with its own key, so it proves the arithmetic and the gate,
 not that a given production request came from SignalWire. That proof is the
 signature on your real traffic against your real key.
+
+The check is an HMAC over the URL and body, so it says the sender held the
+key and the body is unchanged. It says nothing about when the request was
+made: the verifier sends one valid request twice and the gate serves both. Add
+your own check against replay, such as refusing a `call_id` you have already
+served.
 
 The guide says the URL "excludes basic auth credentials on call requests" and
 includes them on messaging requests "as configured". Set `WEBHOOK_URL` to match

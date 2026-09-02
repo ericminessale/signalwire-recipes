@@ -1381,12 +1381,75 @@ streams, call status callbacks. Facts that cost a round or a fetch:
   saying START, so anyone could undo a real STOP (codex, f99418b). The
   signature check from `verify-a-webhook-signature` sits in front of it now.
 
+## Waves 8 and 9 of the fill-out (2026-09-02)
+
+Ten more: webhook signatures, a Bedrock agent, room recording, recording
+export, a video avatar, background transcription, routing by dialed number and
+hour, camera vision, a browser dialing an agent through a Fabric address, and a
+serverless IVR as a call flow. Facts that cost a round:
+
+- **The signature scheme is documented at
+  `signalwire.com/docs/swml/guides/webhook-security.md`.** `X-Signalwire-Signature`
+  is HMAC-SHA1 hex over `url + raw_body` with no separator; the SHA-256 header
+  arrives on call requests. The 3.0.1 SDK has no verifier (no `hmac` import),
+  so the recipe is standard library. Presence of the SHA-256 header must
+  select it: an empty SHA-256 beside a valid SHA-1 is a failed check, not a
+  fallback (sol). A signature proves the key and the body, never freshness.
+- **`BedrockAgent` rewrites the verb, not the tools.** `agents/bedrock.py`
+  renders the base document and swaps `ai` for `amazon_bedrock`, adding
+  `voice_id`, `temperature` and `top_p` inside the prompt and dropping
+  `barge_confidence`, `presence_penalty`, `frequency_penalty`. `define_tool`
+  takes a full JSON-schema object as `parameters`.
+- **`get_visual_input` is a filler name, not a native function.**
+  `SWAIGNativeFunction` is four names (`check_time`, `wait_seconds`,
+  `wait_for_user`, `adjust_response_latency`); `SWAIGInternalFiller` includes
+  `get_visual_input`. `enable_vision: true` is what turns it on;
+  `vision_model` is three named consts plus any string.
+- **`AIParams` accepts unknown keys** (see wave 7). The avatar recipe shows a
+  misspelt `video_idel_file` validating; exact-key assertions are the guard.
+- **`%-I` is not a portable strftime flag.** It raised `ValueError` on
+  Windows inside a Flask route and surfaced as a 500. Use `%I` and `lstrip`.
+- **A closed window is half-open.** `start <= t < end`, or "closes at 16:00"
+  is false at 16:00 (sol). Test the minute before and the minute itself.
+- **Recording export is copy first, delete second, and the verifier proves
+  it by injecting a fetcher that raises**: no DELETE follows a failed copy.
+  The relay recordings list has no query parameters; it pages by `links.next`.
+- **`SWMLService.add_verb` validates a `prompt` with a `"say:"` string**, and
+  `switch.variable` is the bare variable name (`prompt_value`). A call flow
+  is `POST /api/fabric/resources/call_flows` with `title` and `relayml`; a
+  number is pointed at any Fabric resource with
+  `POST /api/fabric/resources/{id}/phone_routes` (`phone_route_id`,
+  `handler: calls`).
+- **A guest token names Fabric address ids**, not names: `allowed_addresses`
+  holds up to ten UUIDs from `GET /api/fabric/resources/{id}/addresses`.
+- **Sol will ask for "may send" wording on every callback**, because the
+  specs call them best-effort. Write it that way the first time.
+- **Sol misreads two things every round; pre-empt them in the brief.**
+  `verifylib.spec("compat")` is valid, and the compat voice status callback
+  requires eleven audio statistics, which the passing verifier shows.
+- **Codex hit its usage limit at 2026-09-02 11:26Z** ("try again at Sep 6th,
+  2026 11:11 PM"). Eight audits died mid-run and every `codex review` after
+  394bbdc is owed, not done: the owner protocol says an outage is not a
+  blocker, so the wave-9 commits went in with the gate and their own
+  verifiers, and the review debt is listed under *Open work*. Do not launch
+  audits before the reset; they burn the log and return nothing.
+
 ## Open work
 
-- 34 launch-adjacent stubs still have folders with empty entry files (they
-  render as "not written yet"); the 60 `proposed` inventory rows have no
-  folder. Write them through the protocol above, launch set first
-  (`docs/INVENTORY.md`).
+- **Review debt from the codex outage (2026-09-02).** `codex review` is owed
+  on every commit after 394bbdc, and these recipes never got a clean sol
+  round: `run-a-bedrock-voice-agent` (r3), `record-a-video-room` (r3),
+  `stream-a-video-room-to-rtmp` (r5), `give-an-agent-a-video-avatar` (r3),
+  `transcribe-a-call-in-the-background` (r3), `export-recordings-and-enforce-retention`
+  (r2), `verify-a-webhook-signature` (r3), `handle-call-status-callbacks` (r5),
+  `route-calls-by-dialed-number-or-time` (r2, partial verdict applied),
+  `let-a-browser-dial-your-agent-with-no-dashboard-setup` (r2),
+  `build-an-ivr-without-a-server` (r2). Each had its last verdict applied
+  and verifies and lints clean; run the round when codex is back (Sep 6).
+- Stubs still unwritten after wave 9: `hand-off-from-ai-to-a-human-agent`,
+  `measure-voice-ai-latency`, `call-an-mcp-server-from-a-live-call` (hold),
+  the three stub builds, and the `proposed` rows without a folder. Write
+  them through the protocol above (`docs/INVENTORY.md`).
 - Three stub builds (`voice-support-line`, `sms-support-desk`,
   `governed-intake-agent`) need repositories or retirement; `ai-call-center`'s
   `composes` must be re-verified against its code.

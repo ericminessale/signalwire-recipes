@@ -6,18 +6,23 @@ SignalWire. Nothing is deleted that was not copied first.
 
 Proof: the HTTP layer is a recorder that answers with two recording pages
 joined by `links.next`: two recordings past the window, one inside it. The
-media fetcher is a fake that records the URLs it was asked for. The pass makes
-GET, GET, DELETE, DELETE in that order, downloads exactly the two expired
-URLs, writes each to the export directory under its id, and leaves the fresh
-one alone. A second pass whose fetcher raises makes no DELETE at all. Every
-path is documented, the delete answers 204, and the spec's recording variants
-all carry `id`, `created_at` and `url`. Expected values live here, not in
-app.py.
+media fetcher is a fake that records the URLs it was asked for, and the
+recorder's DELETE checks that the file is complete on disk at that moment. The
+pass makes GET, GET, DELETE, DELETE in that order, downloads exactly the two
+expired URLs, writes each under its id, and leaves the fresh one alone. A
+second pass whose fetcher raises makes no DELETE at all. The real `download`
+sends basic auth to an https URL on the space and refuses anything else. Every
+path is documented, the delete answers 204, and the spec's four recording
+variants all carry `id`, `created_at` and `url`. Expected values live here,
+not in app.py.
 """
+import base64
 import os
 import pathlib
 import sys
 import tempfile
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 
 HERE = pathlib.Path(__file__).parent
@@ -65,10 +70,24 @@ def main():
     rec = V.Recorder(responses=[PAGE1, PAGE2, {}, {}])
     recipe.client.recordings._http = rec
     fetched = []
+    events = []                                   # one stream: copies and deletes, in order
 
     def fake_fetch(url):
         fetched.append(url)
+        events.append(("copy", url.rsplit("/", 1)[-1]))
         return b"RIFF" + url.encode()
+
+    real_delete = rec.delete
+
+    def delete_checking_disk(path):
+        rid = path.rsplit("/", 1)[-1]
+        on_disk = list(EXPORTS.glob(f"{rid}.*"))
+        assert len(on_disk) == 1, f"DELETE of {rid} before its copy landed: {on_disk}"
+        assert on_disk[0].read_bytes().startswith(b"RIFF"), on_disk[0]
+        events.append(("delete", rid))
+        return real_delete(path)
+
+    rec.delete = delete_checking_disk
 
     moved = recipe.export_and_delete(now=NOW, fetch=fake_fetch)
 
@@ -80,6 +99,8 @@ def main():
     assert page1["params"] is None, page1
     assert page2["params"] == {"page_token": "tok2"}, page2
     assert fetched == [OLD1["url"], OLD2["url"]], fetched
+    assert events == [("copy", "rec-old-1.wav"), ("delete", "rec-old-1"),
+                      ("copy", "rec-old-2.mp3"), ("delete", "rec-old-2")], events
     assert [m["id"] for m in moved] == ["rec-old-1", "rec-old-2"], moved
     for m, ext in zip(moved, ("wav", "mp3")):
         path = pathlib.Path(m["path"])
@@ -102,18 +123,53 @@ def main():
         raise AssertionError("a failed copy did not stop the pass")
     assert [c["method"] for c in rec2.calls] == ["GET"], rec2.calls
 
+    # the real fetcher: credentials only to https on the space, and no redirects
+    class FakeResponse:
+        def __init__(self, body): self.body = body
+        def read(self): return self.body
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    class FakeOpener:
+        def __init__(self): self.requests = []
+        def open(self, req, timeout=None):
+            self.requests.append(req)
+            return FakeResponse(b"RIFFdata")
+
+    opener = FakeOpener()
+    assert recipe.download(OLD1["url"], opener=opener) == b"RIFFdata"
+    (req,) = opener.requests
+    assert req.full_url == OLD1["url"] and req.get_method() == "GET", req.full_url
+    assert req.get_header("Authorization") == "Basic " + base64.b64encode(b"proj-1234:PT-test").decode()
+    for bad in ("http://example.signalwire.com/x.wav", "https://evil.example.com/x.wav"):
+        try:
+            recipe.download(bad, opener=opener)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError(f"credentials would have gone to {bad}")
+    assert len(opener.requests) == 1, "a refused URL must make no request"
+    try:
+        recipe.NoRedirects().redirect_request(req, None, 302, "Found", {}, "https://elsewhere.example.com/x")
+    except urllib.error.HTTPError as e:
+        assert e.code == 302, e
+    else:
+        raise AssertionError("a redirect was followed")
+
     # the spec's word on the two paths
     spec = V.spec("rest")
     V.assert_documented("rest", "GET", PATH, None)
-    V.assert_documented("rest", "GET", PATH, None, page2["params"])
     V.assert_documented("rest", "DELETE", f"{PATH}/{{id}}", None)
     delete = spec["paths"][f"{PATH}/{{id}}"]["delete"]
     assert "204" in delete["responses"], list(delete["responses"])
     listing = deref(spec, spec["paths"][PATH]["get"]["responses"]["200"]["content"]["application/json"]["schema"])
     assert "links" in listing["properties"], sorted(listing["properties"])
     items = deref(spec, deref(spec, listing["properties"]["data"])["items"])
-    variants = [deref(spec, v) for v in items.get("oneOf", [items])]
-    assert len(variants) >= 1
+    assert "oneOf" in items, "the spec's recording is a oneOf of call kinds"
+    variants = [deref(spec, v) for v in items["oneOf"]]
+    assert sorted(v.get("title", "") for v in variants) == \
+        ["ConferenceRecording", "PstnRecording", "SipRecording", "WebRtcRecording"], \
+        [v.get("title") for v in variants]
     for variant in variants:
         props = variant["properties"]
         assert {"id", "created_at", "url", "duration_in_seconds"} <= set(props), sorted(props)
@@ -122,7 +178,8 @@ def main():
         assert set(fixture) <= set(variants[0]["properties"]), sorted(set(fixture) - set(variants[0]["properties"]))
 
     print(f"ok: two pages walked, {len(fetched)} expired recordings copied to {EXPORTS.name} "
-          f"then deleted in order, the 3-day-old one kept; a failed copy made no DELETE")
+          f"then deleted, each file complete before its DELETE; the 3-day-old one kept; a failed "
+          f"copy made no DELETE; download sends basic auth only to https on the space")
 
 
 if __name__ == "__main__":

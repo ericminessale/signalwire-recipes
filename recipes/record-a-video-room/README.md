@@ -7,11 +7,11 @@
 ## What this demonstrates
 
 Recording is a property of the room, not a button in the call. The vendored
-REST spec's `POST /api/video/rooms` takes `record_on_start`, a boolean it
-describes as "Specifies whether to start recording a Room Session when one is
-started for this Room". From then on the recordings are REST objects.
+REST spec's `POST /api/video/rooms` takes `record_on_start`, a boolean. The
+spec describes it as "Specifies whether to start recording a Room Session when
+one is started for this Room". From then on the recordings are REST objects.
 `GET /api/video/room_sessions/{id}/recordings` lists a session's, and each
-carries `status`, `duration`, `format`, `size_in_bytes` and a `uri` to fetch.
+carries `status`, `duration`, `format`, `size_in_bytes` and a `uri`.
 `GET /api/video/room_recordings/{id}` reads one, and
 `DELETE /api/video/room_recordings/{id}` answers `204` and removes it. You
 reach them as `client.video.rooms.create`,
@@ -43,10 +43,10 @@ GET /api/video/room_recordings/<recording_id>
 DELETE /api/video/room_recordings/<recording_id>
 ```
 
-The session id comes from the room's `active_session` in the room object, or
-from `GET /api/video/room_sessions`. The list and the get take `media_ttl`, how
-long the returned `uri` stays valid; the recipe leaves it at the platform's
-default.
+The session id comes from `GET /api/video/room_sessions`, wrapped as
+`client.video.room_sessions.list`, and the spec's room object also carries an
+`active_session`. The recordings list and the get both document a `media_ttl`
+query parameter; the recipe leaves it at the platform's default.
 
 ## Run it
 
@@ -54,15 +54,17 @@ default.
 cd python
 pip install -r requirements.txt
 cp ../.env.example .env          # then edit .env: your project id, API token and space
-python app.py room               # once; then hold a session in the room
+python app.py room               # once
+python app.py sessions           # after a session: the ids to ask about
 python app.py recordings <session_id>
 python app.py get <recording_id>
 python app.py delete <recording_id>
 ```
 
-There is no server to expose; the script speaks to the REST API and exits. Join
-the room from a browser, leave, and the session's recording appears once the
-platform finishes it.
+There is no server to expose; the script speaks to the REST API and exits. To
+hold a session, join the room from a browser the way
+`create-a-video-room-and-join-from-the-browser` does, then leave. Then list the
+session's recordings and read each one's `status`.
 
 ## Verify it
 
@@ -72,14 +74,17 @@ No network, no account.
 python verify.py          # from the recipe folder, not python/
 ```
 
-You swap the SDK's HTTP layer for a recorder that answers with a room and one
-recording. You call the four helpers and assert the following.
+You swap the SDK's HTTP layer for a recorder that answers with a room, one
+session and one recording. You call the five helpers and assert the following.
 
-- they make four requests in order: `POST` the room, `GET` the session's recordings, `GET` one recording, `DELETE` it
-- the room body is exactly `name`, `display_name` and `record_on_start: true`, and the other three carry no body or query
+- they make five requests in order: `POST` the room, `GET` the sessions, `GET` the session's recordings, `GET` one recording, `DELETE` it
+- the room body is exactly `name`, `display_name` and `record_on_start: true`, and the other four carry no body and no query
 - every path and body is documented; the spec requires `name` on the room and describes `record_on_start` with the quoted sentence
-- the spec's recording schema, on both the list and the get, carries `id`, `room_session_id`, `status`, `duration`, `format` and `uri`, and the fixture uses only documented fields
-- the delete answers `204` with no body, and the list documents `media_ttl`
+- the spec's room response carries `active_session`
+- the sessions list's documented items carry `id`, and the fixture session uses only documented fields
+- the spec's recording schema, on both the list and the get, carries `id`, `room_session_id`, `status`, `duration`, `format` and `uri`
+- the recording fixture uses only fields each of those two schemas documents
+- the delete answers `204` with no body, and both the list and the get document `media_ttl`
 
 ## Limitations
 
@@ -94,6 +99,6 @@ documented switch.
 ## What to change first
 
 Drop `record_on_start=True` from `create_room` and run the verifier. The
-exact-body assertion fails, and nothing else would. The spec's own default is
-not to record, so a room without the switch produces sessions and no
-recordings.
+exact-body assertion fails, and nothing else would. A room without the switch
+asks for no automatic recording; the spec documents no default for the field,
+so the platform's own is what you get.

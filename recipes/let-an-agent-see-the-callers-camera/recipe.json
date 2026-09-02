@@ -2,7 +2,7 @@
   "slug": "let-an-agent-see-the-callers-camera",
   "title": "Let an agent see the callers camera",
   "alias": "ai.params enable_vision + vision_model + a get_visual_input filler",
-  "summary": "enable_vision true in ai.params lets the agent read the caller's camera through the platform's get_visual_input function. vision_model picks the model, and an internal filler for get_visual_input covers the look.",
+  "summary": "enable_vision: true in ai.params turns on the platform's get_visual_input function for the agent. vision_model names the model, and an internal filler under get_visual_input gives the agent something to say for it.",
   "scenario": "A workshop desk on a video call that wants to see the worn part before it gives advice",
   "surfaces": [
     "python"

@@ -1,6 +1,6 @@
 # Route calls by dialed number or time
 
-> One SWML webhook serves several numbers. The handler reads the dialed number from the documented inbound call webhook and the clock in that line's zone, and returns the document for that number at that hour.
+> One SWML webhook serves several numbers. Your handler reads the dialed number from the documented inbound call webhook and the clock in that line's zone. It returns the document for that number at that hour.
 
 **Scenario:** a bike shop with a sales line in Denver and a workshop line in Los Angeles, both pointed at one URL
 
@@ -9,9 +9,8 @@
 SignalWire fetches SWML with a POST the vendored REST spec documents as the
 inbound call webhook. Its `call` object requires `call_id`, `direction`,
 `type`, `from`, `to` and six more fields, and carries `to_number` for phone
-calls; the spec describes `to` as "The number/URI of the destination of this
-call". A document is therefore something you compute per request, not a file.
-This handler keys a table of lines by dialed number and judges the clock in the
+calls. The spec describes `to` as "The number/URI of the destination of this
+call". This handler computes a document per request. It keys a table of lines by dialed number and judges the clock in the
 line's own time zone with `zoneinfo`. It builds one of three documents with
 `SWMLService`: greet and `connect`, play the hours and hang up, or not in
 service.
@@ -21,7 +20,6 @@ service.
 ```python
 def document(to, now):
     service = SWMLService(name="front", route="/swml")
-    service.reset_document()
     service.add_verb("answer", {})
     line = LINES.get(to)
     if not line:
@@ -79,13 +77,14 @@ cd ..                     # back to the recipe folder
 python verify.py
 ```
 
-The verifier drives the Flask app with its test client and a frozen clock, and
-asserts the following.
+You drive the Flask app with its test client and a frozen clock, and assert
+the following.
 
 - the fixture carries every field the spec's inbound call webhook requires, at both levels, and nothing the spec lacks; `to` is documented as the destination and `phone` is in the type enum
-- at 16:30 UTC each of the two numbers gets `answer`, `play`, `connect`, `hangup`, with its own greeting and its own `connect` destination and timeout
+- at 16:30 UTC each of the two numbers gets `answer`, `play`, `connect`, `hangup`
+- each carries its own complete greeting and its own `connect` destination and timeout
 - at 01:00 UTC each gets `answer`, `play`, `hangup`, with its own hours in the message
-- one instant falls on opposite sides of the workshop's close in Los Angeles while Denver stays open, so the zone on the line is what decides
+- two instants one minute apart, 15:59 and 16:00 in Los Angeles, fall on opposite sides of the workshop's close while Denver stays open, so the zone on the line decides
 - a number in neither line gets the not-in-service message and no `connect`
 - every document validates against the bundled schema, and `dialed()` prefers `to_number` over `to`
 
@@ -100,7 +99,7 @@ the same.
 
 ## What to change first
 
-Change the workshop's `tz` to `America/Denver` and run the verifier. The 16:00
-edge case fails, because 23:00 UTC is 17:00 in Denver and the workshop closes
+Change the workshop's `tz` to `America/Denver` and run the verifier. The 15:59
+edge case fails, because 22:59 UTC is 16:59 in Denver and the workshop closes
 at 16:00. The zone belongs to the line, and the verifier holds each line to its
 own.

@@ -1,6 +1,6 @@
-# Give an agent a video avatar in plain SWML. The three `params` name a looping
-# clip for each state; the platform switches between them. The schema notes
-# each one "Only works for calls that support video."
+# Give an agent a video avatar in plain SWML. The three `params` name a clip
+# for each state the schema describes: idle, listening, talking. The schema
+# notes each one requires a call that supports video.
 version: "1.0.0"
 sections:
   main:

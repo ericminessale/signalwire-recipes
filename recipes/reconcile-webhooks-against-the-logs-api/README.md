@@ -48,8 +48,9 @@ GET /api/messaging/logs?created_after=...&created_before=...&page_size=200
 
 `every_page` re-issues the query string each `links.next` carries, so it follows
 whatever pagination the platform hands back. `SEEN` stands in for whatever your
-webhook handler writes: a table of call and message ids. An id in the window
-that your table lacks is an entry you have no record of. Why you have none is
+webhook handler writes: a table of voice and message ids. Keep it per product,
+so an id that appears in both cannot hide an entry. An id in the window that your
+table lacks is an entry you have no record of. Why you have none is
 for you to work out, and the events trail is where you start.
 
 ## Run it
@@ -78,21 +79,21 @@ are two voice pages, two message pages, and a trail per unseen call. In each
 list, page one's `links.next` URL points at page two. You run a pass and
 assert the following.
 
-- the pass makes six requests in order: voice page one, voice page two, one events request per unseen call, message page one, message page two
+- the pass makes seven requests in order: voice page one, voice page two, one events request per unseen voice log, message page one, message page two
 - page one of each list carries the window parameters, and page two of each carries exactly the query from its `links.next` URL
 - the events requests carry no query, and each event in a trail carries every field the spec requires
 - the spec documents every path and parameter used
-- the report names both unseen calls, each with its own trail, and both unseen messages, and nothing the store holds
+- the report equals one expected object. It holds the three unseen voice logs whole, each with its own trail, the two unseen messages whole, and nothing the store holds
+- judge a shared id within its product: the store holds the message id, so the pass excludes the message and reports the voice log
 - one of the calls and one of the messages come from a second page
 - the spec bounds `page_size` at exactly 1 and 1000 on both lists
 
 ## Limitations
 
 The diff is by id: the pass compares each log entry's `id` with the ids your
-handler stored. The message status callback documents its `id` as the message's
-identifier. For calls, the vendored specs do not document which callback field
-equals the voice log's `id`. Check that mapping against your own account before
-trusting the report on the voice side.
+handler stored. Neither callback document in the vendored specs states that
+its `id` equals the log entry's `id`. Check both mappings against your own
+account before trusting the report.
 
 You prove the requests and the diff against fixtures; what the logs contain for
 a real window is the platform's record.

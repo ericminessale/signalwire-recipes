@@ -1,6 +1,7 @@
 """Stream a video room to RTMP.
 
-One POST starts pushing a room's session to an RTMP or RTMPS server of yours.
+One POST asks the platform to stream a room's session to an RTMP or RTMPS
+server of yours.
 The vendored REST spec (tools/openapi/rest.json) documents
 `POST /api/video/rooms/{id}/streams` with one required field, `url`, described
 as "RTMP or RTMPS URL. This must be the address of a server accepting incoming
@@ -22,12 +23,12 @@ load_dotenv()
 # SIGNALWIRE_SPACE from the environment (signalwire/rest/client.py).
 client = RestClient()
 
-# the URL is a credential to your streaming server, so it lives in .env
+# the URL may contain a stream key, so it lives in .env and not here
 RTMP_URL = os.getenv("RTMP_URL")
 
 
 def start_stream(room_id, url=None):
-    """Start pushing the room to `url`. The response id is the handle."""
+    """Ask for a stream of the room to `url`. The response id is the handle."""
     url = url or RTMP_URL
     if not url:
         raise SystemExit("RTMP_URL is required to start a stream; see .env.example")
@@ -35,7 +36,7 @@ def start_stream(room_id, url=None):
 
 
 def move_stream(stream_id, url):
-    """Send a running stream to a different server."""
+    """Update the stream's destination URL."""
     return client.video.streams.update(stream_id, url=url)
 
 

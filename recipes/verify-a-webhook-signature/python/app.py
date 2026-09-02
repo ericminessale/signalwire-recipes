@@ -19,11 +19,12 @@ Written against Flask and the standard library. There is no SDK here.
 import hashlib
 import hmac
 import os
+import re
 
 from dotenv import load_dotenv
 from flask import Flask, abort, jsonify, request
 
-# .env is not read for you
+# load .env into the environment; there is no SDK here to do it
 load_dotenv()
 
 SIGNING_KEY = os.getenv("SIGNALWIRE_SIGNING_KEY")
@@ -35,6 +36,7 @@ for name, value in REQUIRED:
 
 DIGESTS = {"X-Signalwire-SHA256-Signature": hashlib.sha256,
            "X-Signalwire-Signature": hashlib.sha1}
+HEX = re.compile(r"[0-9a-fA-F]+")
 
 
 def expected(key, url, raw_body, digest):
@@ -49,8 +51,12 @@ def verify(headers, url, raw_body, key=None):
     is not signed, so it is not SignalWire's."""
     key = key or SIGNING_KEY
     for header, digest in DIGESTS.items():
-        sent = headers.get(header)
-        if sent:
+        if header in headers:
+            # presence selects the digest, so an empty or wrong SHA-256 header
+            # is a failed SHA-256 check, not a fallback to SHA-1
+            sent = headers[header]
+            if not HEX.fullmatch(sent):
+                return False        # not a hex digest at all; compare_digest wants ASCII
             return hmac.compare_digest(sent, expected(key, url, raw_body, digest))
     return False
 
@@ -60,7 +66,7 @@ app = Flask(__name__)
 
 @app.before_request
 def gate():
-    """Runs before any route. Nothing of yours executes for a bad signature."""
+    """Runs before any route. The route handler does not run for a bad signature."""
     url = WEBHOOK_URL
     if request.query_string:
         url += "?" + request.query_string.decode()

@@ -1,9 +1,9 @@
 {
   "slug": "build-an-ivr-without-a-server",
   "title": "Build an ivr without a server",
-  "alias": "",
-  "summary": "A Call Flow Builder flow deployed over REST answers, gathers and forwards with no code hosted anywhere.",
-  "scenario": "",
+  "alias": "call_flows relayml + phone_routes",
+  "summary": "A call flow is a SWML document you hand to the platform, described in the spec as the document the flow should execute, so no server of yours serves it. One POST creates it from a title and a relayml document. One POST points a number at it by phone_route_id with the calls handler.",
+  "scenario": "A bike shop that wants press 1 for sales, 2 for the workshop on its main number and nothing to keep running",
   "surfaces": [
     "python"
   ],
@@ -20,17 +20,26 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "voice",
     "folds": [
       "sol gap #9",
       "t:ai-phone-tree-builder-from-description"
     ],
     "evidence": [
-      "docs call-flow-builder/reference/nodes (18 nodes)",
-      "docs apis/rest/call-flows/create-call-flow (versions, deploy)",
-      "resolved: POST /api/fabric/resources/call_flows documents flow_data and paired relayml (docs apis/rest/call-flows/create-call-flow); keep a check that the result stays editable in CFB"
+      "tools/openapi/rest.json POST /api/fabric/resources/call_flows: title required, relayml the calling SWML document, flow_data optional",
+      "tools/openapi/rest.json POST /api/fabric/resources/{id}/phone_routes: phone_route_id and handler required",
+      "schema.json Prompt (play required, max_digits), Switch (variable, case); prompt_value holds the digits",
+      "sdk rest/namespaces/fabric.py call_flows.create, resources.assign_phone_route",
+      "verified 2026-09-02: recipes/build-an-ivr-without-a-server/verify.py"
     ]
   },
-  "subcategory": "routing"
+  "subcategory": "routing",
+  "prerequisites": [
+    "answer-an-inbound-call"
+  ],
+  "related": [
+    "collect-speech-input-and-branch",
+    "route-calls-by-dialed-number-or-time"
+  ]
 }

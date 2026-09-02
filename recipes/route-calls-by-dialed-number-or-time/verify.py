@@ -1,14 +1,14 @@
 """Prove the claim without a network.
 
-Claim: one SWML webhook serves several numbers. The handler reads the dialed
+Claim: one SWML webhook serves several numbers. Your handler reads the dialed
 number from the documented inbound call webhook and the clock in that line's
-zone, and returns the document for that number at that hour.
+zone. It returns the document for that number at that hour.
 
 Proof: drive the Flask app with its test client and a frozen clock. Two
 payloads shaped like the spec's inbound call webhook, every required field
 present and nothing undocumented, differ only in the dialed number. At one
 instant, 16:30 UTC, the sales line in Denver is open at 10:30 and the workshop
-line in Los Angeles is open at 09:30, and each document connects to its own
+line in Los Angeles is open at 09:30. Each document connects to its own
 destination. At another instant, 01:00 UTC, both are closed and each document
 plays its own hours and hangs up. A number in neither line plays a
 not-in-service message. Every document validates. Expected values live here,
@@ -29,8 +29,8 @@ import verifylib as V  # noqa: E402
 SALES, WORKSHOP, NOBODY = "+15550001111", "+15550002222", "+15550009999"
 OPEN_AT = datetime(2026, 9, 2, 16, 30, tzinfo=timezone.utc)    # 10:30 Denver, 09:30 LA
 CLOSED_AT = datetime(2026, 9, 3, 1, 0, tzinfo=timezone.utc)    # 19:00 Denver, 18:00 LA
-EDGE = datetime(2026, 9, 2, 23, 0, tzinfo=timezone.utc)        # 17:00 Denver open, 16:00 LA open
-PAST_EDGE = datetime(2026, 9, 2, 23, 1, tzinfo=timezone.utc)   # 16:01 LA, workshop closed
+EDGE = datetime(2026, 9, 2, 22, 59, tzinfo=timezone.utc)       # 16:59 Denver open, 15:59 LA open
+PAST_EDGE = datetime(2026, 9, 2, 23, 0, tzinfo=timezone.utc)   # 16:00 LA, the workshop is closed
 
 
 def payload(to):
@@ -87,11 +87,12 @@ def main():
 
     try:
         # open: greeting, then connect to that line's own destination
-        for to, dest, word in ((SALES, "+15550100001", "sales"), (WORKSHOP, "+15550100002", "workshop")):
+        for to, dest, greeting in ((SALES, "+15550100001", "say:Ridgeline Cycles sales, one moment."),
+                                   (WORKSHOP, "+15550100002", "say:Ridgeline Cycles workshop, one moment.")):
             doc = fetch(to, OPEN_AT)
             assert V.verb_names(doc) == ["answer", "play", "connect", "hangup"], (to, V.verb_names(doc))
             assert V.first(doc, "connect") == {"to": dest, "timeout": 25}, (to, V.first(doc, "connect"))
-            assert word in V.first(doc, "play")["url"], (to, V.first(doc, "play"))
+            assert V.first(doc, "play") == {"url": greeting}, (to, V.first(doc, "play"))
 
         # closed: the hours, no connect
         for to, hours in ((SALES, "9 AM to 6 PM"), (WORKSHOP, "8 AM to 4 PM")):
@@ -99,10 +100,10 @@ def main():
             assert V.verb_names(doc) == ["answer", "play", "hangup"], (to, V.verb_names(doc))
             assert hours in V.first(doc, "play")["url"], (to, V.first(doc, "play"))
 
-        # the clock is judged in each line's own zone: one instant, two answers
-        assert "connect" in V.verb_names(fetch(WORKSHOP, EDGE)), "16:00 in Los Angeles is open"
-        assert "connect" not in V.verb_names(fetch(WORKSHOP, PAST_EDGE)), "16:01 in Los Angeles is closed"
-        assert "connect" in V.verb_names(fetch(SALES, PAST_EDGE)), "17:01 in Denver is open"
+        # the clock is judged in each line's own zone: two instants a minute apart
+        assert "connect" in V.verb_names(fetch(WORKSHOP, EDGE)), "15:59 in Los Angeles is open"
+        assert "connect" not in V.verb_names(fetch(WORKSHOP, PAST_EDGE)), "16:00 in Los Angeles is closed"
+        assert "connect" in V.verb_names(fetch(SALES, PAST_EDGE)), "17:00 in Denver is open"
 
         # a number in neither line
         doc = fetch(NOBODY, OPEN_AT)
@@ -116,7 +117,7 @@ def main():
     assert recipe.dialed({"to": SALES}) == SALES
 
     print(f"ok: at 16:30 UTC {SALES} connects to sales and {WORKSHOP} to the workshop; at 01:00 UTC "
-          f"both play their hours; 16:00 and 16:01 in Los Angeles fall on opposite sides of the "
+          f"both play their hours; 15:59 and 16:00 in Los Angeles fall on opposite sides of the "
           f"workshop's close; an unknown number is not in service")
 
 

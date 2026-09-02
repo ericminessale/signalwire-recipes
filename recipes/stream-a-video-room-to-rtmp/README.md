@@ -1,6 +1,6 @@
 # Stream a video room to RTMP
 
-> One POST to a room's streams path with a `url` starts pushing its session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new `url`, and a DELETE by id answers `204`.
+> One POST to a room's streams path with a `url` asks the platform to stream the room's session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new `url`, and a DELETE by id answers `204`.
 
 **Scenario:** a workshop stand-up on video that a wider audience watches on a streaming platform
 
@@ -43,8 +43,8 @@ PUT /api/video/streams/<stream_id>
 DELETE /api/video/streams/<stream_id>
 ```
 
-Keep the URL in `RTMP_URL` and out of the code: whoever holds it can push video
-to your streaming server. The room is one you already have; the spec documents the
+Keep the URL in `RTMP_URL` and out of the code, because it may contain a
+stream key. The room is one you already have; the spec documents the
 same `url` field on `POST /api/video/conferences/{id}/streams` for a prebuilt
 conference.
 
@@ -62,8 +62,7 @@ python app.py stop "$STREAM_ID"
 python app.py list "$ROOM_ID"
 ```
 
-You expose no server; the script speaks to the REST API and exits. Each
-subcommand checks its own arguments and prints the usage line otherwise.
+You expose no server; the script speaks to the REST API and exits.
 
 ## Verify it
 
@@ -80,8 +79,10 @@ following.
 
 - they make four requests in order: `POST` the stream, `PUT` the stream by id, `DELETE` the stream by id, `GET` the room's streams
 - the create and the move are exactly `{"url": ...}`; the delete and the list carry no body
-- the vendored spec documents every path and body, requires exactly `url` on the create and the update, and titles the `PUT` "Update stream" and the `DELETE` "Delete stream"
-- the spec describes `url` as an RTMP or RTMPS URL; the create's `201` schema carries `id`, `url` and `stream_type`; the delete answers `204` with no body
+- the vendored spec documents every path and body, and requires exactly `url` on the create and the update
+- the spec titles the `PUT` "Update stream" and the `DELETE` "Delete stream"
+- the spec describes `url` as an RTMP or RTMPS URL, and its update body has exactly one property
+- the create's `201` schema carries `id`, `url` and `stream_type`; the delete's `204` response says there is no content to send
 - the spec requires the same `url` on the conference streams path
 - with `RTMP_URL` unset, `start_stream` stops before any request
 
@@ -99,4 +100,4 @@ id.
 
 Change `move_stream` to send `{"rtmp_url": url}` and run the verifier. The
 exact-body assertion fails first, and `assert_documented` would fail next: the
-spec knows one field here, and its name is `url`.
+spec's update body has exactly one property, and its name is `url`.

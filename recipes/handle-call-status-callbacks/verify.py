@@ -10,12 +10,14 @@ Proof: with the HTTP layer replaced by a recorder, `place` makes one POST to
 the documented compat calls path with exactly the expected body. The four
 events it asks for are in the list the spec's description calls valid, and the
 two it leaves out are named. Then the
-Flask app receives four callbacks out of order, each carrying every field the
+Flask app receives four callbacks out of order. Each carries every field the
 spec's voice status callback schema requires and a `CallStatus` from its enum,
-one of them form-encoded. `timeline` returns the steps in sequence order,
+and one of them is form-encoded. Every one of the 24 arrival orders yields the
+same timeline. `timeline` returns the steps in sequence order,
 initiated, ringing, in-progress, completed, with the duration taken from the
 completed event alone. Expected values live here, not in app.py.
 """
+import itertools
 import os
 import pathlib
 import re
@@ -71,7 +73,7 @@ def main():
     V.sdk_banner()
     import app as recipe
 
-    # the request that asks for every stage
+    # the request that asks for the four selected stages
     rec = V.Recorder(responses=[{"sid": SID, "status": "queued"}])
     recipe.client.compat.calls._http = rec
     recipe.place(TO)
@@ -119,6 +121,26 @@ def main():
     assert life["steps"][2]["at"] == "Wed, 02 Sep 2026 10:00:03 +0000", life["steps"][2]
     assert (life["final"], life["duration"]) == ("completed", 38), life
     assert (life["direction"], life["from"], life["to"]) == ("outbound-api", "+15550001111", TO), life
+
+    # every arrival order gives the same complete timeline
+    EXPECTED_LIFE = {
+        "call_sid": SID, "direction": "outbound-api", "from": "+15550001111", "to": TO,
+        "steps": [{"seq": 0, "status": "initiated", "at": "Wed, 02 Sep 2026 10:00:00 +0000"},
+                  {"seq": 1, "status": "ringing", "at": "Wed, 02 Sep 2026 10:00:01 +0000"},
+                  {"seq": 2, "status": "in-progress", "at": "Wed, 02 Sep 2026 10:00:03 +0000"},
+                  {"seq": 3, "status": "completed", "at": "Wed, 02 Sep 2026 10:00:41 +0000"}],
+        "final": "completed", "duration": 38,
+    }
+    assert life == EXPECTED_LIFE, life
+    for order in itertools.permutations(ARRIVAL):
+        recipe.CALLS.clear()
+        for e in order:
+            client.post("/status", json=e)
+        assert recipe.timeline(SID) == EXPECTED_LIFE, [e["SequenceNumber"] for e in order]
+    recipe.CALLS.clear()
+    for e in ARRIVAL:
+        client.post("/status", json=e)
+    life = recipe.timeline(SID)
 
     # the same timeline over HTTP, from the process that holds the store
     r = client.get(f"/calls/{SID}")

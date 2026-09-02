@@ -1,18 +1,18 @@
 """Prove the claim without a network.
 
-Claim: one POST to a room's streams path with a `url` starts pushing its
-session to an RTMP or RTMPS server of yours. The stream id in the response is
-the handle: a PUT to the stream's path carries a new `url`, and a DELETE by id
-answers 204.
+Claim: one POST to a room's streams path with a `url` asks the platform to
+stream the room's session to an RTMP or RTMPS server of yours. The stream id
+in the response is the handle: a PUT to the stream's path carries a new `url`,
+and a DELETE by id answers 204.
 
 Proof: the HTTP layer is a recorder that answers the stream create with an
-id. The four helpers make four requests in order: POST the stream with
-exactly `{"url": ...}`, PUT the new URL by stream id, DELETE by stream id, GET
-the room's streams. The vendored REST spec documents each path and body,
-requires exactly `url` on the create and the update, carries the stream `id`
-in the create response, answers the delete with 204, and documents the same
-`url` field on the conference streams path. Expected values live here, not in
-app.py.
+id. The four helpers make four requests in order. They POST the stream with
+exactly `{"url": ...}`, PUT the new URL by stream id, DELETE by stream id, and
+GET the room's streams. The vendored REST spec documents each path and body
+and requires exactly `url` on the create and the update. It carries the stream
+`id` in the create response, answers the delete with 204, and documents the
+same `url` field on the conference streams path. Expected values live here,
+not in app.py.
 """
 import os
 import pathlib
@@ -56,8 +56,6 @@ def response_props(spec, path, method):
     if not content:
         return code, {}
     schema = deref(spec, content["application/json"]["schema"])
-    if "data" in schema.get("properties", {}):
-        schema = deref(spec, deref(spec, schema["properties"]["data"]).get("items"))
     return code, schema.get("properties", {})
 
 
@@ -104,8 +102,9 @@ def main():
     # the id the create returns is what the other two paths take
     code, props = response_props(spec, f"{ROOMS}/{{id}}/streams", "post")
     assert code == "201" and {"id", "url", "stream_type"} <= set(props), (code, sorted(props))
-    code, props = response_props(spec, "/api/video/streams/{id}", "delete")
-    assert code == "204" and props == {}, (code, props)
+    delete = spec["paths"]["/api/video/streams/{id}"]["delete"]["responses"]
+    assert "204" in delete and "no content to send" in delete["204"]["description"], delete.get("204")
+    assert set(body_schema(spec, "/api/video/streams/{id}", "put")["properties"]) == {"url"}
 
     # the same field on a conference, as the README says
     conf = body_schema(spec, "/api/video/conferences/{id}/streams", "post")

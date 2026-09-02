@@ -10,8 +10,10 @@ conferences path. Its body equals one expected object, whose keys are all
 documented and include `display_name`, the spec's one required field, and the
 spec's 200 schema carries `id`. `tokens` makes one GET to the documented
 conference tokens path for that id and returns the recorder's whole page,
-links and data. The spec's token schema carries `name`, `token` and `scopes`. Expected
-values live here, not in app.py.
+links and data. The spec's token schema carries `name`, `token` and `scopes`. A second launch with overrides and no name or
+join-window arguments sends exactly the overridden defaults and neither of
+those keys.
+Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -83,6 +85,15 @@ def main():
                  ["responses"]["200"]["content"]["application/json"]["schema"])
     token = deref(spec, resp["properties"]["data"]["items"])
     assert {"id", "name", "token", "scopes"} <= set(token["properties"]), sorted(token["properties"])
+
+    # overrides reach the body, and the name and join-window keys stay out when not given
+    rec2 = V.Recorder(responses=[{"id": "conf-2"}])
+    recipe.client.video.conferences._http = rec2
+    recipe.launch("Quick call", quality="1080p", layout="1x1", primary="#044EF4")
+    (second,) = rec2.calls
+    assert second["body"] == {"display_name": "Quick call", "record_on_start": False,
+                              "quality": "1080p", "layout": "1x1",
+                              "light_primary": "#044EF4", "dark_primary": "#044EF4"}, second["body"]
 
     print(f"ok: POST {CONFERENCES} with display_name and documented options, then GET "
           f"{TOKENS}; the spec's token carries name, token and scopes")

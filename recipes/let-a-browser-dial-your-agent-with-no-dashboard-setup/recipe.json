@@ -1,12 +1,11 @@
 {
   "slug": "let-a-browser-dial-your-agent-with-no-dashboard-setup",
   "title": "Let a browser dial your agent with no dashboard setup",
-  "alias": "",
-  "summary": "On startup the agent registers its own SWML handler resource and mints guest tokens, so a browser can dial it with zero Dashboard configuration.",
-  "scenario": "",
+  "alias": "swml_webhooks resource + addresses + guest token",
+  "summary": "A SWML webhook resource whose primary_request_url is your agent's URL gets a Fabric address. A guest token whose allowed_addresses names that address lets a browser dial it, with no Dashboard step.",
+  "scenario": "A support page whose talk-to-us button should reach the agent you deployed a minute ago, with no Dashboard visit first",
   "surfaces": [
-    "python",
-    "typescript"
+    "python"
   ],
   "governed": false,
   "demo": "none",
@@ -23,16 +22,25 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "video",
     "folds": [
       "demo example (the canonical shape 12 demos copy)"
     ],
     "evidence": [
-      "demo example app.py:139-240 (legacy SDK)",
-      "demo afterhours app.py:152-250 RestClient fabric.swml_webhooks + tokens.create_guest_token (3.x - quote this one)",
-      "sdk rest/namespaces/fabric.py"
+      "tools/openapi/rest.json POST /api/fabric/resources/swml_webhooks: primary_request_url required; used_for calling|messaging",
+      "tools/openapi/rest.json GET /api/fabric/resources/{id}/addresses: id, name, channels",
+      "tools/openapi/rest.json POST /api/fabric/guests/tokens: allowed_addresses required (up to 10), expire_at; 201 token, refresh_token",
+      "sdk rest/namespaces/fabric.py swml_webhooks.create/list_addresses, tokens.create_guest_token",
+      "verified 2026-09-02: recipes/let-a-browser-dial-your-agent-with-no-dashboard-setup/verify.py"
     ]
   },
-  "subcategory": "tools"
+  "subcategory": "tools",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "call-from-a-browser",
+    "protect-tool-webhooks-with-per-call-tokens"
+  ]
 }

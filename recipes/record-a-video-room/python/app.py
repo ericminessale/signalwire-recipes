@@ -2,10 +2,11 @@
 
 `record_on_start` on a room is the switch. The vendored REST spec describes it
 as "Specifies whether to start recording a Room Session when one is started
-for this Room." Every session of the room is then recorded, and the
-recordings are REST objects: `GET /api/video/room_sessions/{id}/recordings`
-lists a session's, each with a `status`, a `duration`, a `format` and a `uri`
-to fetch, `GET /api/video/room_recordings/{id}` reads one, and
+for this Room." The recordings are then REST objects.
+`GET /api/video/room_sessions` lists sessions with their ids.
+`GET /api/video/room_sessions/{id}/recordings` lists a session's recordings,
+each with a `status`, a `duration`, a `format` and a `uri`.
+`GET /api/video/room_recordings/{id}` reads one, and
 `DELETE /api/video/room_recordings/{id}` removes it.
 
 Written against signalwire-sdk 3.0.1 (RestClient.video).
@@ -31,8 +32,13 @@ def create_room(name=ROOM):
                                      record_on_start=True)
 
 
+def sessions():
+    """The room sessions the platform has, with their ids."""
+    return client.video.room_sessions.list()
+
+
 def recordings_of(session_id):
-    """What a session produced. Each entry carries the uri to download."""
+    """What a session produced. Each entry carries a status and a uri."""
     return client.video.room_sessions.list_recordings(session_id)
 
 
@@ -48,13 +54,15 @@ def delete_recording(recording_id):
 if __name__ == "__main__":
     import sys
 
-    usage = ("usage: python app.py room | recordings <session_id> | "
+    usage = ("usage: python app.py room | sessions | recordings <session_id> | "
              "get <recording_id> | delete <recording_id>")
     if len(sys.argv) < 2:
         raise SystemExit(usage)
     verb, args = sys.argv[1], sys.argv[2:]
     if verb == "room":
         print(create_room())
+    elif verb == "sessions":
+        print(sessions())
     elif verb == "recordings" and args:
         print(recordings_of(args[0]))
     elif verb == "get" and args:

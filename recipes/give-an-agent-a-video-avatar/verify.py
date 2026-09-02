@@ -1,8 +1,8 @@
 """Prove the claim without a network.
 
 Claim: three `ai.params`, `video_idle_file`, `video_listening_file` and
-`video_talking_file`, give an agent a face on a video call, and the platform
-switches between them with the agent's state.
+`video_talking_file`, give an agent a face on a video call, and the schema
+names the state each one plays for.
 
 Proof: render the agent's SWML and read `ai.params`. The three keys hold
 exactly the three expected URLs and no other `video_*` key is present. The
@@ -71,7 +71,7 @@ def main():
     typo_params = ai_of(typo)["params"]
     typo_params["video_idel_file"] = typo_params.pop("video_idle_file")
     V.validate_swml(typo)
-    assert "video_idle_file" not in typo_params
+    assert "video_idel_file" not in props, "the schema now knows the misspelt key"
 
     print(f"ok: ai.params carries idle, listening and talking clips under "
           f"{EXPECTED['video_idle_file'].rsplit('/', 1)[0]}/ on both surfaces; the schema "

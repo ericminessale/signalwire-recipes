@@ -3,11 +3,10 @@
 Two `ai.params` and one filler. The bundled schema documents `enable_vision`
 as "Enables visual input processing for the AI Agent. When set to `true`, the
 AI Agent will be able to utilize visual processing capabilities, while
-leveraging the `get_visual_input` function." `vision_model` picks the model:
+leveraging the `get_visual_input` function." `vision_model` names the model:
 "Allowed values are `gpt-4o-mini`, `gpt-4.1-mini`, and `gpt-4.1-nano`." The
 `get_visual_input` function is the platform's; you do not define it. What you
-can give it is an internal filler, a phrase the agent says while it looks, so
-the caller does not hear silence.
+can give it is an internal filler, a phrase filed under its name.
 
 Written against signalwire-sdk 3.0.1 (AgentBase.set_params,
 set_internal_fillers).
@@ -34,7 +33,7 @@ class EyesAgent(AgentBase):
             "describe what you see before you give advice.")
         # the switch and the model; the platform supplies get_visual_input
         self.set_params({"enable_vision": True, "vision_model": VISION_MODEL})
-        # what the caller hears while the agent looks
+        # the phrases filed under the platform's function name
         self.set_internal_fillers({"get_visual_input": {"en-US": LOOKING}})
 
 

@@ -6,15 +6,17 @@
 
 ## What this demonstrates
 
-SignalWire keeps a recording until you delete it. The vendored REST spec lists
-them at `GET /api/relay/rest/recordings`, paginated through `links.next`, and
-every variant of recording it documents carries an `id`, a `created_at`, a
+The vendored REST spec lists recordings at `GET /api/relay/rest/recordings`,
+with a `links` object for paging and no query parameters of its own. Every
+variant of recording it documents carries an `id`, a `created_at`, a
 `duration_in_seconds` and a `url` "of the recording file".
-`DELETE /api/relay/rest/recordings/{id}` answers `204`. Retention is therefore
-three steps in a fixed order: find what is past the window, copy it out, delete
-it. The copy is a GET of `url` with your project credentials as basic auth, so
-it also works when the project's media protection is on. You reach the two
-endpoints as `client.recordings.list` and `client.recordings.delete`.
+`DELETE /api/relay/rest/recordings/{id}` answers `204`; nothing deletes a
+recording until you do. Retention is therefore three steps in a fixed order:
+find what is past the window, copy it out, delete it. The copy is a GET of
+`url` with your project credentials as basic auth. The media protection page,
+https://signalwire.com/docs/platform/media-protection, says protected media
+requires them. You reach the two endpoints as `client.recordings.list` and
+`client.recordings.delete`.
 
 ## How it works
 
@@ -25,7 +27,8 @@ def export_and_delete(now=None, fetch=download):
     for recording in every_page(client.recordings.list):
         if not expired(recording, now):
             continue
-        path = EXPORT_DIR / f"{recording['id']}{suffix_of(recording['url'])}"
+        suffix = pathlib.PurePosixPath(urlsplit(recording["url"]).path).suffix or ".wav"
+        path = EXPORT_DIR / f"{recording['id']}{suffix}"
         path.write_bytes(fetch(recording["url"]))     # copy first
         client.recordings.delete(recording["id"])      # then, and only then, delete
         moved.append({"id": recording["id"], "created_at": recording["created_at"],
@@ -45,7 +48,10 @@ DELETE /api/relay/rest/recordings/<id>    204
 The order is the safety property. A copy that raises stops the pass on that
 recording, before its `DELETE`, so a storage outage leaves recordings in
 SignalWire rather than nowhere. `EXPORT_DIR` stands in for your object storage;
-swap `write_bytes` for your client's upload.
+swap `write_bytes` for your client's upload. `download` sends the credentials
+only to an `https` URL on your own space and refuses to follow a redirect, so
+a `url` that pointed elsewhere would get nothing. `RETENTION_DAYS` below one is
+refused at startup, because a zero window would delete everything.
 
 ## Run it
 
@@ -73,19 +79,23 @@ recordings, two past a 30-day window and one inside it. You swap the media
 fetcher for a fake that records its URLs. You run a pass and assert the following.
 
 - the pass makes `GET`, `GET`, `DELETE`, `DELETE` in that order; page two carries exactly the query from `links.next`
+- one event stream records every copy and every delete: each recording's file is complete on disk before its `DELETE` is made
 - the fetcher was asked for exactly the two expired URLs, and each copy sits in the export directory under its id with the file's own extension
 - the fresh recording was neither fetched nor deleted, and the report names the two moved ones in order
 - a second pass whose fetcher raises makes no `DELETE`
-- every path and the page query are documented, the delete answers `204`, the list carries `links`, and every recording variant in the spec carries `id`, `created_at`, `url` and `duration_in_seconds`
+- `download` sends one GET with your project credentials as basic auth to an `https` URL on your space, and refuses `http`, another host, and a redirect
+- every path is documented, the delete answers `204`, the list carries `links`, and the spec's four recording variants each carry `id`, `created_at`, `url` and `duration_in_seconds`
 
 ## Limitations
 
 You prove the order and the requests. What `url` serves, and how long the
 platform takes to mark a recording `finished`, are the platform's side.
 
-Writing a recording somewhere else at record time is a different mechanism. In
-cXML, `<Record>` takes `storageUrl` for that; SWML's `record` and `record_call`
-expose no storage URL, which is why this recipe works after the fact.
+Writing a recording somewhere else at record time is a different mechanism. The
+cXML `<Record>` reference documents `storageUrl` for that
+(https://signalwire.com/docs/compatibility-api/cxml/reference/voice/record).
+The bundled SWML schema's `record` and `record_call` have no storage field,
+which is why this recipe works after the fact.
 
 ## What to change first
 

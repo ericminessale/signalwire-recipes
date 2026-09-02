@@ -80,14 +80,14 @@ app = Flask(__name__)
 @app.post("/status")
 def status():
     # the spec documents the payload as JSON; a form-encoded post carries the
-    # same field names, so both are accepted
+    # same field names, so the handler accepts both
     record(request.get_json(silent=True) or request.form.to_dict())
     return "", 204
 
 
 @app.get("/calls/<call_sid>")
 def life(call_sid):
-    """The timeline, served from the process that holds the store."""
+    """The timeline. The process that holds the store serves it."""
     return jsonify(timeline(call_sid))
 
 

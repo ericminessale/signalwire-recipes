@@ -1,6 +1,6 @@
 # Send from a number group with sticky sender
 
-> A number group created with `sticky_sender: true` is a pool the platform picks From numbers out of, holding one per recipient. A compat send names the group as `MessagingServiceSid` and carries no `From`.
+> When you create a number group with `sticky_sender: true`, the platform picks From numbers out of that pool and holds one per recipient. A compat send names the group as `MessagingServiceSid` and carries no `From`.
 
 **Scenario:** a bike shop texting repair updates from several numbers, where each customer should keep seeing the same one
 
@@ -63,8 +63,8 @@ python app.py pool repair-updates +1XXXXXXXXXX +1XXXXXXXXXY    # prints the grou
 python app.py send <group_id> +1YYYYYYYYYY "Your bike is ready."
 ```
 
-A pool is two or more numbers on your project; with one number there is nothing
-to pick from. There is no server to expose; the script speaks to the REST API
+Use two or more numbers on your project to see the selection; the command
+accepts one, which makes a group with nothing to choose between. There is no server to expose; the script speaks to the REST API
 and exits. Send twice to one recipient and compare the From numbers in the
 messaging log.
 
@@ -83,10 +83,10 @@ You build a two-number pool and send twice to one recipient, and assert the
 following.
 
 - the group create is one `POST` to the documented path with exactly `name` and `sticky_sender: true`
-- every number is looked up before the group is created, one `GET` of the phone numbers list each with exactly `filter_number`
+- you look up every number before you create the group, one `GET` of the phone numbers list each with exactly `filter_number`
 - each number then costs one `POST` to the documented memberships path
 - that membership body is exactly the id of the exact number, not the near miss the lookup listed first
-- both sends are `POST`s to the documented compat messages path, each equal to one literal body: `To`, its own `Body`, and a `MessagingServiceSid` equal to the group id
+- both sends are `POST`s to the documented compat messages path. Each equals one literal body: `To`, its own `Body`, and a `MessagingServiceSid` equal to the group id
 - the spec requires `name` on the group, `phone_number_id` on the membership, and only `To` on the message
 - the spec documents `sticky_sender` as a boolean defaulting to false with the full quoted description
 - `From`'s description in the spec says either it or `MessagingServiceSid` must be provided

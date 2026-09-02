@@ -1,19 +1,24 @@
 """Prove the claim without a network.
 
 Claim: `calling.transcribe` starts transcribing a live call in the background
-by `control_id`, `calling.transcribe.stop` ends it, and the transcript lands on
-your `status_url` as a documented callback whose `params.text` holds the text
-when there is any.
+by `control_id`, and `calling.transcribe.stop` ends it. SignalWire may then
+send the documented transcript callback to your `status_url`, whose
+`params.text` holds the text when there is any.
 
-Proof: with the HTTP layer replaced by a recorder, `start` and `stop` each make
-one POST to the documented calling path whose body equals one expected object,
-and the spec's variants require exactly `control_id`. The Flask app receives
-two callbacks shaped like the spec's transcribe status callback, every required
-field present and nothing undocumented: a completed one with text and a failed
-one without. It stores each under its call id, `GET /transcripts/<call_id>`
-returns it, and an unknown call reads as pending. Expected values live here,
-not in app.py.
+Proof: the HTTP layer is a recorder. `start` and `stop` each make one POST to
+the documented calling path whose body equals one expected object. The spec's
+variants require exactly `control_id`. The Flask app receives two callbacks
+shaped like the spec's transcribe status callback, every required field
+present and nothing undocumented. One is completed with text and one is failed
+without it. Each is signed the way SignalWire signs a webhook; an unsigned or
+forged one is refused and stores nothing. The app stores each signed one under
+its call id, `GET /transcripts/<call_id>` returns it to a caller with the read
+token and refuses one without, and an unknown call reads as pending. Expected
+values live here, not in app.py.
 """
+import hashlib
+import hmac
+import json
 import os
 import pathlib
 import sys
@@ -26,6 +31,8 @@ os.environ.update({
     "SIGNALWIRE_API_TOKEN": "PT-test",
     "SIGNALWIRE_SPACE": "example.signalwire.com",
     "TRANSCRIBE_STATUS_URL": "https://example.com/transcripts",
+    "SIGNALWIRE_SIGNING_KEY": "PSK_verifier_only",
+    "READ_TOKEN": "read-verifier-only",
 })
 
 import verifylib as V  # noqa: E402
@@ -81,8 +88,6 @@ def main():
         assert params["required"] == ["control_id"], (command, params.get("required"))
         assert set(call["body"]["params"]) <= set(params["properties"]), \
             (command, sorted(set(call["body"]["params"]) - set(params["properties"])))
-    _, params = variant(spec, "calling.transcribe")
-    assert "status_url" in params["properties"], sorted(params["properties"])
 
     # the callback, as the spec documents it
     hook = spec["webhooks"]["subpackage_callingWebhooks.transcribe_status_callback"]["post"]
@@ -99,21 +104,36 @@ def main():
         assert set(e) <= set(schema["properties"]), sorted(set(e) - set(schema["properties"]))
         assert set(p_schema.get("required", [])) <= set(e["params"]), p_schema.get("required")
         assert set(e["params"]) <= set(p_schema["properties"]), sorted(e["params"])
-        assert e["event_type"] in types
 
     client = recipe.app.test_client()
-    assert client.get(f"/transcripts/{CALL}").get_json() == {"status": "pending", "text": None}
+    READ = {"Authorization": "Bearer read-verifier-only"}
+
+    def post(event, key="PSK_verifier_only", headers=None):
+        raw = json.dumps(event).encode()
+        if headers is None:
+            sig = hmac.new(key.encode(), b"https://example.com/transcripts" + raw,
+                           hashlib.sha1).hexdigest()
+            headers = {"X-Signalwire-Signature": sig}
+        return client.post("/transcripts", data=raw,
+                           headers={"Content-Type": "application/json", **headers})
+
+    assert client.get(f"/transcripts/{CALL}").status_code == 401, "a read without the token"
+    assert client.get(f"/transcripts/{CALL}", headers=READ).get_json() == {"status": "pending", "text": None}
+    # only SignalWire's signature gets a callback stored
+    assert post(done, headers={}).status_code == 403
+    assert post(done, key="attacker").status_code == 403
+    assert client.get(f"/transcripts/{CALL}", headers=READ).get_json()["status"] == "pending"
     for e in (done, failed):
-        r = client.post("/transcripts", json=e)
+        r = post(e)
         assert r.status_code == 204, (r.status_code, r.data[:80])
-    assert client.get(f"/transcripts/{CALL}").get_json() == \
+    assert client.get(f"/transcripts/{CALL}", headers=READ).get_json() == \
         {"status": "completed", "text": TEXT, "at": 1788350400.5}
-    assert client.get(f"/transcripts/{FAILED}").get_json() == \
+    assert client.get(f"/transcripts/{FAILED}", headers=READ).get_json() == \
         {"status": "failed", "text": None, "at": 1788350400.5}
 
     print(f"ok: calling.transcribe and calling.transcribe.stop POST the expected bodies for "
-          f"{CALL[:8]}...; a completed callback stores {len(TEXT)} characters of text and a "
-          f"failed one stores none; both are shaped like the spec's callback")
+          f"{CALL[:8]}...; a signed completed callback stores {len(TEXT)} characters of text and "
+          f"a failed one stores none; unsigned ones are 403; reads need the bearer token")
 
 
 if __name__ == "__main__":

@@ -16,6 +16,7 @@ Written against signalwire-sdk 3.0.1 (RestClient.recordings).
 import base64
 import os
 import pathlib
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from urllib.parse import parse_qsl, urlsplit
@@ -31,7 +32,12 @@ load_dotenv()
 client = RestClient()
 
 RETENTION_DAYS = int(os.getenv("RETENTION_DAYS", "30"))
+if RETENTION_DAYS < 1:
+    raise SystemExit("RETENTION_DAYS must be at least 1; a zero or negative window "
+                     "would delete every recording")
 EXPORT_DIR = pathlib.Path(os.getenv("EXPORT_DIR", "exports"))
+# the only host that gets your credentials: your own space
+SPACE = os.environ["SIGNALWIRE_SPACE"]
 
 
 def every_page(fetch, **params):
@@ -47,13 +53,28 @@ def every_page(fetch, **params):
         page = fetch(**dict(parse_qsl(urlsplit(nxt).query)))
 
 
-def download(url):
-    """Fetch the media. Project credentials as basic auth satisfy media
-    protection; without it they are ignored."""
+class NoRedirects(urllib.request.HTTPRedirectHandler):
+    """Credentials go to the URL you were given and nowhere it points onward."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, "redirect refused", headers, fp)
+
+
+OPENER = urllib.request.build_opener(NoRedirects)
+
+
+def download(url, opener=None):
+    """Fetch the media with project credentials as basic auth, which the media
+    protection page says protected media requires. The credentials go only to
+    an https URL on your own space, and never follow a redirect."""
+    parts = urlsplit(url)
+    if parts.scheme != "https" or parts.hostname != SPACE:
+        raise ValueError("refusing to send credentials to "
+                         f"{parts.scheme}://{parts.hostname}")
     creds = f"{os.environ['SIGNALWIRE_PROJECT_ID']}:{os.environ['SIGNALWIRE_API_TOKEN']}"
     req = urllib.request.Request(url, headers={
         "Authorization": "Basic " + base64.b64encode(creds.encode()).decode()})
-    with urllib.request.urlopen(req, timeout=120) as response:
+    with (opener or OPENER).open(req, timeout=120) as response:
         return response.read()
 
 

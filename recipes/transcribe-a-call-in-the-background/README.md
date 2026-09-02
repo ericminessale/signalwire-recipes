@@ -1,8 +1,8 @@
 # Transcribe a call in the background
 
-> `calling.transcribe` starts transcribing a live call in the background by `control_id`, and `calling.transcribe.stop` ends it. The transcript lands on your `status_url` as a documented callback whose `params.text` holds the text when there is any.
+> `calling.transcribe` starts transcribing a live call in the background by `control_id`, and `calling.transcribe.stop` ends it. SignalWire may then send the documented transcript callback to your `status_url`, whose `params.text` holds the text when there is any.
 
-**Scenario:** a shop that wants the text of each support call filed against the ticket, without the caller hearing anything change
+**Scenario:** you want each support call's text filed against its ticket
 
 ## What this demonstrates
 
@@ -10,8 +10,8 @@ The vendored REST spec has a `calling.transcribe` variant of the call command.
 Its params require `control_id` and take a `status_url`, "An HTTP or HTTPS URL
 that receives the status callback when the transcription completes".
 `calling.transcribe.stop` takes the same `control_id`. The spec also documents
-what arrives: the transcribe status callback, whose `event_type` is
-`calling.transcript.completed` or `calling.transcript.failed`, and whose
+what may arrive: the transcribe status callback, whose `event_type` is
+`calling.transcript.completed` or `calling.transcript.failed`. Its
 `params.text` is "The transcribed text of the call. Omitted when there is no
 transcribed text." The spec calls the callback advisory and best-effort. You
 reach the two commands as `client.calling.transcribe` and
@@ -46,15 +46,19 @@ POST https://<your-host>/transcripts
 ```
 
 `record` reads `text` with `.get`, because the spec omits it when nothing was
-transcribed, and a failed event carries none. `GET /transcripts/<call_id>`
-serves what arrived, or `pending` until it does.
+transcribed, whichever status the event carries; the verifier's failed fixture
+omits it. Before `record` runs, the route checks SignalWire's signature over
+the request, `hex(HMAC(signing_key, url + raw_body))`, the check
+`verify-a-webhook-signature` explains, so a forged callback cannot overwrite a
+transcript. `GET /transcripts/<call_id>` serves what arrived, or `pending`
+until something does, to a caller with your `READ_TOKEN` as a bearer token.
 
 ## Run it
 
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # then edit .env: credentials and TRANSCRIBE_STATUS_URL
+cp ../.env.example .env          # then edit .env: credentials, TRANSCRIBE_STATUS_URL, the signing key, READ_TOKEN
 python app.py                    # the status URL, on port 8080
 ```
 
@@ -67,7 +71,11 @@ The status URL needs a public HTTPS address. For a local run, expose port 8080
 with a tunnel such as ngrok, and set `TRANSCRIBE_STATUS_URL` to
 `https://<your-host>/transcripts`. The call id is the `id` of a call in
 progress; `handle-call-status-callbacks` or the calling logs give you one. When
-the call ends, read `GET /transcripts/<call_id>`.
+the call ends, read the transcript with your token:
+
+```bash
+curl -H "Authorization: Bearer $READ_TOKEN" "https://YOUR_HOST/transcripts/CALL_ID"
+```
 
 ## Verify it
 
@@ -82,10 +90,12 @@ The verifier swaps the SDK's HTTP layer for a recorder and drives the Flask app
 with its test client. It asserts the following.
 
 - `start` and `stop` each make one `POST` to the documented calling path, and each body equals one expected object
-- the spec's two variants require exactly `control_id`, every param sent is documented, and `status_url` is a documented param of the start
+- the spec's two variants require exactly `control_id`, and every param sent is documented
 - the spec's callback has exactly two event types, and it says `text` is omitted when there is no transcribed text
-- two fixture callbacks, one completed with text and one failed without, carry every required field at both levels and nothing undocumented
-- an unknown call reads as pending; after the callbacks, the completed call reads back its text and the failed one reads back no text
+- two fixture callbacks, one completed with text and one failed without it, carry every required field at both levels and nothing undocumented
+- an unsigned callback, and one signed with another key, are refused with 403 and store nothing
+- a read without the bearer token is refused with 401
+- an unknown call reads as pending; after the signed callbacks, the completed call reads back its text and the failed one reads back no text
 
 ## Limitations
 

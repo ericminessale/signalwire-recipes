@@ -1,6 +1,6 @@
 # Give an agent a video avatar
 
-> Three `ai.params`, `video_idle_file`, `video_listening_file` and `video_talking_file`, give an agent a face on a video call. The platform switches between the three clips with the agent's state.
+> Three `ai.params`, `video_idle_file`, `video_listening_file` and `video_talking_file`, give an agent a face on a video call. The schema names the state each one plays for.
 
 **Scenario:** a bike shop's video front desk that shows a face rather than a blank tile
 
@@ -10,10 +10,9 @@ The bundled schema documents three parameters under `ai.params`.
 `video_idle_file` is the "URL of a video file to play when AI is idle".
 `video_listening_file` is the one "to play when AI is listening to the user
 speak". `video_talking_file` is the one "to play when AI is talking". Each
-carries the note "Only works for calls that support video". You supply three
-looping clips
-and three URLs; the platform decides which one plays. Nothing about the prompt,
-the tools or the voice changes.
+carries the schema's note that it requires a call that supports video. You
+supply three URLs, one per state, and the schema's descriptions say which state
+each is for.
 
 ## How it works
 
@@ -40,9 +39,8 @@ What the platform receives, inside the `ai` verb:
 ```
 
 `set_params` merges into the agent's params, so the three sit beside whatever
-else you set. The `swml/` surface is the same verb written by hand. The clips
-are yours to make: a few seconds each, looping cleanly, hosted where the
-platform can fetch them.
+else you set. The `swml/` surface is the same verb written by hand. Make short
+clips, loop them cleanly, and host them where the platform can fetch them.
 
 ## Run it
 
@@ -55,9 +53,10 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. A video call is what shows the
-face, so point a Fabric address or a video-capable client at
-`https://<user>:<password>@<your-host>/face/`. A phone call runs the same agent
-with no video.
+face. Give the agent a Fabric address by creating a SWML webhook resource whose
+`primary_request_url` is `https://<user>:<password>@<your-host>/face/`, the way
+`let-a-browser-dial-your-agent-with-no-dashboard-setup` does, then dial that
+address from a video-capable client.
 
 ## Verify it
 
@@ -74,8 +73,8 @@ asserts the following.
 - `ai.params` holds exactly the three expected URLs, and no other `video_*` key
 - the plain-SWML surface validates and carries the same three
 - both prompts say the agent is on a video call
-- the bundled schema documents each key as a string, names its state in the description, and notes it only works for calls that support video
-- a document with a misspelt key, `video_idel_file`, still validates, which is why the first assertion compares the keys whole
+- the bundled schema documents each key as a string, names its state in the description, and notes it requires a call that supports video
+- a document with a misspelt key, `video_idel_file`, still validates, which is why the second assertion lists every `video_*` key present
 
 ## Limitations
 
@@ -90,6 +89,8 @@ the three names validates and shows nothing. Copy the names from the schema.
 
 ## What to change first
 
-Point `AVATAR_BASE_URL` at your own three clips and run the verifier. It fails,
-because its expected URLs are its own. That is the design: the verifier pins
-the example, and your `.env` carries your files.
+The verifier sets `AVATAR_BASE_URL` to its own example before it imports the
+app, so `.env` never reaches it. Point `AVATAR_BASE_URL` in `.env` at your own
+three clips and run the agent, not the verifier, to see your face on a call.
+Change the verifier's `EXPECTED` instead and it fails, because the example is
+what it pins.
