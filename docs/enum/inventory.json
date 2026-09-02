@@ -3629,7 +3629,7 @@
         "composes verified against agent.py on 2026-09-02, see recipes/docs-site-voice-guide/recipe.json"
       ],
       "featured": true,
-      "feature_line": "Ask the docs a question, and the page turns to the answer.",
+      "feature_line": "State-aware voice AI, inside your web page.",
       "feature_rank": 1
     }
   ],
