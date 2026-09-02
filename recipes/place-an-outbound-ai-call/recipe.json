@@ -1,6 +1,6 @@
 {
   "slug": "place-an-outbound-ai-call",
-  "title": "Place an outbound ai call",
+  "title": "Place an outbound AI call",
   "alias": "dial + ai.params direction/wait_for_user",
   "summary": "One REST dial carries the agent's SWML inside the request. direction outbound makes the agent the caller, and wait_for_user makes it wait for the callee to speak first.",
   "scenario": "A workshop calling a customer to say their bike is ready",

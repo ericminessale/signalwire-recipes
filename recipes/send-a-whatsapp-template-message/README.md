@@ -1,4 +1,4 @@
-# Send a whatsapp template message
+# Send a WhatsApp template message
 
 > A template message is sent over the same messages endpoint with a whatsapp: From address.
 

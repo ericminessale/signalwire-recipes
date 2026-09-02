@@ -1,4 +1,4 @@
-# Run an ai sidecar on a live call
+# Run an AI sidecar on a live call
 
 > A non-speaking AI listens to a human call and pushes coaching, compliance flags or tool calls to the agent's screen.
 

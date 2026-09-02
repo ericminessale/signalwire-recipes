@@ -1,6 +1,6 @@
 {
   "slug": "handle-opt-outs-yourself",
-  "title": "Handle opt outs yourself",
+  "title": "Handle opt-outs yourself",
   "alias": "inbound message webhook + send_sms + a checked record",
   "summary": "Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. The handler accepts the webhook only with SignalWire's signature over it.",
   "scenario": "A bike shop that texts repair updates and must stop the moment a customer says so",

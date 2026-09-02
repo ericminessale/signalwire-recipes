@@ -1,4 +1,4 @@
-# Connect freeswitch to signalwire
+# Connect FreeSWITCH to SignalWire
 
 > A FreeSWITCH Connector resource routes calls to your FreeSWITCH, and a dialplan extension can hand a call to a SignalWire AI agent.
 

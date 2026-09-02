@@ -1,4 +1,4 @@
-# Get a WebRTC token with restricted dial targets
+# Issue a browser calling token restricted to chosen destinations
 
 > The token is the permission. A visitor holding one can reach the list and
 > nothing else.

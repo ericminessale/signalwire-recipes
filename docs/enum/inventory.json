@@ -113,7 +113,7 @@
         "phase 2: transfer_to_human emits a bare connect action (not in the documented SWAIG action list) - switch to FunctionResult.connect(); unrelated to the scoping claim"
       ],
       "featured": true,
-      "feature_line": "The model cannot call a tool that is not on the table.",
+      "feature_line": "You decide which tools the model can call at each step of the call.",
       "feature_rank": 6
     },
     {

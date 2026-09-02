@@ -1,6 +1,6 @@
 {
   "slug": "stream-a-video-room-to-rtmp",
-  "title": "Stream a video room to rtmp",
+  "title": "Stream a video room to RTMP",
   "alias": "POST rooms/{id}/streams url + PUT/DELETE streams/{id}",
   "summary": "One POST to a room's streams path with a url asks the platform to stream the room's session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new url, and a DELETE by id answers 204.",
   "scenario": "A workshop stand-up on video that a wider audience watches on a streaming platform",

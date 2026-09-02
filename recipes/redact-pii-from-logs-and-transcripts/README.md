@@ -1,4 +1,4 @@
-# Redact pii from logs and transcripts
+# Redact PII from logs and transcripts
 
 > Named PII categories are masked in logs, events, webhooks, the timeline, the transcript and post-call logs; audio and the model's input are not.
 

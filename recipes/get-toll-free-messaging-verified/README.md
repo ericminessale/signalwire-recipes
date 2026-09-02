@@ -1,4 +1,4 @@
-# Get toll free messaging verified
+# Get toll-free messaging verified
 
 > Toll-free sending is gated on a verification form reviewed by Carrier Ops; short codes go through sales.
 

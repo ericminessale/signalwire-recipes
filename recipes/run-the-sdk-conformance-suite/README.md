@@ -1,4 +1,4 @@
-# Run the sdk conformance suite
+# Run the SDK conformance suite
 
 > 107 SDK capabilities are asserted over a live WebRTC call, and the JSON key the platform receives is checked against the SDK method that produced it.
 

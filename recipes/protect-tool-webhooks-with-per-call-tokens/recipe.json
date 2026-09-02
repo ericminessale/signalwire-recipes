@@ -1,6 +1,6 @@
 {
   "slug": "protect-tool-webhooks-with-per-call-tokens",
-  "title": "Protect tool webhooks with per call tokens",
+  "title": "Protect tool webhooks with per-call tokens",
   "alias": "__token on web_hook_url",
   "summary": "Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all.",
   "scenario": "An account line where refunds must not be triggered from outside the call that asked",

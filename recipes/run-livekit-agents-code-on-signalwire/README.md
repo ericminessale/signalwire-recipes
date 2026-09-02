@@ -1,4 +1,4 @@
-# Run LiveKit-agents code on SignalWire
+# Run LiveKit Agents code on SignalWire
 
 > LiveKit-agents-shaped code, an `Agent` with `instructions` and a `@function_tool`, an `AgentSession` and an `rtc_session` entrypoint, renders a SignalWire agent through `signalwire.livewire`. The instructions become the prompt, the tool becomes a SWAIG function, and the same Python function runs when the tool is called.
 

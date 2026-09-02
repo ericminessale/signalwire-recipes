@@ -1,4 +1,4 @@
-# Reconcile webhooks against the logs API
+# Reconcile webhooks against the Logs API
 
 > A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, by the id the logs carry, and fetches the event trail of each such voice log.
 

@@ -1,6 +1,6 @@
 {
   "slug": "inject-a-message-into-a-live-ai-call",
-  "title": "Inject a message into a live ai call",
+  "title": "Inject a message into a live AI call",
   "alias": "calling.ai_message",
   "summary": "One REST command, calling.ai_message, addresses a running call by id. Its params carry a system message, a global_data merge, or a reset with a new system prompt.",
   "scenario": "Your CRM finishes a lookup after the call started and tells the agent who is on the line",

@@ -1,6 +1,6 @@
 {
   "slug": "connect-freeswitch-to-signalwire",
-  "title": "Connect freeswitch to signalwire",
+  "title": "Connect FreeSWITCH to SignalWire",
   "alias": "",
   "summary": "A FreeSWITCH Connector resource routes calls to your FreeSWITCH, and a dialplan extension can hand a call to a SignalWire AI agent.",
   "scenario": "",

@@ -45,6 +45,6 @@
     "hide-fields-from-the-model"
   ],
   "featured": true,
-  "feature_line": "The model cannot call a tool that is not on the table.",
+  "feature_line": "You decide which tools the model can call at each step of the call.",
   "feature_rank": 6
 }

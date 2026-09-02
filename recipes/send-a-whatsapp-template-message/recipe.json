@@ -1,6 +1,6 @@
 {
   "slug": "send-a-whatsapp-template-message",
-  "title": "Send a whatsapp template message",
+  "title": "Send a WhatsApp template message",
   "alias": "",
   "summary": "A template message is sent over the same messages endpoint with a whatsapp: From address.",
   "scenario": "",

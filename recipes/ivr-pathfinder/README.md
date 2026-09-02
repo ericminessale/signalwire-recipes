@@ -1,4 +1,4 @@
-# Ivr pathfinder
+# IVR pathfinder
 
 > An agent that dials a foreign phone tree, listens, presses the right digits and hands the reached human to you.
 

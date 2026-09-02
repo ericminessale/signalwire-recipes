@@ -1,6 +1,6 @@
 {
   "slug": "redact-pii-from-logs-and-transcripts",
-  "title": "Redact pii from logs and transcripts",
+  "title": "Redact PII from logs and transcripts",
   "alias": "",
   "summary": "Named PII categories are masked in logs, events, webhooks, the timeline, the transcript and post-call logs; audio and the model's input are not.",
   "scenario": "",
