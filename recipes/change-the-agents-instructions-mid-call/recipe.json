@@ -1,15 +1,15 @@
 {
   "slug": "change-the-agents-instructions-mid-call",
-  "title": "Change the agents instructions mid call",
-  "alias": "",
-  "summary": "A tool result swaps the system prompt (or resets the conversation) on the same call, without a transfer.",
-  "scenario": "",
+  "title": "Change the agent's instructions mid-call",
+  "alias": "context_switch",
+  "summary": "A tool result replaces the system prompt on the call in progress, summarising or dropping the earlier turns, with no transfer.",
+  "scenario": "A front desk that becomes billing or the workshop once it knows why you called",
   "surfaces": [
     "python",
     "swml"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -21,13 +21,23 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [],
     "evidence": [
       "sdk function_result.py:699 switch_context",
-      "docs swml/guides/context-switch"
+      "docs swml/guides/context-switch",
+      "sdk function_result.py:699-725 switch_context emits the key context_switch; object form when consolidate/full_reset/user_prompt set, bare string otherwise",
+      "schema.json ContextSwitchAction documents context_switch as an object (system_prompt, user_prompt, consolidate, full_reset)",
+      "verified 2026-09-01: recipes/change-the-agents-instructions-mid-call/verify.py"
     ]
   },
-  "subcategory": "handoff"
+  "subcategory": "handoff",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "scope-tools-per-step",
+    "transfer-a-call-without-losing-context"
+  ]
 }

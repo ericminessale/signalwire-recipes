@@ -1,14 +1,14 @@
 {
   "slug": "start-from-a-prefab-agent",
   "title": "Start from a prefab agent",
-  "alias": "",
-  "summary": "A complete survey or receptionist agent runs from a prefab class and a dozen lines of configuration.",
-  "scenario": "survey prefab",
+  "alias": "ReceptionistAgent, SurveyAgent",
+  "summary": "A complete receptionist or survey agent runs from a prefab class and a dozen lines of configuration.",
+  "scenario": "A bicycle shop's front desk and its workshop follow-up survey",
   "surfaces": [
     "python"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -20,7 +20,7 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [
       "#17 (canonical: survey prefab)",
@@ -29,8 +29,15 @@
     "evidence": [
       "sdk prefabs/receptionist.py:21",
       "sdk prefabs/survey.py:23",
-      "sdk prefabs/info_gatherer.py:24"
+      "sdk prefabs/info_gatherer.py:24",
+      "sdk prefabs/receptionist.py:21 ctor(departments, name, route, greeting, voice); tools collect_caller_info, transfer_call; transfer_call handler emits connect(final=True) with post_process",
+      "sdk prefabs/survey.py:23 ctor(survey_name, questions, ...); tools validate_response, log_response; rating validated against scale",
+      "verified 2026-09-01: recipes/start-from-a-prefab-agent/verify.py"
     ]
   },
-  "subcategory": "other"
+  "subcategory": "other",
+  "related": [
+    "give-an-agent-a-tool",
+    "transfer-a-call"
+  ]
 }

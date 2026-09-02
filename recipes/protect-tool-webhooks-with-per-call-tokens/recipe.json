@@ -1,14 +1,14 @@
 {
   "slug": "protect-tool-webhooks-with-per-call-tokens",
   "title": "Protect tool webhooks with per call tokens",
-  "alias": "",
-  "summary": "A tool webhook signed for one call cannot be replayed on another call or from outside a call.",
-  "scenario": "",
+  "alias": "__token on web_hook_url",
+  "summary": "Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all.",
+  "scenario": "An account line where refunds must not be triggered from outside the call that asked",
   "surfaces": [
     "python"
   ],
   "governed": false,
-  "demo": "none",
+  "demo": "talk",
   "provenance": "new",
   "category": "ai-agents",
   "products": [
@@ -20,14 +20,24 @@
   "tier": "next",
   "plan": {
     "kind": "recipe",
-    "status": "proposed",
+    "status": "verified",
     "lens": "ai",
     "folds": [],
     "evidence": [
       "sdk agent_base.py:931-936 __token",
       "sdk web_mixin.py:867-882 enforcement",
-      "sdk security/session_manager.py:92"
+      "sdk security/session_manager.py:92",
+      "sdk security/session_manager.py:55-91 HMAC over call_id:function:expiry:nonce; validate_token checks function, expiry, signature, call_id",
+      "sdk agent_base.py:931-936 __token appended to web_hook_url for secure functions when call_id is known",
+      "sdk web_mixin.py:768 basic auth first; :862-882 token checked only when present",
+      "verified 2026-09-01: recipes/protect-tool-webhooks-with-per-call-tokens/verify.py"
     ]
   },
-  "subcategory": "governance"
+  "subcategory": "governance",
+  "prerequisites": [
+    "give-an-agent-a-tool"
+  ],
+  "related": [
+    "require-verification-before-unlocking-tools"
+  ]
 }

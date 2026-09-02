@@ -1055,6 +1055,49 @@ These cost a review round each. They are not in any single doc.
   contractions before dropping apostrophes, strip politeness but never hedges
   like "perhaps") and compare against a set.
 
+## Wave 1 of the fill-out (2026-09-01)
+
+Interactive demos are paused; the priority is filling out the corpus without
+phoning it in (Eric, 2026-09-01). Five recipes went end to end this wave, each
+through verify, lint and two rounds of sol. Facts that cost a round:
+
+- **`FunctionFillers` is a oneOf of single-language objects.** A `fillers` dict
+  with two language keys fails `validate_swml`. One language per tool filler;
+  language-wide pools go through `add_language(speech_fillers=,
+  function_fillers=)`. Passing only one of the two writes the deprecated
+  `fillers` key instead.
+- **`wait_file` and `wait_file_loops` validate** on a SWAIG function and are
+  emitted by `wait_file=`/`wait_file_loops=` on the tool decorator. A wait file
+  the recipe does not serve is a claim the recipe cannot make, so it is
+  optional via `WAIT_FILE_URL` and the verifier renders both ways.
+- **`switch_context(system_prompt=...)` alone emits a bare string.** The schema
+  documents `context_switch` as an object; pass `consolidate` or `full_reset`
+  to get the object form. The wire key is `context_switch`, not the method name.
+- **`gather_info` is absent from the 3.0.1 schema**, so a recipe cannot prove
+  it offline. Ordered steps use contexts and steps with `set_functions` on
+  every step, because a step without `functions` inherits the previous set.
+- **The context builder's ValueError is swallowed at render.** A `valid_steps`
+  entry naming a step that does not exist raises from
+  `agent._contexts_builder.validate()`, but `_render_swml()` catches it, logs
+  it, and fails on a missing `prompt` instead. Assert both, because the second
+  is what a developer sees.
+- **A per-call token is checked only when present.** The `/swaig` route checks
+  basic auth first and validates `__token` only if the query carries one, so
+  a client that strips the token bypasses the check. The recipe adds a FastAPI
+  middleware on `agent.get_app()` that 403s a tool POST with no token, and the
+  verifier drives the real app with `TestClient`, not the handler. `serve()`
+  reuses the cached app, so the middleware is live.
+- **`ReceptionistAgent` takes `voice` as a constructor argument** (default
+  `rime.spore`); `SurveyAgent` has none. Do not write "changing the voice means
+  subclassing" about a prefab without reading its `__init__`.
+- **Substring asserts on a prefab's response are tautologies in waiting.**
+  `"valid" in response` accepts "invalid". Compare the exact string.
+- **Prose length ran 420-520 words this wave**, above the 230-380 guidance,
+  because each *Verify it* carries a bulleted list of assertions and each
+  *Run it* now carries the tunnel sentence. Sol did not object; the guidance
+  stands as a target, not a gate, and a recipe that needs the words to state
+  its proof keeps them.
+
 ## Open work
 
 - 34 launch-adjacent stubs still have folders with empty entry files (they
