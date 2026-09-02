@@ -474,7 +474,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .tg .cn{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);
   background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:2px 5px;}
 .tg:hover .cn{color:var(--fg-2);}
-.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);}
+.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);margin-left:6px;vertical-align:1px;}
 .catbody{padding-top:4px;}
 .tgroup{margin-top:22px;}
 .tgh{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--fg-muted);
