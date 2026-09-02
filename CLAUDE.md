@@ -215,6 +215,15 @@ brand cheatsheet's abstractions and not invented:
   in `scratchpad/palette.py` if per-category colour ever comes back.
 - **The one fuchsia mark on a build card is the repository dot**: the thing
   worth standing out per card is that it exists.
+- **A featured build reads as a build (2026-09-02).** Featuring the docs guide
+  showed the band knew only recipes: it got the AI Agents tile and label.
+  Eric: "It is not ai agents, its a build that features ai agents and voice."
+  A featured build now carries one tile per product line it touches, the word
+  Build where the category label sits, a periwinkle edge and the builds
+  block's stack via the same `--sheets` property. The viewport carries 8px of
+  padding folded back with a negative margin so the last card's sheets are
+  not clipped and the card widths do not change; `tools/qc.py` measures the
+  viewport's content width, not its box, for the same reason.
 - **Refused on the render, 2026-09-02 (Eric: "dont like either")**: a fuchsia
   trailing rule on the Builds heading, and turquoise mechanism lines on recipe
   cards. Also declined before rendering: the SignalWire mark beside "Builds"

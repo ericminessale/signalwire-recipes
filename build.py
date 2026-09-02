@@ -621,9 +621,11 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fdot:hover{background:rgba(255,255,255,.34);}
 .fdot.on{background:var(--accent);}
 .fdot:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
-.fviewport{overflow:hidden;}
+/* 8px of padding folded back with a negative margin: the cards keep their
+   width and the last card's sheets have room before the clip. */
+.fviewport{overflow:hidden;padding-right:8px;margin-right:-8px;}
 /* --per is set by the script from the viewport, so a page is really a page */
-.ftrack{display:flex;gap:10px;--per:3;
+.ftrack{display:flex;gap:10px;--per:3;padding:2px 0 8px;
   transition:transform 420ms cubic-bezier(.4,0,.2,1);}
 .ftrack>.fcard{flex:0 0 calc((100% - (var(--per) - 1) * 10px) / var(--per));}
 .fstatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
@@ -656,7 +658,16 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 /* An iconless category keeps the slot: display:none takes the 34px and
    the gap with it and drops that card's claim above its neighbours. */
 .ftile:empty{visibility:hidden;}
+.ftiles{display:inline-flex;gap:6px;min-height:34px;}
 .fico{width:17px;height:17px;display:block;}
+/* A featured build carries the builds block's stack, one sheet per product
+   line beyond its home, and a periwinkle edge, so it reads as a build here
+   too. The sheets join the card's own lip and lift; the track leaves them
+   room, because the viewport clips. */
+.fcard.build:not(.planned){border-color:var(--accent);
+  box-shadow:var(--sheets,none),var(--lip),var(--lift);}
+.fcard.build:not(.planned):hover{border-color:var(--accent);
+  box-shadow:var(--sheets,none),var(--lip),0 2px 4px rgba(0,0,0,.45),0 16px 34px -14px rgba(0,0,0,.8);}
 .fcard:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 .fcard .fl{font-family:var(--head);font-weight:600;font-size:19px;
   letter-spacing:-.03em;line-height:1.22;color:var(--fg);text-wrap:balance;}
@@ -1430,20 +1441,37 @@ def build_index(recipes, body_only=False):
 
     def fcard(r):
         planned = r.get("_planned")
+        is_build = r.get("kind") == "build"
+        style = ""
+        if is_build:
+            # A featured build reads as a build, not as its home category: one
+            # tile per product line it touches, the word Build where the
+            # category label sits, and the same stack the builds block draws.
+            cats = sorted(touches(r) | set(r.get("products", [])), key=cat_rank)
+            behind = [k for k in cats if k != r.get("category")]
+            tiles = "".join('<span class="ftile">%s</span>' % category_icon(k)
+                            for k in cats)
+            label = "Build"
+            if behind and not planned:
+                style = ' style="--sheets:%s"' % ",".join(
+                    "%dpx %dpx 0 -1px var(--surface),%dpx %dpx 0 0 var(--accent)"
+                    % (4 * (i + 1), 4 * (i + 1), 4 * (i + 1), 4 * (i + 1))
+                    for i in range(len(behind)))
+        else:
+            tiles = '<span class="ftile">%s</span>' % category_icon(r.get("category", ""))
+            label = cat_label.get(r.get("category"), r.get("category", ""))
         return (
-            '<a class="fcard%s"%s data-slug="%s" data-hay="%s"%s>'
-            '<span class="ftile">%s</span>'
+            '<a class="fcard%s%s"%s data-slug="%s" data-hay="%s"%s%s>'
+            '<span class="ftiles">%s</span>'
             '<span class="fl">%s</span>'
             '<span class="fm"><span class="fn">%s</span>'
             '<span class="fc">%s</span></span></a>'
-            % (" planned" if planned else "",
+            % (" planned" if planned else "", " build" if is_build else "",
                "" if planned else ' href="r/%s.html"' % esc(r["slug"]),
                esc(r["slug"]), esc(hay(r)),
-               ' aria-disabled="true"' if planned else "",
-               category_icon(r.get("category", "")),
-               esc(r["feature_line"]), esc(r["title"]),
-               esc("planned" if planned else
-                   cat_label.get(r.get("category"), r.get("category", ""))))
+               ' aria-disabled="true"' if planned else "", style,
+               tiles, esc(r["feature_line"]), esc(r["title"]),
+               esc("planned" if planned else label))
         )
 
     featured = ""
