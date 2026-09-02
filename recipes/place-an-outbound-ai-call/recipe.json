@@ -2,7 +2,7 @@
   "slug": "place-an-outbound-ai-call",
   "title": "Place an outbound ai call",
   "alias": "dial + ai.params direction/wait_for_user",
-  "summary": "One REST dial carries the agent's SWML in the request, and two ai params make it an outbound conversation: direction outbound, and wait_for_user so the agent waits for the callee to speak first.",
+  "summary": "One REST dial carries the agent's SWML inside the request. Two ai params make it outbound: direction outbound, and wait_for_user so the agent waits for the callee to speak first.",
   "scenario": "A workshop calling a customer to say their bike is ready",
   "surfaces": [
     "python",

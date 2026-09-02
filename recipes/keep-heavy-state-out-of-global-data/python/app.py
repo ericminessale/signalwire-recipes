@@ -6,7 +6,8 @@ growing record. This agent keeps the record server-side, keyed by `call_id`,
 and writes only a count and a one-line summary to `global_data`.
 
 The tool handlers read the full record from the store, so the agent can still
-report on everything the caller said, without the model ever holding it.
+read everything back on request, and the model carries none of it between
+turns in `global_data`.
 
 Written against signalwire-sdk 3.0.1.
 """
@@ -56,11 +57,13 @@ class InspectionAgent(AgentBase):
         # the full text goes to the store, under this call
         findings = STORE.setdefault(call_id, [])
         findings.append({"area": area, "detail": detail})
-        # the model gets a count and a one-line summary, nothing more
+        # the model gets a count and the distinct areas, nothing more; the
+        # areas field is bounded by the five areas however many findings arrive
+        seen = list(dict.fromkeys(f["area"] for f in findings))
         r = FunctionResult(f"Recorded {area}. {len(findings)} findings so far.")
         r.add_action("set_global_data", {
             "findings": len(findings),
-            "areas": ", ".join(f["area"] for f in findings),
+            "areas": ", ".join(seen),
         })
         return r
 

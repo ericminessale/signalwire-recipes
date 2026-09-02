@@ -1,15 +1,15 @@
 """Prove the claim without a network.
 
-Claim: one REST `dial` originates a call with an AI agent's SWML inside the
-request, and the agent's `params` mark the conversation outbound and make the
-agent wait for the callee to speak first.
+Claim: one REST `dial` command carries an AI agent's SWML inside the request,
+and that document's `ai.params` carry `direction: outbound` and
+`wait_for_user: true`.
 
 Proof: with the HTTP layer replaced by a recorder, `place()` makes exactly one
-POST to the documented calling path with `command: dial`; every parameter is
-a documented property of the SWML dial variant and the required ones are
-present; the inline document validates against the bundled schema; and its
-`ai.params` carry `direction: outbound`, `wait_for_user: true` and a documented
-`outbound_attention_timeout`. Expected values live here, not in app.py.
+POST to the documented calling path with `command: dial`. Every parameter is a
+documented property of the SWML dial variant and the required ones are present.
+The inline document validates against the bundled schema. Its `ai.params` carry
+the two values and an `outbound_attention_timeout` inside the schema's range.
+Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -57,12 +57,13 @@ def main():
     params = body["params"]
 
     props, required = documented_dial_params()
+    assert {"from", "swml"} <= required, required  # the README says so; the spec must
     unknown = set(params) - props
     assert not unknown, f"undocumented dial params: {sorted(unknown)}"
     for key in required:
         assert key in params, f"the SWML dial variant requires {key}"
     assert params["to"] == TO and params["from"] == "+15550001111", params
-    assert "swml" in params and "url" not in params, params
+    assert "url" not in params, params  # the document travels inline, not by URL
 
     # the document that rides inside the request is the agent's, and valid
     doc = params["swml"]
@@ -72,10 +73,10 @@ def main():
     p = ai["params"]
     assert p["direction"] == "outbound", p
     assert p["wait_for_user"] is True, p
-    # inside the documented range for the outbound attention window
-    bounds = V.spec("rest")  # keep the spec loaded; the range is in the SWML schema
-    assert 10000 <= p["outbound_attention_timeout"] <= 600000, p
-    del bounds
+    # inside the range the bundled SWML schema gives for the attention window
+    rng = V.swml_schema()["$defs"]["AIParams"]["properties"]["outbound_attention_timeout"]
+    lo, hi = rng["minimum"], rng["maximum"]
+    assert lo <= p["outbound_attention_timeout"] <= hi, (lo, p, hi)
 
     events = V.spec("rest")["components"]["schemas"][
         "CallingCallCreateParamsSwmlStatusEventsItems"]["enum"]

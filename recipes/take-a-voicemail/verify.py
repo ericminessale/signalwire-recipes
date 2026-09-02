@@ -26,6 +26,8 @@ OWNER = "+15550100001"
 os.environ["OWNER_NUMBER"] = OWNER
 os.environ["RING_SECONDS"] = "20"
 os.environ["PUBLIC_URL"] = "https://your-host.example.com"
+PROMPT = "say:Leave a message after the tone."
+THANKS = "say:Thanks. We will call you back."
 RECORD = {"beep": True, "format": "mp3", "max_length": 120,
           "end_silence_timeout": 5, "terminators": "#",
           "status_url": "https://your-host.example.com/recording-status"}
@@ -41,8 +43,9 @@ def check(doc, label):
     assert [list(v)[0] for v in cases["connected"]] == ["hangup"], (label, cases)
     failed = cases["failed"]
     assert [list(v)[0] for v in failed] == ["play", "record", "play", "hangup"], (label, failed)
-    assert "Leave a message" in failed[0]["play"]["url"], (label, failed[0])
+    assert failed[0]["play"]["url"] == PROMPT, (label, failed[0])
     assert failed[1]["record"] == RECORD, (label, failed[1])
+    assert failed[2]["play"]["url"] == THANKS, (label, failed[2])
 
 
 def main():

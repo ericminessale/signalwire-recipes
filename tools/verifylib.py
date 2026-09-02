@@ -29,6 +29,15 @@ def validate_swml(doc):
     return doc
 
 
+def swml_schema():
+    """The SDK's bundled SWML schema as a dict, for reading ranges and enums."""
+    import json
+    import pathlib
+    import signalwire
+    path = next(pathlib.Path(signalwire.__file__).parent.rglob("schema.json"))
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def load_yaml(path):
     import yaml
     with open(path, encoding="utf-8") as f:

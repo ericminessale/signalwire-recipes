@@ -4,7 +4,8 @@
 branch plays a prompt and `record` takes the message in the foreground: it
 runs until `#`, silence or `max_length`, then execution continues. The
 platform POSTs recording events, including the download URL, to `status_url`,
-and sets `record_url` and `record_result` on the call.
+which is an endpoint you run; this app does not serve one. It also sets
+`record_url` and `record_result` on the call.
 
 Written against signalwire-sdk 3.0.1 (SWMLService).
 """

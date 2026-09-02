@@ -1,17 +1,20 @@
 """Prove the claim without a network.
 
 Claim: the agent collects, confirms, and then commits once through a single
-tool, and nothing is written before the confirmation is on record.
+tool. The confirmation is an answer the handler judges against an allow-list
+of whole phrases, and nothing is written before a yes the code accepted.
 
 Proof: run the handlers in the platform's payload shape, threading
 `global_data` the way the platform does, and assert the order book after each
-step. Committing before any order, and committing before confirmation, each
-refuse and write nothing. Changing the order after confirming resets the
-confirmation. Committing after confirmation writes once and returns an order
-id; committing again on the same call refuses with the same id and the book
-still holds one order. A different call id gets its own order. The enum on
-`set_order` limits the model's items to the catalogue, and the handler drops
-anything else. Expected values live here, not in app.py.
+step. Committing before any order, and before confirmation, refuses and writes
+nothing. "Yesterday", "no", "I can't say yes", "sure thing" and an empty
+answer are not a yes. "Yes, that's right." is, with the readback in the
+response, and so is "Yes, thank you!" once politeness is dropped.
+Changing the order after confirming resets the confirmation. Committing after
+confirmation writes once and returns an order id; committing again on the same
+call refuses with the same id and the book still holds one order. A different
+call id gets its own order. An empty or all-unknown item list is refused with
+no action. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -74,8 +77,14 @@ def main():
     assert book == {}
 
     # confirm with no order: refused
-    r = s.run("confirm_order")
+    r = s.run("confirm_order", answer="yes")
     assert r["response"].startswith("INCOMPLETE") and "action" not in r, r
+
+    # nothing usable: refused, session and book untouched
+    for items in ([], ["unicycle"]):
+        r = s.run("set_order", items=items)
+        assert r["response"].startswith("INVALID") and "action" not in r, r
+        assert s.data == {} and book == {}
 
     # the order, with one item that is not in the catalogue dropped
     r = s.run("set_order", items=["helmet", "puncture-kit", "unicycle"])
@@ -89,17 +98,30 @@ def main():
     assert r["response"].startswith("NOT_CONFIRMED") and "action" not in r, r
     assert book == {}
 
-    # confirm, then change the order: the confirmation is gone again
-    r = s.run("confirm_order")
-    assert r["action"] == [{"set_global_data": {"confirmed": True}}], r
-    r = s.run("set_order", items=["cargo-rack"])
+    # answers the handler does not accept as a yes: nothing changes
+    for answer in ("yesterday", "no", "I can't say yes", "", "yes or no", "sure thing"):
+        r = s.run("confirm_order", answer=answer)
+        assert r["response"].startswith("NOT_A_YES") and "action" not in r, (answer, r)
+        assert s.data["confirmed"] is False
+    r = s.run("commit_order")
+    assert r["response"].startswith("NOT_CONFIRMED") and book == {}, r
+
+    # a yes, with the readback in the response; then change the order and the
+    # confirmation is gone again
+    r = s.run("confirm_order", answer="Yes, that's right.")
+    assert r == {"response": "Confirmed: helmet, puncture-kit for 101.50. You may "
+                             "commit it now.",
+                 "action": [{"set_global_data": {"confirmed": True}}]}, r
+    s.run("set_order", items=["cargo-rack"])
     assert s.data["confirmed"] is False, s.data
     r = s.run("commit_order")
     assert r["response"].startswith("NOT_CONFIRMED"), r
     assert book == {}
 
-    # confirm and commit: one write, one id
-    s.run("confirm_order")
+    # confirm and commit: one write, one id. Politeness and punctuation are
+    # dropped before the lookup, so this is the whole answer "yes"
+    r = s.run("confirm_order", answer="Yes, thank you!")
+    assert s.data["confirmed"] is True, r
     r = s.run("commit_order")
     assert r["action"] == [{"set_global_data": {"order_id": "RC-1001"}}], r
     assert book == {"call-A": {"id": "RC-1001", "items": ["cargo-rack"], "total": 45.0}}
@@ -112,15 +134,15 @@ def main():
     # another call is its own transaction
     t = Session(agent, "call-B")
     t.run("set_order", items=["helmet"])
-    t.run("confirm_order")
+    t.run("confirm_order", answer="correct")
     r = t.run("commit_order")
     assert r["action"] == [{"set_global_data": {"order_id": "RC-1002"}}], r
     assert sorted(book) == ["call-A", "call-B"]
 
     print(f"ok: {TOOLS} with the catalogue enum {CATALOGUE}; commit refused before "
-          f"an order and before confirmation; a changed order drops the "
-          f"confirmation; one commit per call id, a repeat returns the same id; "
-          f"the book holds {len(book)} orders for two calls")
+          f"an order and before a yes; yesterday/no/I can't say yes are not a yes; "
+          f"a changed order drops the confirmation; one commit per call id, a "
+          f"repeat returns the same id; the book holds {len(book)} orders")
 
 
 if __name__ == "__main__":

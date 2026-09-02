@@ -1,10 +1,10 @@
 """Place an outbound AI call.
 
-One REST `dial` originates the call and carries the agent's SWML in the same
-request, so the callee is talking to the agent the moment they answer. Two
-`params` on the `ai` verb make it an outbound conversation: `direction:
-outbound`, and `wait_for_user: true` so the agent waits for the callee to
-speak first instead of talking over a "hello".
+One REST `dial` command carries the agent's SWML inside the request. Two
+`params` on the `ai` verb make it an outbound conversation. `direction:
+outbound` forces the call's direction to the assistant. `wait_for_user: true`
+makes the agent wait for the callee to speak first. Both are documented in the
+ai params reference.
 
 The agent is an ordinary AgentBase; `_render_swml()` gives the document the
 platform would otherwise fetch from it.
@@ -64,4 +64,6 @@ def place(to):
 if __name__ == "__main__":
     import sys
 
-    print(place(sys.argv[1] if len(sys.argv) > 1 else "+15552223333"))
+    if len(sys.argv) != 2 or not sys.argv[1].startswith("+"):
+        raise SystemExit("usage: python app.py +1XXXXXXXXXX   (the number to call)")
+    print(place(sys.argv[1]))

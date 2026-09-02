@@ -4,12 +4,13 @@ Claim: per-call state lives server-side keyed by call_id, and only a short
 AI-facing summary is written to global_data.
 
 Proof: record three long findings on one call and one on another. After each,
-the `set_global_data` action carries only a count and a comma-separated list
-of areas, never the detail text, and stays under a fixed size while the store
-grows past it. The store holds the full text under each call id and the two
-calls do not mix. `read_back_report` returns every detail from the store for
-its own call and nothing for a call with no findings. Expected values live
-here, not in app.py.
+the whole `action` list is measured and stays under a fixed size, and the
+`set_global_data` it carries is exactly a count and the distinct areas. The
+store holds the full text under each call id, the two calls do not mix, and a
+snapshot of the store is unchanged by another call's write and by an invalid
+one. Twenty more findings on one area leave the action bounded.
+`read_back_report` returns every detail from the store for its own call and
+nothing for a call with no findings. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -38,7 +39,7 @@ FINDINGS_A = [
                "spokes on the drive side; front bearing has slight play."),
 ]
 FINDING_B = ("lights", "Rear light bracket cracked.")
-GLOBAL_DATA_CAP = 120  # bytes of JSON per set_global_data action
+ACTION_CAP = 120  # bytes of JSON for the whole action list of one tool result
 
 
 def run(agent, call_id, tool, **args):
@@ -62,23 +63,34 @@ def main():
     recipe.STORE.clear()
     for n, (area, detail) in enumerate(FINDINGS_A, 1):
         r = run(agent, "call-A", "record_finding", area=area, detail=detail)
-        (action,) = r["action"]
-        gd = action["set_global_data"]
-        # a count and the areas, and the detail text is not in it
-        assert gd == {"findings": n,
-                      "areas": ", ".join(a for a, _ in FINDINGS_A[:n])}, gd
-        assert detail[:20] not in json.dumps(gd), gd
-        assert len(json.dumps(gd)) <= GLOBAL_DATA_CAP, (len(json.dumps(gd)), gd)
+        # the whole wire action, measured first and on its own
+        wire = json.dumps(r["action"])
+        assert len(wire) <= ACTION_CAP, (len(wire), wire)
+        assert detail[:20] not in wire, wire
+        # then exactly what it carries, and what the model is told
+        assert r["action"] == [{"set_global_data": {
+            "findings": n, "areas": ", ".join(a for a, _ in FINDINGS_A[:n])}}], r
+        assert r["response"] == f"Recorded {area}. {n} findings so far.", r
     # the store has every word, and it is already bigger than the cap allows
     stored = recipe.STORE["call-A"]
     assert [(f["area"], f["detail"]) for f in stored] == FINDINGS_A, stored
-    assert len(json.dumps(stored)) > GLOBAL_DATA_CAP * 3, len(json.dumps(stored))
+    assert len(json.dumps(stored)) > ACTION_CAP * 3, len(json.dumps(stored))
+    snapshot = json.dumps(recipe.STORE, sort_keys=True)
 
-    # another call is another record
+    # another call is another record, and call-A's is untouched
     r = run(agent, "call-B", "record_finding", area=FINDING_B[0], detail=FINDING_B[1])
     assert r["action"] == [{"set_global_data": {"findings": 1, "areas": "lights"}}], r
     assert [(f["area"], f["detail"]) for f in recipe.STORE["call-B"]] == [FINDING_B]
-    assert len(recipe.STORE["call-A"]) == 3
+    assert json.dumps({"call-A": recipe.STORE["call-A"]}, sort_keys=True) == \
+        json.dumps({"call-A": json.loads(snapshot)["call-A"]}, sort_keys=True)
+
+    # the summary is bounded by the areas, not by the number of findings
+    for i in range(20):
+        r = run(agent, "call-B", "record_finding", area="lights",
+                detail=f"Further note {i}: " + "x" * 80)
+    assert len(json.dumps(r["action"])) <= ACTION_CAP, r["action"]
+    assert r["action"][0]["set_global_data"] == {"findings": 21, "areas": "lights"}
+    assert len(recipe.STORE["call-B"]) == 21
 
     # the read-back comes from the store, in full, for its own call only
     r = run(agent, "call-A", "read_back_report")
@@ -89,14 +101,15 @@ def main():
     r = run(agent, "call-C", "read_back_report")
     assert r["response"].startswith("INCOMPLETE") and "action" not in r, r
 
-    # a bad finding writes nowhere
+    # a bad finding writes nowhere: the store is byte-for-byte what it was
+    before = json.dumps(recipe.STORE, sort_keys=True)
     r = run(agent, "call-A", "record_finding", area="saddle", detail="torn")
     assert r["response"].startswith("INVALID") and "action" not in r, r
-    assert len(recipe.STORE["call-A"]) == 3
+    assert json.dumps(recipe.STORE, sort_keys=True) == before
 
-    print(f"ok: three findings on call-A kept every set_global_data under "
-          f"{GLOBAL_DATA_CAP} bytes while the store holds "
-          f"{len(json.dumps(stored))} bytes; call-B is separate; read_back_report "
+    print(f"ok: three findings on call-A kept every action under {ACTION_CAP} "
+          f"bytes while the store holds {len(json.dumps(stored))} bytes; 21 "
+          f"findings on call-B stay bounded; calls do not mix; read_back_report "
           f"returns the full text from the store")
 
 

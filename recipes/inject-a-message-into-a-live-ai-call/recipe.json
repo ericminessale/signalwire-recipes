@@ -2,7 +2,7 @@
   "slug": "inject-a-message-into-a-live-ai-call",
   "title": "Inject a message into a live ai call",
   "alias": "calling.ai_message",
-  "summary": "One REST command, calling.ai_message, pushes a system instruction, a global_data merge or a full reset into a conversation that is already running, addressed by call id.",
+  "summary": "One REST command, calling.ai_message, addresses a running call by id. Its params carry a system message, a global_data merge, or a reset with a new system prompt.",
   "scenario": "Your CRM finishes a lookup after the call started and tells the agent who is on the line",
   "surfaces": [
     "python"

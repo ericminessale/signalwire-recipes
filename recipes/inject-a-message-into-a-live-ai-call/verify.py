@@ -1,15 +1,14 @@
 """Prove the claim without a network.
 
-Claim: your backend pushes a message into a running AI conversation with one
-REST command, `calling.ai_message`, addressed by call id. A `system` role
-carries an instruction; the same command merges `global_data` or resets the
-conversation.
+Claim: each helper sends one documented `calling.ai_message` command, with the
+call id at the top level and exactly the params the spec describes: a system
+message, a `global_data` merge, or a `reset`.
 
-Proof: with the HTTP layer replaced by a recorder, each helper makes exactly
-one POST to the documented calling path with `command: calling.ai_message`,
-the call id at the top level as `id`, and only documented `params`. The role
-is one of the documented enum values. Expected values live here, not in
-app.py.
+Proof: with the HTTP layer replaced by a recorder, each helper adds exactly one
+POST to the documented calling path. Every body equals the expected shape. The
+params, including the nested `reset` keys, are all documented properties of
+the spec's `calling.ai_message` variant, and the role is one of its enum
+values. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -57,15 +56,20 @@ def main():
     rec = V.Recorder()
     recipe.client.calling._http = rec
 
-    recipe.nudge(CALL, "The caller is a returning customer. Skip the identity questions.")
-    recipe.share(CALL, {"tier": "gold"})
-    recipe.restart(CALL, "You are now the billing specialist.")
-    assert len(rec.calls) == 3, rec.calls
+    for helper, arg in [(recipe.nudge, "The caller is a returning customer. Skip the "
+                                       "identity questions."),
+                        (recipe.share, {"tier": "gold"}),
+                        (recipe.restart, "You are now the billing specialist.")]:
+        before = len(rec.calls)
+        helper(CALL, arg)
+        assert len(rec.calls) == before + 1, (helper.__name__, rec.calls)
 
     required, props = documented_variant("calling.ai_message")
     assert set(required) == {"command", "id", "params"}, required
     roles = props["role"]["enum"]
     assert set(roles) == {"system", "user", "assistant"}, roles
+    # the observed role is checked on its own, before the exact comparison
+    assert rec.calls[0]["body"]["params"]["role"] in roles, rec.calls[0]["body"]
 
     expected_params = [
         {"role": "system", "message_text": "The caller is a returning customer. "
@@ -83,7 +87,11 @@ def main():
             json.dumps(body, indent=1)
         unknown = set(want) - set(props)
         assert not unknown, f"undocumented ai_message params: {sorted(unknown)}"
-    assert rec.calls[0]["body"]["params"]["role"] in roles
+        # nested objects too: reset's keys against the spec's reset schema
+        for key, value in want.items():
+            if isinstance(value, dict) and props[key].get("properties"):
+                nested = set(value) - set(props[key]["properties"])
+                assert not nested, f"undocumented {key} keys: {sorted(nested)}"
 
     print(f"ok: three POST {PATH} calling.ai_message for id {CALL[:8]}...: a system "
           f"message, a global_data merge and a full reset, every param documented")

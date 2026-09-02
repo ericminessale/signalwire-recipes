@@ -28,7 +28,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Place an outbound ai call](place-an-outbound-ai-call/) | One REST dial carries the agent's SWML in the request, and two ai params make it an outbound conversation: direction outbound, and wait_for_user so the agent waits for the callee to speak first. | Python, Markup |
+| [Place an outbound ai call](place-an-outbound-ai-call/) | One REST dial carries the agent's SWML inside the request. Two ai params make it outbound: direction outbound, and wait_for_user so the agent waits for the callee to speak first. | Python, Markup |
 
 ### Governance
 
@@ -37,7 +37,7 @@ Agents that answer, reason, and act on a live call.
 | [Enforce state transitions in a tool handler](enforce-state-transitions-in-a-tool-handler/) | Your code decides what happens next, so the model cannot strand or misroute the caller. | Python |
 | [Get recording consent before recording](get-recording-consent-before-recording/) | Speak the disclosure and capture the answer before any audio is written to disk. | Python |
 | [Hide fields from the model](hide-fields-from-the-model/) | Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely. | Python |
-| [Keep heavy state out of global data](keep-heavy-state-out-of-global-data/) | Per-call state lives server-side keyed by call_id. Only a count and a one-line summary go to global_data, and the handlers read the full record from the store. | Python |
+| [Keep heavy state out of global data](keep-heavy-state-out-of-global-data/) | Per-call state lives server-side keyed by call_id. Only a count and the distinct areas go to global_data, and the handlers read the full record from the store. | Python |
 | [Protect tool webhooks with per call tokens](protect-tool-webhooks-with-per-call-tokens/) | Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all. | Python |
 | [Require verification before unlocking tools](require-verification-before-unlocking-tools/) | The account tools do not exist in the model's world until a handler says the caller passed. | Python |
 | [Scope an agent's tools per step](scope-tools-per-step/) | At each point in the conversation the model can only see the tools you allowed there. | Python |
@@ -61,7 +61,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Inject a message into a live ai call](inject-a-message-into-a-live-ai-call/) | One REST command, calling.ai_message, pushes a system instruction, a global_data merge or a full reset into a conversation that is already running, addressed by call id. | Python |
+| [Inject a message into a live ai call](inject-a-message-into-a-live-ai-call/) | One REST command, calling.ai_message, addresses a running call by id. Its params carry a system message, a global_data merge, or a reset with a new system prompt. | Python |
 | [Stream agent debug events](stream-agent-debug-events/) | Two params on the ai verb make the platform POST each debug event the level selects to your endpoint as it happens. The SDK routes every one to a handler you register. | Python, Markup |
 
 ### Routing & queueing
@@ -75,7 +75,7 @@ Agents that answer, reason, and act on a live call.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Call an API without running a backend](call-an-api-without-a-backend/) | SignalWire makes the API call, so no service of yours is in the tool path. | Python, Markup |
-| [Commit a transaction from a call](commit-a-transaction-from-a-call/) | The agent collects, confirms, and then commits once through a single tool. Nothing reaches the order book before the caller's confirmation is on record, and a second commit on the same call returns the first order's id. | Python |
+| [Commit a transaction from a call](commit-a-transaction-from-a-call/) | The agent collects, confirms, and then commits once through a single tool. The handler judges the confirmation against an allow-list of whole answers, and nothing reaches the order book before one. | Python |
 | [Cover tool latency with fillers](cover-tool-latency-with-fillers/) | The slow tool renders a filler phrase, and a wait file when you host one, while each language carries its own filler pool. | Python |
 | [Extract structured data after a call](extract-structured-data-after-a-call/) | Get typed fields out of a finished conversation instead of parsing a transcript. | Python |
 | [Give an agent a tool](give-an-agent-a-tool/) | Let the model call your function, and decide what it gets back. | Python |

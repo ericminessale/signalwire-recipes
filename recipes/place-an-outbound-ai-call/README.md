@@ -1,15 +1,15 @@
 # Place an outbound AI call
 
-> One REST `dial` carries the agent's SWML in the request, and two `ai` params make it an outbound conversation: `direction: outbound`, and `wait_for_user: true` so the agent waits for the callee to speak first.
+> One REST `dial` carries the agent's SWML inside the request. Two `ai` params make it outbound: `direction: outbound`, and `wait_for_user: true` so the agent waits for the callee to speak first.
 
 **Scenario:** a workshop calling a customer to say their bike is ready
 
 ## What this demonstrates
 
-`POST /api/calling/calls` with `command: dial` originates the call. The request
-carries the document the call runs on answer, so nothing is fetched from you.
-That document is an ordinary `AgentBase` rendered with `_render_swml()`. Two
-entries in its `ai.params` change the shape of the conversation. The
+`POST /api/calling/calls` with `command: dial` and the SWML dial variant, which
+the vendored REST spec defines with `from` and `swml` required. The document is
+an ordinary `AgentBase` rendered with `_render_swml()`. Two entries in its
+`ai.params` change the shape of the conversation. The
 [ai params reference](https://signalwire.com/docs/swml/reference/ai/params)
 says `direction` "forces the direction of the call to the assistant". It says
 `wait_for_user: true` means the "agent will wait for the user to speak first".
@@ -42,11 +42,12 @@ What the platform receives, trimmed:
                                  "outbound_attention_timeout": 20000}}}]}}}}
 ```
 
-`outbound_attention_timeout` is how long the agent waits for the callee before
-prompting, in milliseconds; the schema allows 10,000 to 600,000. `dial` takes
-either `swml` or `url`; this recipe inlines the document because the agent has
-no tools to serve. An agent with tools needs to be running at a public URL for
-its webhooks, and `url` would point the dial at it.
+The bundled schema bounds `outbound_attention_timeout` to 10,000 through
+600,000, and the verifier reads that range from the schema. The spec has a
+second dial variant, `Calling.CallCreateParamsURL`, that takes `url` in place
+of `swml`; this recipe inlines the document instead. The `swml/` surface is a
+plain-SWML version of the document with the same two params; the agent's
+rendering adds `answer` and a `pom` prompt.
 
 ## Run it
 
@@ -54,12 +55,11 @@ its webhooks, and `url` would point the dial at it.
 cd python
 pip install -r requirements.txt
 cp ../.env.example .env          # project id, API token, space, your number
-python app.py +15552223333
+python app.py +1XXXXXXXXXX       # the number to call; the script refuses to run without one
 ```
 
-The number you call from must be a voice-enabled number on your project.
-`status_url` receives the lifecycle events; point `PUBLIC_URL` at a host you
-control or remove the two status keys.
+Point `PUBLIC_URL` at a host you run for the `status_url` callbacks, or remove
+the two status keys from `place()`.
 
 ## Verify it
 
@@ -74,22 +74,25 @@ asserts the following.
 
 - exactly one `POST` to the documented calling path with `command: dial`
 - every dial parameter is a documented property of the SWML dial variant, and the required ones are present
-- `to` and `from` carry the configured numbers, and the document travels as `swml`, not `url`
+- `to` and `from` carry the configured numbers, and the request carries no `url`
 - the inline document validates against the bundled schema and opens with the agent's `Role` section
-- `ai.params` carry `direction: outbound`, `wait_for_user: true`, and an `outbound_attention_timeout` inside the documented range
-- `status_events` uses only documented event names
+- `ai.params` carry `direction: outbound` and `wait_for_user: true`
+- the spec's `required` for that variant includes `from` and `swml`
+- `outbound_attention_timeout` sits inside the range the bundled schema gives
+- `status_events` uses only documented event names, and the `swml/` surface validates with the same two params
 
 ## Limitations
 
-The verifier proves the request. Whether the callee speaks first, and what the
-agent then says, is a live call.
+The verifier proves the request. What the callee hears, and when the agent
+first speaks, is a live call.
 
-Answering machines answer too. `wait_for_user` makes the agent wait for the
-machine's greeting to end; pair with `detect-an-answering-machine` when a
-voicemail should get a different message.
+This agent has no tools, which is what lets the document travel inline. An
+agent with tools renders each tool's `web_hook_url` from its own host
+(`agent_base.py`, `_build_webhook_url`), so it has to be running somewhere the
+platform can reach.
 
 ## What to change first
 
 Remove `"direction": "outbound"` from `set_params` and run the verifier. The
-params assertion fails, which is the point: without it the platform treats the
-agent as answering an inbound call.
+params assertion fails, which is the point: the param is what tells the
+platform which side of the call the assistant is on.
