@@ -1162,6 +1162,12 @@ configure-an-agent-per-request. Facts that would have cost a round:
   `serial_parallel`. `result.case` switches on `connect_result`, which is
   `connected` or `failed` (docs: swml/reference/connect), and runs once the
   peer leg has ended.
+- **Sol will ask for a citation on the `.env.example` basic-auth comment
+  every time.** It is house boilerplate the lint requires, not a recipe
+  claim. State that in the brief's platform facts rather than editing five
+  copies of the same sentence.
+- **Sol's date is a day behind this machine's** (it reported 2026-09-02
+  verification stamps as future-dated). Say the date in the brief.
 - **Heredocs ate a backslash again** (a `\` line continuation inside a quoted
   Python string) while patching a verifier. The Edit tool, or a script file
   written with Write, for anything containing one.
