@@ -540,6 +540,14 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.028);}
 .card:hover,.buildcard:hover{background:var(--surface);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+/* The build rail marks a build that exists. The shared rule above flattened
+   every card onto --page and, being later, silently took the rail with it,
+   so AI Call Center read like its planned siblings again. Restated after it,
+   scoped to builds with a repository. */
+.buildcard:not(.planned){box-shadow:inset 2px 0 0 var(--fuchsia),
+  inset 0 1px 0 rgba(255,255,255,.028);}
+.buildcard:not(.planned):hover{box-shadow:inset 2px 0 0 var(--fuchsia),
+  inset 0 1px 0 rgba(255,255,255,.06);}
 
 /* lockup: official mark carries the wordmark */
 .eyebrow{display:inline-flex;align-items:center;gap:11px;}

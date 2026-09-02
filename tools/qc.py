@@ -60,6 +60,8 @@ JS_DEADLINKS = """(function(){var bad=[];document.querySelectorAll('a[href]').fo
 
 JS_CHROME = """(function(){var o={};var b=document.querySelector('.chip.kind');if(b&&b.previousElementSibling){  var prev=b.previousElementSibling;  var rg=document.createRange();rg.selectNodeContents(prev);  var ink=rg.getBoundingClientRect().right;  var bl=b.getBoundingClientRect().left;  var d=bl+parseFloat(getComputedStyle(b,'::before').left);  var sameRow=Math.abs(prev.getBoundingClientRect().top-b.getBoundingClientRect().top)<2;  if(sameRow){o.divFromInk=d-ink;o.divFromChip=bl-d;}  else{o.wrappedDividerPainted=getComputedStyle(b,'::before').content!=='none';}}var a=document.querySelector('.farrow');if(a){var cs=getComputedStyle(a);var r=a.getBoundingClientRect();  var ring=function(e){var c=getComputedStyle(e);return c.borderTopWidth!=='0px'||c.boxShadow!=='none'||c.backgroundImage!=='none'||(c.backgroundColor!=='rgba(0, 0, 0, 0)'&&c.backgroundColor!=='transparent')};  var pseudo=function(e,w){var c=getComputedStyle(e,w);return c.content!=='none'&&(c.borderTopWidth!=='0px'||(c.backgroundColor!=='rgba(0, 0, 0, 0)'&&c.backgroundColor!=='transparent'))};  o.arrowRing=ring(a)||pseudo(a,'::before')||pseudo(a,'::after');  o.arrowHit=Math.min(r.width,r.height);  var nx=document.querySelector('.farrow[data-step="1"]');  var pv=document.querySelector('.farrow[data-step="-1"]');  if(nx&&pv&&document.querySelectorAll('.fdot').length>1){    nx.click();o.pulseFwd=nx.classList.contains('pulse')&&!pv.classList.contains('pulse');    nx.classList.remove('pulse');pv.classList.remove('pulse');    pv.click();o.pulseBack=pv.classList.contains('pulse')&&!nx.classList.contains('pulse');  }}return JSON.stringify(o)})()"""
 
+JS_RAIL = """(function(){var live=document.querySelector('.buildcard:not(.planned)');var planned=document.querySelector('.buildcard.planned');var F='rgb(247, 42, 114)';var has=function(e){return !!e&&getComputedStyle(e).boxShadow.indexOf(F)>=0};return JSON.stringify({live:!!live,liveRail:has(live),planned:!!planned,plannedRail:has(planned)})})()"""
+
 JS_TASKGROUP = """(function(){var chip=document.querySelector('details.cat .tg');if(!chip)return JSON.stringify({skip:true});var cat=chip.closest('details.cat');var o={tag:chip.tagName,wasOpen:cat.open};cat.open=false;chip.click();o.opened=cat.open;var g=cat.querySelector('.tgroup[data-g="'+chip.dataset.g+'"]');o.hasGroup=!!g;o.focusable=chip.tabIndex>=0;var keys=[].slice.call(cat.querySelectorAll('.tg')).map(function(c){return c.dataset.g});var groups=[].slice.call(cat.querySelectorAll('.tgroup')).map(function(t){return t.dataset.g});o.orphans=keys.filter(function(k){return groups.indexOf(k)<0});return JSON.stringify(o)})()"""
 
 
@@ -221,6 +223,17 @@ def main(argv):
             if "arrowHit" in r and r["arrowHit"] < 44:
                 fail(w, "arrows", "the arrow hit box is %.0fpx, under the 44px "
                                   "touch target" % r["arrowHit"])
+
+            # the rail is a rule that was in the source and not in the render
+            # once; a later shared card rule had taken its box-shadow
+            r = evaljs(JS_RAIL)
+            if r.get("live") and not r.get("liveRail"):
+                fail(w, "rail", "a build with a repository paints no fuchsia "
+                                "rail; the rule is in the source and a later "
+                                "declaration wins")
+            if r.get("planned") and r.get("plannedRail"):
+                fail(w, "rail", "a planned build paints the rail; only a build "
+                                "that exists carries it")
             if r.get("pulseFwd") is False:
                 fail(w, "arrows", "advancing did not light the next arrow")
             if r.get("pulseBack") is False:
@@ -327,7 +340,7 @@ def main(argv):
             print("  " + f)
         return 1
     print("QC ok: overflow, overlap, click, toggle, tabs, banner, featured, "
-          "carousel, taskgroup, divider, arrows, sidescroll, deadlink, replay, contrast at "
+          "carousel, taskgroup, divider, arrows, rail, sidescroll, deadlink, replay, contrast at "
           + ", ".join(f"{w}x{h}" for w, h in VIEWPORTS))
     return 0
 

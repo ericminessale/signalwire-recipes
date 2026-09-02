@@ -174,6 +174,12 @@ brand cheatsheet's abstractions and not invented:
   reversed that the same day — the cards went flat and AI Call Center looked
   like its planned siblings. The rule under the builds block (`.bsec`) is
   neutral, full width on purpose: it separates two blocks, not two cells.
+  **The rail was lost a second time without anyone deciding it** (found
+  2026-09-02): the flat-grid pass added `.card,.buildcard{box-shadow:...}`
+  after the `.buildcard` rule, and a later declaration wins, so the rail's
+  rule stayed in the file while the render had none. `tools/qc.py` now asserts
+  a live build card paints the fuchsia inset and a planned one does not; a
+  rule that exists in source is not a rule that paints.
 - turquoise for links and identifiers; no purple anywhere
 - no glows, no gradients, no texture — the call center disables its own grain and
   dot-grid deliberately
