@@ -46,5 +46,5 @@
   ],
   "featured": true,
   "feature_line": "The model cannot call a tool that is not on the table.",
-  "feature_rank": 5
+  "feature_rank": 6
 }

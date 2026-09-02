@@ -4,10 +4,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**121 rows.** By kind: recipe 100 · build 8 · guide 4 · tool 2 · hold 7.  
-By status: verified 42 · written 4 · stub 8 · proposed 60 · hold 7.  
+**122 rows.** By kind: recipe 100 · build 9 · guide 4 · tool 2 · hold 7.  
+By status: verified 42 · written 5 · stub 8 · proposed 60 · hold 7.  
 Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
-Rows per planning lens: AI Agents & Automation 42 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
+Rows per planning lens: AI Agents & Automation 43 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
@@ -1343,7 +1343,7 @@ An inbound fax on a number is received to a URL and your webhook is told when it
   - platform-docs: no native /api/fax send endpoint
   - verified 2026-08-25: recipes/receive-an-inbound-fax/verify.py (requests checked against tools/openapi)
 
-## Builds — 8
+## Builds — 9
 
 ### `ai-call-center` **·launch**
 
@@ -1433,6 +1433,17 @@ An agent that dials a foreign phone tree, listens, presses the right digits and 
 - evidence:
   - repo github.com/signalwire-demos/pathfinder
   - composes: send-dtmf-to-an-external-ivr, require-verification-before-unlocking-tools (toggle gating), place-an-outbound-ai-call, record-a-call, stream-agent-debug-events - to verify
+
+### `docs-site-voice-guide`
+
+A voice and video agent in a floating widget on a documentation site: it answers from the docs, navigates the reader to the right page and scrolls to the right section.
+
+- kind **build** · status **written** · category **AI Agents** (ai-agents, voice, video) · task group **—** · lens AI Agents & Automation
+- interfaces: agents-sdk, swml, rest, browser-sdk · capabilities: rag, user-event, browser-sdk, avatar, fillers, guest-token, lambda
+- evidence:
+  - repo github.com/ericminessale/harbor-docs (site); agent in SignalWire AI Agent Automated Testing Protocol/agents/docs-bot, no repository of its own yet
+  - live at harbor-docs-5k2.pages.dev
+  - composes verified against agent.py on 2026-09-02, see recipes/docs-site-voice-guide/recipe.json
 
 ## Guides — 4
 

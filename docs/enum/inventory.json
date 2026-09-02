@@ -83,7 +83,7 @@
       ],
       "featured": true,
       "feature_line": "Tools that do not exist until the caller proves who they are.",
-      "feature_rank": 2
+      "feature_rank": 3
     },
     {
       "slug": "scope-tools-per-step",
@@ -114,7 +114,7 @@
       ],
       "featured": true,
       "feature_line": "The model cannot call a tool that is not on the table.",
-      "feature_rank": 5
+      "feature_rank": 6
     },
     {
       "slug": "hide-fields-from-the-model",
@@ -176,7 +176,7 @@
       ],
       "featured": true,
       "feature_line": "The second agent already knows who this is.",
-      "feature_rank": 3
+      "feature_rank": 4
     },
     {
       "slug": "enforce-state-transitions-in-a-tool-handler",
@@ -1524,7 +1524,7 @@
       ],
       "featured": true,
       "feature_line": "Both sides of a live call, transcribed as it happens.",
-      "feature_rank": 4
+      "feature_rank": 5
     },
     {
       "slug": "translate-a-call-in-real-time",
@@ -1559,7 +1559,7 @@
       ],
       "featured": true,
       "feature_line": "Two people, two languages, one call.",
-      "feature_rank": 1
+      "feature_rank": 2
     },
     {
       "slug": "listen-to-a-live-call",
@@ -2644,7 +2644,7 @@
       ],
       "featured": true,
       "feature_line": "Video in one REST call and twenty lines of browser code.",
-      "feature_rank": 6
+      "feature_rank": 7
     },
     {
       "slug": "add-a-phone-caller-to-a-video-room",
@@ -3593,6 +3593,44 @@
         "docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)",
         "demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)"
       ]
+    },
+    {
+      "slug": "docs-site-voice-guide",
+      "claim": "A voice and video agent in a floating widget on a documentation site: it answers from the docs, navigates the reader to the right page and scrolls to the right section.",
+      "kind": "build",
+      "status": "written",
+      "launch": false,
+      "products": [
+        "ai-agents",
+        "voice",
+        "video"
+      ],
+      "task_group": null,
+      "lens": "ai",
+      "interfaces": [
+        "agents-sdk",
+        "swml",
+        "rest",
+        "browser-sdk"
+      ],
+      "capabilities": [
+        "rag",
+        "user-event",
+        "browser-sdk",
+        "avatar",
+        "fillers",
+        "guest-token",
+        "lambda"
+      ],
+      "folds": [],
+      "evidence": [
+        "repo github.com/ericminessale/harbor-docs (site); agent in SignalWire AI Agent Automated Testing Protocol/agents/docs-bot, no repository of its own yet",
+        "live at harbor-docs-5k2.pages.dev",
+        "composes verified against agent.py on 2026-09-02, see recipes/docs-site-voice-guide/recipe.json"
+      ],
+      "featured": true,
+      "feature_line": "Ask the docs a question, and the page turns to the answer.",
+      "feature_rank": 1
     }
   ],
   "_patched_round5": true

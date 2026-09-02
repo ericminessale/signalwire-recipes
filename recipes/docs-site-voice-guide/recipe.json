@@ -23,6 +23,9 @@
   "surfaces": [],
   "repo": "https://github.com/ericminessale/harbor-docs",
   "demo_url": "https://harbor-docs-5k2.pages.dev/",
+  "featured": true,
+  "feature_line": "Ask the docs a question, and the page turns to the answer.",
+  "feature_rank": 1,
   "composes": [
     "ground-an-agent-in-your-docs",
     "push-events-from-an-agent-to-the-browser",
