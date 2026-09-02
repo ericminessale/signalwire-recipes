@@ -78,7 +78,7 @@ fails, retry before concluding anything.
 ## 4. The gate, then commit
 
 ```bash
-set -o pipefail
+set -euo pipefail                          # -e: a failed check stops the chain before the commit
 python tools/lint_recipes.py
 python tools/gen_index.py --check || python tools/gen_index.py
 python build.py
@@ -91,7 +91,9 @@ git add -A && git commit && git push
 ```
 
 Public build before preview. The order is the one above; a commit without the
-render checks has shipped a page broken on first click twice. Commit with
+render checks has shipped a page broken on first click twice. The `-e` is not
+optional: with `pipefail` alone a failed lint, build or QC is printed and the
+commit and push still run (codex caught the snippet without it). Commit with
 `-c core.safecrlf=false`; the message ends with the Co-Authored-By line.
 
 ## 5. After the commit

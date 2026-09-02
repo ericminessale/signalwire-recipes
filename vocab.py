@@ -127,6 +127,11 @@ def validate_recipe(r, V, where=""):
             f"unknown category '{r.get('category')}' "
             f"(add vocab/categories/{r.get('category')}.json to introduce it)"
         )
+    # CLAUDE.md hard rule 6: every recipe needs a real summary. The card and
+    # the page description render it, and an empty one shipped as a blank card
+    # description until this check existed (codex, 2026-09-02).
+    if not str(r.get("summary") or "").strip():
+        errs.append("missing summary (the one-line claim the card and the page carry)")
     for s in r.get("surfaces", []):
         name = s if isinstance(s, str) else s.get("lang")
         if name not in V["surfaces"]:

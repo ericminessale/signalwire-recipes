@@ -46,5 +46,6 @@ narrative. Treat that pass as part of the same decision as flipping
 
 ## The numbers, as of 2026-09-02
 
-96 of 121 folders written and verified. The 25 that remain, and why each
-waits, are listed under *Open work* in `CLAUDE.md`.
+97 of 122 folders written and verified (`python tools/gen_index.py` prints
+the current count; `recipes/README.md` carries it). The 25 that remain, and
+why each waits, are listed under *Open work* in `CLAUDE.md`.

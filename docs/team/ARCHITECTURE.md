@@ -15,8 +15,9 @@ adding a recipe. The fields that matter to the generator:
 |---|---|
 | `slug` | must equal the directory name |
 | `kind` | `recipe` (default) or `build` |
-| `summary` | the one-line claim; enforced, renders on the card |
-| `products` | the SignalWire product lines it touches; **category is derived from this**, never chosen |
+| `summary` | the one-line claim; the build refuses a recipe without one; renders on the card and as the page description |
+| `products` | the SignalWire product lines it touches |
+| `category` | required, and must name a file in `vocab/categories/`; **derived from `products`, not chosen**: `scaffold.py` writes the first product line, and a folder added by hand must carry it or the build refuses |
 | `subcategory` | the task group; required on recipes, absent on builds |
 | `surfaces` | which of `python/`, `swml/`, `typescript/` are written; declare only what exists |
 | `prerequisites`, `related`, `next` | authored forward edges, rendered as *Where this sits* |
@@ -110,8 +111,10 @@ card and click back at the render before calling a change done.
 
 ## Deployment
 
-`vercel.json` runs `python3 -m pip install -r requirements.txt && python3
-build.py` and serves `site/`; the deploy builds and never serves committed
-files. `.github/workflows/gate.yml` runs the gate in CI in two jobs, one for the
+`vercel.json` runs `bash tools/vercel_build.sh` and serves `site/`; the deploy
+builds and never serves committed files. The script finds an interpreter,
+creates a virtualenv (a modern system Python is externally managed under PEP
+668, so a bare `pip install` is refused), installs the tooling and runs
+`build.py`; read it before debugging a deploy. `.github/workflows/gate.yml` runs the gate in CI in two jobs, one for the
 Python checks and one for the browser checks. `requirements.txt` at the root is
 the tooling (Pygments, PyYAML); each recipe pins its own dependencies.

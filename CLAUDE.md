@@ -860,8 +860,8 @@ fabricated record, not a specimen.
   from `site.config.json`. On a preview host the sitemap was advertising 56
   URLs that all 404.
 - **The deploy builds; it does not serve committed files.** `site/` is
-  gitignored. `vercel.json` runs
-  `python3 -m pip install -r requirements.txt && python3 build.py` and serves
+  gitignored. `vercel.json` runs `bash tools/vercel_build.sh` (a virtualenv,
+  because a PEP 668 system Python refuses a bare pip install) and serves
   `site/`. Use `python3`, not `python`: the build image is Node-first.
 - **The gate belongs in CI, not in the deploy build.** `.github/workflows/gate.yml`
   has two jobs: `gate` (lint, index freshness, build, extensibility, verify) and
