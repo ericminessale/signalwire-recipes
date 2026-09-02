@@ -129,6 +129,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 #q::placeholder{color:var(--fg-subtle);}
 #q:focus-visible{outline:2px solid var(--fuchsia);outline-offset:1px;border-color:var(--fuchsia);}
 .chip{font-family:var(--body);font-size:12.5px;padding:7px 14px;border-radius:var(--r-md);
+  display:inline-flex;align-items:center;gap:7px;
   border:1px solid transparent;background:transparent;color:var(--fg-muted);cursor:pointer;}
 .chip:hover{color:var(--fg);}
 /* Selection is the one state that answers "what am I looking at", so it
@@ -420,10 +421,10 @@ a.cx:hover{color:var(--fg);}
    button. Planned rows are hidden by default now that most of the corpus is
    written (Eric, 2026-09-02); the plate and the switch went with the old
    default, because a control this quiet should not look like a setting. */
-.pvbanner .pvb{display:flex;align-items:center;justify-content:flex-end;gap:14px;
-  flex-wrap:wrap;font-size:12px;color:var(--fg-subtle);}
-.pvbanner b{color:var(--fg-muted);font-weight:500;font-variant-numeric:tabular-nums;}
-.pvtog{font-family:var(--body);font-size:12px;color:var(--fg-muted);cursor:pointer;
+.pvbanner .pvb{display:flex;align-items:center;justify-content:flex-start;gap:14px;
+  flex-wrap:wrap;font-size:12.5px;color:var(--fg-muted);}
+.pvbanner b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums;}
+.pvtog{font-family:var(--body);font-size:12.5px;color:var(--fg);cursor:pointer;
   background:transparent;border:0;padding:4px 0;
   text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-3);}
 .pvtog:hover{color:var(--fg);text-decoration-color:currentColor;}
@@ -469,7 +470,12 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .tg .cn{font-family:var(--mono);font-size:10px;color:var(--fg-subtle);
   background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:2px 5px;}
 .tg:hover .cn{color:var(--fg-2);}
-.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);margin-left:6px;vertical-align:1px;}
+/* the count is a pill, the same object the task-group strip uses, centred on
+   the label's box. A bare numeral on the baseline read as too low and a
+   numeral raised 1px read as an exponent (Eric, 2026-09-02); a pill has its
+   own edges, so where it sits is not a question. */
+.chip .cn{font-family:var(--mono);font-size:10.5px;color:var(--fg-subtle);line-height:1.4;
+  background:rgba(0,0,0,.35);border-radius:var(--r-sm);padding:1px 5px;}
 .catbody{padding-top:4px;}
 .tgroup{margin-top:22px;}
 .tgh{font-family:var(--body);font-weight:500;font-size:12.5px;color:var(--fg-muted);
