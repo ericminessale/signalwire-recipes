@@ -1579,6 +1579,12 @@ and a paced batch send.
   a module-level dict and the verifier, running both halves in one process,
   never noticed. State that crosses the documented commands goes to a file or
   a store, and the verifier reloads the module between the halves.
+- **A "stand-in for your sign-in" that reads the role from the request body is
+  an escalation path, not a stand-in.** The PubSub token route minted a
+  publisher for anyone who sent `role: publisher`. The stand-in is now a
+  server-held key the browser never has, and a request asking to publish
+  without it is refused, not downgraded. A verifier for any token minter
+  posts the escalation attempt and asserts no request was made.
 - **Re-read the clock after a sleep.** A pacer that computes the next slot
   from the time before it slept lets an oversleep shorten the next gap.
 - **Sign the callback URL once.** A configured status URL that already has a

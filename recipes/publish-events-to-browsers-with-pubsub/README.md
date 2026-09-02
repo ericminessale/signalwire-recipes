@@ -28,6 +28,8 @@ def reader_token(member_id):
 @app.post("/pubsub/token")
 def token():
     body = request.get_json(force=True)
+    if body.get("role") == "publisher" and request.headers.get("X-Board-Key") != BOARD_KEY:
+        abort(403)
     minted = publisher_token(body["member_id"]) if body.get("role") == "publisher" \
         else reader_token(body["member_id"])
     return jsonify({"token": minted["token"], "channel": CHANNEL})
@@ -46,9 +48,11 @@ POST /api/pubsub/tokens
 ```
 
 The route hands the browser the minted token and the channel name, and nothing
-else. Who counts as a publisher is your sign-in's decision. The route here
-takes a `role` field as a stand-in for it; replace that with your own session
-check.
+else. Who counts as a publisher is the server's decision, never the browser's.
+A request that asks to publish must carry the board's key in `X-Board-Key`, a
+secret only the board process holds. Without it the request is refused with
+403 rather than downgraded. Replace the header check with your own session
+check when you have sign-in.
 
 ## Run it
 
@@ -85,7 +89,8 @@ route with its test client. It asserts the following.
 - `reader_token` and `publisher_token` each make one `POST` to the documented PubSub tokens path
 - the reader body is exactly `ttl` 60, the member id, the channel with `read` true and `write` false, and a `state`; the publisher body has `write` true
 - the spec requires exactly `ttl` and `channels`, describes `ttl` in minutes with the 43,200 bound and `channels` as objects with `read` and/or `write`, documents `member_id` and `state`, and answers with `token`
-- the route returns exactly the token and the channel name, mints a reader by default and a publisher when your sign-in says so
+- the route returns exactly the token and the channel name, mints a reader by default and a publisher only for a request carrying the board's key
+- a request that asks to publish without the key, or with the wrong key, is refused with 403 and mints nothing
 - a request without a member id is refused and mints nothing, and no request carries the API token
 
 ## Limitations

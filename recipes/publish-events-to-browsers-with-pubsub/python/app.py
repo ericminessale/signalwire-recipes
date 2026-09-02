@@ -28,6 +28,10 @@ client = RestClient()
 
 CHANNEL = os.getenv("CHANNEL", "workshop-board")
 TOKEN_TTL_MINUTES = int(os.getenv("TOKEN_TTL_MINUTES", "60"))
+# Only the board process holds this. A browser cannot ask to be a publisher;
+# it can only present the key, and browsers do not have it. Replace the
+# header check with your own session check when you have sign-in.
+BOARD_KEY = os.getenv("BOARD_KEY")
 
 
 def reader_token(member_id):
@@ -51,13 +55,16 @@ app = Flask(__name__)
 
 @app.post("/pubsub/token")
 def token():
-    """Your sign-in decides the role; the platform token then carries it."""
+    """The server decides the role; the platform token then carries it."""
     body = request.get_json(force=True)
     member_id = body.get("member_id")
     if not member_id:
         abort(400)
-    minted = publisher_token(member_id) if body.get("role") == "publisher" \
-        else reader_token(member_id)
+    wants_write = body.get("role") == "publisher"
+    has_key = bool(BOARD_KEY) and request.headers.get("X-Board-Key") == BOARD_KEY
+    if wants_write and not has_key:
+        abort(403)  # asked to publish without the key: refused, not downgraded
+    minted = publisher_token(member_id) if wants_write else reader_token(member_id)
     return jsonify({"token": minted["token"], "channel": CHANNEL})
 
 

@@ -27,6 +27,7 @@ os.environ.update({
     "SIGNALWIRE_SPACE": "example.signalwire.com",
     "CHANNEL": "workshop-board",
     "TOKEN_TTL_MINUTES": "60",
+    "BOARD_KEY": "board-verifier-key",
 })
 
 import verifylib as V  # noqa: E402
@@ -78,7 +79,16 @@ def main():
     client = recipe.app.test_client()
     r = client.post("/pubsub/token", json={"member_id": "dana"})
     assert r.status_code == 200 and r.get_json() == {"token": "t-reader", "channel": "workshop-board"}, r.get_json()
-    r = client.post("/pubsub/token", json={"member_id": "board-1", "role": "publisher"})
+    # a browser asking to publish, without the board's key, is refused and
+    # mints nothing (codex, wave 11 review: the role must not come from the client)
+    r = client.post("/pubsub/token", json={"member_id": "dana", "role": "publisher"})
+    assert r.status_code == 403, r.status_code
+    r = client.post("/pubsub/token", json={"member_id": "dana", "role": "publisher"},
+                    headers={"X-Board-Key": "wrong"})
+    assert r.status_code == 403, r.status_code
+    assert len(rec2.calls) == 1, "a refused publisher request must mint nothing"
+    r = client.post("/pubsub/token", json={"member_id": "board-1", "role": "publisher"},
+                    headers={"X-Board-Key": "board-verifier-key"})
     assert r.get_json() == {"token": "t-writer", "channel": "workshop-board"}, r.get_json()
     assert [c["body"]["channels"]["workshop-board"]["write"] for c in rec2.calls] == [False, True]
     assert client.post("/pubsub/token", json={}).status_code == 400
