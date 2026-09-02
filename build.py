@@ -392,6 +392,8 @@ pre.src{margin:0;background:var(--well);color:var(--fg-2);padding:18px 18px 20px
   overscroll-behavior:contain;
   border:none;border-top:1px solid var(--well-line);box-shadow:var(--sunk);
   font-family:var(--mono);font-size:12px;line-height:1.8;overflow-x:auto;}
+.cx.planned{color:var(--fg-subtle);cursor:default;}
+.cx.planned small{font-family:var(--mono);font-size:10px;margin-left:5px;}
 .cxlist{display:flex;flex-wrap:wrap;gap:6px;}
 pre.src .c,pre.src .c1,pre.src .cm,pre.src .cs,pre.src .ch{color:var(--fg-subtle);font-style:italic;}
 pre.src .k,pre.src .kn,pre.src .kd,pre.src .kr,pre.src .kt,pre.src .kc{color:var(--fg);font-weight:500;}
@@ -852,7 +854,11 @@ function apply(){
     // it, so the offset is whole viewports plus one gap each. offsetLeft
     // cannot be used here: applying a transform makes the track the cards'
     // offsetParent, so the measurement changes meaning as soon as it is used.
-    const vw=viewport.getBoundingClientRect().width;
+    // content width, not the box: the viewport carries padding-right for the
+    // build cards' sheets, and the cards are sized from the track's content
+    // box, so a page is that width plus one gap (codex, 2026-09-02)
+    const vcs=getComputedStyle(viewport);
+    const vw=viewport.clientWidth-parseFloat(vcs.paddingLeft)-parseFloat(vcs.paddingRight);
     track.style.transform='translateX(-'+(at*(vw+GAP))+'px)';
     [...dotWrap.children].forEach((d,n)=>{
       d.classList.toggle('on',n===at);
@@ -1592,6 +1598,7 @@ def build_index(recipes, body_only=False):
 
 _USED_IN = {}
 _TITLES = {}
+_WRITTEN = set()   # slugs with a page of their own; a link to anything else is dead
 
 DETAIL_JS = """
 document.querySelectorAll('.stabs').forEach(function(bar){
@@ -1876,7 +1883,12 @@ def build_detail(r, body_only=False):
         out.append('<div class="sec proc"><h2>What to change first</h2>%s</div>'
                    % blocks_html(sections["What to change first"]))
     def link(slug):
-        return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))
+        # A planned recipe has no page, so it is named and not linked. The
+        # public build once linked written pages to stubs it did not write
+        # (codex, 2026-09-02).
+        if slug in _WRITTEN:
+            return '<a class="cx" href="%s.html">%s</a>' % (esc(slug), esc(_TITLES.get(slug, slug)))
+        return '<span class="cx planned">%s <small>planned</small></span>' % esc(_TITLES.get(slug, slug))
 
     # Typed relationships: authored forward edges (recipe -> prerequisite,
     # sibling, next) and the build edges in both directions. One block, so the
@@ -1928,6 +1940,22 @@ def build_detail(r, body_only=False):
 
 
 
+def build_redirect(old_slug, r):
+    """The page an old slug serves: a meta refresh, a canonical, and a link.
+    noindex regardless of the site setting, because the new page is the one
+    to index; a static host needs no configuration for it to work."""
+    target = f"{r['slug']}.html"
+    return (
+        '<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+        '<meta name="robots" content="noindex,nofollow">\n'
+        f'<meta http-equiv="refresh" content="0; url={esc(target)}">\n'
+        f'<link rel="canonical" href="{esc(BASE + recipe_path(r["slug"])) if BASE else esc(target)}">\n'
+        f"<title>{esc(r['title'])}</title>\n"
+        f'<p>This recipe moved. <a href="{esc(target)}">{esc(r["title"])}</a></p>\n'
+    )
+
+
 def build_md(r):
     lines = [
         f"# {r['title']}",
@@ -1948,7 +1976,8 @@ def build_md(r):
                        ("next", "Next"), ("composes", "Composes")):
         if r.get(key):
             lines.append(f"- **{title}:** " + ", ".join(
-                f"[{_TITLES.get(x, x)}]({BASE}/{x})" for x in r[key]))
+                f"[{_TITLES.get(x, x)}]({BASE}/{x})" if x in _WRITTEN
+                else f"{_TITLES.get(x, x)} (planned)" for x in r[key]))
     lines += ["", f"Canonical: {BASE}/{r['slug']}", ""]
     return "\n".join(lines)
 
@@ -2154,6 +2183,7 @@ def build_preview(recipes):
                     "_surfaces_on_disk": [], "_planned": "planned",
                 })
         _TITLES.update({r["slug"]: r["title"] for r in live})
+        _WRITTEN.update(r["slug"] for r in live if not r.get("_planned"))
     else:
         live = written
     if not live:
@@ -2182,6 +2212,7 @@ def main():
     global _USED_IN, _TITLES
     _USED_IN = used_in(recipes)
     _TITLES = {r["slug"]: r["title"] for r in recipes}
+    _WRITTEN.update(r["slug"] for r in recipes if has_content(r))
     if "--preview" in sys.argv:
         SITE.mkdir(parents=True, exist_ok=True)
         out = SITE / "preview.html"
@@ -2218,6 +2249,10 @@ def main():
     for r in written:
         (SITE / "r" / f"{r['slug']}.html").write_text(build_detail(r), encoding="utf-8")
         (SITE / "r" / f"{r['slug']}.md").write_text(build_md(r), encoding="utf-8")
+        # a slug is a URL; renaming one leaves the old address answering with a
+        # redirect page, never a 404 (codex, on the Harbor rename)
+        for old in r.get("former_slugs", []):
+            (SITE / "r" / f"{old}.html").write_text(build_redirect(old, r), encoding="utf-8")
     (SITE / "llms.txt").write_text(build_llms(written), encoding="utf-8")
     (SITE / "sitemap.xml").write_text(build_sitemap(written), encoding="utf-8")
     (SITE / "robots.txt").write_text(build_robots(), encoding="utf-8")

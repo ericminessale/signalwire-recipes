@@ -1,5 +1,8 @@
 {
   "slug": "embed-a-state-aware-voice-agent-in-your-web-page",
+  "former_slugs": [
+    "docs-site-voice-guide"
+  ],
   "kind": "build",
   "title": "Embed a state-aware voice agent in your web page",
   "alias": "a WebRTC voice AI agent embedded in a web page, aware of the page and able to drive it",
