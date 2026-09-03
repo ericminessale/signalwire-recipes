@@ -1,8 +1,8 @@
 {
   "slug": "governed-intake-agent",
-  "title": "Governed Intake Agent",
-  "alias": "guardrailed AI intake",
-  "summary": "An intake agent that cannot skip a step, cannot see fields it should not, and cannot transfer before it has what it needs.",
+  "title": "Governed AI intake agent",
+  "alias": "AI intake workflow guardrails",
+  "summary": "Enforce intake steps, field visibility, and transfer prerequisites in code instead of relying on the AI agent's prompt.",
   "scenario": "Intake that survives a risk review",
   "category": "ai-agents",
   "products": [

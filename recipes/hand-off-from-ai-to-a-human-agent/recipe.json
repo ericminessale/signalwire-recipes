@@ -2,7 +2,7 @@
   "slug": "hand-off-from-ai-to-a-human-agent",
   "title": "Hand off from AI to a human agent",
   "alias": "AI-to-human handoff with context",
-  "summary": "The agent's tool writes its notes under the call's id and hands the call to a named queue with enter_queue. The human's side reads the next queue member over REST, whose documented fields include that same call_id, and finds the notes by it.",
+  "summary": "Store the AI agent's notes by call ID, transfer the caller to a queue, and load those notes for the human agent.",
   "scenario": "A bike shop front desk that takes the name and the problem, then puts the caller through to a person who already knows both",
   "category": "voice",
   "products": [

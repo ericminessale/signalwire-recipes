@@ -2,7 +2,7 @@
   "slug": "translate-a-call-in-real-time",
   "title": "Translate a call in real time",
   "alias": "real-time call translation",
-  "summary": "Each side speaks their own language on one bridge.",
+  "summary": "Translate both sides of one bridged call so each participant speaks and hears their chosen language.",
   "scenario": "Support without a language-matched agent",
   "category": "voice",
   "products": [

@@ -1,4 +1,4 @@
-# Let a browser dial your agent with no Dashboard setup
+# Let a browser dial your agent with no dashboard setup
 
 > A SWML webhook resource whose `primary_request_url` is your agent's URL is a thing a browser can dial: you list its Fabric addresses over REST and mint a guest token whose `allowed_addresses` names one, with no Dashboard step.
 

@@ -1,4 +1,4 @@
-# Start from a prefab agent
+# Start from a prefab AI agent
 
 > A complete receptionist or survey agent runs from a prefab class and a short configuration block.
 

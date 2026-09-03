@@ -1,4 +1,4 @@
-# Let the agent call an API with no server of yours
+# Let a voice AI agent call an API without your server
 
 > SignalWire makes the API call, so no service of yours is in the tool path.
 

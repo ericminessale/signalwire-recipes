@@ -2,7 +2,7 @@
   "slug": "walk-a-caller-through-ordered-steps",
   "title": "Walk a caller through steps they cannot skip",
   "alias": "guided AI conversation flow",
-  "summary": "Every step names one tool. Each step but the last names only its successor, so the next_step tool the model is offered has no backward or skip target.",
+  "summary": "Expose only the next allowed AI agent tool at each step so callers cannot move backward or skip ahead.",
   "scenario": "Opening a roadside assistance request, three questions in order",
   "surfaces": [
     "python"

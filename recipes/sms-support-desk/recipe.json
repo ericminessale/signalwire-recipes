@@ -2,7 +2,7 @@
   "slug": "sms-support-desk",
   "title": "SMS Support Desk",
   "alias": "SMS customer support",
-  "summary": "Inbound texts routed to the right queue, answered by the same agent logic as the phone line, with delivery handled properly.",
+  "summary": "Route inbound SMS conversations to support queues, reuse the phone agent's logic, and track message delivery.",
   "scenario": "Support over text without a second codebase",
   "category": "messaging",
   "products": [

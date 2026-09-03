@@ -1,4 +1,4 @@
-# Support Line
+# Inbound support line
 
 > A full inbound support number: menu, priority queue, hold, callback instead of waiting, and a recording of every call.
 

@@ -1,8 +1,8 @@
 {
   "slug": "protect-tool-webhooks-with-per-call-tokens",
-  "title": "Protect tool webhooks with per-call tokens",
-  "alias": "webhook authentication for AI tools",
-  "summary": "Every tool webhook needs a token minted for that call and function. Another call, another function, an edit or expiry gets a refusal, and so does no token at all.",
+  "title": "Protect AI agent tool webhooks with per-call tokens",
+  "alias": "AI agent tool webhook authentication",
+  "summary": "Mint a token for each call and AI agent tool, then reject missing, expired, edited, or mismatched tokens.",
   "scenario": "An account line where refunds must not be triggered from outside the call that asked",
   "surfaces": [
     "python"

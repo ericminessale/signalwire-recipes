@@ -2,7 +2,7 @@
   "slug": "transfer-a-call-without-losing-context",
   "title": "Transfer a call without losing context",
   "alias": "context-preserving call transfer",
-  "summary": "State and identity travel with the call, so the next leg already knows who this is.",
+  "summary": "Pass caller identity and state with the transfer so the next call leg receives the context.",
   "scenario": "The thing that breaks on every other platform",
   "category": "ai-agents",
   "products": [

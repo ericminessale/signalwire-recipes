@@ -1,7 +1,7 @@
 {
   "slug": "live-sales-coach",
-  "title": "Live sales coach",
-  "alias": "real-time sales coaching AI",
+  "title": "Add real-time AI coaching to sales calls",
+  "alias": "real-time AI sales coaching",
   "summary": "A rep takes calls in the browser while a sidecar streams objection-handling insights beside the call.",
   "scenario": "",
   "surfaces": [

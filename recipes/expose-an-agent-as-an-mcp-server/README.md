@@ -1,4 +1,4 @@
-# Expose an agent as an MCP server
+# Expose a voice AI agent as an MCP server
 
 > Let another AI call your voice agent's tools directly.
 

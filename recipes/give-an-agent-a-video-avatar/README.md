@@ -1,4 +1,4 @@
-# Give an agent a video avatar
+# Give a voice AI agent a video avatar
 
 > Three `ai.params`, `video_idle_file`, `video_listening_file` and `video_talking_file`, give an agent a face on a video call. The schema names the state each one plays for.
 

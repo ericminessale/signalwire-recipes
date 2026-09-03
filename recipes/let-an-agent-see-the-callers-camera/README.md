@@ -1,4 +1,4 @@
-# Let an agent see the caller's camera
+# Let a voice AI agent see the caller's camera
 
 > `enable_vision: true` in `ai.params` turns on the platform's `get_visual_input` function for the agent. `vision_model` names the model, and an internal filler under `get_visual_input` gives the agent something to say for it.
 

@@ -1,4 +1,4 @@
-# Control which tools the agent can call at each step
+# Control which tools an AI agent can call at each step
 
 > At each point in the conversation the model can only see the tools you allowed there.
 

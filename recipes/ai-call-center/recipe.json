@@ -2,8 +2,8 @@
   "slug": "ai-call-center",
   "kind": "build",
   "title": "AI Call Center",
-  "alias": "AI contact center with live human agents",
-  "summary": "A complete contact centre: AI triage, priority queues, live human agents in the browser, and supervisor listen, whisper and barge.",
+  "alias": "AI contact center with human agents",
+  "summary": "Route callers with AI, queue by priority, connect browser-based human agents, and let supervisors listen, whisper, or barge in.",
   "scenario": "What the recipes look like assembled into a product",
   "category": "ai-agents",
   "products": [

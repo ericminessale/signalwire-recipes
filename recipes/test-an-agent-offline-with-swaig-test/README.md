@@ -1,4 +1,4 @@
-# Test an agent offline with swaig-test
+# Test a voice AI agent offline with swaig-test
 
 > The SDK's `swaig-test` command loads an agent file with no number, tunnel or account. It prints the SWML the platform would fetch, lists the tools, and runs any tool with the arguments you give it.
 

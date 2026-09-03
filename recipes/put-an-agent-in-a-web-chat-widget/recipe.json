@@ -1,8 +1,8 @@
 {
   "slug": "put-an-agent-in-a-web-chat-widget",
-  "title": "Put an agent in a web chat widget",
-  "alias": "web chat AI widget",
-  "summary": "Drop the same agent into a chat box on any page.",
+  "title": "Put an AI agent in a web chat widget",
+  "alias": "AI web chat widget",
+  "summary": "Embed a chat widget that connects website visitors to the same AI agent used on other channels.",
   "scenario": "Support chat that shares the phone agent's logic",
   "category": "messaging",
   "products": [

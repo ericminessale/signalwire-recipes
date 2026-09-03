@@ -1,4 +1,4 @@
-# Change the agent's instructions mid-call
+# Change a voice AI agent's instructions mid-call
 
 > A tool result replaces the system prompt on the call in progress, summarising or dropping the earlier turns, with no transfer.
 

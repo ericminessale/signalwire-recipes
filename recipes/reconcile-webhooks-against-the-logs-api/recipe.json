@@ -2,7 +2,7 @@
   "slug": "reconcile-webhooks-against-the-logs-api",
   "title": "Reconcile webhooks against the Logs API",
   "alias": "webhook reconciliation against call logs",
-  "summary": "A pass over a time window walks every page of the voice and message logs. It reports every entry your webhook handler's store lacks, by the id the logs carry, and fetches the event trail of each such voice log.",
+  "summary": "Page through voice and message logs, find entries missing from your webhook store, and retrieve each missing call's event history.",
   "scenario": "A nightly job that finds the calls and messages your status handler has no record of",
   "surfaces": [
     "python"

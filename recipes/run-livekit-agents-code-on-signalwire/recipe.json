@@ -2,7 +2,7 @@
   "slug": "run-livekit-agents-code-on-signalwire",
   "title": "Run LiveKit Agents code on SignalWire",
   "alias": "LiveKit Agents compatibility",
-  "summary": "LiveKit-agents-shaped code, an Agent with instructions and a function_tool, an AgentSession and an rtc_session entrypoint, renders a SignalWire agent through signalwire.livewire. The instructions become the prompt, the tool becomes a SWAIG function, and the same Python function runs when the tool is called.",
+  "summary": "Run LiveKit Agents-style instructions, sessions, and Python tools through SignalWire while keeping the same agent structure and tool functions.",
   "scenario": "A front desk you wrote for livekit-agents that you want on SignalWire without rewriting the tool",
   "surfaces": [
     "python"

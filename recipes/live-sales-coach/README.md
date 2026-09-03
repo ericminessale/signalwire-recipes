@@ -1,4 +1,4 @@
-# Live sales coach
+# Add real-time AI coaching to sales calls
 
 > A rep takes calls in the browser while a sidecar streams objection-handling insights beside the call.
 

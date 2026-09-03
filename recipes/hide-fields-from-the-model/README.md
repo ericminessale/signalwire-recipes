@@ -1,4 +1,4 @@
-# Show the model only the fields it needs
+# Show the AI model only the fields it needs
 
 > Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.
 

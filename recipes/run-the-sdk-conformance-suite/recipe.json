@@ -1,7 +1,7 @@
 {
   "slug": "run-the-sdk-conformance-suite",
   "title": "Run the SDK conformance suite",
-  "alias": "SDK conformance testing",
+  "alias": "voice AI SDK conformance testing",
   "summary": "107 SDK capabilities are asserted over a live WebRTC call, and the JSON key the platform receives is checked against the SDK method that produced it.",
   "scenario": "",
   "surfaces": [

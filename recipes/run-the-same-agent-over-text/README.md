@@ -1,4 +1,4 @@
-# Run the same agent over text
+# Run one AI agent over voice and SMS
 
 > One agent definition answering by SMS as well as by voice.
 

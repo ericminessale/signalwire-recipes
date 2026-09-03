@@ -1,6 +1,6 @@
 {
   "slug": "scope-tools-per-step",
-  "title": "Control which tools the agent can call at each step",
+  "title": "Control which tools an AI agent can call at each step",
   "alias": "per-step tool scoping for AI agents",
   "summary": "At each point in the conversation the model can only see the tools you allowed there.",
   "scenario": "An agent that structurally cannot go off-script",

@@ -236,6 +236,19 @@ brand cheatsheet's abstractions and not invented:
   "context-preserving call transfer". The recipe page `<title>` is
   `how-to title · alias · SignalWire Recipes`, so a search result shows both
   shapes on one line.
+- **Summaries are the meta description, so they speak the reader's language
+  (sol content audit, 2026-09-03, `docs/CONTENT_REVIEW_2026-09-03.md`).** A
+  summary states the mechanism in words a searcher recognises ("Turn call
+  noise reduction on or off in the call flow or during a live call through
+  REST"); the SDK and schema names (SWML, relayml, flow_data, global_data,
+  SWAIG, ai.params, calling.*) belong in the README's *How it works* and the
+  verifier, where the reader who wants them has arrived. Titles of recipes
+  carry "voice AI agent" / "AI agent" where the noun needs a subject; builds
+  keep noun-phrase names (an application is a thing, not a how-to), sharpened
+  where weak ("Inbound support line", "Real-time AI sales coach"). Sol's
+  overreach list is the guard on this register: "secure payment capture",
+  "verified data", "context intact" and "answers from your content rather than
+  the model's memory" were all reworded to what the recipe shows.
 - **Slugs name the mechanism, builds included (2026-09-02).** The Harbor demo
   shipped as `docs-site-voice-guide`, which names nothing a developer searches
   for and could read as a pointer to docs about voice. Eric: "the entire point

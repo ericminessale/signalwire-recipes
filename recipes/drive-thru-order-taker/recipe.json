@@ -1,8 +1,8 @@
 {
   "slug": "drive-thru-order-taker",
-  "title": "Drive thru order taker",
+  "title": "Drive-thru order taker",
   "alias": "voice AI order taking",
-  "summary": "A drive-thru ordering agent with a live order board: menu constraints in code, per-guest voice, events pushed to the browser.",
+  "summary": "Apply menu rules in code, use a voice for each guest, and push live order events to a browser board.",
   "scenario": "",
   "surfaces": [],
   "governed": false,

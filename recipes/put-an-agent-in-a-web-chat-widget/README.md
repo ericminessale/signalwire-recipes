@@ -1,4 +1,4 @@
-# Put an agent in a web chat widget
+# Put an AI agent in a web chat widget
 
 > Drop the same agent into a chat box on any page.
 

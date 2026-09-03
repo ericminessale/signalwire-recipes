@@ -2,7 +2,7 @@
   "slug": "isolate-tenants-with-subprojects-and-scoped-tokens",
   "title": "Isolate tenants with subprojects and scoped tokens",
   "alias": "multi-tenant isolation with scoped API tokens",
-  "summary": "One POST creates a subproject, and a second creates an API token bound to it through subproject_id with exactly the permissions you list. The spec's permission enum is the whole vocabulary, and management is not in this token's list.",
+  "summary": "Create a subproject for each tenant and issue API tokens limited to that subproject and an explicit permission list.",
   "scenario": "A SaaS that gives each customer their own numbers, logs and credentials on one SignalWire account",
   "surfaces": [
     "python"

@@ -1,4 +1,4 @@
-# Control a call from your own process over relay
+# Control a call from your own process over WebSocket
 
 > One persistent WebSocket answers inbound calls and places outbound ones from your process; no HTTP webhook is exposed.
 

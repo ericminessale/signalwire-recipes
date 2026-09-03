@@ -1,6 +1,6 @@
 {
   "slug": "call-an-api-without-a-backend",
-  "title": "Let the agent call an API with no server of yours",
+  "title": "Let a voice AI agent call an API without your server",
   "alias": "serverless API integration for voice AI",
   "summary": "SignalWire makes the API call, so no service of yours is in the tool path.",
   "scenario": "Package tracking, weather, stock quotes",

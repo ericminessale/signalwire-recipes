@@ -1,4 +1,4 @@
-# Protect tool webhooks with per-call tokens
+# Protect AI agent tool webhooks with per-call tokens
 
 > Every tool webhook request must carry a token minted for that call and that function. The endpoint refuses anything else before a handler runs.
 

@@ -2,7 +2,7 @@
   "slug": "split-one-number-into-isolated-personas",
   "title": "Run isolated personas behind one number",
   "alias": "multi-persona AI on one number",
-  "summary": "The default context's step lists sales, support and billing in valid_contexts and names no tools. Each persona is an isolated context, and its step offers the model only that desk's tool.",
+  "summary": "Route one phone number among isolated sales, support, and billing AI personas, each with access only to its own tools.",
   "scenario": "A bicycle shop with one number and three desks that must not blur into each other",
   "surfaces": [
     "python"

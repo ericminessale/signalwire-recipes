@@ -2,7 +2,7 @@
   "slug": "send-an-sms",
   "title": "Send an SMS",
   "alias": "programmable SMS",
-  "summary": "The three-line version, plus what to do when it fails.",
+  "summary": "Send an SMS with one REST call, and handle a request that fails.",
   "scenario": "Where every messaging project starts",
   "category": "messaging",
   "products": [

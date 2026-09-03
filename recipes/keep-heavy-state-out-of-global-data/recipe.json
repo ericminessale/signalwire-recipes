@@ -2,7 +2,7 @@
   "slug": "keep-heavy-state-out-of-global-data",
   "title": "Keep per-call state server-side, keyed by call id",
   "alias": "server-side session state for voice AI",
-  "summary": "Per-call state lives server-side keyed by call_id. Only a count and the distinct areas go to global_data, and the handlers read the full record from the store.",
+  "summary": "Store full per-call state on your server, keyed by call ID, and expose only the fields the voice AI agent needs.",
   "scenario": "A mechanic phoning in a bike inspection, one finding at a time",
   "surfaces": [
     "python"

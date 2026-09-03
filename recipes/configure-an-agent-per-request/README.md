@@ -1,4 +1,4 @@
-# Configure one agent per request for many tenants
+# Configure a voice AI agent per request for many tenants
 
 > One deployed agent serves many tenants. A callback runs on every SWML request and configures an ephemeral copy from the query string or a header, so the deployed agent never changes.
 

@@ -1,4 +1,4 @@
-# Cover tool latency with fillers
+# Cover AI agent tool latency with fillers
 
 > The slow tool renders a filler phrase, and a wait file when you host one. Each language carries its own filler pool.
 

@@ -1,4 +1,4 @@
-# Require verification before unlocking tools
+# Require verification before unlocking AI agent tools
 
 > Account tools do not exist in the model's tool list until a verification tool has succeeded.
 

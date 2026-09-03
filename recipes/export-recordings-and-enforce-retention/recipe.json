@@ -2,7 +2,7 @@
   "slug": "export-recordings-and-enforce-retention",
   "title": "Export recordings and enforce retention",
   "alias": "call recording retention and export",
-  "summary": "A pass lists every call recording across pages, copies each one older than your retention window to storage you control, and then deletes it from SignalWire. Nothing is deleted that was not copied first.",
+  "summary": "Copy recordings older than your retention window to your storage, then delete each SignalWire original after a successful copy.",
   "scenario": "A shop that must keep call recordings for a year in its own archive and nowhere else",
   "surfaces": [
     "python"

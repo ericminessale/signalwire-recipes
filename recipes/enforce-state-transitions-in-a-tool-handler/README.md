@@ -1,4 +1,4 @@
-# Decide the next step in code, not in the prompt
+# Enforce an AI agent's next step in code
 
 > Your code decides what happens next, so the model cannot strand or misroute
 > the caller.

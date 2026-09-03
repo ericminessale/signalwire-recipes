@@ -1,4 +1,4 @@
-# Give an agent a tool
+# Give a voice AI agent a tool
 
 > Let the model call your function, and decide what it gets back.
 

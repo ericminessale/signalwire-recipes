@@ -1,4 +1,4 @@
-# Push events from an agent to the browser
+# Push events from a voice AI agent to the browser
 
 > A tool result carries a SWML `user_event` whose `event` is any JSON object the handler chooses. The bundled schema describes the verb as sending events to the connected client on the call.
 

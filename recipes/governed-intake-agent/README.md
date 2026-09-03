@@ -1,4 +1,4 @@
-# Governed Intake Agent
+# Governed AI intake agent
 
 > An intake agent that cannot skip a step, cannot see fields it should not, and cannot transfer before it has what it needs.
 

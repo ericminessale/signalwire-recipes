@@ -1,8 +1,8 @@
 {
   "slug": "run-the-same-agent-over-text",
-  "title": "Run the same agent over text",
+  "title": "Run one AI agent over voice and SMS",
   "alias": "omnichannel AI agent (voice and SMS)",
-  "summary": "One agent definition answering by SMS as well as by voice.",
+  "summary": "Use one AI agent definition for voice calls and SMS conversations.",
   "scenario": "Channel parity without a second build",
   "category": "messaging",
   "products": [

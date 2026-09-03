@@ -2,7 +2,7 @@
   "slug": "handle-opt-outs-yourself",
   "title": "Handle SMS STOP and START in your own code",
   "alias": "SMS opt-out (STOP) handling",
-  "summary": "Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. The handler accepts the webhook only with SignalWire's signature over it.",
+  "summary": "Verify inbound webhook signatures, record STOP or START, send a confirmation, and check the consent record before every outbound SMS.",
   "scenario": "A bike shop that texts repair updates and must stop the moment a customer says so",
   "surfaces": [
     "python"

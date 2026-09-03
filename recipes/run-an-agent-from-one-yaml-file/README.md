@@ -1,4 +1,4 @@
-# Run an agent from one YAML file
+# Run a voice AI agent from one YAML file
 
 > A complete agent in one document, with nothing to deploy.
 

@@ -2,7 +2,7 @@
   "slug": "stream-call-audio-to-your-own-server",
   "title": "Stream call audio to your own server",
   "alias": "media streaming and audio forking",
-  "summary": "tap sends a copy of a call's audio to a WebSocket or RTP destination of yours, and stop_tap ends it by control id. The same pair exists mid-call over REST as calling.tap and calling.tap.stop.",
+  "summary": "Copy live call audio to your WebSocket or RTP server, then stop the stream by its control ID.",
   "scenario": "A workshop that wants every support call's audio on its own server, live",
   "surfaces": [
     "swml",

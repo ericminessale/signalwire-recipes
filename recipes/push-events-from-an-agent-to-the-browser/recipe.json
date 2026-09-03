@@ -1,8 +1,8 @@
 {
   "slug": "push-events-from-an-agent-to-the-browser",
-  "title": "Push events from an agent to the browser",
-  "alias": "voice AI driving a web page",
-  "summary": "A tool result carries a SWML user_event whose event is any JSON object the handler chooses. The bundled schema describes the verb as sending events to the connected client on the call.",
+  "title": "Push events from a voice AI agent to the browser",
+  "alias": "voice-controlled website navigation",
+  "summary": "Return a JSON event from a voice AI agent tool and deliver it to the browser connected to the call.",
   "scenario": "A booking page that highlights the slot the caller picked, the moment the agent records it",
   "surfaces": [
     "python",

@@ -1,4 +1,4 @@
-# Ground an agent in your docs
+# Ground a voice AI agent in your documents
 
 > A Datasphere tool searches only the selected tagged corpus and returns the matching passages to the agent.
 

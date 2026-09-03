@@ -2,7 +2,7 @@
   "slug": "run-a-bedrock-voice-agent",
   "title": "Run a Bedrock voice agent",
   "alias": "Amazon Bedrock voice agent",
-  "summary": "Swapping AgentBase for BedrockAgent renders amazon_bedrock instead of ai, with the prompt carrying three Bedrock settings. The SWAIG function renders with the same schema on both, and the handler you register on each returns the same reply.",
+  "summary": "Run the same voice AI agent and tool handler through Amazon Bedrock by changing the agent class and Bedrock settings.",
   "scenario": "A parts desk you want to run on Amazon Bedrock without rewriting its tools",
   "surfaces": [
     "python"

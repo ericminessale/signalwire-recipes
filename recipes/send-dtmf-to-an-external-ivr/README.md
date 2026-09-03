@@ -1,4 +1,4 @@
-# Send DTMF to an external IVR
+# Send DTMF to someone else's IVR
 
 > The digits ride along with the origination, so they land while the tree is
 > listening.

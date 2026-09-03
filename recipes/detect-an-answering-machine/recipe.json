@@ -2,7 +2,7 @@
   "slug": "detect-an-answering-machine",
   "title": "Detect an answering machine",
   "alias": "answering machine detection (AMD)",
-  "summary": "Tell a human from a voicemail greeting before you start talking.",
+  "summary": "Use answering machine detection to classify a pickup as human or voicemail before playing the main message.",
   "scenario": "Outbound dialing that does not leave half a message",
   "category": "voice",
   "products": [

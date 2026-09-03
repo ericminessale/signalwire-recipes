@@ -1,4 +1,4 @@
-# Route SIP calls to agents by username
+# Route SIP calls to AI agents by username
 
 > One AgentServer routes SIP usernames on one domain to different agents. A routing callback reads the username from the request body and the SDK answers 307 with that agent's route. A re-POST to that route serves that agent's SWML.
 

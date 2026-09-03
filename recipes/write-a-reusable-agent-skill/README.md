@@ -1,4 +1,4 @@
-# Write a reusable agent skill
+# Write a reusable AI agent skill
 
 > One class carries the tools, the hints and the prompt, and any agent adds it
 > in a line.

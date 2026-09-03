@@ -2,7 +2,7 @@
   "slug": "get-toll-free-messaging-verified",
   "title": "Get toll-free messaging verified",
   "alias": "toll-free SMS verification",
-  "summary": "Toll-free sending is gated on a verification form reviewed by Carrier Ops; short codes go through sales.",
+  "summary": "Submit the verification form required before a toll-free number can send SMS, then wait for carrier review.",
   "scenario": "",
   "surfaces": [],
   "governed": false,

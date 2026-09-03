@@ -1,8 +1,8 @@
 {
   "slug": "stream-agent-debug-events",
-  "title": "Stream agent debug events",
+  "title": "Stream voice AI agent debug events",
   "alias": "voice AI observability",
-  "summary": "Two params on the ai verb make the platform POST each debug event the level selects to your endpoint as it happens. The SDK routes every one to a handler you register.",
+  "summary": "Select a voice AI debug level, stream matching events to your webhook, and handle them as they arrive.",
   "scenario": "A message-taking agent whose barges and model errors you want to see live",
   "surfaces": [
     "python",

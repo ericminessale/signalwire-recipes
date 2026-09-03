@@ -2,7 +2,7 @@
   "slug": "receive-an-inbound-fax",
   "title": "Receive an inbound fax",
   "alias": "inbound fax to webhook",
-  "summary": "An inbound fax on a number is received to a URL and your webhook is told when it lands.",
+  "summary": "Receive an inbound fax at a webhook URL and get a status callback when delivery completes.",
   "scenario": "",
   "surfaces": [
     "swml",

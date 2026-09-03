@@ -1,4 +1,4 @@
-# Run an agent as a cloud function
+# Run a voice AI agent as an AWS Lambda function
 
 > The same agent file runs as an AWS Lambda handler. `agent.run(event, context)` returns the SWML for the root and the tool result for a POST to `/swaig`. Both sit behind the same basic auth, in the shape API Gateway expects.
 

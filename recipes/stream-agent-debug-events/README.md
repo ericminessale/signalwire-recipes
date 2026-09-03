@@ -1,4 +1,4 @@
-# Stream agent debug events
+# Stream voice AI agent debug events
 
 > Two `params` on the `ai` verb make the platform POST each debug event the level selects to your endpoint as it happens. The SDK routes every one to a handler you register.
 

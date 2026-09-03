@@ -1,4 +1,4 @@
-# Drive thru order taker
+# Drive-thru order taker
 
 > A drive-thru ordering agent with a live order board: menu constraints in code, per-guest voice, events pushed to the browser.
 

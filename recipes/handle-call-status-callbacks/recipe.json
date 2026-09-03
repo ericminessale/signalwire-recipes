@@ -2,7 +2,7 @@
   "slug": "handle-call-status-callbacks",
   "title": "Handle call status callbacks",
   "alias": "call status webhooks",
-  "summary": "Asking for initiated, ringing, answered and completed in StatusCallbackEvent asks SignalWire to post those state changes of a call to your URL. Keyed by CallSid and ordered by SequenceNumber, the callbacks that arrive rebuild the call's life, with the duration when the completed one carries it.",
+  "summary": "Receive ordered webhooks for initiated, ringing, answered, and completed call states, keyed by call ID.",
   "scenario": "A shop that calls customers when repairs are done and wants a record of what happened to each call",
   "category": "voice",
   "products": [
