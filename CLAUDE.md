@@ -1635,6 +1635,13 @@ and a paced batch send.
   reason). One SHIP (RTMP); the other eighteen were fixed in eight gated
   batches. Commits after `efc4d49` (batch 7) are owed a `codex review` in the
   ordinary course.
+- **List review round 7 is written and unreviewed** (`docs/LIST_REVIEW_2026-09-03_round7.md`;
+  the brief `docs/_sol_brief_list_round7.md`). Two `codex exec` attempts on
+  2026-09-03 at 14:54Z died with `404 Not Found` from the codex backend before
+  reading the brief, as did a one-word probe: an outage, not a flaky run. The
+  owner protocol says an outage is not a blocker; the round is owed, and the
+  decisions in the document (the merge, four retirements, the `guide` kind,
+  the next wave) are Eric's to take with or without it.
 - **Corpus after wave 11 (2026-09-02): 96 of 121 folders written**, all
   passing `python verify.py` and the lint. Waves 10 and 11 (eight recipes)
   went in on the gate alone because codex was down; they are on the review
