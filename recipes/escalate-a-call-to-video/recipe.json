@@ -1,7 +1,7 @@
 {
   "slug": "escalate-a-call-to-video",
   "title": "Escalate a call to video",
-  "alias": "",
+  "alias": "voice-to-video escalation",
   "summary": "A voice call between two Fabric addresses adds video mid-call from the browser; the call does not drop.",
   "scenario": "",
   "surfaces": [

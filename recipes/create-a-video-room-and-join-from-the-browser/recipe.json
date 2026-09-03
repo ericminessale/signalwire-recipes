@@ -1,7 +1,7 @@
 {
   "slug": "create-a-video-room-and-join-from-the-browser",
   "title": "Create a video room and join from the browser",
-  "alias": "",
+  "alias": "WebRTC video rooms",
   "summary": "A room is created over REST, a token is minted per participant, and the browser joins with layouts and screen share.",
   "scenario": "",
   "surfaces": [

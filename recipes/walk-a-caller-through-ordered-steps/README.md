@@ -1,4 +1,4 @@
-# Walk a caller through ordered steps
+# Walk a caller through steps they cannot skip
 
 > Every step names one tool. Each step but the last names only its successor, so the `next_step` tool the model is offered has no backward or skip target.
 

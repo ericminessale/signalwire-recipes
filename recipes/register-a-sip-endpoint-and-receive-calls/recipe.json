@@ -1,7 +1,7 @@
 {
   "slug": "register-a-sip-endpoint-and-receive-calls",
   "title": "Register a SIP endpoint and receive calls",
-  "alias": "subscriber SIP credential + connect to its address",
+  "alias": "SIP endpoint registration",
   "summary": "A subscriber's SIP credential is a username and password a softphone registers with, created with one POST. A SWML connect to the subscriber's Fabric address is the document that sends a call to it.",
   "scenario": "A shop that wants the workshop's desk phone on a SIP softphone, reached from the main number",
   "surfaces": [

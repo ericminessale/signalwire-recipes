@@ -1,7 +1,7 @@
 {
   "slug": "reduce-background-noise-on-a-call",
   "title": "Reduce background noise on a call",
-  "alias": "denoise / stop_denoise + calling.denoise",
+  "alias": "AI noise suppression",
   "summary": "denoise switches noise reduction on for a leg and stop_denoise switches it off, in SWML or mid-call over REST as calling.denoise and calling.denoise.stop.",
   "scenario": "A caller leaving a message from a busy workshop floor",
   "surfaces": [

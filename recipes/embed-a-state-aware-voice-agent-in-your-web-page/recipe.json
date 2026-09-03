@@ -5,7 +5,7 @@
   ],
   "kind": "build",
   "title": "Embed a state-aware voice agent in your web page",
-  "alias": "a WebRTC voice AI agent embedded in a web page, aware of the page and able to drive it",
+  "alias": "embedded voice AI assistant for websites",
   "summary": "A voice and video agent in a floating widget on a documentation site. It answers from the docs through a hosted search tool, navigates the reader to the right page and scrolls them to the right section, and knows which page they are on.",
   "scenario": "Quincy for Harbor: a documentation site whose help is a person you talk to, and who moves the page for you",
   "category": "ai-agents",

@@ -1,4 +1,4 @@
-# Handle opt-outs yourself
+# Handle SMS STOP and START in your own code
 
 > Your webhook handler records a STOP from the inbound message webhook and confirms it with a `send_sms` document. Every later send checks that record before it makes a request, so a refused send is never a request.
 

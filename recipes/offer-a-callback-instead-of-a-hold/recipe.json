@@ -1,7 +1,7 @@
 {
   "slug": "offer-a-callback-instead-of-a-hold",
   "title": "Offer a callback instead of a hold",
-  "alias": "callback queue",
+  "alias": "virtual hold with callback",
   "summary": "Take the number, drop the call, and ring back with the context intact.",
   "scenario": "Queues that do not waste the caller's time",
   "category": "voice",

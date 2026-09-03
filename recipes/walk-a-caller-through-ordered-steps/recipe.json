@@ -1,7 +1,7 @@
 {
   "slug": "walk-a-caller-through-ordered-steps",
-  "title": "Walk a caller through ordered steps",
-  "alias": "valid_steps + one tool per step",
+  "title": "Walk a caller through steps they cannot skip",
+  "alias": "guided conversation flow",
   "summary": "Every step names one tool. Each step but the last names only its successor, so the next_step tool the model is offered has no backward or skip target.",
   "scenario": "Opening a roadside assistance request, three questions in order",
   "surfaces": [

@@ -1,7 +1,7 @@
 {
   "slug": "send-dtmf-to-an-external-ivr",
   "title": "Send DTMF to someone else's IVR",
-  "alias": "send_digits",
+  "alias": "automated DTMF navigation",
   "summary": "Drive another company's phone tree from your own code.",
   "scenario": "Reaching a human at a carrier",
   "category": "voice",

@@ -1,4 +1,4 @@
-# Brief the human before the bridge completes
+# Whisper a summary to the agent before connecting the caller
 
 > The agent knows who is calling before the caller can hear them.
 

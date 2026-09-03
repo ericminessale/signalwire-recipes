@@ -1,7 +1,7 @@
 {
   "slug": "answer-an-inbound-call",
   "title": "Answer an inbound call",
-  "alias": "answer + play",
+  "alias": "inbound call handling",
   "summary": "Accept an incoming call, greet the caller, and hang up cleanly.",
   "scenario": "The hello-world of telephony",
   "category": "voice",

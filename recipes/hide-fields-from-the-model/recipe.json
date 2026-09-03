@@ -1,7 +1,7 @@
 {
   "slug": "hide-fields-from-the-model",
-  "title": "Hide fields from the model",
-  "alias": "server-side projection",
+  "title": "Show the model only the fields it needs",
+  "alias": "data minimization for LLM prompts",
   "summary": "Load the whole record, expose a curated slice, and keep the rest out of the prompt entirely.",
   "scenario": "Risk flags and pricing the caller must not hear",
   "category": "ai-agents",

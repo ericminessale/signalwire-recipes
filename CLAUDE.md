@@ -215,6 +215,19 @@ brand cheatsheet's abstractions and not invented:
   in `scratchpad/palette.py` if per-category colour ever comes back.
 - **The one fuchsia mark on a build card is the repository dot**: the thing
   worth standing out per card is that it exists.
+- **The audience is someone googling an industry term (Eric, 2026-09-02).**
+  "This recipes page casts a wide net of all our features so SEO can route to
+  us... its not necessarily a docs page for people familiar with the
+  platform." So the three names divide by search shape, not by taste: the
+  **title** is the how-to query ("Transfer a call without losing context"),
+  the **alias**, the mono line under a card's title and the `Technical:` line
+  of the markdown twin, is the **industry term** ("context-preserving call
+  transfer", "answering machine detection (AMD)", "click-to-call widget"), and
+  the **feature line** is the capability name. Aliases that named SDK
+  mechanisms (`set_functions per step`, `global_data across the handoff`)
+  were written for the reader who already knew the platform; all 122 were
+  rewritten. Industry terms are claims too: "PCI-compliant" and "TCPA" were
+  not used because the recipes do not prove them.
 - **Slugs name the mechanism, builds included (2026-09-02).** The Harbor demo
   shipped as `docs-site-voice-guide`, which names nothing a developer searches
   for and could read as a pointer to docs about voice. Eric: "the entire point

@@ -1,7 +1,7 @@
 {
   "slug": "buy-a-number-and-point-it-at-your-app",
   "title": "Buy a number and point it at your app",
-  "alias": "",
+  "alias": "phone number provisioning",
   "summary": "Search by area code or pattern, purchase, and assign the number's call and message handlers, all over REST.",
   "scenario": "",
   "surfaces": [

@@ -1,7 +1,7 @@
 {
   "slug": "control-a-call-from-your-own-process-over-relay",
   "title": "Control a call from your own process over relay",
-  "alias": "",
+  "alias": "programmable call control over WebSocket",
   "summary": "One persistent WebSocket answers inbound calls and places outbound ones from your process; no HTTP webhook is exposed.",
   "scenario": "",
   "surfaces": [

@@ -1,7 +1,7 @@
 {
   "slug": "configure-an-agent-per-request",
-  "title": "Configure an agent per request",
-  "alias": "set_dynamic_config_callback",
+  "title": "Configure one agent per request for many tenants",
+  "alias": "multi-tenant voice AI",
   "summary": "One deployed agent serves many tenants. A callback runs on every SWML request and configures an ephemeral copy from the query string or a header, so the deployed agent never changes.",
   "scenario": "Two bicycle shops sharing one front-desk deployment",
   "surfaces": [

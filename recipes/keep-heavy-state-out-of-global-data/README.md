@@ -1,4 +1,4 @@
-# Keep heavy state out of global_data
+# Keep per-call state server-side, keyed by call id
 
 > Per-call state lives server-side keyed by `call_id`. Only a count and the distinct areas go to `global_data`, and the handlers read the full record from the store.
 

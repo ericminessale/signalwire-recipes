@@ -1,7 +1,7 @@
 {
   "slug": "reply-to-an-inbound-sms",
   "title": "Reply to an inbound SMS",
-  "alias": "inbound webhook + threaded reply",
+  "alias": "two-way SMS",
   "summary": "Receive a text and answer it in the same thread.",
   "scenario": "Two-way texting",
   "category": "messaging",

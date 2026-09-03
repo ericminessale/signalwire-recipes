@@ -1,7 +1,7 @@
 {
   "slug": "queue-a-call-until-an-agent-is-free",
   "title": "Queue a call until an agent is free",
-  "alias": "",
+  "alias": "call queuing",
   "summary": "Callers wait in a named queue with hold audio and are bridged in order as agents connect to it.",
   "scenario": "",
   "surfaces": [

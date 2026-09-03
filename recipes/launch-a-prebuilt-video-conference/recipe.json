@@ -1,7 +1,7 @@
 {
   "slug": "launch-a-prebuilt-video-conference",
   "title": "Launch a prebuilt video conference",
-  "alias": "video.conferences.create + list_conference_tokens",
+  "alias": "hosted video conferencing",
   "summary": "One POST creates a themed video conference from a display_name and the options the spec documents. One GET lists the tokens the spec documents for it, each with a name, a token and scopes.",
   "scenario": "A workshop that wants a video room in its own colours without building a room UI",
   "surfaces": [

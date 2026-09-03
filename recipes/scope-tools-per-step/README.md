@@ -1,4 +1,4 @@
-# Scope an agent's tools per step
+# Control which tools the agent can call at each step
 
 > At each point in the conversation the model can only see the tools you allowed there.
 

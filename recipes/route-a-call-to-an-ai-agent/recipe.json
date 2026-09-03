@@ -1,7 +1,7 @@
 {
   "slug": "route-a-call-to-an-ai-agent",
   "title": "Route a call to an AI agent",
-  "alias": "agent as dial target",
+  "alias": "AI call answering",
   "summary": "Point a phone number at an agent and let it answer.",
   "scenario": "The first voice AI call you will make",
   "category": "ai-agents",

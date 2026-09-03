@@ -1,4 +1,4 @@
-# Split one number into isolated personas
+# Run isolated personas behind one number
 
 > The default context's step lists sales, support and billing in valid_contexts and names no tools. Each persona is an isolated context, and its step offers the model only that desk's tool.
 

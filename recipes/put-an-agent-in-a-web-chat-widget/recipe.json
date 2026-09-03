@@ -1,7 +1,7 @@
 {
   "slug": "put-an-agent-in-a-web-chat-widget",
   "title": "Put an agent in a web chat widget",
-  "alias": "browser chat transport",
+  "alias": "web chat AI widget",
   "summary": "Drop the same agent into a chat box on any page.",
   "scenario": "Support chat that shares the phone agent's logic",
   "category": "messaging",

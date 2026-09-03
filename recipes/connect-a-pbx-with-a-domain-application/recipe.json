@@ -1,7 +1,7 @@
 {
   "slug": "connect-a-pbx-with-a-domain-application",
   "title": "Connect a PBX with a Domain Application",
-  "alias": "",
+  "alias": "SIP trunking for a PBX",
   "summary": "An IP-authenticated Domain Application takes inbound SIP from your PBX and a SIP Gateway carries calls back to it.",
   "scenario": "",
   "surfaces": [

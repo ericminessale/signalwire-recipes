@@ -1,7 +1,7 @@
 {
   "slug": "build-an-ivr-without-a-server",
   "title": "Build an IVR without a server",
-  "alias": "call_flows relayml + phone_routes",
+  "alias": "serverless IVR",
   "summary": "A call flow is a SWML document you hand to the platform, so no server of yours serves it. The spec calls relayml the document the flow should execute. One POST creates the flow from a title, a relayml document and the flow_data the spec pairs with it. One POST points a number at it by phone_route_id with the calling handler.",
   "scenario": "A bike shop that wants press 1 for sales, 2 for the workshop on its main number and nothing to keep running",
   "surfaces": [

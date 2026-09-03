@@ -1,7 +1,7 @@
 {
   "slug": "transfer-a-call",
   "title": "Transfer a call",
-  "alias": "connect / transfer action",
+  "alias": "call transfer",
   "summary": "Move a live caller to another number or address.",
   "scenario": "The simplest handoff there is",
   "category": "voice",

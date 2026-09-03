@@ -1,7 +1,7 @@
 {
   "slug": "build-an-ivr-menu",
   "title": "Build an IVR menu",
-  "alias": "DTMF collect + branch",
+  "alias": "IVR menu (DTMF)",
   "summary": "Play a menu, collect keypad input, and route the caller to the right place.",
   "scenario": "Press 1 for sales",
   "category": "voice",

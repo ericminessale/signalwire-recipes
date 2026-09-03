@@ -1,7 +1,7 @@
 {
   "slug": "voice-support-line",
   "title": "Support Line",
-  "alias": "IVR + queue + callback",
+  "alias": "inbound support line (IVR, queue, callback)",
   "summary": "A full inbound support number: menu, priority queue, hold, callback instead of waiting, and a recording of every call.",
   "scenario": "The number a small support team actually runs on",
   "category": "voice",

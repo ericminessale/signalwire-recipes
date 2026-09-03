@@ -1,7 +1,7 @@
 {
   "slug": "text-the-caller-during-the-call",
   "title": "Text the caller during the call",
-  "alias": "FunctionResult.send_sms",
+  "alias": "in-call SMS",
   "summary": "A tool result carries a SWML send_sms, so the handler texts the caller while the voice call is still up. The model never sees a phone number.",
   "scenario": "A workshop booking line that texts the agreed appointment time to the caller",
   "surfaces": [

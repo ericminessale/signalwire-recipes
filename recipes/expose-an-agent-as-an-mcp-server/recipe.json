@@ -1,7 +1,7 @@
 {
   "slug": "expose-an-agent-as-an-mcp-server",
   "title": "Expose an agent as an MCP server",
-  "alias": "agent as provider",
+  "alias": "voice agent as an MCP server",
   "summary": "Let another AI call your voice agent's tools directly.",
   "scenario": "Give Claude a phone number",
   "category": "ai-agents",

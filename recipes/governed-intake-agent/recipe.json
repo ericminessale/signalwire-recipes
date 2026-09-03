@@ -1,7 +1,7 @@
 {
   "slug": "governed-intake-agent",
   "title": "Governed Intake Agent",
-  "alias": "code-enforced conversation",
+  "alias": "guardrailed AI intake",
   "summary": "An intake agent that cannot skip a step, cannot see fields it should not, and cannot transfer before it has what it needs.",
   "scenario": "Intake that survives a risk review",
   "category": "ai-agents",

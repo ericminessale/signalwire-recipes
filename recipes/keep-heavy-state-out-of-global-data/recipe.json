@@ -1,7 +1,7 @@
 {
   "slug": "keep-heavy-state-out-of-global-data",
-  "title": "Keep heavy state out of global_data",
-  "alias": "server-side store keyed by call_id",
+  "title": "Keep per-call state server-side, keyed by call id",
+  "alias": "server-side session state for voice AI",
   "summary": "Per-call state lives server-side keyed by call_id. Only a count and the distinct areas go to global_data, and the handlers read the full record from the store.",
   "scenario": "A mechanic phoning in a bike inspection, one finding at a time",
   "surfaces": [

@@ -1,4 +1,4 @@
-# Try destinations in order
+# Dial destinations in order or all at once, with a failure path
 
 > One `connect` carries a `serial` list to dial in order, or a `parallel` list to dial at once. `result` runs when the bridge ends, and its `failed` branch is the failure path.
 

@@ -1,7 +1,7 @@
 {
   "slug": "ground-an-agent-in-your-docs",
   "title": "Ground an agent in your own documents",
-  "alias": "vector search over a local index",
+  "alias": "RAG for voice AI",
   "summary": "Answers that come from your content rather than the model's memory.",
   "scenario": "A docs hotline that does not invent features",
   "category": "ai-agents",

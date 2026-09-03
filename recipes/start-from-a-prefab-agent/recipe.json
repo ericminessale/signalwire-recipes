@@ -1,7 +1,7 @@
 {
   "slug": "start-from-a-prefab-agent",
   "title": "Start from a prefab agent",
-  "alias": "ReceptionistAgent, SurveyAgent",
+  "alias": "prebuilt AI receptionist and survey agents",
   "summary": "A complete receptionist or survey agent runs from a prefab class and a short configuration block.",
   "scenario": "A bicycle shop's front desk and its workshop follow-up survey",
   "surfaces": [

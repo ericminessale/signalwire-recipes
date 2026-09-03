@@ -1,7 +1,7 @@
 {
   "slug": "run-an-ai-sidecar-on-a-live-call",
   "title": "Run an AI sidecar on a live call",
-  "alias": "",
+  "alias": "real-time agent assist",
   "summary": "A non-speaking AI listens to a human call and pushes coaching, compliance flags or tool calls to the agent's screen.",
   "scenario": "",
   "surfaces": [

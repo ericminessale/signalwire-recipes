@@ -1,7 +1,7 @@
 {
   "slug": "run-an-agent-from-one-yaml-file",
   "title": "Run an agent from one YAML file",
-  "alias": "declarative markup, no SDK",
+  "alias": "declarative voice agent in YAML",
   "summary": "A complete working agent with nothing installed and no server of your own.",
   "scenario": "For teams that are not a Python shop",
   "category": "ai-agents",

@@ -1,7 +1,7 @@
 {
   "slug": "receive-calls-in-the-browser",
   "title": "Receive calls in the browser",
-  "alias": "subscriber + subscriber token + connect to its address",
+  "alias": "WebRTC softphone in the browser",
   "summary": "A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML connect to that address is the document that sends a call to the registered browser.",
   "scenario": "A workshop mechanic who takes the shop's calls at a laptop, with no desk phone",
   "surfaces": [

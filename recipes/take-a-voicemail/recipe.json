@@ -1,7 +1,7 @@
 {
   "slug": "take-a-voicemail",
   "title": "Take a voicemail",
-  "alias": "connect result.failed + record",
+  "alias": "voicemail",
   "summary": "When the bridge to the owner does not happen, connect's failed branch plays a prompt and record takes the message in the foreground. Recording events, with the download URL, go to status_url.",
   "scenario": "A one-person shop whose number should take a message when the owner cannot pick up",
   "surfaces": [

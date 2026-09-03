@@ -1,7 +1,7 @@
 {
   "slug": "route-calls-by-dialed-number-or-time",
   "title": "Route calls by dialed number or time",
-  "alias": "one SWML webhook, branch on call.to and the clock",
+  "alias": "time-of-day call routing",
   "summary": "One SWML webhook serves several numbers. Your handler reads the dialed number from the documented inbound call webhook and the clock in that line's zone. It returns the document for that number at that hour.",
   "scenario": "A bike shop with a sales line in Denver and a workshop line in Los Angeles, both pointed at one URL",
   "surfaces": [

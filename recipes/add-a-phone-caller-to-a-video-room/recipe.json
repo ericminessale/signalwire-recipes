@@ -1,7 +1,7 @@
 {
   "slug": "add-a-phone-caller-to-a-video-room",
   "title": "Add a phone caller to a video room",
-  "alias": "fabric conference_rooms create + join_room",
+  "alias": "PSTN dial-in to a video conference",
   "summary": "You create a conference room over REST with the two fields the spec requires. A SWML join_room naming that room is the verb that puts the leg running the document into it.",
   "scenario": "A workshop stand-up on video that the mechanic on the road joins by phone",
   "surfaces": [

@@ -1,7 +1,7 @@
 {
   "slug": "commit-a-transaction-from-a-call",
   "title": "Commit a transaction from a call",
-  "alias": "confirm flag in global_data gates the commit",
+  "alias": "confirmed transactions by voice",
   "summary": "The agent collects, confirms, and then commits once through a single tool. The handler judges the confirmation against an allow-list of whole answers, and nothing reaches the order book before one.",
   "scenario": "A bicycle shop taking accessory orders by phone",
   "surfaces": [

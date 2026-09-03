@@ -1,7 +1,7 @@
 {
   "slug": "write-a-disposition-from-handler-owned-data",
-  "title": "Write a disposition from handler-owned data",
-  "alias": "set_global_data + on_summary",
+  "title": "Write call dispositions from data your handlers recorded",
+  "alias": "call disposition from verified data",
   "summary": "The qualification fields of a disposition come from what your tool handlers wrote to global_data during the call, not from the transcript or the model's summary.",
   "scenario": "Qualifying inbound leads for a fleet bicycle supplier",
   "surfaces": [

@@ -1,7 +1,7 @@
 {
   "slug": "move-a-twiml-app-by-changing-the-endpoint",
   "title": "Move a TwiML app by changing the endpoint",
-  "alias": "compat client on /api/laml/2010-04-01 + the same cXML handler",
+  "alias": "Twilio migration (TwiML compatibility)",
   "summary": "A TwiML app moves to SignalWire by changing the REST base and the credentials. The compat client posts the same Calls body to the LaML path on your Space, and your cXML handler serves the same document it served before.",
   "scenario": "A shop's Twilio voice app, a Say and a Hangup behind one URL, moving without a rewrite",
   "surfaces": [

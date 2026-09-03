@@ -1,4 +1,4 @@
-# Enforce state transitions in a tool handler
+# Decide the next step in code, not in the prompt
 
 > Your code decides what happens next, so the model cannot strand or misroute
 > the caller.

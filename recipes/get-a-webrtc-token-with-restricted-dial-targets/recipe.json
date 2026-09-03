@@ -1,7 +1,7 @@
 {
   "slug": "get-a-webrtc-token-with-restricted-dial-targets",
   "title": "Issue a browser calling token restricted to chosen destinations",
-  "alias": "scoped WebRTC token",
+  "alias": "scoped WebRTC access tokens",
   "summary": "Mint a short-lived browser token and restrict what it is allowed to call.",
   "scenario": "Click-to-call without handing out your account",
   "category": "voice",

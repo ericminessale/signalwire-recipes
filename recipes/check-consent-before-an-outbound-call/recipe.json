@@ -1,7 +1,7 @@
 {
   "slug": "check-consent-before-an-outbound-call",
   "title": "Check consent before an outbound call",
-  "alias": "consent check, then calling.dial",
+  "alias": "consent and calling-hours checks for outbound calls",
   "summary": "You place an outbound call only when the number has affirmative consent on record. The current time must also be inside the permitted window in the callee's time zone. The check is code, and it runs before the dial, so a refused call is never a request.",
   "scenario": "A workshop that calls customers when their bikes are ready, and only the ones who asked",
   "surfaces": [

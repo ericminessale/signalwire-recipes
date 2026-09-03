@@ -1,7 +1,7 @@
 {
   "slug": "give-an-agent-a-video-avatar",
   "title": "Give an agent a video avatar",
-  "alias": "ai.params video_idle_file / video_listening_file / video_talking_file",
+  "alias": "AI video avatar",
   "summary": "Three ai.params, video_idle_file, video_listening_file and video_talking_file, give an agent a face on a video call. The schema names the state each one plays for.",
   "scenario": "A bike shop's video front desk that shows a face rather than a blank tile",
   "surfaces": [

@@ -1,4 +1,4 @@
-# Write a disposition from handler-owned data
+# Write call dispositions from data your handlers recorded
 
 > The qualification fields of a disposition come from what your tool handlers wrote to `global_data` during the call, not from the transcript or the model's summary.
 

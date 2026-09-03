@@ -1,7 +1,7 @@
 {
   "slug": "get-toll-free-messaging-verified",
   "title": "Get toll-free messaging verified",
-  "alias": "",
+  "alias": "toll-free SMS verification",
   "summary": "Toll-free sending is gated on a verification form reviewed by Carrier Ops; short codes go through sales.",
   "scenario": "",
   "surfaces": [],

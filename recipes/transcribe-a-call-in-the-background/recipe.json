@@ -1,7 +1,7 @@
 {
   "slug": "transcribe-a-call-in-the-background",
   "title": "Transcribe a call in the background",
-  "alias": "calling.transcribe + transcribe status callback",
+  "alias": "asynchronous call transcription",
   "summary": "calling.transcribe starts transcribing a live call in the background by control_id, and calling.transcribe.stop ends it. SignalWire may then send the documented transcript callback to your status_url, whose params.text holds the text when there is any.",
   "scenario": "You want each support call's text filed against its ticket",
   "surfaces": [
