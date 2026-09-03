@@ -48,7 +48,8 @@ POST https://<your-host>/transcripts
 `record` reads `text` with `.get`, because the spec omits it when nothing was
 transcribed, whichever status the event carries; the verifier's failed fixture
 omits it. Before `record` runs, the route checks SignalWire's signature over
-the request, `hex(HMAC(signing_key, url + raw_body))`, the check
+the request, `hex(HMAC(signing_key, url + raw_body))`, as
+`signalwire.com/docs/swml/guides/webhook-security` documents it and
 `verify-a-webhook-signature` explains, so a forged callback cannot overwrite a
 transcript. `GET /transcripts/<call_id>` serves what arrived, or `pending`
 until something does, to a caller with your `READ_TOKEN` as a bearer token.
@@ -65,16 +66,18 @@ python app.py                    # the status URL, on port 8080
 ```bash
 cd python                        # in another shell, during a live call
 python app.py start <call_id>
+python app.py stop <call_id>     # later, with the same control id
 ```
 
 The status URL needs a public HTTPS address. For a local run, expose port 8080
 with a tunnel such as ngrok, and set `TRANSCRIBE_STATUS_URL` to
 `https://<your-host>/transcripts`. The call id is the `id` of a call in
 progress; `handle-call-status-callbacks` or the calling logs give you one. When
-the call ends, read the transcript with your token:
+the call ends, read the transcript with your token. Paste the `READ_TOKEN` value
+from `.env`; `load_dotenv()` loads it into the app, not into your shell:
 
 ```bash
-curl -H "Authorization: Bearer $READ_TOKEN" "https://YOUR_HOST/transcripts/CALL_ID"
+curl -H "Authorization: Bearer YOUR_READ_TOKEN" "https://YOUR_HOST/transcripts/CALL_ID"
 ```
 
 ## Verify it
@@ -93,7 +96,8 @@ with its test client. It asserts the following.
 - the spec's two variants require exactly `control_id`, and every param sent is documented
 - the spec's callback has exactly two event types, and it says `text` is omitted when there is no transcribed text
 - two fixture callbacks, one completed with text and one failed without it, carry every required field at both levels and nothing undocumented
-- an unsigned callback, and one signed with another key, are refused with 403 and store nothing
+- the route refuses an unsigned callback, and one signed with another key, with 403, and the store stays empty
+- a callback signed with the SHA-256 header is accepted; a valid SHA-1 signature beside an empty SHA-256 header is refused, because the header that is present decides
 - a read without the bearer token is refused with 401
 - an unknown call reads as pending; after the signed callbacks, the completed call reads back its text and the failed one reads back no text
 - a status URL configured with its own query string is signed as that URL, once; a signature over the query appended twice is refused

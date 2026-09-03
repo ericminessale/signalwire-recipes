@@ -12,7 +12,7 @@ shaped like the spec's transcribe status callback, every required field
 present and nothing undocumented. One is completed with text and one is failed
 without it. Each is signed the way SignalWire signs a webhook; an unsigned or
 forged one is refused and stores nothing. The app stores each signed one under
-its call id, `GET /transcripts/<call_id>` returns it to a caller with the read
+its call id. `GET /transcripts/<call_id>` returns it to a caller with the read
 token and refuses one without, and an unknown call reads as pending. Expected
 values live here, not in app.py.
 """
@@ -122,6 +122,22 @@ def main():
     # only SignalWire's signature gets a callback stored
     assert post(done, headers={}).status_code == 403
     assert post(done, key="attacker").status_code == 403
+    assert recipe.TRANSCRIPTS == {}, "a refused callback must store nothing"
+    # the header that is present decides: SHA-256 alone is accepted, and a
+    # valid SHA-1 beside an empty SHA-256 header is refused (docs: both
+    # headers are documented; the check never falls back to the other one)
+    raw = json.dumps(done).encode()
+    url = b"https://example.com/transcripts"
+    sha256 = hmac.new(b"PSK_verifier_only", url + raw, hashlib.sha256).hexdigest()
+    sha1 = hmac.new(b"PSK_verifier_only", url + raw, hashlib.sha1).hexdigest()
+    hdr = {"Content-Type": "application/json"}
+    r = client.post("/transcripts", data=raw,
+                    headers={**hdr, "X-Signalwire-Signature": sha1, "X-Signalwire-SHA256-Signature": ""})
+    assert r.status_code == 403, r.status_code
+    assert recipe.TRANSCRIPTS == {}
+    r = client.post("/transcripts", data=raw, headers={**hdr, "X-Signalwire-SHA256-Signature": sha256})
+    assert r.status_code == 204, r.status_code
+    recipe.TRANSCRIPTS.clear()
     # a configured URL that already carries a query is signed as that URL, once;
     # the first version appended the request's query again and refused the
     # genuine callback (codex, wave 9 review)

@@ -92,9 +92,15 @@ def export_and_delete(now=None, fetch=download):
         if not expired(recording, now):
             continue
         suffix = pathlib.PurePosixPath(urlsplit(recording["url"]).path).suffix or ".wav"
+        body = fetch(recording["url"])                 # copy first
+        # the spec's recording carries byte_size; a short body is a truncated
+        # copy, and the pass stops before writing it and before any delete
+        if "byte_size" in recording and len(body) != recording["byte_size"]:
+            raise ValueError(f"{recording['id']}: fetched {len(body)} bytes, "
+                             f"expected {recording['byte_size']}; nothing deleted")
         EXPORT_DIR.mkdir(parents=True, exist_ok=True)
         path = EXPORT_DIR / f"{recording['id']}{suffix}"
-        path.write_bytes(fetch(recording["url"]))     # copy first
+        path.write_bytes(body)
         client.recordings.delete(recording["id"])      # then, and only then, delete
         moved.append({"id": recording["id"], "created_at": recording["created_at"],
                       "path": str(path)})

@@ -11,8 +11,8 @@ transcribed text."
 
 Nothing here plays into the call or waits on it; the transcript is a document
 that may arrive later. The status route accepts a callback only with
-SignalWire's signature over it, and the read route wants a bearer token of
-yours, because a transcript is call content.
+SignalWire's signature over it. The read route wants a bearer token of yours,
+because a transcript is call content.
 
 Written against signalwire-sdk 3.0.1 (RestClient.calling) and Flask.
 """
@@ -63,10 +63,10 @@ def stop(call_id):
     return client.calling.transcribe_stop(call_id, control_id=CONTROL_ID)
 
 
-def signed(headers, url, raw_body, key=None):
+def signed(headers, url, raw_body):
     """True only when a signature header is present and matches, so a forged
     callback cannot overwrite a transcript."""
-    key = key or SIGNING_KEY
+    key = SIGNING_KEY
     for header, digest in DIGESTS.items():
         if header in headers:
             sent = headers[header]

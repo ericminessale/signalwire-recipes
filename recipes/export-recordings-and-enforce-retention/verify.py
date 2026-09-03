@@ -44,9 +44,16 @@ NOW = datetime(2026, 9, 2, 12, 0, tzinfo=timezone.utc)
 NEXT = f"https://example.signalwire.com{PATH}?page_token=tok2"
 
 
+def body_for(url):
+    """What the fake fetcher returns for a URL, and therefore the byte_size the
+    fixture must carry for the copy to count as complete."""
+    return b"RIFF" + url.encode()
+
+
 def recording(rid, created, ext="wav"):
+    url = f"https://example.signalwire.com/api/relay/rest/recordings/{rid}.{ext}"
     return {"id": rid, "created_at": created, "status": "finished", "duration_in_seconds": 61,
-            "url": f"https://example.signalwire.com/api/relay/rest/recordings/{rid}.{ext}"}
+            "url": url, "byte_size": len(body_for(url))}
 
 
 OLD1 = recording("rec-old-1", "2026-07-01T09:00:00Z")          # 63 days old
@@ -75,7 +82,7 @@ def main():
     def fake_fetch(url):
         fetched.append(url)
         events.append(("copy", url.rsplit("/", 1)[-1]))
-        return b"RIFF" + url.encode()
+        return body_for(url)
 
     real_delete = rec.delete
 
@@ -83,7 +90,9 @@ def main():
         rid = path.rsplit("/", 1)[-1]
         on_disk = list(EXPORTS.glob(f"{rid}.*"))
         assert len(on_disk) == 1, f"DELETE of {rid} before its copy landed: {on_disk}"
-        assert on_disk[0].read_bytes().startswith(b"RIFF"), on_disk[0]
+        # the whole body, at the moment of the delete, not a prefix afterwards
+        url = next(u for u in fetched if u.rsplit("/", 1)[-1].startswith(rid))
+        assert on_disk[0].read_bytes() == body_for(url), on_disk[0]
         events.append(("delete", rid))
         return real_delete(path)
 
@@ -102,11 +111,40 @@ def main():
     assert events == [("copy", "rec-old-1.wav"), ("delete", "rec-old-1"),
                       ("copy", "rec-old-2.mp3"), ("delete", "rec-old-2")], events
     assert [m["id"] for m in moved] == ["rec-old-1", "rec-old-2"], moved
+    # the report is the whole record: id, when it was made, where the copy is
+    assert moved == [
+        {"id": "rec-old-1", "created_at": "2026-07-01T09:00:00Z", "path": str(EXPORTS / "rec-old-1.wav")},
+        {"id": "rec-old-2", "created_at": "2026-08-02T09:00:00Z", "path": str(EXPORTS / "rec-old-2.mp3")},
+    ], moved
     for m, ext in zip(moved, ("wav", "mp3")):
         path = pathlib.Path(m["path"])
         assert path == EXPORTS / f"{m['id']}.{ext}", path
         assert path.read_bytes() == b"RIFF" + f"https://example.signalwire.com{PATH}/{m['id']}.{ext}".encode()
     assert not (EXPORTS / "rec-fresh.wav").exists()
+
+    # a short body is a truncated copy: nothing written, nothing deleted
+    rec3 = V.Recorder(responses=[{"data": [OLD1], "links": {}}])
+    recipe.client.recordings._http = rec3
+    for f in EXPORTS.glob("rec-old-1.*"):
+        f.unlink()
+    try:
+        recipe.export_and_delete(now=NOW, fetch=lambda url: body_for(url)[:-1])
+    except ValueError as e:
+        assert "nothing deleted" in str(e), e
+    else:
+        raise AssertionError("a short copy did not stop the pass")
+    assert [c["method"] for c in rec3.calls] == ["GET"], rec3.calls
+    assert not list(EXPORTS.glob("rec-old-1.*")), "a truncated copy must not be written"
+
+    # RETENTION_DAYS below one is refused at startup, in a fresh interpreter
+    import subprocess
+    import signalwire
+    env = dict(os.environ, RETENTION_DAYS="0",
+               PYTHONPATH=os.path.dirname(os.path.dirname(signalwire.__file__)))
+    proc = subprocess.run([sys.executable, "-c", "import app"], cwd=HERE / "python",
+                          env=env, capture_output=True, text=True)
+    assert proc.returncode != 0 and "RETENTION_DAYS must be at least 1" in proc.stderr, \
+        (proc.returncode, proc.stderr[-300:])
 
     # a copy that fails stops the pass before the delete
     rec2 = V.Recorder(responses=[{"data": [OLD1], "links": {}}])
@@ -172,7 +210,7 @@ def main():
         [v.get("title") for v in variants]
     for variant in variants:
         props = variant["properties"]
-        assert {"id", "created_at", "url", "duration_in_seconds"} <= set(props), sorted(props)
+        assert {"id", "created_at", "url", "duration_in_seconds", "byte_size"} <= set(props), sorted(props)
         assert "recording file" in deref(spec, props["url"])["description"], props["url"]
     for fixture in (OLD1, FRESH, OLD2):
         assert set(fixture) <= set(variants[0]["properties"]), sorted(set(fixture) - set(variants[0]["properties"]))
