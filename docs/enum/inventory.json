@@ -82,7 +82,7 @@
         "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
       ],
       "featured": true,
-      "feature_line": "Tools that do not exist until the caller proves who they are.",
+      "feature_line": "Verification-gated tools",
       "feature_rank": 3
     },
     {
@@ -113,7 +113,7 @@
         "phase 2: transfer_to_human emits a bare connect action (not in the documented SWAIG action list) - switch to FunctionResult.connect(); unrelated to the scoping claim"
       ],
       "featured": true,
-      "feature_line": "You decide which tools the model can call at each step of the call.",
+      "feature_line": "Per-step tool scoping",
       "feature_rank": 6
     },
     {
@@ -175,7 +175,7 @@
         "resolved: params.persist_global_data restores global_data when a new AI session starts on the same call (sdk schema.json AIParams); SDK finding: execute_swml(transfer=True) puts the transfer flag inside the SWML document, unlike connect() and the documented action shape - build the action explicitly"
       ],
       "featured": true,
-      "feature_line": "The second agent already knows who this is.",
+      "feature_line": "Context-preserving transfers",
       "feature_rank": 4
     },
     {
@@ -1523,7 +1523,7 @@
         "verified 2026-08-25: recipes/start-live-transcription/verify.py"
       ],
       "featured": true,
-      "feature_line": "Both sides of a live call, transcribed as it happens.",
+      "feature_line": "Live call transcription",
       "feature_rank": 5
     },
     {
@@ -1558,7 +1558,7 @@
         "verified 2026-08-25: recipes/translate-a-call-in-real-time/verify.py"
       ],
       "featured": true,
-      "feature_line": "Two people, two languages, one call.",
+      "feature_line": "Real-time call translation",
       "feature_rank": 2
     },
     {
@@ -2643,7 +2643,7 @@
         "resolved: v4 path is a Fabric conference_rooms resource dialled at /public/<name> with a guest SAT; the documented create body requires enable_room_previews"
       ],
       "featured": true,
-      "feature_line": "Video in one REST call and twenty lines of browser code.",
+      "feature_line": "Video rooms from one REST call",
       "feature_rank": 7
     },
     {
@@ -3629,7 +3629,7 @@
         "composes verified against agent.py on 2026-09-02, see recipes/embed-a-state-aware-voice-agent-in-your-web-page/recipe.json"
       ],
       "featured": true,
-      "feature_line": "State-aware voice AI, inside your web page.",
+      "feature_line": "State-aware voice AI inside your web page",
       "feature_rank": 1
     }
   ],

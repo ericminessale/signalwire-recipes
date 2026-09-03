@@ -45,6 +45,6 @@
     "hide-fields-from-the-model"
   ],
   "featured": true,
-  "feature_line": "You decide which tools the model can call at each step of the call.",
+  "feature_line": "Per-step tool scoping",
   "feature_rank": 6
 }

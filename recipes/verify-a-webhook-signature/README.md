@@ -2,7 +2,7 @@
 
 > The gate refuses, with 403 and before any route runs, a request whose signature header does not match hex(HMAC(signing_key, url + raw_body)). `X-Signalwire-SHA256-Signature` decides when present; otherwise `X-Signalwire-Signature`, the SHA-1 one, does.
 
-**Scenario:** a public webhook that must never run a document for a request SignalWire did not sign
+**Scenario:** a public webhook that refuses any request without a valid SignalWire signature
 
 ## What this demonstrates
 
@@ -61,8 +61,8 @@ python app.py
 
 The webhook needs a public HTTPS URL. For a local run, expose port 8080 with a
 tunnel such as ngrok, and set `WEBHOOK_URL` to `https://<your-host>/webhook`,
-exactly as you enter it in the Dashboard. Point a number's SWML webhook at that
-URL and call it. Then send the same URL a `curl` with no header and read the
+with no query string; the gate appends each request's own. Point a number's
+SWML webhook at that URL and call it. Then send the same URL a `curl` with no header and read the
 403.
 
 ## Verify it
@@ -84,7 +84,8 @@ own. It asserts the following.
 - the gate refuses a signature over `url + "\n" + body`, a wrong SHA-256, an empty header, and a header that is not hex, each with 403
 - the same valid signed request, sent twice, is served twice: the gate does not stop a replay
 - a request with a query string is served only when the signature covers the query string
-- an unknown path is 403, not 404, because the gate runs before routing
+- an unknown path is 403, not 404, because the gate runs before routing, and a signature valid for the webhook URL replayed at another path is 403 too
+- a `WEBHOOK_URL` configured with a query string is refused at startup, in a fresh interpreter
 - `verify()` on its own agrees with the app, so you can call it outside Flask
 
 ## Limitations

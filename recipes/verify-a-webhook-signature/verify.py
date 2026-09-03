@@ -84,8 +84,19 @@ def main():
     assert post({"X-Signalwire-Signature": sha1}, path="/webhook?tenant=ridgeline").status_code == 403, \
         "a signature over the bare URL must not pass for a request with a query"
 
-    # the gate runs before routing: an unknown path is still 403, not 404
+    # the gate runs before routing: an unknown path is still 403, not 404, and
+    # a signature valid for the webhook URL does not open another path (sol r3)
     assert post({}, path="/nothing-here").status_code == 403
+    assert post({"X-Signalwire-Signature": sha1}, path="/nothing-here").status_code == 403, \
+        "a valid signature for /webhook must not pass the gate at another path"
+
+    # a configured query string is refused at startup, in a fresh interpreter
+    import subprocess
+    env = dict(os.environ, WEBHOOK_URL=URL + "?tenant=ridgeline")
+    proc = subprocess.run([sys.executable, "-c", "import app"], cwd=HERE / "python",
+                          env=env, capture_output=True, text=True)
+    assert proc.returncode != 0 and "must not carry a query string" in proc.stderr, \
+        (proc.returncode, proc.stderr[-300:])
 
     # what the gate does not do: the same valid request twice is served twice
     assert [post({"X-Signalwire-Signature": sha1}).status_code for _ in range(2)] == [200, 200], \

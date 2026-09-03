@@ -20,6 +20,7 @@ import hashlib
 import hmac
 import os
 import re
+from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
 from flask import Flask, abort, jsonify, request
@@ -33,6 +34,12 @@ REQUIRED = (("SIGNALWIRE_SIGNING_KEY", SIGNING_KEY), ("WEBHOOK_URL", WEBHOOK_URL
 for name, value in REQUIRED:
     if not value:
         raise SystemExit(f"{name} is required; see .env.example")
+# WEBHOOK_URL is the URL without a query string: the gate appends each request's
+# own query before checking, so a configured query would be signed twice
+if "?" in WEBHOOK_URL:
+    raise SystemExit("WEBHOOK_URL must not carry a query string; "
+                     "the request's own is appended")
+WEBHOOK_PATH = urlsplit(WEBHOOK_URL).path
 
 DIGESTS = {"X-Signalwire-SHA256-Signature": hashlib.sha256,
            "X-Signalwire-Signature": hashlib.sha1}
@@ -67,6 +74,10 @@ app = Flask(__name__)
 @app.before_request
 def gate():
     """Runs before any route. The route handler does not run for a bad signature."""
+    # a signature is bound to the URL SignalWire posted to, so a valid one
+    # replayed at another path on this host is refused before it is checked
+    if request.path != WEBHOOK_PATH:
+        abort(403)
     url = WEBHOOK_URL
     if request.query_string:
         url += "?" + request.query_string.decode()
