@@ -15,7 +15,7 @@ from datetime import datetime, time, timezone
 from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from signalwire import SWMLService
 
 # the SDK does not read .env for you
@@ -34,6 +34,13 @@ CLOSED = ("Thanks for calling Ridgeline Cycles. The {name} line is open from "
           "{start} to {end}. Please call back then.")
 UNKNOWN = "This number is not in service."
 CONNECT_TIMEOUT = int(os.getenv("CONNECT_TIMEOUT", "25"))
+# The webhook serves a routing document to whoever asks; SignalWire fetches it
+# with the credentials in the URL you give it, so the route wants them too.
+AUTH_USER = os.getenv("SWML_BASIC_AUTH_USER")
+AUTH_PASSWORD = os.getenv("SWML_BASIC_AUTH_PASSWORD")
+if not (AUTH_USER and AUTH_PASSWORD):
+    raise SystemExit("SWML_BASIC_AUTH_USER and SWML_BASIC_AUTH_PASSWORD are required; "
+                     "see .env.example")
 
 
 def clock(t):
@@ -76,6 +83,9 @@ app = Flask(__name__)
 
 @app.post("/swml")
 def swml():
+    auth = request.authorization
+    if not (auth and auth.username == AUTH_USER and auth.password == AUTH_PASSWORD):
+        return Response(status=401, headers={"WWW-Authenticate": 'Basic realm="swml"'})
     payload = request.get_json(force=True)
     return jsonify(document(dialed(payload["call"]), datetime.now(timezone.utc)))
 

@@ -11,8 +11,8 @@ ordered timeline of the call, whatever order the callbacks arrived in. The
 compat call create takes `StatusCallback` and `StatusCallbackEvent`, and the
 vendored spec describes the events as "Valid values: initiated, ringing,
 answered, completed, ringing_forwarded, ringing_queued. Defaults to
-`completed`". With a `StatusCallback` and no event list, you get the end and
-nothing else. This recipe asks for four of the six; `ringing_forwarded` and
+`completed`". With a `StatusCallback` and no event list, you ask for only the
+completed event. This recipe asks for four of the six; `ringing_forwarded` and
 `ringing_queued` are the two it leaves out. The spec documents the payload it
 posts. The voice status callback carries `CallSid`, `CallStatus`,
 `SequenceNumber`, `Timestamp`, `Direction`, `From`, `To` and a block of audio
@@ -114,7 +114,9 @@ anything depends on it.
 
 ## What to change first
 
-In `record`, replace `int(payload["SequenceNumber"])` with
-`len(CALLS[payload["CallSid"]])`, so the key is the arrival position, and run
-the verifier. The step-order assertion fails on the fixture's shuffled arrival,
-which is the failure this recipe exists to prevent.
+Swap `CALLS` for a store of your own keyed by `CallSid` and `SequenceNumber`,
+so a restart or a second worker keeps the same ordering. To see what that key
+protects, as an exercise and not a change to keep: replace
+`int(payload["SequenceNumber"])` in `record` with `len(CALLS[payload["CallSid"]])`
+and run the verifier. The step-order assertion fails on the fixture's shuffled
+arrival, which is the failure this recipe exists to prevent.

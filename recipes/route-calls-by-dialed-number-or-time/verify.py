@@ -23,6 +23,8 @@ HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE.parent.parent / "tools"))
 sys.path.insert(0, str(HERE / "python"))
 os.environ["CONNECT_TIMEOUT"] = "25"
+os.environ.setdefault("SWML_BASIC_AUTH_USER", "signalwire")
+os.environ.setdefault("SWML_BASIC_AUTH_PASSWORD", "verify-only-password")
 
 import verifylib as V  # noqa: E402
 
@@ -76,16 +78,27 @@ def main():
     real = recipe.datetime
     recipe.datetime = FrozenDatetime
     client = recipe.app.test_client()
+    import base64
+    creds = base64.b64encode(b"signalwire:verify-only-password").decode()
+    AUTH = {"Authorization": "Basic " + creds}
 
     def fetch(to, at):
         FrozenDatetime.frozen = at
-        r = client.post("/swml", json=payload(to))
+        r = client.post("/swml", json=payload(to), headers=AUTH)
         assert r.status_code == 200, (to, at, r.status_code, r.data[:80])
         doc = r.get_json()
         V.validate_swml(doc)
         return doc
 
     try:
+        # the webhook is behind the basic auth SignalWire carries in the URL
+        # (sol r2): no credentials, or the wrong ones, get 401 and no document
+        FrozenDatetime.frozen = OPEN_AT
+        assert client.post("/swml", json=payload(SALES)).status_code == 401
+        wrong = base64.b64encode(b"signalwire:wrong").decode()
+        assert client.post("/swml", json=payload(SALES),
+                           headers={"Authorization": "Basic " + wrong}).status_code == 401
+
         # open: greeting, then connect to that line's own destination
         for to, dest, greeting in ((SALES, "+15550100001", "say:Ridgeline Cycles sales, one moment."),
                                    (WORKSHOP, "+15550100002", "say:Ridgeline Cycles workshop, one moment.")):
