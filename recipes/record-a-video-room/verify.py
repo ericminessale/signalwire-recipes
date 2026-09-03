@@ -2,7 +2,7 @@
 
 Claim: `record_on_start: true` on a room makes the platform record each of its
 sessions. A session's recordings list over REST, each with a `uri`, a `status`
-and a `duration`, and a DELETE by recording id removes one.
+and a `duration`, and a DELETE by recording id asks for deletion and answers 204.
 
 Proof: the HTTP layer is a recorder. The five helpers make five requests in
 order. They POST the room with exactly `name`, `display_name` and
@@ -10,9 +10,9 @@ order. They POST the room with exactly `name`, `display_name` and
 GET one recording, and DELETE it. Every path and body is documented. The spec
 requires `name` on the room and describes `record_on_start` as starting a
 recording when a session starts. Its recording schema carries `uri`, `status`,
-`duration`, `format` and `room_session_id`, the room response carries
-`active_session`, and the delete answers 204. Expected values live here, not in
-app.py.
+`duration`, `format` and `room_session_id`, and the delete answers 204. Whether
+the platform deletes the file is live behaviour; the request and the documented
+answer are what is proven. Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -100,9 +100,6 @@ def main():
     assert switch["type"] == "boolean", switch
     assert "start recording a Room Session when one is started" in switch["description"], switch["description"]
 
-    # the room object carries the session pointer the README names
-    _, room_props = response(spec, ROOMS, "post")
-    assert "active_session" in room_props, sorted(room_props)
 
     # the sessions list is where the id comes from, and the fixture is shaped like it
     code, session_props = response(spec, SESSIONS, "get")

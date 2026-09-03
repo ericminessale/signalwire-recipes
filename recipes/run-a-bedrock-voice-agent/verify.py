@@ -59,7 +59,10 @@ def main():
     assert V.verb_names(br_doc) == ["answer", "amazon_bedrock"], V.verb_names(br_doc)
     ai, br = verb(ai_doc, "ai"), verb(br_doc, "amazon_bedrock")
 
-    # same tools, same schemas; the webhook URLs differ only by the per-call token
+    # same tools, same schemas. The two agents are two renders, so each
+    # web_hook_url carries its own __token; the comparison strips that one
+    # query value and nothing else, and asserts both carried one. Comparing the
+    # raw lists would fail on the token alone and prove nothing about the schema.
     def without_token(functions):
         out = []
         for f in functions:

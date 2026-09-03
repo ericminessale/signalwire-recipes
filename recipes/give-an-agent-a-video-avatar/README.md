@@ -54,9 +54,9 @@ python app.py
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. A video call is what shows the
 face. Give the agent a Fabric address by creating a SWML webhook resource whose
-`primary_request_url` is `https://<user>:<password>@<your-host>/face/`, the way
-`let-a-browser-dial-your-agent-with-no-dashboard-setup` does, then dial that
-address from a video-capable client.
+`primary_request_url` is `https://<user>:<password>@<your-host>/face/`.
+`let-a-browser-dial-your-agent-with-no-dashboard-setup` shows the steps. Then
+dial that address from a video-capable client.
 
 ## Verify it
 
@@ -85,12 +85,13 @@ The clips are files you host. The schema says nothing about format or length;
 short, loopable, and served with a correct content type is the safe reading.
 
 The schema does not reject an unknown key under `params`, so a typo in one of
-the three names validates and shows nothing. Copy the names from the schema.
+the three names validates and does not configure the documented parameter.
+Copy the names from the schema.
 
 ## What to change first
 
 The verifier sets `AVATAR_BASE_URL` to its own example before it imports the
-app, so `.env` never reaches it. Point `AVATAR_BASE_URL` in `.env` at your own
+app, so a value in `.env` cannot override it there. Point `AVATAR_BASE_URL` in `.env` at your own
 three clips and run the agent, not the verifier, to see your face on a call.
 Change the verifier's `EXPECTED` instead and it fails, because the example is
 what it pins.

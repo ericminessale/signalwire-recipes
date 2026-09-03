@@ -1,6 +1,6 @@
 # Record a video room
 
-> `record_on_start: true` on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a `uri`, a `status` and a `duration`, and a DELETE by recording id removes one.
+> `record_on_start: true` on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a `uri`, a `status` and a `duration`, and a DELETE by recording id asks the platform to delete one and answers `204`.
 
 **Scenario:** a workshop stand-up on video that the people who missed it watch later
 
@@ -13,7 +13,7 @@ one is started for this Room". From then on the recordings are REST objects.
 `GET /api/video/room_sessions/{id}/recordings` lists a session's, and each
 carries `status`, `duration`, `format`, `size_in_bytes` and a `uri`.
 `GET /api/video/room_recordings/{id}` reads one, and
-`DELETE /api/video/room_recordings/{id}` answers `204` and removes it. You
+`DELETE /api/video/room_recordings/{id}` asks for its deletion and answers `204`. You
 reach them as `client.video.rooms.create`,
 `client.video.room_sessions.list_recordings`, and `client.video.room_recordings`
 `get` and `delete`.
@@ -43,10 +43,10 @@ GET /api/video/room_recordings/<recording_id>
 DELETE /api/video/room_recordings/<recording_id>
 ```
 
-The session id comes from `GET /api/video/room_sessions`, wrapped as
-`client.video.room_sessions.list`, and the spec's room object also carries an
-`active_session`. The recordings list and the get both document a `media_ttl`
-query parameter; the recipe leaves it at the platform's default.
+Read the session id from `GET /api/video/room_sessions`, which the SDK exposes
+as `client.video.room_sessions.list`. The recordings list and the get both
+document a `media_ttl` query parameter; the recipe leaves it at the platform's
+default.
 
 ## Run it
 
@@ -80,7 +80,6 @@ session and one recording. You call the five helpers and assert the following.
 - they make five requests in order: `POST` the room, `GET` the sessions, `GET` the session's recordings, `GET` one recording, `DELETE` it
 - the room body is exactly `name`, `display_name` and `record_on_start: true`, and the other four carry no body and no query
 - every path and body is documented; the spec requires `name` on the room and describes `record_on_start` with the quoted sentence
-- the spec's room response carries `active_session`
 - the sessions list's documented items carry `id`, and the fixture session uses only documented fields
 - the spec's recording schema, on both the list and the get, carries `id`, `room_session_id`, `status`, `duration`, `format` and `uri`
 - the recording fixture uses only fields each of those two schemas documents
@@ -92,9 +91,9 @@ You prove the requests and the documented shapes. When a recording reaches
 `completed`, and what the `uri` serves, are the platform's side of a live
 session.
 
-Starting a recording from inside the call is not here. The Browser SDK v4
-reference labels `startRecording` unimplemented, so the room property is the
-documented switch.
+Do not look here for starting a recording from inside the call. The Browser
+SDK v4 reference labels `startRecording` unimplemented, so the room property is
+the documented switch.
 
 ## What to change first
 

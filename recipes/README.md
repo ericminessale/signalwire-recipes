@@ -235,7 +235,7 @@ Rooms, recording, streaming, and PSTN into a room.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Record a video room](record-a-video-room/) | record_on_start true on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a uri, a status and a duration, and a DELETE by recording id removes one. | Python |
+| [Record a video room](record-a-video-room/) | record_on_start true on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a uri, a status and a duration, and a DELETE by recording id asks the platform to delete one and answers 204. | Python |
 | [Stream a video room to RTMP](stream-a-video-room-to-rtmp/) | One POST to a room's streams path with a url asks the platform to stream the room's session to an RTMP or RTMPS server of yours. The stream id in the response is the handle: a PUT to the stream's path carries a new url, and a DELETE by id answers 204. | Python |
 
 ## Fax

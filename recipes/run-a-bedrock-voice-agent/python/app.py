@@ -2,8 +2,8 @@
 
 `BedrockAgent` renders `amazon_bedrock` where `AgentBase` renders `ai`. The
 SDK's `agents/bedrock.py` renders the base document, then rebuilds the verb
-with the same `prompt` plus `voice_id`, `temperature` and `top_p` inside it,
-and copies `SWAIG`, `params`, `global_data` and the post-prompt settings. So
+with the same `prompt` plus `voice_id`, `temperature` and `top_p` inside it.
+It copies `SWAIG`, `params`, `global_data` and the post-prompt settings. So
 the SWAIG functions render the same on both, and one `configure()` registers
 the same handler on each agent. This file configures one parts desk twice,
 once on each base class, from that one function.

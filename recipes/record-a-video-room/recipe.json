@@ -2,7 +2,7 @@
   "slug": "record-a-video-room",
   "title": "Record a video room",
   "alias": "rooms record_on_start + room_recordings REST",
-  "summary": "record_on_start true on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a uri, a status and a duration, and a DELETE by recording id removes one.",
+  "summary": "record_on_start true on a room makes the platform record each of its sessions. A session's recordings list over REST, each with a uri, a status and a duration, and a DELETE by recording id asks the platform to delete one and answers 204.",
   "scenario": "A workshop stand-up on video that the people who missed it watch later",
   "surfaces": [
     "python"

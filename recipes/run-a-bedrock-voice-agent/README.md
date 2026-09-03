@@ -2,13 +2,13 @@
 
 > Swapping `AgentBase` for `BedrockAgent` renders `amazon_bedrock` instead of `ai`, with the prompt carrying three Bedrock settings. The SWAIG function renders with the same schema on both, and the handler you register on each returns the same reply.
 
-**Scenario:** a parts desk you want to try on Amazon Bedrock's voice-to-voice model without rewriting its tools
+**Scenario:** a parts desk you want to run on Amazon Bedrock without rewriting its tools
 
 ## What this demonstrates
 
 You swap the base class and the SDK's `agents/bedrock.py` renders the base
-document, then rebuilds the verb as `amazon_bedrock` with the same `prompt`,
-`SWAIG`, `params`, `global_data` and post-prompt settings. Inside the prompt it
+document, then rebuilds the verb as `amazon_bedrock`. The `prompt`, `SWAIG`,
+`params`, `global_data` and post-prompt settings are copied over. Inside the prompt it
 adds `voice_id`, `temperature` and `top_p`; its comment says that in Bedrock
 the voice configuration is part of the prompt object. It also drops three
 text-model prompt settings if you set them. The bundled schema documents the
@@ -23,7 +23,7 @@ def configure(agent):
     agent.prompt_add_section("Role", "You are the parts desk at Ridgeline Cycles. ...")
     agent.define_tool(name="check_stock",
                       description="Check whether a bike part is in stock before promising it.",
-                      parameters=PARAMETERS, handler=check_stock, secure=False)
+                      parameters=PARAMETERS, handler=check_stock)
     return agent
 
 def build(kind="bedrock"):

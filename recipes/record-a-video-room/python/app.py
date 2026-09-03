@@ -7,7 +7,7 @@ for this Room." The recordings are then REST objects.
 `GET /api/video/room_sessions/{id}/recordings` lists a session's recordings,
 each with a `status`, a `duration`, a `format` and a `uri`.
 `GET /api/video/room_recordings/{id}` reads one, and
-`DELETE /api/video/room_recordings/{id}` removes it.
+`DELETE /api/video/room_recordings/{id}` asks for its deletion.
 
 Written against signalwire-sdk 3.0.1 (RestClient.video).
 """

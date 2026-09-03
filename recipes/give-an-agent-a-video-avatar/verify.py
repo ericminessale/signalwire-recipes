@@ -48,7 +48,7 @@ def main():
     V.validate_swml(doc)
     params = ai_of(doc)["params"]
     assert {k: params.get(k) for k in EXPECTED} == EXPECTED, params
-    assert [k for k in params if k.startswith("video_")] == list(EXPECTED), sorted(params)
+    assert {k for k in params if k.startswith("video_")} == set(EXPECTED), sorted(params)
 
     y = V.load_yaml(HERE / "swml" / "agent.yaml")
     V.validate_swml(y)
@@ -64,9 +64,9 @@ def main():
         assert "Only works for calls that support video" in desc, (key, desc)
         assert props[key].get("type") == "string", (key, props[key])
 
-    # the schema accepts unknown params, so a misspelt key validates and does
-    # nothing: exact keys are the only guard, which is why the assertions above
-    # compare them whole
+    # the schema accepts unknown params, so a misspelt key validates and the
+    # documented parameter goes unconfigured: exact keys are the only guard,
+    # which is why the assertions above compare them whole
     typo = json.loads(json.dumps(y))
     typo_params = ai_of(typo)["params"]
     typo_params["video_idel_file"] = typo_params.pop("video_idle_file")
