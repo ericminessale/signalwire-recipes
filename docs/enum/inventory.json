@@ -3851,6 +3851,34 @@
         "sdk rest/namespaces/calling.py:149-151 refer; npm @signalwire/sdk 2.0.5 refer",
         "verified 2026-09-03: recipes/transfer-a-sip-call-with-refer/verify.py"
       ]
+    },
+    {
+      "slug": "control-live-translation-on-a-call-in-progress",
+      "claim": "Translation is switched on partway through a call, spoken into, summarised and switched off, each with one REST command.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "voice",
+        "ai-agents"
+      ],
+      "task_group": "call-control",
+      "lens": "voice",
+      "interfaces": [
+        "rest"
+      ],
+      "capabilities": [
+        "rest",
+        "translation"
+      ],
+      "folds": [
+        "round 7 gap: live-call control over REST"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json calling.live_translate: params required action, a oneOf of start, inject, summarize and stop; start requires from_lang, to_lang and direction (array of remote-caller|local-caller) and takes speech_engine deepgram|google; inject requires message and direction; summarize takes webhook and prompt",
+        "sdk rest/namespaces/calling.py:138-140 live_translate; npm @signalwire/sdk 2.0.5 liveTranslate",
+        "verified 2026-09-03: recipes/control-live-translation-on-a-call-in-progress/verify.py"
+      ]
     }
   ],
   "_patched_round5": true

@@ -39,18 +39,20 @@ for (const bad of [undefined, ""]) {
     }
   }
 }
-try {
-  await setVolume(callId, 41);
-  refused.push("SENT");
-} catch (error) {
-  refused.push(String((error as Error).message));
+for (const bad of [41, Number("loud")]) {
+  try {
+    await setVolume(callId, bad);
+    refused.push("SENT");
+  } catch (error) {
+    refused.push(String((error as Error).message));
+  }
 }
 const beforeAnyRequest = captured.length;
 
 await say(callId, text);
 await say(callId, text, undefined, statusUrl);
 await playFile(callId, url);
-await setVolume(callId, -6);
+await setVolume(callId, Number("-6"));
 await stopPlayback(callId);
 await askDigits(callId, statusUrl);
 await askSpeech(callId, statusUrl);

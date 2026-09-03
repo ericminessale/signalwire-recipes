@@ -116,7 +116,7 @@ asserts the following.
 - `calling.collect` requires only `control_id`, `digits` requires `max`, and every sent `digits` and `speech` key is documented
 - the spec defaults `start_input_timers` to `false`, and both collects send `true`
 - the two stop commands require only `control_id`, and `calling.play.volume` requires the control id and a volume, with the range in the spec's own text
-- a volume outside -40 to 40 raises before any request is made
+- a volume outside -40 to 40 raises before any request is made, as does one that is not a number, in both the value a caller passes and the string the command line hands over
 - each body equals the expected `{"command", "id", "params"}` shape, and every param is a documented property
 - the TypeScript surface sends those same seven bodies, and refuses a collect with no status URL before any request
 

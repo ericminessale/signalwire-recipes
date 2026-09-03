@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-105 of 130 folders are written and verified. The rest are planned and carry a stub.
+106 of 131 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -13,7 +13,7 @@ and without a network.
 ## Contents
 
 - [AI Agents](#ai-agents) (36)
-- [Voice](#voice) (50)
+- [Voice](#voice) (51)
 - [Messaging](#messaging) (9)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
@@ -124,6 +124,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Reduce background noise on a call](reduce-background-noise-on-a-call/) | Turn call noise reduction on or off in the call flow or during a live call through REST. | Markup, Python |
 | [Register a SIP endpoint and receive calls](register-a-sip-endpoint-and-receive-calls/) | Create SIP credentials for a softphone, register it as an endpoint, and route calls to its address. | Python |
 | [Send DTMF to someone else's IVR](send-dtmf-to-an-external-ivr/) | Send programmed keypad tones during an outbound call to navigate an external IVR. | Python |
+| [Start, steer and stop live translation on a call in progress](control-live-translation-on-a-call-in-progress/) | Switch translation on partway through a call, speak a translated line into it, ask for a summary, and switch it off, each with one REST command. | Python, TypeScript |
 | [Stream call audio to a WebSocket that checks a bearer token](stream-call-audio-to-an-authenticated-websocket/) | Send one side of a call, or both, to your own WebSocket over TLS, with a bearer token on the connection and your own metadata attached. | Python, TypeScript |
 | [Stream call audio to your own server](stream-call-audio-to-your-own-server/) | Copy live call audio to your WebSocket or RTP server, then stop the stream by its control ID. | Markup, Python |
 | [Take a voicemail](take-a-voicemail/) | If a bridge fails, play a voicemail prompt, record the caller's message, and send its download URL to a status webhook. | Markup, Python |

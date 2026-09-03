@@ -41,6 +41,10 @@ export function playFile(callId: string, url: string, controlId = PLAY_ID) {
 
 /** Adjust a playing prompt, in dB. The spec's range is -40 to 40. */
 export function setVolume(callId: string, volume: number, controlId = PLAY_ID) {
+  if (!Number.isFinite(volume)) {
+    // Number("loud") is NaN, and NaN fails every range comparison silently
+    throw new Error(`volume must be a number of dB, not ${volume}`);
+  }
   if (volume < -40 || volume > 40) {
     throw new Error(`volume must be between -40 and 40 dB, not ${volume}`);
   }

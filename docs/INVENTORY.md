@@ -4,10 +4,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**130 rows.** By kind: recipe 108 · build 9 · guide 4 · tool 2 · hold 7.  
-By status: verified 50 · written 5 · stub 8 · proposed 60 · hold 7.  
-Recipes per public category: AI Agents 37 · Voice 52 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
-Rows per planning lens: AI Agents & Automation 44 · Voice & Call Control 40 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 7 · Fax 2.  
+**131 rows.** By kind: recipe 109 · build 9 · guide 4 · tool 2 · hold 7.  
+By status: verified 51 · written 5 · stub 8 · proposed 60 · hold 7.  
+Recipes per public category: AI Agents 37 · Voice 53 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
+Rows per planning lens: AI Agents & Automation 44 · Voice & Call Control 41 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 7 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
@@ -519,7 +519,7 @@ On a video call the agent shows idle, listening and talking video loops that swi
   - docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)
   - demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)
 
-## Voice — 52 recipes
+## Voice — 53 recipes
 
 #### Call control
 
@@ -787,6 +787,18 @@ A SIP call is handed to another endpoint with a REFER, carrying the destination 
   - tools/openapi/rest.json calling.refer: device required, requiring type and params; device type enum is exactly [sip]; ReferSipParams requires to (sip: URI), with optional from, username and password; status_url receives refer lifecycle webhooks
   - sdk rest/namespaces/calling.py:149-151 refer; npm @signalwire/sdk 2.0.5 refer
   - verified 2026-09-03: recipes/transfer-a-sip-call-with-refer/verify.py
+
+### `control-live-translation-on-a-call-in-progress`
+
+Translation is switched on partway through a call, spoken into, summarised and switched off, each with one REST command.
+
+- kind **recipe** · status **verified** · category **Voice** (voice, ai-agents) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest, translation
+- folds: round 7 gap: live-call control over REST
+- evidence:
+  - tools/openapi/rest.json calling.live_translate: params required action, a oneOf of start, inject, summarize and stop; start requires from_lang, to_lang and direction (array of remote-caller|local-caller) and takes speech_engine deepgram|google; inject requires message and direction; summarize takes webhook and prompt
+  - sdk rest/namespaces/calling.py:138-140 live_translate; npm @signalwire/sdk 2.0.5 liveTranslate
+  - verified 2026-09-03: recipes/control-live-translation-on-a-call-in-progress/verify.py
 
 #### Routing & queueing
 

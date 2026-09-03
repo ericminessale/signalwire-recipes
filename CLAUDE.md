@@ -1789,6 +1789,46 @@ assumption that the Agents SDK is Python-only was simply out of date.
   `.env` through `dotenv/config` (the `load_dotenv()` equivalent), and compiles
   with `module`/`moduleResolution` `NodeNext` into a gitignored `dist/`.
 
+## Wave 13 of the fill-out (2026-09-03)
+
+Five more REST call-control recipes, every one shipping python/ and typescript/
+together from the first commit: detect, ai_hold/ai_unhold/ai.stop, stream,
+refer, and live_translate, plus `calling.play.volume` folded into the recipe
+that already owned the play family. Call-command coverage went from 25 of 42 to
+35. Reviews: `docs/CODEX_REVIEW_2026-09-03_wave13.md`.
+
+- **`calling.ai_hold`'s `timeout` is a string.** The spec types it as one and
+  says "must be sent as a string" and "integer payloads are rejected". A number
+  is a 400.
+- **The SDK method name and the command differ again**: `ai_stop()` sends
+  `calling.ai.stop`, with a dot, in both SDKs.
+- **`calling.ai.stop` documents `control_id` as "Reserved field ... currently
+  ignored"**, so a recipe should not send it.
+- **`calling.detect` is a oneOf of three configs** (machine, fax, digit) that
+  share one `type` enum. The machine defaults are `initial_timeout` 4.5,
+  `end_silence_timeout` 1, `machine_voice_threshold` 1.25,
+  `machine_words_threshold` 6; the fax tone enum is `CNG`/`CED` and their
+  lower-case forms.
+- **`calling.stream` is `tap`'s authenticated sibling.** TLS only (the spec
+  says plain `ws://` is rejected), a `track` enum of
+  `inbound_track|outbound_track|both_tracks`, an
+  `authorization_bearer_token` sent as `Authorization: Bearer`, and
+  `custom_parameters` passed to the endpoint as connection metadata.
+- **`calling.refer` is the SIP-layer transfer.** Its device enum holds exactly
+  `sip`, and `to` must be a `sip:` URI. The command table calls it "Transfer a
+  SIP call via SIP REFER", which is the sentence a recipe can quote.
+- **`calling.live_translate` carries one `action`,** a oneOf of `start`,
+  `inject`, `summarize` and `stop`. Start needs `from_lang`, `to_lang` and a
+  `direction` array; inject needs `message` and a single direction from the
+  same enum. This is richer than the SWML verb, which decides before the call
+  starts.
+- **A verifier that passes clean values proves the helper, not the documented
+  path** (codex, on 44b7278). `python app.py volume <id> -6` hands over the
+  string `"-6"`, and the range check raised `TypeError`; the verifier had
+  passed an int. In TypeScript the same helper let `NaN` through, because it
+  fails every range comparison silently. Where a README shows a command line,
+  the verifier passes what that command line passes.
+
 ## Open work
 
 - **Review debt cleared (2026-09-02, late).** Codex reviewed every range after

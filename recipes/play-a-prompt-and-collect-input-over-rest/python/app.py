@@ -47,6 +47,11 @@ def play_file(call_id, url, control_id=PLAY_ID):
 
 def set_volume(call_id, volume, control_id=PLAY_ID):
     """Adjust a playing prompt, in dB. The spec's range is -40 to 40."""
+    try:
+        # the command line hands this over as a string
+        volume = float(volume)
+    except (TypeError, ValueError):
+        raise ValueError(f"volume must be a number of dB, not {volume!r}") from None
     if not -40 <= volume <= 40:
         raise ValueError(f"volume must be between -40 and 40 dB, not {volume!r}")
     return client.calling.play_volume(call_id, control_id=control_id, volume=volume)
