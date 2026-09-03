@@ -228,6 +228,14 @@ brand cheatsheet's abstractions and not invented:
   were written for the reader who already knew the platform; all 122 were
   rewritten. Industry terms are claims too: "PCI-compliant" and "TCPA" were
   not used because the recipes do not prove them.
+- **A name carries its subject when the noun could belong to another domain
+  (Eric asked; decided 2026-09-02).** "Tools", "prompts", "state", "flow" and
+  "events" need "AI agent" (the industry term; "voice AI" where the voice part
+  is the point, "LLM" only where the model is): "verification-gated AI agent
+  tools", "per-step tool scoping for AI agents". Telephony nouns do not:
+  "context-preserving call transfer". The recipe page `<title>` is
+  `how-to title · alias · SignalWire Recipes`, so a search result shows both
+  shapes on one line.
 - **Slugs name the mechanism, builds included (2026-09-02).** The Harbor demo
   shipped as `docs-site-voice-guide`, which names nothing a developer searches
   for and could read as a pointer to docs about voice. Eric: "the entire point

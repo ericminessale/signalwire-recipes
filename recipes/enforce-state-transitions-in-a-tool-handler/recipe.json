@@ -1,7 +1,7 @@
 {
   "slug": "enforce-state-transitions-in-a-tool-handler",
   "title": "Decide the next step in code, not in the prompt",
-  "alias": "code-enforced conversation flow",
+  "alias": "code-enforced AI conversation flow",
   "summary": "Your code decides what happens next, so the model cannot strand or misroute the caller.",
   "scenario": "When step instructions alone are not enough",
   "category": "ai-agents",

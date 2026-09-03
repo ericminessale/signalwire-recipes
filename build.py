@@ -1933,7 +1933,8 @@ def build_detail(r, body_only=False):
         out.append("<script>%s</script>" % DETAIL_JS)
     body = "".join(out)
     return body if body_only else page(
-        r["title"] + " - SignalWire Recipes", body,
+        # both shapes a search takes: the how-to phrase and the industry term
+        (r["title"] + (" · " + r["alias"] if r.get("alias") else "") + " · SignalWire Recipes"), body,
         desc=r.get("summary") or "",
         path=recipe_path(r["slug"]),
     )

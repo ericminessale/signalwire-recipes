@@ -1,7 +1,7 @@
 {
   "slug": "cover-tool-latency-with-fillers",
   "title": "Cover tool latency with fillers",
-  "alias": "conversational fillers for tool latency",
+  "alias": "conversational fillers for AI tool latency",
   "summary": "The slow tool renders a filler phrase, and a wait file when you host one, while each language carries its own filler pool.",
   "scenario": "A parts desk checking a slow inventory system",
   "surfaces": [
