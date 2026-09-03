@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-97 of 122 folders are written and verified. The rest are planned and carry a stub.
+101 of 126 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -13,7 +13,7 @@ and without a network.
 ## Contents
 
 - [AI Agents](#ai-agents) (35)
-- [Voice](#voice) (43)
+- [Voice](#voice) (47)
 - [Messaging](#messaging) (9)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
@@ -113,7 +113,10 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Connect a PBX with a Domain Application](connect-a-pbx-with-a-domain-application/) | An IP-authenticated Domain Application takes inbound SIP from your PBX and a SIP Gateway carries calls back to it. | Python, Markup |
 | [Detect an answering machine](detect-an-answering-machine/) | Use answering machine detection to classify a pickup as human or voicemail before playing the main message. | Python |
 | [Embed a call widget with no backend](embed-a-call-widget-with-no-backend/) | A sw-click-to-call element with a Click to Call token from the Dashboard and a destination address puts a call button on a page. No server of yours is in the call path. | Python |
+| [End or transfer a live call over REST](end-or-transfer-a-live-call-over-rest/) | Hang up a live call with a reason, send it to a new destination, or unbridge it from its peer, each with one REST command addressed to the call id. | Python |
+| [Pause and resume a call recording over REST](pause-and-resume-a-call-recording-over-rest/) | Start recording a live call from your own backend, pause it while a card number is read out, resume it, and stop it, all by control id over REST. | Python |
 | [Place an outbound call](place-an-outbound-call/) | Dial a number from your own code and follow the call through to completion. | Python |
+| [Play a prompt and collect digits or speech over REST](play-a-prompt-and-collect-input-over-rest/) | Speak a prompt into a live call from your own backend, stop it early, and collect keypad digits or speech, with the result delivered to your webhook. | Python |
 | [Receive calls in the browser](receive-calls-in-the-browser/) | Register a browser as a WebRTC endpoint with a subscriber token, then route calls to its address. | Python, TypeScript |
 | [Record a call](record-a-call/) | Start a recording and pick it up from the completion webhook. | Python, Markup |
 | [Reduce background noise on a call](reduce-background-noise-on-a-call/) | Turn call noise reduction on or off in the call flow or during a live call through REST. | Markup, Python |
@@ -130,6 +133,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Export recordings and enforce retention](export-recordings-and-enforce-retention/) | Copy recordings older than your retention window to your storage, then delete each SignalWire original after a successful copy. | Python |
 | [Isolate tenants with subprojects and scoped tokens](isolate-tenants-with-subprojects-and-scoped-tokens/) | Create a subproject for each tenant and issue API tokens limited to that subproject and an explicit permission list. | Python |
 | [Issue a browser calling token restricted to chosen destinations](get-a-webrtc-token-with-restricted-dial-targets/) | Mint a short-lived browser token and restrict what it is allowed to call. | Python |
+| [Let your users buy a phone number through your app](let-your-users-buy-a-phone-number-through-your-app/) | Give each customer their own project and API token, then search, buy, route and release phone numbers with their credentials rather than yours. | Python |
 | [Register an E911 address for a number](register-an-e911-address-for-a-number/) | Create an emergency address through REST, look up the phone number, and attach that address to it. | Python |
 | [Verify a caller id for outbound calls](verify-a-caller-id-for-outbound-calls/) | Three REST requests register a number you own elsewhere as a verified caller ID. You submit the code you heard, and redial the verification call if you missed it. | Python |
 | [Verify a webhook signature](verify-a-webhook-signature/) | The gate refuses, with 403 and before any route runs, a request whose signature header does not match hex(HMAC(signing_key, url + raw_body)). X-Signalwire-SHA256-Signature decides when present; otherwise X-Signalwire-Signature, the SHA-1 one, does. | Python |

@@ -36,3 +36,6 @@ design/
 # the hand-off recipe's local notes store, and its verifier's scratch copy
 handoff-notes.json
 .verify-notes.json
+
+# the tenant provisioning recipe: a local store holding live tenant tokens
+tenants.json

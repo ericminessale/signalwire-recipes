@@ -1,0 +1,46 @@
+{
+  "slug": "let-your-users-buy-a-phone-number-through-your-app",
+  "title": "Let your users buy a phone number through your app",
+  "alias": "self-service number provisioning for tenants",
+  "summary": "Give each customer their own project and API token, then search, buy, route and release phone numbers with their credentials rather than yours.",
+  "scenario": "Your customers pick a local number during signup and give it back when they cancel",
+  "surfaces": [
+    "python"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice",
+    "messaging"
+  ],
+  "capabilities": [
+    "rest",
+    "multi-tenant"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "numbers-identity",
+    "folds": [
+      "round 7 gap: space and number management over REST for apps that provision per customer (Eric, 2026-09-03)"
+    ],
+    "evidence": [
+      "tools/openapi/rest.json POST /api/projects: name required; POST /api/project/tokens: name and permissions required, subproject_id optional; Project.TokenPermission enum of eleven includes numbers and management",
+      "tools/openapi/rest.json GET /api/relay/rest/phone_numbers/search query areacode, number_type, max_results...; POST /api/relay/rest/phone_numbers requires number; PUT and DELETE /api/relay/rest/phone_numbers/{id}; AvailablePhoneNumber requires number",
+      "sdk rest/client.py:63-77 RestClient(project, token, host) builds its own HttpClient with basic auth; rest/namespaces/phone_numbers.py search, and CrudResource create/update/delete with _update_method PUT",
+      "verified 2026-09-03: recipes/let-your-users-buy-a-phone-number-through-your-app/verify.py"
+    ]
+  },
+  "subcategory": "governance",
+  "prerequisites": [
+    "isolate-tenants-with-subprojects-and-scoped-tokens",
+    "buy-a-number-and-point-it-at-your-app"
+  ],
+  "related": [
+    "register-an-e911-address-for-a-number",
+    "configure-an-agent-per-request"
+  ]
+}

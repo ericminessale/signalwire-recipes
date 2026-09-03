@@ -1625,6 +1625,83 @@ and a paced batch send.
   query string is the URL SignalWire signs; appending the request's query to
   it again computed the HMAC over `...?x=1?x=1` and refused genuine callbacks.
 
+## List review method (decided 2026-09-03, round 7)
+
+- **Start from the axes, not the schema.** Round 7 began from the SWML schema
+  and found 51 of 60 methods covered; Eric: "rest is a category we were blind
+  to... are there more categories". The axes a review must walk: interface
+  (SWML, Agents SDK, REST, Compatibility and cXML, Relay, Browser SDK, no-code
+  and Dashboard-hosted, webhooks), language (the surface tabs), deployment
+  target, integration with the customer's systems, migration from a vendor,
+  product-line balance, vertical builds, content kind. Section 9 of
+  `docs/LIST_REVIEW_2026-09-03_round7.md` is the table; recompute it, do not
+  reread it.
+- **Coverage is computed, not read.** `tools/openapi/*.json` and the bundled
+  schema against the corpus text; the numbers in the review came from that.
+- **The `surfaces` field is the honest measure of language coverage.** The
+  inventory's `interfaces` field says what the platform offers for a row, not
+  what the recipe implements: it reports cxml 20 and relay 16 for a corpus
+  with one cXML recipe and no Relay.
+
+## Wave 12 of the fill-out (2026-09-03)
+
+Four REST recipes from round 7's §10: `end-or-transfer-a-live-call-over-rest`,
+`play-a-prompt-and-collect-input-over-rest`,
+`pause-and-resume-a-call-recording-over-rest` and
+`let-your-users-buy-a-phone-number-through-your-app`. Codex was returning
+`404 Not Found` all day, so the round was run in-house: a workflow of subagents,
+three lenses per recipe (spec fidelity, verifier strength, prose) and one
+skeptic per finding. 59 findings, 18 survived refutation, and it caught a P1 the
+gate cannot see. The record is `docs/RECIPE_REVIEW_2026-09-03_wave12.md`.
+
+- **The calling POST description carries a command table, and it is a proof
+  surface.** `spec("rest")["paths"]["/api/calling/calls"]["post"]["description"]`
+  holds one row per command. The recipe had written that `calling.disconnect`
+  "ends the peer leg"; the table says "Disconnect bridged calls without hanging
+  up either leg", which is the reverse. A verifier that asserts the row is how a
+  behaviour sentence gets a source. The live reference agrees: it separates the
+  legs without ending either.
+- **`calling.play` items each have their own required param**: `tts` needs
+  `text`, `audio` needs `url`, `silence` needs `duration`. Assert them per item
+  by the schema's `title`; `("text",) in by_required` passes with the
+  association reversed.
+- **`calling.collect` delivers nothing in the HTTP response.** The spec says the
+  result arrives at `status_url`, and that at least one of `digits` or `speech`
+  is required. A collect with no status URL is unobservable, so the recipe
+  refuses it before sending.
+- **`calling.record` is `control_id` plus `record.audio`**, and
+  `calling.record.pause` takes `behavior` `skip` or `silence`. One control id
+  carries start, pause, resume and stop.
+- **A partial stub makes a negative claim unfalsifiable.** Stubbing
+  `client._http` and one namespace leaves every other namespace on the real
+  `HttpClient`, so "the platform client sent no number request" could not fail
+  and a mutation would have hit the network. `V.record_everything(client, rec)`
+  is the guard; mutation-test the leak.
+- **Prove a guard for every value it admits, not one.** A reason enum checked
+  with one accepted and one refused value still passes when the guard is
+  narrowed. Send all six and pin the default.
+- **`POST /api/projects` is root-project only**, and a subproject that tries
+  fails with `422 nested_subprojects_not_allowed`. The response carries a
+  one-time `signing_key`. There is no `GET` for tokens, but `PATCH
+  /api/project/tokens/{token_id}` returns one, so "no way to read it again" is
+  wrong and "no GET for tokens" is right.
+- **Every REST operation documents its scope in its own description**
+  (`_Numbers_`, `_Management_`), so "which permission an endpoint needs is the
+  platform's decision" understates what is written down. `401` is documented on
+  these operations; `403` is not documented anywhere near them.
+- **Two RestClients in one process are two identities.**
+  `RestClient(project, token, host)` builds its own `HttpClient` whose session
+  holds that pair as basic auth, and an empty argument falls back to the
+  environment. That fallback is why a missing tenant credential must raise
+  rather than be passed through.
+- **`cmd, call_id, *rest = sys.argv[1:] or ["help", ""]` raises on one
+  argument**, so the usage fallback fires only on none. Unpack defensively.
+- **A markdown link in a README reached the page as literal `[text](url)`.**
+  `md_inline` handled code spans and emphasis only, and seventeen citations
+  across twelve recipes were showing their own markup. It renders links now, in
+  turquoise, `http(s)` only so a README cannot talk the generator into a
+  `javascript:` href.
+
 ## Open work
 
 - **Review debt cleared (2026-09-02, late).** Codex reviewed every range after
@@ -1642,8 +1719,10 @@ and a paced batch send.
   owner protocol says an outage is not a blocker; the round is owed, and the
   decisions in the document (the merge, four retirements, the `guide` kind,
   the next wave) are Eric's to take with or without it.
-- **Corpus after wave 11 (2026-09-02): 96 of 121 folders written**, all
-  passing `python verify.py` and the lint. Waves 10 and 11 (eight recipes)
+- **Corpus after wave 12 (2026-09-03): 101 of 126 folders written**, all
+  passing `python verify.py` and the lint. Wave 12's four REST recipes are
+  reviewed (in-house workflow, `docs/RECIPE_REVIEW_2026-09-03_wave12.md`) but
+  are owed a `codex review` whenever the backend is up again. Waves 10 and 11 (eight recipes)
   went in on the gate alone because codex was down; they are on the review
   debt list too.
 - **The 25 unwritten folders, and why each waits.** Seven builds and

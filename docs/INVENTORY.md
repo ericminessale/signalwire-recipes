@@ -4,10 +4,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**122 rows.** By kind: recipe 100 · build 9 · guide 4 · tool 2 · hold 7.  
-By status: verified 42 · written 5 · stub 8 · proposed 60 · hold 7.  
-Recipes per public category: AI Agents 36 · Voice 45 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
-Rows per planning lens: AI Agents & Automation 43 · Voice & Call Control 35 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 8 · SIP, PBX & Migration 6 · Fax 2.  
+**126 rows.** By kind: recipe 104 · build 9 · guide 4 · tool 2 · hold 7.  
+By status: verified 46 · written 5 · stub 8 · proposed 60 · hold 7.  
+Recipes per public category: AI Agents 36 · Voice 49 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
+Rows per planning lens: AI Agents & Automation 43 · Voice & Call Control 38 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 6 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
@@ -507,7 +507,7 @@ On a video call the agent shows idle, listening and talking video loops that swi
   - docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)
   - demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)
 
-## Voice — 45 recipes
+## Voice — 49 recipes
 
 #### Call control
 
@@ -701,6 +701,42 @@ One persistent WebSocket answers inbound calls and places outbound ones from you
   - sdk relay/client.py:91,202,216,343 RelayClient on_call/connect/dial
   - demo workshop examples/03-relay-realtime/python/app.py (smoke-tested against mocks only)
   - docs server-sdks/guides/relay-client
+
+### `end-or-transfer-a-live-call-over-rest`
+
+A process holding a call id ends the call with a reason, moves it to a new destination, or unbridges it from its peer, over REST.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest
+- folds: round 7 gap: live-call control over REST (5 of 31 commands covered)
+- evidence:
+  - tools/openapi/rest.json Calling.CallRequest variants calling.end (params.reason enum hangup|cancel|busy|noAnswer|decline|error), calling.transfer (params.dest required), calling.disconnect (no params); the POST description's command table says disconnect "Disconnect bridged calls without hanging up either leg"
+  - sdk rest/namespaces/calling.py:38-45 end, transfer, disconnect
+  - verified 2026-09-03: recipes/end-or-transfer-a-live-call-over-rest/verify.py
+
+### `play-a-prompt-and-collect-input-over-rest`
+
+A backend plays a prompt into a live call and collects digits or speech, with the result delivered to its own webhook.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest, dtmf, speech
+- folds: round 7 gap: live-call control over REST (5 of 31 commands covered)
+- evidence:
+  - tools/openapi/rest.json calling.play (control_id, play array of audio|tts|silence|ringtone items; tts requires text, audio requires url), calling.play.stop, calling.collect (control_id; at least one of digits or speech; results to status_url), calling.collect.stop
+  - sdk rest/namespaces/calling.py:48-60 play family; :77-83 collect, collect_stop
+  - verified 2026-09-03: recipes/play-a-prompt-and-collect-input-over-rest/verify.py
+
+### `pause-and-resume-a-call-recording-over-rest`
+
+A recording started over REST is paused, resumed and stopped by the control id its caller chose.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest, recording
+- folds: round 7 gap: live-call control over REST (5 of 31 commands covered)
+- evidence:
+  - tools/openapi/rest.json calling.record (control_id, record.audio required; Calling.RecordAudioParams beep, format, stereo, direction, max_length, terminators), calling.record.pause (behavior enum skip|silence), calling.record.resume, calling.record.stop
+  - sdk rest/namespaces/calling.py:64-74 record, record_pause, record_resume, record_stop
+  - verified 2026-09-03: recipes/pause-and-resume-a-call-recording-over-rest/verify.py
 
 #### Routing & queueing
 
@@ -977,6 +1013,19 @@ No outbound call is placed to a number without a recorded consent and inside the
   - docs platform/compliance (TCPA)
   - docs apis/rest/calls/call-commands (dial)
   - the platform mechanism is thin here: the claim is the ordering (consent check, then dial); pair with handle-opt-outs-yourself
+
+### `let-your-users-buy-a-phone-number-through-your-app`
+
+Each customer gets a subproject and a scoped token, and every number request authenticates as them rather than as your platform token.
+
+- kind **recipe** · status **verified** · category **Voice** (voice, messaging) · task group **Governance** · lens Numbers, Identity & Trust
+- interfaces: rest · capabilities: rest, multi-tenant
+- folds: round 7 gap: space and number management over REST for apps that provision per customer (Eric, 2026-09-03)
+- evidence:
+  - tools/openapi/rest.json POST /api/projects (name required), POST /api/project/tokens (name, permissions required; subproject_id), Project.TokenPermission enum of eleven
+  - tools/openapi/rest.json GET /api/relay/rest/phone_numbers/search, POST /api/relay/rest/phone_numbers (number required), PUT and DELETE /api/relay/rest/phone_numbers/{id}
+  - sdk rest/client.py:63-77 RestClient(project, token, host) builds its own HttpClient with basic auth
+  - verified 2026-09-03: recipes/let-your-users-buy-a-phone-number-through-your-app/verify.py
 
 #### Tools & integrations
 

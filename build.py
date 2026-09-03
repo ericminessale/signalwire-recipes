@@ -422,6 +422,8 @@ a.cx:hover{color:var(--fg);}
 .dfoot{border-top:1px solid var(--line);margin-top:50px;padding-top:20px;display:flex;
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turq);}
+.mdlink{color:var(--turq);}
+.mdlink:hover{text-decoration:underline;}
 .showhid{margin-left:auto;display:inline-flex;align-items:center;gap:7px;
   font-family:var(--body);font-size:12.5px;color:var(--fg-muted);cursor:pointer;
   padding:6px 0 6px 14px;white-space:nowrap;}
@@ -1007,6 +1009,10 @@ def md_inline(t):
     t = esc(smart_typography(t))
     t = re.sub(r"`([^`]+)`", r'<code translate="no">\1</code>', t)
     t = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", t)
+    # a citation in the prose is a link, not its own markup. http(s) only, so a
+    # README can never talk the generator into emitting a javascript: href
+    t = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)",
+               r'<a class="mdlink" href="\2" rel="noopener">\1</a>', t)
     return t
 
 

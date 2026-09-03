@@ -3631,6 +3631,116 @@
       "featured": true,
       "feature_line": "State-aware voice AI inside your web page",
       "feature_rank": 1
+    },
+    {
+      "slug": "end-or-transfer-a-live-call-over-rest",
+      "claim": "A process holding a call id ends the call with a reason, moves it to a new destination, or unbridges it from its peer, over REST.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "voice"
+      ],
+      "task_group": "call-control",
+      "lens": "voice",
+      "interfaces": [
+        "rest"
+      ],
+      "capabilities": [
+        "rest"
+      ],
+      "folds": [
+        "round 7 gap: live-call control over REST (5 of 31 commands covered)"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json Calling.CallRequest variants calling.end (params.reason enum hangup|cancel|busy|noAnswer|decline|error), calling.transfer (params.dest required), calling.disconnect (no params); the POST description's command table says disconnect \"Disconnect bridged calls without hanging up either leg\"",
+        "sdk rest/namespaces/calling.py:38-45 end, transfer, disconnect",
+        "verified 2026-09-03: recipes/end-or-transfer-a-live-call-over-rest/verify.py"
+      ]
+    },
+    {
+      "slug": "play-a-prompt-and-collect-input-over-rest",
+      "claim": "A backend plays a prompt into a live call and collects digits or speech, with the result delivered to its own webhook.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "voice"
+      ],
+      "task_group": "call-control",
+      "lens": "voice",
+      "interfaces": [
+        "rest"
+      ],
+      "capabilities": [
+        "rest",
+        "dtmf",
+        "speech"
+      ],
+      "folds": [
+        "round 7 gap: live-call control over REST (5 of 31 commands covered)"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json calling.play (control_id, play array of audio|tts|silence|ringtone items; tts requires text, audio requires url), calling.play.stop, calling.collect (control_id; at least one of digits or speech; results to status_url), calling.collect.stop",
+        "sdk rest/namespaces/calling.py:48-60 play family; :77-83 collect, collect_stop",
+        "verified 2026-09-03: recipes/play-a-prompt-and-collect-input-over-rest/verify.py"
+      ]
+    },
+    {
+      "slug": "pause-and-resume-a-call-recording-over-rest",
+      "claim": "A recording started over REST is paused, resumed and stopped by the control id its caller chose.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "voice"
+      ],
+      "task_group": "call-control",
+      "lens": "voice",
+      "interfaces": [
+        "rest"
+      ],
+      "capabilities": [
+        "rest",
+        "recording"
+      ],
+      "folds": [
+        "round 7 gap: live-call control over REST (5 of 31 commands covered)"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json calling.record (control_id, record.audio required; Calling.RecordAudioParams beep, format, stereo, direction, max_length, terminators), calling.record.pause (behavior enum skip|silence), calling.record.resume, calling.record.stop",
+        "sdk rest/namespaces/calling.py:64-74 record, record_pause, record_resume, record_stop",
+        "verified 2026-09-03: recipes/pause-and-resume-a-call-recording-over-rest/verify.py"
+      ]
+    },
+    {
+      "slug": "let-your-users-buy-a-phone-number-through-your-app",
+      "claim": "Each customer gets a subproject and a scoped token, and every number request authenticates as them rather than as your platform token.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "voice",
+        "messaging"
+      ],
+      "task_group": "governance",
+      "lens": "numbers-identity",
+      "interfaces": [
+        "rest"
+      ],
+      "capabilities": [
+        "rest",
+        "multi-tenant"
+      ],
+      "folds": [
+        "round 7 gap: space and number management over REST for apps that provision per customer (Eric, 2026-09-03)"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json POST /api/projects (name required), POST /api/project/tokens (name, permissions required; subproject_id), Project.TokenPermission enum of eleven",
+        "tools/openapi/rest.json GET /api/relay/rest/phone_numbers/search, POST /api/relay/rest/phone_numbers (number required), PUT and DELETE /api/relay/rest/phone_numbers/{id}",
+        "sdk rest/client.py:63-77 RestClient(project, token, host) builds its own HttpClient with basic auth",
+        "verified 2026-09-03: recipes/let-your-users-buy-a-phone-number-through-your-app/verify.py"
+      ]
     }
   ],
   "_patched_round5": true
