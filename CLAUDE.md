@@ -1726,11 +1726,66 @@ gate cannot see. The record is `docs/RECIPE_REVIEW_2026-09-03_wave12.md`.
   a machine without npm; `SIGNALWIRE_REQUIRE_TSC=1` refuses it, CI runs
   `npm ci` in every `recipes/*/typescript/` with a committed lockfile and sets
   it, and the check lives in `verifylib.type_check_typescript`.
+- **A markdown list reached the page as one paragraph of dashes.** `end_text()`
+  joined every line of a paragraph with spaces, so no page on the site emitted a
+  single `<li>`, and every *Verify it* list of assertions read as a run-on.
+  89 of 101 pages were affected, 596 items in all. Lists render as `<ul
+  class="bul">` now, with a muted en dash on a hanging indent rather than a
+  square marker, which sol named as a generated-design tell.
+- **The octal-escape trap bit a third time.** `content:"\2013"` inside a
+  non-raw Python string is `\201` plus `3`, so the new list marker rendered as
+  the digit 3. In `build.py`'s CSS a backslash has to be doubled. Measure the
+  rendered marker, do not trust the rule.
+- **A closing quote after a code span opened instead of closing.**
+  `smart_typography` splits on backticks and curls each segment on its own, so a
+  quote at the start of a segment had nothing before it and became an opening
+  quote: `` `speech`" `` produced two opening quotes and no closing one. The
+  character on the other side of the backtick is carried across the boundary
+  now, and anything but whitespace or an opening bracket closes.
 - **A markdown link in a README reached the page as literal `[text](url)`.**
   `md_inline` handled code spans and emphasis only, and seventeen citations
   across twelve recipes were showing their own markup. It renders links now, in
   turquoise, `http(s)` only so a README cannot talk the generator into a
   `javascript:` href.
+
+## TypeScript is a first-class surface (decided 2026-09-03)
+
+Eric chose "Node everywhere, agents included" once the research came back. The
+assumption that the Agents SDK is Python-only was simply out of date.
+
+- **`@signalwire/sdk` 2.0.5 is the TypeScript peer of the Python SDK.** npm,
+  MIT, published 2026-05-06, ESM only, Node >=18. It carries `AgentBase`,
+  `AgentServer`, `SWMLService`, POM, `ContextBuilder`, `DataMap`, the same five
+  prefabs, a `swaig-test` binary, and a `RestClient` with 21 namespaces and all
+  37 calling commands. Its bundled `schema.json` matches the vendored Python
+  3.0.1 schema.
+- **Four seams, all proven offline before any recipe was written.**
+  `new RestClient({project, token, host, fetchImpl})` takes an injectable fetch;
+  `client.<ns>._http._fetch` is writable after construction, which is the same
+  seam the Python verifiers use on `client._http`; `agent.renderSwml()` returns
+  the document as a **string**; `app.fetch(new Request(...))` on
+  `agent.getApp()` drives the routes in process, basic auth enforced, which is
+  the `TestClient` equivalent.
+- **The surface is `typescript`, not a new `node` key.** One TypeScript surface
+  per recipe: browser recipes stay on `@signalwire/js`, server-side recipes use
+  `@signalwire/sdk`. The vocabulary's `install`/`run` fields are only fallbacks,
+  used when a README has no *Run it*, so one entry serves both.
+- **`typescript/record.ts` is the Node half of the proof.** It swaps the
+  client's fetch, calls the same exported helpers the page shows, and prints
+  what it captured as JSON. `verifylib.node_surface()` type-checks, compiles and
+  runs it, and the verifier compares that output to the **same expected values**
+  it pins for Python. Two surfaces against one third thing, never against each
+  other.
+- **The type checker does not catch an undocumented param.** A mutation adding
+  `timeout: 30` to a `calling.transfer` call type-checked cleanly and was caught
+  by the verifier's exact-body comparison. Types are not the proof.
+- **TypeScript serves both `/route` and `/route/`,** unlike Python, whose
+  AgentBase answers only the trailing-slash form. Do not relax the lint's
+  trailing-slash rule on that basis: the Python surface still needs it, and a
+  recipe's webhook URL has to work for both.
+- The surface pins `@signalwire/sdk` exactly, sets `"type": "module"`, reads
+  `.env` through `dotenv/config` (the `load_dotenv()` equivalent), and compiles
+  with `module`/`moduleResolution` `NodeNext` into a gitignored `dist/`.
 
 ## Open work
 

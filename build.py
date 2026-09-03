@@ -423,6 +423,9 @@ a.cx:hover{color:var(--fg);}
   gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;}
 .dfoot a{color:var(--turq);}
 .mdlink{color:var(--turq);}
+.bul{margin:0 0 14px;padding:0;list-style:none;}
+.bul li{position:relative;padding-left:19px;margin:0 0 7px;}
+.bul li::before{content:"\\2013";position:absolute;left:0;color:var(--fg-subtle);}
 .mdlink:hover{text-decoration:underline;}
 .showhid{margin-left:auto;display:inline-flex;align-items:center;gap:7px;
   font-family:var(--body);font-size:12.5px;color:var(--fg-muted);cursor:pointer;
@@ -996,12 +999,21 @@ def smart_typography(t):
     are left exactly as the author wrote them."""
     parts = t.split("`")
     for i in range(0, len(parts), 2):  # even segments are outside code
-        seg = parts[i].replace("...", "\u2026")
-        seg = re.sub(r'(?<![A-Za-z0-9])"', "\u201c", seg)
-        seg = seg.replace('"', "\u201d")
-        seg = re.sub(r"(?<![A-Za-z0-9])'", "\u2018", seg)
-        seg = seg.replace("'", "\u2019")
-        parts[i] = seg
+        seg = parts[i].replace("...", "…")
+        # A quote directly after a code span closes; it does not open. Each
+        # segment is curled on its own, so the character on the other side of
+        # the backtick has to be carried across the boundary, or a closing
+        # quote after `speech` opens a second time and never shuts.
+        prev = parts[i - 1][-1:] if i and parts[i - 1] else ""
+        # any character but whitespace or an opening bracket closes: a
+        # code span can end in punctuation, as `wss://` does
+        pad = "x" if prev and not prev.isspace() and prev not in "([{" else ""
+        seg = pad + seg
+        seg = re.sub(r'(?<![A-Za-z0-9])"', "“", seg)
+        seg = seg.replace('"', "”")
+        seg = re.sub(r"(?<![A-Za-z0-9])'", "‘", seg)
+        seg = seg.replace("'", "’")
+        parts[i] = seg[len(pad):]
     return "`".join(parts)
 
 
@@ -1030,8 +1042,22 @@ def read_sections(d):
 
         def end_text():
             for para in "\n".join(text).split("\n\n"):
-                if para.strip():
-                    blocks.append(md_inline(" ".join(para.split())))
+                if not para.strip():
+                    continue
+                lines = [ln for ln in para.splitlines() if ln.strip()]
+                if lines[0].lstrip().startswith(("- ", "* ")):
+                    # a list: "- " starts an item, and an indented line
+                    # continues the item above it
+                    items = []
+                    for ln in lines:
+                        if ln.lstrip().startswith(("- ", "* ")):
+                            items.append(ln.lstrip()[2:].strip())
+                        elif items:
+                            items[-1] += " " + ln.strip()
+                    blocks.append(LIST_MARK + "\x00".join(
+                        md_inline(" ".join(i.split())) for i in items))
+                    continue
+                blocks.append(md_inline(" ".join(para.split())))
             text.clear()
 
         for line in buf:
@@ -1058,19 +1084,27 @@ def read_sections(d):
 
 
 PRE_MARK = "\x00pre:"
+LIST_MARK = "\x00list:"
+
+
+def one_block(b):
+    if b.startswith(PRE_MARK):
+        return '<pre class="mdcode" translate="no">%s</pre>' % b[len(PRE_MARK):]
+    if b.startswith(LIST_MARK):
+        return '<ul class="bul">%s</ul>' % "".join(
+            "<li>%s</li>" % i for i in b[len(LIST_MARK):].split("\x00"))
+    return "<p>%s</p>" % b
 
 
 def blocks_html(blocks):
-    """Paragraph strings become <p>; fenced code (PRE_MARK-prefixed) becomes <pre>."""
-    return "".join(
-        '<pre class="mdcode" translate="no">%s</pre>' % b[len(PRE_MARK):] if b.startswith(PRE_MARK)
-        else "<p>%s</p>" % b
-        for b in blocks
-    )
+    """Paragraphs become <p>, fenced code <pre>, and a markdown list <ul>."""
+    return "".join(one_block(b) for b in blocks)
 
 
 def prose(blocks):
-    return [b for b in blocks if not b.startswith(PRE_MARK)]
+    """Prose only: no code, and no list, because the claim is a sentence."""
+    return [b for b in blocks
+            if not b.startswith(PRE_MARK) and not b.startswith(LIST_MARK)]
 
 
 # One unknown lexer should not break a build; a missing Pygments should.
