@@ -5,7 +5,7 @@ spec describes `relayml` as "The calling SWML document this Call Flow should
 execute", so no server of yours serves it. `POST /api/fabric/resources/call_flows`
 requires a `title`. The response is a Fabric resource with an `id`.
 `POST /api/fabric/resources/{id}/phone_routes` then points a number at it; the
-spec requires `phone_route_id` and `handler`, and `calls` is the handler for
+spec requires `phone_route_id` and `handler`, and `calling` is the handler for
 voice.
 
 You build the document with `SWMLService`, whose `add_verb` raises

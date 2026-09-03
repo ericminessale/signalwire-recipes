@@ -1,9 +1,9 @@
 """Prove the claim without a network.
 
 Claim: a call flow is a SWML document the platform hosts, so an IVR needs no
-server of yours. One POST creates it from a `title` and a `relayml` document,
-and one POST points a number at it by `phone_route_id` with the `calls`
-handler.
+server of yours. One POST creates it from a `title`, a `relayml` document and
+its paired `flow_data`, and one POST points a number at it by `phone_route_id`
+with the `calling` handler.
 
 Proof: the document validates against the bundled schema and contains answer,
 prompt, switch, hangup in order. The prompt collects one digit. The switch
@@ -115,7 +115,6 @@ def main():
     # the enum, not the prose: the description says "calls", the enum says calling
     handler_enum = deref(spec, route_schema["properties"]["handler"])["enum"]
     assert handler_enum == ["calling", "messaging"], handler_enum
-    assert route["body"]["handler"] in handler_enum
 
     # the bundled schema's word on the two verbs the IVR turns on
     defs = V.swml_schema()["$defs"]

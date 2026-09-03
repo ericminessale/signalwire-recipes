@@ -1,6 +1,6 @@
 # Let a browser dial your agent with no Dashboard setup
 
-> A SWML webhook resource whose `primary_request_url` is your agent's URL gets a Fabric address. A guest token whose `allowed_addresses` names that address lets a browser dial it, with no Dashboard step.
+> A SWML webhook resource whose `primary_request_url` is your agent's URL is a thing a browser can dial: you list its Fabric addresses over REST and mint a guest token whose `allowed_addresses` names one, with no Dashboard step.
 
 **Scenario:** a support page whose "talk to us" button should reach the agent you deployed a minute ago, with no Dashboard visit first
 
@@ -10,8 +10,9 @@ Three REST calls the vendored spec documents. `POST /api/fabric/resources/swml_w
 creates a resource. Its one required field is `primary_request_url`, "Primary
 URL SignalWire fetches the SWML document from when the webhook fires".
 `used_for` says whether it handles calls or messages.
-`GET /api/fabric/resources/{id}/addresses` lists the Fabric addresses the
-resource got, each with an `id`, a `name` and its `channels`.
+`GET /api/fabric/resources/{id}/addresses` lists the resource's Fabric
+addresses, each with an `id`, a `name` and its `channels`. That an address is
+there to list is the platform's side; the recipe asks until one is.
 `POST /api/fabric/guests/tokens` requires `allowed_addresses`, "List of up to
 10 UUIDs representing the allowed Fabric addresses", takes an `expire_at`, and
 answers `201` with `token` and `refresh_token`. You reach them as
@@ -35,7 +36,8 @@ def register(name="front-desk", wait=time.sleep):
     raise RuntimeError(f"resource {resource['id']} listed no address after {ADDRESS_TRIES} tries")
 
 def guest_token(address_id, now=None):
-    now = now or time.time()
+    if now is None:
+        now = time.time()
     return client.fabric.tokens.create_guest_token(
         allowed_addresses=[address_id], expire_at=int(now) + TOKEN_TTL_SECONDS)
 ```
@@ -69,8 +71,10 @@ cd python
 pip install -r requirements.txt
 cp ../.env.example .env          # then edit .env: credentials and AGENT_URL
 python app.py register           # once: prints the resource id and the address
-python app.py token <address_id> # per visitor: a token good for TOKEN_TTL_SECONDS
+python app.py token YOUR_ADDRESS_ID   # per visitor: a token good for TOKEN_TTL_SECONDS
 ```
+
+Replace `YOUR_ADDRESS_ID` with the address id `register` printed.
 
 There is no server to expose here; the script speaks to the REST API and
 exits. `AGENT_URL` is the public URL of an agent you already run, for example
@@ -93,8 +97,9 @@ assert the following.
 
 - `register` makes one `POST` to the documented SWML webhooks path with exactly `name`, `used_for`, `primary_request_url` and `primary_request_method`
 - it then asks for the resource's addresses with no body or query, and when the first answer is empty it waits a second and asks again
-- a resource that lists no address after five tries fails with a message that names it, and no token is minted
-- `guest_token` makes one `POST` to the documented guest tokens path with exactly the one address id and `expire_at` 900 seconds after the injected clock, and honours a clock of zero
+- a resource that lists no address after five tries fails with a message that names the resource and the count, after four waits, and the token client saw no request
+- `guest_token` makes one `POST` to the documented guest tokens path with exactly the one address id and `expire_at` 900 seconds after the injected clock
+- a clock of zero is a clock, not a missing argument: `expire_at` is 900
 - the spec requires exactly `primary_request_url` on the resource and exactly `allowed_addresses` on the token, and says the list holds up to 10 addresses
 - `calling` and `POST` are in the spec's enums for `used_for` and the request method
 - the guest token answers `201` with `token` and `refresh_token`; the address list carries `id`, `name` and `channels`, and the fixture uses only documented fields
@@ -105,10 +110,11 @@ You prove the requests and the documented shapes. Whether the address rings
 your agent, and what the browser hears, are the platform's side of a live call.
 
 A guest token is a credential. Mint it on your server per visitor and hand it
-over HTTPS; the fixed fifteen-minute `expire_at` here is the recipe's choice.
+over HTTPS; the default fifteen-minute `expire_at` here is the recipe's choice.
 
 ## What to change first
 
-Give `guest_token` two address ids and run the verifier. The exact-body
-assertion fails. The spec says why you might want that anyway: a token may
-allow up to ten addresses, so one page can reach several desks.
+Change `guest_token` to take a list of address ids as its first argument, pass
+two, and run the verifier. The exact-body assertion fails. The spec says why
+you might want that anyway: a token may allow up to ten addresses, so one page
+can reach several desks.

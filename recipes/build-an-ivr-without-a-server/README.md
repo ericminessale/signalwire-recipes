@@ -1,6 +1,6 @@
 # Build an IVR without a server
 
-> A call flow is a SWML document you hand to the platform, described in the spec as the document the flow should execute, so no server of yours serves it. One POST creates it from a `title`, a `relayml` document and the `flow_data` the spec pairs with it. One POST points a number at it by `phone_route_id` with the `calling` handler.
+> A call flow is a SWML document you hand to the platform, so no server of yours serves it. The spec calls `relayml` the document the flow should execute. One POST creates the flow from a `title`, a `relayml` document and the `flow_data` the spec pairs with it. One POST points a number at it by `phone_route_id` with the `calling` handler.
 
 **Scenario:** a bike shop that wants "press 1 for sales, 2 for the workshop" on its main number and nothing to keep running
 
@@ -29,8 +29,12 @@ service.add_verb("switch", {
     "default": [{"play": {"url": f"say:{FALLBACK}"}}],
 })
 
+FLOW_DATA = {"generated_by": "signalwire-recipes",
+             "recipe": "build-an-ivr-without-a-server"}
+
 def deploy(title="Ridgeline Cycles IVR"):
-    return client.fabric.call_flows.create(title=title, relayml=build().get_document())
+    return client.fabric.call_flows.create(
+        title=title, relayml=build().get_document(), flow_data=FLOW_DATA)
 
 def point_number(resource_id, e164):
     return client.fabric.resources.assign_phone_route(
@@ -49,14 +53,15 @@ POST /api/fabric/resources/call_flows
                "case": {"1": [{"connect": {"to": "+1555...", "timeout": 25}}],
                         "2": [{"connect": {"to": "+1555...", "timeout": 25}}]},
                "default": [{"play": {"url": "say:Sorry, that was not an option. Goodbye."}}]}},
-   {"hangup": {}}]}}}
+   {"hangup": {}}]},
+ "flow_data": {"generated_by": "signalwire-recipes", "recipe": "build-an-ivr-without-a-server"}}
 
 POST /api/fabric/resources/<resource_id>/phone_routes
 {"phone_route_id": "<id of your number>", "handler": "calling"}
 ```
 
-`prompt_value` holds the digit the prompt collected, so `switch` reads it by
-name. `SWMLService.add_verb` raises `SchemaValidationError` for a verb the
+The SWML `prompt` reference documents `prompt_value` as the variable that holds
+what the prompt collected, so `switch` reads it by name. `SWMLService.add_verb` raises `SchemaValidationError` for a verb the
 bundled schema rejects, so a wrong field fails on your machine, not after
 deployment. `number_id` looks the number up with the spec's `filter_number`
 and compares exactly.
@@ -88,12 +93,14 @@ The verifier validates the document and swaps the SDK's HTTP layer for a
 recorder. It asserts the following.
 
 - the document validates and its verbs are `answer`, `prompt`, `switch`, `hangup`
-- the prompt is exactly the menu, one digit and an eight-second initial timeout; the switch reads `prompt_value`, connects 1 and 2 to their desks with a 25-second timeout, and defaults to the fallback
+- the prompt is exactly the menu, one digit and an eight-second initial timeout
+- the switch reads `prompt_value`, connects 1 and 2 to their desks with a 25-second timeout, and defaults to the fallback
 - `add_verb` raises `SchemaValidationError` for a `prompt` with no `play`, and the document keeps its four verbs
-- `deploy` makes one `POST` to the documented call flows path with exactly `title` and that document as `relayml`
+- `deploy` makes one `POST` to the documented call flows path with exactly `title`, that document as `relayml`, and the `flow_data` descriptor
 - `point_number` makes one `GET` of the phone numbers list with exactly `filter_number` and picks the exact match over a near miss
 - it then makes one `POST` to the documented phone routes path with exactly `phone_route_id` and `handler: calling`, and asserts `calling` is in the spec's enum
-- the spec requires exactly `title` on the flow and exactly `phone_route_id` and `handler` on the route, and says `relayml` and `flow_data` travel together or not at all
+- the spec requires exactly `title` on the flow and exactly `phone_route_id` and `handler` on the route
+- the spec says `relayml` and `flow_data` travel together or not at all
 - the spec describes `relayml` as the SWML document the flow should execute
 - the bundled schema requires `play` on `prompt`, and `variable` and `case` on `switch`
 
@@ -102,10 +109,9 @@ recorder. It asserts the following.
 You prove the document and the requests. What the caller hears, and whether a
 desk answers, are the platform's side of a live call.
 
-`flow_data` is the Call Flow Builder's own canvas state, opaque to the API.
-The spec says to send it with `relayml` or send neither, so the script sends a
-small descriptor beside the document. A flow deployed this way has no diagram
-to edit in the Dashboard; the document is the source.
+The spec describes `flow_data` as "Call Flow Builder state, stored as an opaque
+JSON object", and says to send it with `relayml` or send neither. The script
+sends a small descriptor beside the document; the document is the source.
 
 ## What to change first
 

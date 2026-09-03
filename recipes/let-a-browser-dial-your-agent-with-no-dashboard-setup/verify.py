@@ -1,8 +1,8 @@
 """Prove the claim without a network.
 
 Claim: a SWML webhook resource whose `primary_request_url` is your agent's URL
-gets a Fabric address. A guest token whose `allowed_addresses` names that
-address lets a browser dial it, with no Dashboard step.
+is a thing a browser can dial: you list its Fabric addresses over REST and mint
+a guest token whose `allowed_addresses` names one, with no Dashboard step.
 
 Proof: the HTTP layer is a recorder. `register` makes one POST to the
 documented SWML webhooks path with exactly `name`, `used_for`,
@@ -89,18 +89,24 @@ def main():
         [(c["method"], c["path"]) for c in rec.calls]
     create, listing, _, token = rec.calls
 
-    # a resource that never lists an address fails clearly, and mints nothing
-    rec2 = V.Recorder(responses=[{"id": "r-2"}] + [{"data": []}] * recipe.ADDRESS_TRIES)
+    # a resource that never lists an address fails clearly, and mints nothing.
+    # Five tries and four waits are the verifier's numbers, not the app's; a
+    # separate recorder on the token client proves no token was asked for.
+    assert recipe.ADDRESS_TRIES == 5, recipe.ADDRESS_TRIES
+    rec2 = V.Recorder(responses=[{"id": "r-2"}] + [{"data": []}] * 5)
+    tokens2 = V.Recorder(responses=[])
     recipe.client.fabric.swml_webhooks._http = rec2
+    recipe.client.fabric.tokens._http = tokens2
     waits2 = []
     try:
         recipe.register(wait=waits2.append)
     except RuntimeError as e:
-        assert "r-2" in str(e) and str(recipe.ADDRESS_TRIES) in str(e), str(e)
+        assert "r-2" in str(e) and "5 tries" in str(e), str(e)
     else:
         raise AssertionError("an address-less resource did not fail")
-    assert [c["method"] for c in rec2.calls] == ["POST"] + ["GET"] * recipe.ADDRESS_TRIES, rec2.calls
-    assert waits2 == [1] * (recipe.ADDRESS_TRIES - 1), waits2
+    assert [c["method"] for c in rec2.calls] == ["POST"] + ["GET"] * 5, rec2.calls
+    assert waits2 == [1, 1, 1, 1], waits2
+    assert tokens2.calls == [], "no token may be minted for a resource with no address"
     recipe.client.fabric.swml_webhooks._http = rec
 
     # a clock of zero is a clock, not a missing argument
