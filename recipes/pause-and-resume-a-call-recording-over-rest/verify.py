@@ -8,8 +8,10 @@ recording with documented audio params and an optional `status_url`;
 Proof: with the HTTP layer replaced by a recorder, each helper adds exactly one
 POST to the documented calling path and the body equals the expected shape. The
 required lists, the audio params, the format and direction enums and the pause
-behavior enum are read from the vendored spec. Expected values live here, not
-in app.py.
+behavior enum are read from the vendored spec. The TypeScript surface goes
+through the same recorder seam and is held to the same expected bodies, so the
+two surfaces are compared against this file rather than against each other.
+Expected values live here, not in app.py.
 """
 import json
 import os
@@ -134,13 +136,24 @@ def main():
         unknown = set(want["params"]) - set(props)
         assert not unknown, f"undocumented {want['command']} params: {sorted(unknown)}"
 
+    # the TypeScript surface: the same helpers, the same recorder seam, held to
+    # the expected bodies above
+    node = V.node_surface(HERE, CALL, STATUS)
+    if node is None:
+        ts_note = "typescript not run (npm ci in typescript/ first)"
+    else:
+        assert [(c["method"], c["path"]) for c in node["captured"]] == [
+            ("POST", PATH)] * 5, node["captured"]
+        assert [c["body"] for c in node["captured"]] == expected, node["captured"]
+        ts_note = "typescript sends the same five bodies"
+
     print(f"ok: five POST {PATH} for id {CALL[:8]}...: record with documented stereo "
           f"mp3 audio params and a status_url, pause with behavior silence, resume, "
           f"stop, each body naming control_id {CONTROL}; the three prompt-style "
           f"defaults ({PROMPT_DEFAULTS['initial_timeout']}s, "
           f"{PROMPT_DEFAULTS['end_silence_timeout']}s, "
           f"{PROMPT_DEFAULTS['terminators']}) are overridden with the values SWML's "
-          f"record_call uses; no status_url means no key")
+          f"record_call uses; no status_url means no key; {ts_note}")
 
 
 if __name__ == "__main__":

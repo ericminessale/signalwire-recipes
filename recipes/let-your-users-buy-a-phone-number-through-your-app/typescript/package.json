@@ -1,5 +1,5 @@
 {
-  "name": "end-or-transfer-a-live-call-over-rest",
+  "name": "let-your-users-buy-a-phone-number-through-your-app",
   "private": true,
   "type": "module",
   "engines": {
@@ -15,7 +15,7 @@
     "dotenv": "16.4.5"
   },
   "devDependencies": {
-    "@types/node": "^20.19.43",
+    "@types/node": "20.14.10",
     "typescript": "5.4.5"
   }
 }

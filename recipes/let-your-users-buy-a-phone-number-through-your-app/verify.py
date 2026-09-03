@@ -14,6 +14,11 @@ basic-auth pair, never yours. Each request is checked against the vendored spec:
 the token permission enum, the required `number` on a purchase, the documented
 update fields and the call handler enum. The permission list, like every other
 expected value, is stated here rather than read from app.py.
+
+The TypeScript surface is held to the same values. Its recorder replaces
+globalThis.fetch before any client exists, so every request carries the
+basic-auth pair it would have been sent with, and the identity is read back off
+the wire rather than inferred from which recorder saw it.
 """
 import json
 import os
@@ -173,11 +178,48 @@ def main():
     V.assert_documented("rest", "GET", NUMBERS, None)
     V.assert_documented("rest", "DELETE", f"{NUMBERS}/{NUMBER_ID}", None)
 
+    # the TypeScript surface, held to the same expectations
+    node = V.node_surface(HERE, TENANT, TENANT_PROJECT, TOKEN_ID, TENANT_TOKEN,
+                          NUMBER, HOOK)
+    if node is None:
+        ts_note = "typescript not run (npm ci in typescript/ first)"
+    else:
+        assert node["permissions"] == WANT_PERMISSIONS, node["permissions"]
+        assert node["record"] == {"name": TENANT, "project_id": TENANT_PROJECT,
+                                  "token_id": TOKEN_ID,
+                                  "permissions": WANT_PERMISSIONS,
+                                  "token": TENANT_TOKEN}, node["record"]
+        assert len(node["refused"]) == 2, node["refused"]
+        assert all("refusing" in r for r in node["refused"]), node["refused"]
+        assert node["offered"] == [NUMBER], node["offered"]
+
+        sent = [(c["method"], c["path"]) for c in node["captured"]]
+        assert sent == [("POST", "/api/projects"), ("POST", "/api/project/tokens"),
+                        ("GET", NUMBERS + "/search"), ("POST", NUMBERS),
+                        ("PUT", f"{NUMBERS}/number-1"), ("GET", NUMBERS),
+                        ("DELETE", f"{NUMBERS}/number-1")], sent
+        # who each request went out as, read off the Authorization header
+        onboarding, numbers = node["captured"][:2], node["captured"][2:]
+        assert node["onboardingRequests"] == 2, node["onboardingRequests"]
+        assert [c["project"] for c in onboarding] == [PLATFORM_PROJECT] * 2, onboarding
+        assert [c["project"] for c in numbers] == [TENANT_PROJECT] * 5, numbers
+        assert PLATFORM_PROJECT not in [c["project"] for c in numbers], numbers
+
+        assert onboarding[0]["body"] == project_body, onboarding[0]
+        assert onboarding[1]["body"] == token_body, onboarding[1]
+        # the spec's query param is lower case, and the SDK passes keys through
+        assert numbers[0]["query"] == ("?areacode=415&number_type=local"
+                                       "&max_results=5"), numbers[0]
+        assert numbers[1]["body"] == purchase, numbers[1]
+        assert numbers[2]["body"] == update, numbers[2]
+        ts_note = ("typescript sends the same requests, with onboarding as the "
+                   "platform and every number request as the tenant")
+
     print(f"ok: onboarding sent POST /api/projects and POST /api/project/tokens on "
           f"the platform client; the search, purchase, handler update, list and "
           f"release all travelled on clients authenticating as {TENANT_PROJECT[:8]}"
           f"...; the platform client sent no number request, and a record without a "
-          f"token is refused")
+          f"token is refused; {ts_note}")
 
 
 if __name__ == "__main__":

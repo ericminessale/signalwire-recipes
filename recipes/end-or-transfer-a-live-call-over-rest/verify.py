@@ -157,7 +157,14 @@ def main():
         assert [c["body"] for c in node["every"]] == [
             {"command": "calling.end", "id": CALL, "params": {"reason": r}}
             for r in REASONS + [DEFAULT_REASON]], node["every"]
-        ts_note = "typescript sends the same three bodies and refuses the same reason"
+        # the spec's dest is a string or an object; the typescript surface
+        # takes both, and the object form is sent here
+        inline = {"version": "1.0.0", "sections": {"main": [{"hangup": {}}]}}
+        assert [c["body"] for c in node["inline"]] == [
+            {"command": "calling.transfer", "id": CALL,
+             "params": {"dest": inline}}], node["inline"]
+        ts_note = ("typescript sends the same three bodies, refuses the same "
+                   "reason, and transfers to an inline SWML dest")
 
     print(f"ok: three POST {PATH} for id {CALL[:8]}...: calling.end with an enum "
           f"reason, calling.transfer with a required dest, calling.disconnect with "

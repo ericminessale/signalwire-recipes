@@ -10,8 +10,10 @@ POST to the documented calling path and the body equals the expected shape. A
 play is sent with and without its optional `status_url`, so the branch the
 README shows is exercised both ways. The required lists, each play item's own
 required param, the digits and speech properties and the collect description's
-delivery rule are all read from the vendored spec. Expected values live here,
-not in app.py.
+delivery rule are all read from the vendored spec. The TypeScript surface goes
+through the same recorder seam and is held to the same expected bodies, so the
+two surfaces are compared against this file rather than against each other.
+Expected values live here, not in app.py.
 """
 import json
 import os
@@ -165,12 +167,27 @@ def main():
         unknown = set(want["params"]) - set(props)
         assert not unknown, f"undocumented {want['command']} params: {sorted(unknown)}"
 
+    # the TypeScript surface: the same helpers, the same recorder seam, held to
+    # the expected bodies above
+    node = V.node_surface(HERE, CALL, TEXT, URL, STATUS)
+    if node is None:
+        ts_note = "typescript not run (npm ci in typescript/ first)"
+    else:
+        assert node["beforeAnyRequest"] == 0, node["beforeAnyRequest"]
+        assert len(node["refused"]) == 4, node["refused"]
+        assert all("status_url" in r for r in node["refused"]), node["refused"]
+        assert [(c["method"], c["path"]) for c in node["captured"]] == [
+            ("POST", PATH)] * 7, node["captured"]
+        assert [c["body"] for c in node["captured"]] == expected, node["captured"]
+        ts_note = ("typescript sends the same seven bodies and refuses a collect "
+                   "with no status_url")
+
     print(f"ok: seven POST {PATH} for id {CALL[:8]}...: play tts with and without "
           f"a status_url, an audio item, play.stop, a digits collect and a speech "
           f"collect with documented fields, collect.stop; each item type is pinned to "
           f"its own required param, both collects start the input timers the spec "
           f"defaults to false, and a collect with no status_url is refused before "
-          f"any request")
+          f"any request; {ts_note}")
 
 
 if __name__ == "__main__":

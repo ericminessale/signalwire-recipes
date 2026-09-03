@@ -72,6 +72,15 @@ python app.py numbers "Acme Dental"
 python app.py release "Acme Dental" <number_id>
 ```
 
+The TypeScript surface is the same five commands on `@signalwire/sdk`:
+
+```bash
+cd typescript
+npm ci
+cp ../.env.example .env
+npm start onboard "Acme Dental"
+```
+
 Your credentials must be a root project's. The spec says creating a project is
 allowed only when authenticated as a top level project, and a subproject that
 tries fails with `422 nested_subprojects_not_allowed`.
@@ -100,6 +109,7 @@ The verifier gives each client its own recorder and asserts the following.
 - the tenant client sends the search, the purchase, the update, the list and the release, in that order, with documented paths, query params and bodies
 - the `call_handler` sent is in the spec's `PhoneNumberCallHandlerRequest` enum
 - `buy` returns the purchase response rather than the handler update that follows it
+- the TypeScript surface sends the same requests, and each one carries the basic-auth pair it would go out with: the platform's for onboarding, the tenant's for all five number requests
 
 ## Limitations
 

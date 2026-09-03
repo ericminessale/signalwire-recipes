@@ -31,8 +31,13 @@ export function hangUp(callId: string, reason: EndReason = "hangup") {
   return client.calling.end(callId, { reason });
 }
 
-/** Send the call somewhere else: a phone number, a SIP URI or a SWML URL. */
-export function transfer(callId: string, dest: string) {
+/**
+ * Send the call somewhere else. The spec's `dest` is a string or an object, so
+ * a phone number, a SIP URI, a SWML URL or an inline SWML document all fit.
+ */
+export type Dest = string | Record<string, unknown>;
+
+export function transfer(callId: string, dest: Dest) {
   return client.calling.transfer(callId, { dest });
 }
 

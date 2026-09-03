@@ -50,4 +50,21 @@ const everyRecorder: typeof fetch = async (input, init) => {
 for (const reason of END_REASONS) await hangUp(callId, reason);
 await hangUp(callId);
 
-console.log(JSON.stringify({ reasons: [...END_REASONS], refused, captured, every }));
+// the other documented form of dest: an inline SWML document rather than a URL
+const inline: Captured[] = [];
+const inlineRecorder: typeof fetch = async (input, init) => {
+  const url = new URL(String(input));
+  inline.push({
+    method: init?.method ?? "GET",
+    path: url.pathname,
+    body: typeof init?.body === "string" ? JSON.parse(init.body) : null,
+  });
+  return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });
+};
+(client.calling as unknown as { _http: { _fetch: typeof fetch } })._http._fetch =
+  inlineRecorder;
+await transfer(callId, { version: "1.0.0", sections: { main: [{ hangup: {} }] } });
+
+console.log(JSON.stringify({
+  reasons: [...END_REASONS], refused, captured, every, inline,
+}));

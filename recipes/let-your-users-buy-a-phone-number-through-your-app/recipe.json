@@ -5,7 +5,8 @@
   "summary": "Give each customer their own project and API token, then search, buy, route and release phone numbers with their credentials rather than yours.",
   "scenario": "Your customers pick a local number during signup and give it back when they cancel",
   "surfaces": [
-    "python"
+    "python",
+    "typescript"
   ],
   "governed": false,
   "demo": "none",

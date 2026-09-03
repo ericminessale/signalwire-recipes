@@ -80,6 +80,15 @@ python app.py speech <call_id> https://your-host/collect-events
 python app.py stop <call_id>
 ```
 
+The TypeScript surface is the same commands on `@signalwire/sdk`:
+
+```bash
+cd typescript
+npm ci
+cp ../.env.example .env
+npm start digits <call_id> https://your-host/collect-events
+```
+
 Take the call id from a tool webhook, a status callback, or the `dial`
 response. The commands need no server of yours. The `status_url` does: it is
 where the collected digits or text arrive, so point it at a public route that
@@ -105,6 +114,7 @@ asserts the following.
 - the spec defaults `start_input_timers` to `false`, and both collects send `true`
 - the two stop commands require only `control_id`
 - each body equals the expected `{"command", "id", "params"}` shape, and every param is a documented property
+- the TypeScript surface sends those same seven bodies, and refuses a collect with no status URL before any request
 
 ## Limitations
 

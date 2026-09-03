@@ -5,7 +5,8 @@
   "summary": "Start recording a live call from your own backend, pause it while a card number is read out, resume it, and stop it, all by control id over REST.",
   "scenario": "Your agent desktop pauses the recording while the caller reads a card number, then resumes it",
   "surfaces": [
-    "python"
+    "python",
+    "typescript"
   ],
   "governed": false,
   "demo": "none",

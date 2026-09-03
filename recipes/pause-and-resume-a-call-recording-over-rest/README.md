@@ -80,6 +80,15 @@ python app.py resume <call_id>
 python app.py stop <call_id>
 ```
 
+The TypeScript surface is the same four commands on `@signalwire/sdk`:
+
+```bash
+cd typescript
+npm ci
+cp ../.env.example .env
+npm start start <call_id> https://your-host/recording-events
+```
+
 Take the call id from a tool webhook, a status callback, or the `dial`
 response. There is no server to expose for the commands themselves. The
 `status_url` is where the platform may send the URL of the finished recording.
@@ -102,6 +111,7 @@ plus a `start` with no status URL, and asserts the following.
 - `calling.record.pause` requires `control_id`, its `behavior` enum is exactly `skip` and `silence`, and the sent value is one of them
 - resume and stop require only `control_id`
 - each body equals the expected `{"command", "id", "params"}` shape, the five expected bodies all name one control id, and an omitted `status_url` is an absent key rather than a null
+- the TypeScript surface, driven through the same recorder seam, sends those same five bodies
 
 ## Limitations
 

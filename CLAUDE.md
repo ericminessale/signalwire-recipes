@@ -1754,7 +1754,9 @@ Eric chose "Node everywhere, agents included" once the research came back. The
 assumption that the Agents SDK is Python-only was simply out of date.
 
 - **`@signalwire/sdk` 2.0.5 is the TypeScript peer of the Python SDK.** npm,
-  MIT, published 2026-05-06, ESM only, Node >=18. It carries `AgentBase`,
+  MIT, published 2026-05-06, ESM only. It declares `engines` node >=18, but its
+  cheerio dependency requires **20.18.1**, so that is the floor a surface
+  declares and a README states (codex, on the first surface). It carries `AgentBase`,
   `AgentServer`, `SWMLService`, POM, `ContextBuilder`, `DataMap`, the same five
   prefabs, a `swaig-test` binary, and a `RestClient` with 21 namespaces and all
   37 calling commands. Its bundled `schema.json` matches the vendored Python

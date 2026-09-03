@@ -72,7 +72,8 @@ python app.py transfer <call_id> sip:tier2@pbx.example.com
 python app.py disconnect <call_id>
 ```
 
-The TypeScript surface is the same three commands on `@signalwire/sdk`:
+The TypeScript surface is the same three commands on `@signalwire/sdk`, on Node
+20.18.1 or newer:
 
 ```bash
 cd typescript
