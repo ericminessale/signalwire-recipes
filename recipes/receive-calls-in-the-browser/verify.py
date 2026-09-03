@@ -129,12 +129,7 @@ def main():
     for needle in ("SignalWire({ token })", "client.online(", "incomingCallHandlers",
                    ".accept({ rootElement", ".reject()"):
         assert needle in ts, f"typescript client lacks {needle}"
-    tsc = HERE / "typescript" / "node_modules" / ".bin" / ("tsc.cmd" if os.name == "nt" else "tsc")
-    if tsc.exists():
-        subprocess.run([str(tsc), "--noEmit"], cwd=HERE / "typescript", check=True)
-        compiled = "typescript type-checked against @signalwire/js"
-    else:
-        compiled = "typescript not type-checked (run npm ci in typescript/ first)"
+    compiled = V.type_check_typescript(HERE, "@signalwire/js")
 
     print(f"ok: POST {SUBSCRIBERS} email+display_name, GET its addresses -> {ADDRESS}, POST {TOKENS} "
           f"reference; the ring document connects to {ADDRESS}; every path, body and required field is "

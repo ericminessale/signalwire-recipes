@@ -6,8 +6,10 @@ schema), a REST request (checked against the OpenAPI specs in tools/openapi/),
 or a webhook reply.
 """
 import json
+import os
 import pathlib
 import re
+import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OPENAPI = ROOT / "tools" / "openapi"
@@ -181,6 +183,27 @@ def assert_documented(kind, method, path, body=None, params=None):
             unknown = set(params) - documented
             assert not unknown, f"undocumented query param(s) for {template}: {sorted(unknown)}"
     return op
+
+
+def type_check_typescript(here, what="the installed types"):
+    """Run tsc --noEmit on a recipe's typescript/ directory.
+
+    Returns the sentence a verifier prints. With no node_modules there is
+    nothing to run, which is fine on a machine without npm and is not fine
+    where the dependency is supposed to be: SIGNALWIRE_REQUIRE_TSC=1 turns that
+    case into a failure, and CI sets it. A check that quietly does not run is
+    how three wrong member names would have shipped.
+    """
+    ts = pathlib.Path(here) / "typescript"
+    tsc = ts / "node_modules" / ".bin" / ("tsc.cmd" if os.name == "nt" else "tsc")
+    if tsc.exists():
+        subprocess.run([str(tsc), "--noEmit"], cwd=ts, check=True)
+        return f"typescript type-checked against {what}"
+    if os.environ.get("SIGNALWIRE_REQUIRE_TSC"):
+        raise AssertionError(
+            f"SIGNALWIRE_REQUIRE_TSC is set and {tsc} is missing: "
+            f"run npm ci in {ts} before verifying")
+    return "typescript not type-checked (run npm ci in typescript/ first)"
 
 
 def assert_basic_auth_from_env(agent):

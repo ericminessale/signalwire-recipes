@@ -13,9 +13,7 @@
     "webhooks"
   ],
   "surfaces": [
-    "python",
-    "typescript",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "none",

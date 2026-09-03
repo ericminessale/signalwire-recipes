@@ -60,6 +60,10 @@ SDK_PIN = "signalwire-sdk==3.0.1"
 MAX_SENTENCE = 26   # writing guide: keep sentences under 26 words
 
 
+ENTRY = {"python": "python/app.py", "typescript": "typescript/index.ts",
+         "swml": "swml/agent.yaml"}
+
+
 def code_files(d):
     for sub, name in (("python", "app.py"), ("typescript", "index.ts"), ("swml", "agent.yaml")):
         f = d / sub / name
@@ -79,6 +83,20 @@ def check(d, fail):
     written = list(code_files(d))
     if not written:
         return  # a stub: the generator already marks it "not written yet"
+
+    # A declared surface the folder does not carry is a claim of coverage the
+    # recipe cannot meet. Three written recipes carried one for weeks: the
+    # generator filters them out of the page, so only the manifest was wrong,
+    # and `surfaces` is what the list review counts as language coverage.
+    for surface in r.get("surfaces", []):
+        entry = ENTRY.get(surface)
+        if entry is None:
+            continue  # an unknown surface is the vocabulary's business, not this rule's
+        f = d / entry
+        if not f.exists() or not f.stat().st_size:
+            fail(slug, "recipe.json",
+                 f"declares the {surface} surface, but {entry} is "
+                 f"{'missing' if not f.exists() else 'empty'}")
 
     # --- code -----------------------------------------------------------
     for f in written:

@@ -5,7 +5,6 @@
   "summary": "A fax is sent from a document URL and its status webhook reports pages and result.",
   "scenario": "",
   "surfaces": [
-    "swml",
     "python"
   ],
   "governed": false,

@@ -5,8 +5,7 @@
   "summary": "A tool result replaces the system prompt on the call in progress, summarising or dropping the earlier turns, with no transfer.",
   "scenario": "A front desk that becomes billing or the workshop once it knows why you called",
   "surfaces": [
-    "python",
-    "swml"
+    "python"
   ],
   "governed": false,
   "demo": "talk",

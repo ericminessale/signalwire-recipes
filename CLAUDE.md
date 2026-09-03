@@ -1711,6 +1711,21 @@ gate cannot see. The record is `docs/RECIPE_REVIEW_2026-09-03_wave12.md`.
   rather than be passed through.
 - **`cmd, call_id, *rest = sys.argv[1:] or ["help", ""]` raises on one
   argument**, so the usage fallback fires only on none. Unpack defensively.
+- **A declared surface with an empty entry file is a claim the folder cannot
+  meet.** Three written recipes carried one for weeks (`send-an-sms` declared
+  typescript and swml, `send-a-fax` and
+  `change-the-agents-instructions-mid-call` declared swml). The generator
+  filters them out, so nothing lied on the page, but `surfaces` is what a list
+  review counts as language coverage. `tools/lint_recipes.py` refuses one now,
+  on a written recipe only: a stub's `surfaces` list is intent.
+- **The TypeScript type-check had never run in CI.** The three browser
+  verifiers run `tsc --noEmit` only `if tsc.exists()`, `node_modules/` is
+  gitignored, and CI installed Node only for playwright-cli, so the branch that
+  ran printed "typescript not type-checked" and passed. That is the
+  silent-fallback shape this file already records twice. The fallback stays for
+  a machine without npm; `SIGNALWIRE_REQUIRE_TSC=1` refuses it, CI runs
+  `npm ci` in every `recipes/*/typescript/` with a committed lockfile and sets
+  it, and the check lives in `verifylib.type_check_typescript`.
 - **A markdown link in a README reached the page as literal `[text](url)`.**
   `md_inline` handled code spans and emphasis only, and seventeen citations
   across twelve recipes were showing their own markup. It renders links now, in

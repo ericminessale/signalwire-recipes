@@ -51,12 +51,7 @@ def main():
                    "client.dial(", "audio: true", "video: true", "startScreenShare", "setLayout"):
         assert needle in ts, f"typescript client lacks {needle}"
     assert re.search(r"fetch\([^)]*['\"]/token['\"]", ts), "client must fetch its token from the server"
-    tsc = HERE / "typescript" / "node_modules" / ".bin" / ("tsc.cmd" if os.name == "nt" else "tsc")
-    if tsc.exists():
-        subprocess.run([str(tsc), "--noEmit"], cwd=HERE / "typescript", check=True)
-        compiled = "typescript type-checked against @signalwire/js"
-    else:
-        compiled = "typescript not type-checked (run npm ci in typescript/ first)"
+    compiled = V.type_check_typescript(HERE, "@signalwire/js")
     print(f"ok: POST conference_rooms + POST guests/tokens(allowed_addresses=[/public/team-standup]); {compiled}")
     return 0
 

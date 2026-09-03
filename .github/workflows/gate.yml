@@ -54,12 +54,31 @@ jobs:
       - name: Vocabulary stays out of the generator
         run: python check_extensible.py
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install what the typescript surfaces import
+        # Without this the type-check inside those verifiers has nothing to
+        # run, and it used to say so and pass. Every typescript surface commits
+        # its package-lock.json, so npm ci is exact.
+        run: |
+          for lock in recipes/*/typescript/package-lock.json; do
+            dir="$(dirname "$lock")"
+            echo "npm ci in $dir"
+            (cd "$dir" && npm ci --no-audit --no-fund)
+          done
+
       - name: Every recipe proves its claim
         # verify.py puts SIGNALWIRE_SDK_PATH on PYTHONPATH, so it wants the
         # directory *containing* the package. Locally that is the vendored
         # checkout; on a runner it is site-packages.
+        #
+        # SIGNALWIRE_REQUIRE_TSC refuses the "not type-checked" fallback here,
+        # where the dependency was just installed.
         run: |
           export SIGNALWIRE_SDK_PATH="$(python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
+          export SIGNALWIRE_REQUIRE_TSC=1
           python verify.py
 
   render:

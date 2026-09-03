@@ -49,7 +49,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Change a voice AI agent's instructions mid-call](change-the-agents-instructions-mid-call/) | A tool result replaces the system prompt on the call in progress, summarising or dropping the earlier turns, with no transfer. | Python, Markup |
+| [Change a voice AI agent's instructions mid-call](change-the-agents-instructions-mid-call/) | A tool result replaces the system prompt on the call in progress, summarising or dropping the earlier turns, with no transfer. | Python |
 | [Transfer a call without losing context](transfer-a-call-without-losing-context/) | Pass caller identity and state with the transfer so the next call leg receives the context. | Python |
 
 ### Knowledge
@@ -211,7 +211,7 @@ SMS, MMS, and chat on the same agent.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Reply to an inbound SMS](reply-to-an-inbound-sms/) | Receive a text and answer it in the same thread. | Python, Markup |
-| [Send an SMS](send-an-sms/) | Send an SMS with one REST call, and handle a request that fails. | Python, TypeScript, Markup |
+| [Send an SMS](send-an-sms/) | Send an SMS with one REST call, and handle a request that fails. | Python |
 
 ## MFA
 
@@ -251,7 +251,7 @@ Send and receive fax with status webhooks.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Receive an inbound fax](receive-an-inbound-fax/) | Receive an inbound fax at a webhook URL and get a status callback when delivery completes. | Markup, Python |
-| [Send a fax](send-a-fax/) | A fax is sent from a document URL and its status webhook reports pages and result. | Markup, Python |
+| [Send a fax](send-a-fax/) | A fax is sent from a document URL and its status webhook reports pages and result. | Python |
 
 ## Builds
 
