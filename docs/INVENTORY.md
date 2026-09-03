@@ -4,10 +4,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**126 rows.** By kind: recipe 104 · build 9 · guide 4 · tool 2 · hold 7.  
-By status: verified 46 · written 5 · stub 8 · proposed 60 · hold 7.  
-Recipes per public category: AI Agents 36 · Voice 49 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
-Rows per planning lens: AI Agents & Automation 43 · Voice & Call Control 38 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 6 · Fax 2.  
+**130 rows.** By kind: recipe 108 · build 9 · guide 4 · tool 2 · hold 7.  
+By status: verified 50 · written 5 · stub 8 · proposed 60 · hold 7.  
+Recipes per public category: AI Agents 37 · Voice 52 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
+Rows per planning lens: AI Agents & Automation 44 · Voice & Call Control 40 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 7 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
@@ -18,7 +18,7 @@ Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 - **folds** are the backlog IDs (#n), scenarios, Telnyx stems (t:) and corpus slugs (c:) this row absorbs. Scenarios are tags, never rows.
 - **evidence** cites code (sdk file:line), docs (path under signalwire.com/docs/), demos (repo file:line) or FEATURES.md, or says NEEDS VERIFICATION.
 
-## AI Agents — 36 recipes
+## AI Agents — 37 recipes
 
 #### Call control
 
@@ -34,6 +34,18 @@ Your backend dials a number with an AI agent attached and the agent waits for th
   - docs swml/reference/calling/ai/params (direction)
   - demo dental confirmation_runner.py:191-200 REST dial with a query-parameterised SWML URL; outbound_agent.py:31 wait_for_user
   - demo utility outbound_runner.py:78
+
+### `pause-a-voice-ai-agent-mid-call`
+
+A backend holds the caller with a spoken line, takes them off hold, or ends the AI while the call keeps running.
+
+- kind **recipe** · status **verified** · category **AI Agents** (ai-agents, voice) · task group **Call control** · lens AI Agents & Automation
+- interfaces: rest · capabilities: rest
+- folds: round 7 gap: live-call control over REST
+- evidence:
+  - tools/openapi/rest.json calling.ai_hold: timeout is typed string and its description says integer payloads are rejected; prompt is spoken before hold music; calling.ai_unhold has no params; calling.ai.stop documents control_id as reserved and ignored
+  - sdk rest/namespaces/calling.py:125-132 ai_hold, ai_unhold, ai_stop (whose command is calling.ai.stop)
+  - verified 2026-09-03: recipes/pause-a-voice-ai-agent-mid-call/verify.py
 
 #### Routing & queueing
 
@@ -507,7 +519,7 @@ On a video call the agent shows idle, listening and talking video loops that swi
   - docs swml/reference/calling/ai/params (video_idle_file, video_listening_file, video_talking_file)
   - demo example app.py:517-535 on_swml_request sets avatar files (legacy SDK); demo cinebot app.py:2339-2348 (3.x)
 
-## Voice — 49 recipes
+## Voice — 52 recipes
 
 #### Call control
 
@@ -737,6 +749,44 @@ A recording started over REST is paused, resumed and stopped by the control id i
   - tools/openapi/rest.json calling.record (control_id, record.audio required; Calling.RecordAudioParams beep, format, stereo, direction, max_length, terminators), calling.record.pause (behavior enum skip|silence), calling.record.resume, calling.record.stop
   - sdk rest/namespaces/calling.py:64-74 record, record_pause, record_resume, record_stop
   - verified 2026-09-03: recipes/pause-and-resume-a-call-recording-over-rest/verify.py
+
+### `detect-a-machine-or-fax-on-a-call-in-progress`
+
+Detection of a machine, a fax tone or keypad digits starts on a call that is already up, and the result arrives at a webhook.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest, amd
+- folds: round 7 gap: live-call control over REST
+- evidence:
+  - tools/openapi/rest.json calling.detect: control_id and detect required; detect is a oneOf of machine, fax and digit configs, each requiring type; timeout and status_url; calling.detect.stop requires control_id
+  - tools/openapi/rest.json Calling.DetectMachineConfig defaults 4.5, 1, 1.25, 6, false, true; DetectFaxConfig tone enum CNG|CED
+  - sdk rest/namespaces/calling.py:87-91 detect, detect_stop; npm @signalwire/sdk 2.0.5 detect, detectStop
+  - verified 2026-09-03: recipes/detect-a-machine-or-fax-on-a-call-in-progress/verify.py
+
+### `stream-call-audio-to-an-authenticated-websocket`
+
+One side of a call, or both, streams to a TLS WebSocket that checks a bearer token and receives the caller's own metadata.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens Voice & Call Control
+- interfaces: rest · capabilities: rest, media-streaming
+- folds: round 7 gap: live-call control over REST
+- evidence:
+  - tools/openapi/rest.json calling.stream: control_id and url required; url must start with wss:// and plain ws:// is rejected; track enum inbound_track|outbound_track|both_tracks; authorization_bearer_token becomes Authorization: Bearer; custom_parameters pass through as connection metadata; status_url_method GET|POST; calling.stream.stop requires control_id
+  - sdk rest/namespaces/calling.py:101-105 stream, stream_stop; npm @signalwire/sdk 2.0.5 stream, streamStop
+  - verified 2026-09-03: recipes/stream-call-audio-to-an-authenticated-websocket/verify.py
+
+### `transfer-a-sip-call-with-refer`
+
+A SIP call is handed to another endpoint with a REFER, carrying the destination URI and optional credentials.
+
+- kind **recipe** · status **verified** · category **Voice** (voice) · task group **Call control** · lens SIP, PBX & Migration
+- interfaces: rest · capabilities: rest, sip
+- folds: round 7 gap: live-call control over REST
+- evidence:
+  - tools/openapi/rest.json POST /api/calling/calls command table: calling.refer "Transfer a SIP call via SIP REFER"
+  - tools/openapi/rest.json calling.refer: device required, requiring type and params; device type enum is exactly [sip]; ReferSipParams requires to (sip: URI), with optional from, username and password; status_url receives refer lifecycle webhooks
+  - sdk rest/namespaces/calling.py:149-151 refer; npm @signalwire/sdk 2.0.5 refer
+  - verified 2026-09-03: recipes/transfer-a-sip-call-with-refer/verify.py
 
 #### Routing & queueing
 

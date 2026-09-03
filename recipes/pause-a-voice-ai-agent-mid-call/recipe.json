@@ -1,0 +1,47 @@
+{
+  "slug": "pause-a-voice-ai-agent-mid-call",
+  "title": "Pause a voice AI agent mid-call and bring it back",
+  "alias": "AI agent hold and resume",
+  "summary": "Put the caller on hold with a spoken line, take them off it, or end the AI on a call that keeps running, each with one REST command.",
+  "scenario": "Your backend needs a moment to finish a lookup, and the agent should stop listening until it is done",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "ai-agents",
+  "products": [
+    "ai-agents",
+    "voice"
+  ],
+  "capabilities": [
+    "rest"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "ai",
+    "folds": [
+      "round 7 gap: live-call control over REST"
+    ],
+    "evidence": [
+      "tools/openapi/rest.json Calling.CallRequest variant calling.ai_hold: params timeout (type string; description says it must be sent as a string and that integer payloads are rejected) and prompt (a system message the AI speaks before hold music)",
+      "tools/openapi/rest.json calling.ai_unhold: no params; calling.ai.stop: one param, control_id, described as a reserved field that is currently ignored",
+      "sdk rest/namespaces/calling.py:125-132 ai_hold, ai_unhold, and ai_stop, whose command string is calling.ai.stop",
+      "npm @signalwire/sdk 2.0.5 dist/rest/namespaces/calling.js aiStop sends the same calling.ai.stop",
+      "verified 2026-09-03: recipes/pause-a-voice-ai-agent-mid-call/verify.py"
+    ]
+  },
+  "subcategory": "call-control",
+  "prerequisites": [
+    "route-a-call-to-an-ai-agent"
+  ],
+  "related": [
+    "inject-a-message-into-a-live-ai-call",
+    "keep-heavy-state-out-of-global-data",
+    "end-or-transfer-a-live-call-over-rest"
+  ]
+}

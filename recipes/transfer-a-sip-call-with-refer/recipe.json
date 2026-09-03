@@ -1,0 +1,47 @@
+{
+  "slug": "transfer-a-sip-call-with-refer",
+  "title": "Transfer a SIP call with REFER",
+  "alias": "SIP REFER transfer",
+  "summary": "Hand a SIP call to another endpoint with a REFER, sending the destination URI and, when the far end asks for them, credentials.",
+  "scenario": "A PBX wants the desk phone itself to complete the transfer rather than bridging a second leg",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "rest",
+    "sip"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "sip-migration",
+    "folds": [
+      "round 7 gap: live-call control over REST"
+    ],
+    "evidence": [
+      "tools/openapi/rest.json POST /api/calling/calls description, command table: calling.refer \"Transfer a SIP call via SIP REFER\"",
+      "tools/openapi/rest.json Calling.CallRequest variant calling.refer: params required device; Calling.ReferDevice requires type and params; CallingReferDeviceType enum is exactly [sip]; Calling.ReferSipParams requires to (must start with sip:), with optional from (must start with sip: when provided), username and password; status_url receives refer lifecycle webhooks",
+      "sdk rest/namespaces/calling.py:149-151 refer",
+      "npm @signalwire/sdk 2.0.5 client.calling.refer sends the same body",
+      "verified 2026-09-03: recipes/transfer-a-sip-call-with-refer/verify.py"
+    ]
+  },
+  "subcategory": "call-control",
+  "prerequisites": [
+    "connect-a-pbx-with-a-domain-application"
+  ],
+  "related": [
+    "end-or-transfer-a-live-call-over-rest",
+    "route-sip-calls-to-agents-by-username",
+    "transfer-a-call"
+  ]
+}

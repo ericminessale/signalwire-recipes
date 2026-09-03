@@ -15,6 +15,8 @@ the call id can run them on a call it did not set up. The vendored REST spec,
   Each item has a `type`, one of `audio`, `tts`, `silence` or `ringtone`, and
   `params`. A `tts` item requires `text`; an `audio` item requires `url`.
 - `calling.play.stop` requires `control_id`, the id you gave the play.
+- `calling.play.volume` requires `control_id` and `volume`, a dB adjustment the
+  spec bounds to "between -40 and 40". The recipe refuses anything outside it.
 - `calling.collect` requires `control_id` and, in the spec's words, "at least
   one of `digits` or `speech`". `digits` requires `max`. Results are
   "delivered asynchronously via the `status_url` webhook", so the recipe
@@ -77,6 +79,7 @@ cp ../.env.example .env          # project id, API token, space
 python app.py say <call_id> "Please key in your account number, then press pound."
 python app.py digits <call_id> https://your-host/collect-events
 python app.py speech <call_id> https://your-host/collect-events
+python app.py volume <call_id> -6
 python app.py stop <call_id>
 ```
 
@@ -112,7 +115,8 @@ asserts the following.
 - the spec's `calling.play` description names the four playback states, and its `calling.collect` description says results are delivered to the `status_url` webhook
 - `calling.collect` requires only `control_id`, `digits` requires `max`, and every sent `digits` and `speech` key is documented
 - the spec defaults `start_input_timers` to `false`, and both collects send `true`
-- the two stop commands require only `control_id`
+- the two stop commands require only `control_id`, and `calling.play.volume` requires the control id and a volume, with the range in the spec's own text
+- a volume outside -40 to 40 raises before any request is made
 - each body equals the expected `{"command", "id", "params"}` shape, and every param is a documented property
 - the TypeScript surface sends those same seven bodies, and refuses a collect with no status URL before any request
 

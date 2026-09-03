@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-101 of 126 folders are written and verified. The rest are planned and carry a stub.
+105 of 130 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -12,8 +12,8 @@ and without a network.
 
 ## Contents
 
-- [AI Agents](#ai-agents) (35)
-- [Voice](#voice) (47)
+- [AI Agents](#ai-agents) (36)
+- [Voice](#voice) (50)
 - [Messaging](#messaging) (9)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
@@ -28,6 +28,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
+| [Pause a voice AI agent mid-call and bring it back](pause-a-voice-ai-agent-mid-call/) | Put the caller on hold with a spoken line, take them off it, or end the AI on a call that keeps running, each with one REST command. | Python, TypeScript |
 | [Place an outbound AI call](place-an-outbound-ai-call/) | Place a REST call with the voice AI agent definition and wait for the callee to speak before the agent responds. | Python, Markup |
 
 ### Governance
@@ -111,6 +112,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Build a conference call](build-a-conference-call/) | Put several legs in one room and control each member independently. | Python, Markup |
 | [Call from a browser](call-from-a-browser/) | Place a call from a web page into the same flow a phone reaches. | TypeScript, Python |
 | [Connect a PBX with a Domain Application](connect-a-pbx-with-a-domain-application/) | An IP-authenticated Domain Application takes inbound SIP from your PBX and a SIP Gateway carries calls back to it. | Python, Markup |
+| [Detect a machine, fax tone or digits on a call in progress](detect-a-machine-or-fax-on-a-call-in-progress/) | Start answering machine, fax tone or keypad detection on a call that is already up, and read the result at your webhook. | Python, TypeScript |
 | [Detect an answering machine](detect-an-answering-machine/) | Use answering machine detection to classify a pickup as human or voicemail before playing the main message. | Python |
 | [Embed a call widget with no backend](embed-a-call-widget-with-no-backend/) | A sw-click-to-call element with a Click to Call token from the Dashboard and a destination address puts a call button on a page. No server of yours is in the call path. | Python |
 | [End or transfer a live call over REST](end-or-transfer-a-live-call-over-rest/) | Hang up a live call with a reason, send it to a new destination, or unbridge it from its peer, each with one REST command addressed to the call id. | Python, TypeScript |
@@ -122,8 +124,10 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Reduce background noise on a call](reduce-background-noise-on-a-call/) | Turn call noise reduction on or off in the call flow or during a live call through REST. | Markup, Python |
 | [Register a SIP endpoint and receive calls](register-a-sip-endpoint-and-receive-calls/) | Create SIP credentials for a softphone, register it as an endpoint, and route calls to its address. | Python |
 | [Send DTMF to someone else's IVR](send-dtmf-to-an-external-ivr/) | Send programmed keypad tones during an outbound call to navigate an external IVR. | Python |
+| [Stream call audio to a WebSocket that checks a bearer token](stream-call-audio-to-an-authenticated-websocket/) | Send one side of a call, or both, to your own WebSocket over TLS, with a bearer token on the connection and your own metadata attached. | Python, TypeScript |
 | [Stream call audio to your own server](stream-call-audio-to-your-own-server/) | Copy live call audio to your WebSocket or RTP server, then stop the stream by its control ID. | Markup, Python |
 | [Take a voicemail](take-a-voicemail/) | If a bridge fails, play a voicemail prompt, record the caller's message, and send its download URL to a status webhook. | Markup, Python |
+| [Transfer a SIP call with REFER](transfer-a-sip-call-with-refer/) | Hand a SIP call to another endpoint with a REFER, sending the destination URI and, when the far end asks for them, credentials. | Python, TypeScript |
 
 ### Governance
 

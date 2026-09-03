@@ -38,6 +38,7 @@ COLLECT = "agent-desk-input"
 STATUS = "https://desk.example.com/collect-events"
 TEXT = "Please key in your account number, then press pound."
 URL = "https://desk.example.com/hold.mp3"
+VOLUME = -6
 
 
 def variant(command):
@@ -69,6 +70,14 @@ def main():
     rec = V.Recorder()
     recipe.client.calling._http = rec
 
+    # a volume outside the documented range never reaches the wire
+    try:
+        recipe.set_volume(CALL, 41)
+    except ValueError as exc:
+        assert "-40 and 40" in str(exc), exc
+    else:
+        raise AssertionError("an out-of-range volume was sent")
+
     # a collect with no status_url never reaches the wire, missing or empty
     for bad in (None, ""):
         for helper in (recipe.ask_digits, recipe.ask_speech):
@@ -84,6 +93,7 @@ def main():
             (recipe.say, (CALL, TEXT), {}),
             (recipe.say, (CALL, TEXT), {"status_url": STATUS}),
             (recipe.play_file, (CALL, URL), {}),
+            (recipe.set_volume, (CALL, VOLUME), {}),
             (recipe.stop_playback, (CALL,), {}),
             (recipe.ask_digits, (CALL, STATUS), {}),
             (recipe.ask_speech, (CALL, STATUS), {}),
@@ -111,6 +121,12 @@ def main():
 
     desc, top, required, props, _ = variant("calling.play.stop")
     assert required == ["control_id"], required
+
+    # calling.play.volume: both params required, and the range is in the text
+    desc, top, required, props, _ = variant("calling.play.volume")
+    assert set(required) == {"control_id", "volume"}, required
+    span = " ".join(props["volume"]["description"].split())
+    assert "Must be between -40 and 40" in span, span
 
     # calling.collect: control_id is the only required param; digits needs max;
     # the description says results are delivered by webhook, not in the response
@@ -146,6 +162,8 @@ def main():
         {"command": "calling.play", "id": CALL,
          "params": {"control_id": PLAY,
                     "play": [{"type": "audio", "params": {"url": URL}}]}},
+        {"command": "calling.play.volume", "id": CALL,
+         "params": {"control_id": PLAY, "volume": VOLUME}},
         {"command": "calling.play.stop", "id": CALL, "params": {"control_id": PLAY}},
         {"command": "calling.collect", "id": CALL,
          "params": {"control_id": COLLECT, "initial_timeout": 10,
@@ -174,18 +192,20 @@ def main():
         ts_note = "typescript not run (npm ci in typescript/ first)"
     else:
         assert node["beforeAnyRequest"] == 0, node["beforeAnyRequest"]
-        assert len(node["refused"]) == 4, node["refused"]
-        assert all("status_url" in r for r in node["refused"]), node["refused"]
+        assert len(node["refused"]) == 5, node["refused"]
+        assert all("status_url" in r for r in node["refused"][:4]), node["refused"]
+        assert "-40 and 40" in node["refused"][4], node["refused"]
         assert [(c["method"], c["path"]) for c in node["captured"]] == [
-            ("POST", PATH)] * 7, node["captured"]
+            ("POST", PATH)] * 8, node["captured"]
         assert [c["body"] for c in node["captured"]] == expected, node["captured"]
-        ts_note = ("typescript sends the same seven bodies and refuses a collect "
-                   "with no status_url")
+        ts_note = ("typescript sends the same eight bodies and refuses both a "
+                   "collect with no status_url and an out-of-range volume")
 
-    print(f"ok: seven POST {PATH} for id {CALL[:8]}...: play tts with and without "
+    print(f"ok: eight POST {PATH} for id {CALL[:8]}...: play tts with and without "
           f"a status_url, an audio item, play.stop, a digits collect and a speech "
           f"collect with documented fields, collect.stop; each item type is pinned to "
-          f"its own required param, both collects start the input timers the spec "
+          f"its own required param, a volume inside the documented range, both "
+          f"collects start the input timers the spec "
           f"defaults to false, and a collect with no status_url is refused before "
           f"any request; {ts_note}")
 

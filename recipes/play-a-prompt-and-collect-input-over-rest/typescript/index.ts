@@ -39,6 +39,14 @@ export function playFile(callId: string, url: string, controlId = PLAY_ID) {
   return client.calling.play(callId, { control_id: controlId, play: [item] });
 }
 
+/** Adjust a playing prompt, in dB. The spec's range is -40 to 40. */
+export function setVolume(callId: string, volume: number, controlId = PLAY_ID) {
+  if (volume < -40 || volume > 40) {
+    throw new Error(`volume must be between -40 and 40 dB, not ${volume}`);
+  }
+  return client.calling.playVolume(callId, { control_id: controlId, volume });
+}
+
 /** Cut the prompt short, for example when the caller starts keying digits. */
 export function stopPlayback(callId: string, controlId = PLAY_ID) {
   return client.calling.playStop(callId, { control_id: controlId });
@@ -89,6 +97,8 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, "
     console.log(await playFile(callId, arg));
   } else if (cmd === "stop") {
     console.log(await stopPlayback(callId));
+  } else if (cmd === "volume") {
+    console.log(await setVolume(callId, Number(arg)));
   } else if (cmd === "digits") {
     console.log(await askDigits(callId, arg));
   } else if (cmd === "speech") {

@@ -10,6 +10,7 @@ Written against signalwire-sdk 3.0.1 (RestClient.calling).
 
     python app.py say <call_id> "Please key in your account number"
     python app.py stop <call_id>
+    python app.py volume <call_id> -6
     python app.py digits <call_id> https://your-host/collect-events
     python app.py speech <call_id> https://your-host/collect-events
 """
@@ -42,6 +43,13 @@ def play_file(call_id, url, control_id=PLAY_ID):
     """Play an audio file from an HTTP(S) URL instead of speaking text."""
     item = {"type": "audio", "params": {"url": url}}
     return client.calling.play(call_id, control_id=control_id, play=[item])
+
+
+def set_volume(call_id, volume, control_id=PLAY_ID):
+    """Adjust a playing prompt, in dB. The spec's range is -40 to 40."""
+    if not -40 <= volume <= 40:
+        raise ValueError(f"volume must be between -40 and 40 dB, not {volume!r}")
+    return client.calling.play_volume(call_id, control_id=control_id, volume=volume)
 
 
 def stop_playback(call_id, control_id=PLAY_ID):
@@ -85,7 +93,8 @@ if __name__ == "__main__":
     call_id = args[1] if len(args) > 1 else ""
     rest = args[2:]
     actions = {"say": say, "file": play_file, "stop": stop_playback,
-               "digits": ask_digits, "speech": ask_speech, "cancel": stop_collect}
+               "volume": set_volume, "digits": ask_digits,
+               "speech": ask_speech, "cancel": stop_collect}
     if cmd in actions and call_id:
         print(actions[cmd](call_id, *rest))
     else:

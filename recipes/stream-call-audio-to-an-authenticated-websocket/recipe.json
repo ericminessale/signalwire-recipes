@@ -1,0 +1,47 @@
+{
+  "slug": "stream-call-audio-to-an-authenticated-websocket",
+  "title": "Stream call audio to a WebSocket that checks a bearer token",
+  "alias": "authenticated media streaming over WebSocket",
+  "summary": "Send one side of a call, or both, to your own WebSocket over TLS, with a bearer token on the connection and your own metadata attached.",
+  "scenario": "Your transcription service accepts connections only with a bearer token, and needs to know which ticket each stream belongs to",
+  "surfaces": [
+    "python",
+    "typescript"
+  ],
+  "governed": false,
+  "demo": "none",
+  "provenance": "new",
+  "category": "voice",
+  "products": [
+    "voice"
+  ],
+  "capabilities": [
+    "rest",
+    "media-streaming"
+  ],
+  "tier": "next",
+  "plan": {
+    "kind": "recipe",
+    "status": "verified",
+    "lens": "voice",
+    "folds": [
+      "round 7 gap: live-call control over REST"
+    ],
+    "evidence": [
+      "tools/openapi/rest.json Calling.CallRequest variant calling.stream: params required control_id and url; the url description says it must start with wss:// and that plain ws:// is rejected; track enum inbound_track|outbound_track|both_tracks; authorization_bearer_token is sent as Authorization: Bearer <token>; custom_parameters pass through as connection metadata; status_url with status_url_method GET|POST; codec is freeform",
+      "tools/openapi/rest.json calling.stream.stop: params required control_id",
+      "sdk rest/namespaces/calling.py:101-105 stream, stream_stop",
+      "npm @signalwire/sdk 2.0.5 client.calling.stream / streamStop send the same bodies",
+      "verified 2026-09-03: recipes/stream-call-audio-to-an-authenticated-websocket/verify.py"
+    ]
+  },
+  "subcategory": "call-control",
+  "prerequisites": [
+    "stream-call-audio-to-your-own-server"
+  ],
+  "related": [
+    "start-live-transcription",
+    "transcribe-a-call-in-the-background",
+    "end-or-transfer-a-live-call-over-rest"
+  ]
+}
