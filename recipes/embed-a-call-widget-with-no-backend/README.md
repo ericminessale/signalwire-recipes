@@ -11,12 +11,9 @@ element. The guide is
 https://signalwire.com/docs/browser-sdk/guides/click-to-call-widget. The token is "created from a Click
 to Call resource in the dashboard", and the widget "routes through
 embeds.signalwire.com automatically". So the page needs no backend of yours:
-the Flask app here serves static HTML, holds no API token, and has one route.
-The vendored REST spec also documents `POST /api/fabric/embeds/tokens`, "Create
-guest embed token". Its one required field is `token`, "Click to Call Token",
-and its `201` response carries a `token`. The SDK wraps it as
-`client.fabric.tokens.create_embed_token`. That exchange is for a client of your
-own, not for the widget.
+the Flask app here serves static HTML, reads no API credentials, and has one
+route. The page exposes no credentials of yours; the Click to Call token on it
+is public by design.
 
 ## How it works
 
@@ -69,27 +66,27 @@ cd ..                     # back to the recipe folder
 python verify.py
 ```
 
-The verifier drives the Flask app with its test client and parses the page. It
-asserts the following.
+You drive the Flask app with its test client and parse the page. These are
+checks on the page you serve. That the call routes through
+embeds.signalwire.com is the widget guide's word, not something a local test
+can show. You assert the following.
 
 - the page is served as HTML, loads exactly the widget script the guide names, and holds exactly one `sw-click-to-call` element
 - that element's `token`, `destination` and `label` are exactly the configured values
-- the page carries neither the project id nor the API token, and the app has exactly one route
+- the page carries no project id and no API token, and the app has exactly one route
 - a label containing a quote is escaped, so it stays inside the attribute and adds no attribute of its own
-- `exchange` makes one `POST` to the documented embeds tokens path with exactly `token`, the spec's one required field, described as a Click to Call token, and the spec's `201` response carries `token`
 
 ## Limitations
 
-You prove the page and the documented exchange. Whether the button rings the
-destination, and what the visitor hears, are the widget's and the platform's
-side of a live call.
+You prove the page. Whether the button rings the destination, and what the
+visitor hears, are the widget's and the platform's side of a live call.
 
 A Click to Call token is public by design: it sits in the page source. Scope
 what it can dial in the Dashboard resource, not in the page.
 
 ## What to change first
 
-Point `DESTINATION` at the address of your own agent, from
-`let-a-browser-dial-your-agent-with-no-dashboard-setup`, and run the verifier.
-It fails, because it pins its own destination; run the app instead, and the
-button dials your agent.
+Point `DESTINATION` in `.env` at the address of your own agent, from
+`let-a-browser-dial-your-agent-with-no-dashboard-setup`, and run the app. The
+button dials your agent. The verifier sets its own fixtures before it imports
+the app, so it neither reads `.env` nor fails on it; the app is the live check.

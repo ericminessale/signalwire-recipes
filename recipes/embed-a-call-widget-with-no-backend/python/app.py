@@ -6,16 +6,10 @@ call button on a page with one script tag and one element:
 `<sw-click-to-call token="c2c_..." destination="/public/support">`. The token
 is "created from a Click to Call resource in the dashboard", and the widget
 "routes through embeds.signalwire.com automatically", so no server of yours is
-in the call path. This Flask app only serves the page; it holds no API token,
-and the call never touches it.
+in the call path. This Flask app only serves the page. It reads no API
+credentials, and the call never touches it.
 
-The vendored REST spec also documents `POST /api/fabric/embeds/tokens`, "Create
-guest embed token", whose one required field is `token`, a Click to Call
-token, and whose response carries a `token`. `exchange()` shows that call; the
-page does not need it.
-
-Written against Flask and, for the optional exchange, signalwire-sdk 3.0.1
-(RestClient.fabric.tokens).
+Written against Flask. There is no SDK call here.
 """
 import html
 import os
@@ -59,13 +53,6 @@ def page(token=None, destination=None, label=None):
                        token=html.escape(token or C2C_TOKEN, quote=True),
                        destination=html.escape(destination or DESTINATION, quote=True),
                        label=html.escape(label or LABEL, quote=True))
-
-
-def exchange(c2c_token=None):
-    """The documented REST exchange of a Click to Call token for a guest embed
-    token. The widget does not need it; a client of your own might."""
-    from signalwire.rest import RestClient
-    return RestClient().fabric.tokens.create_embed_token(token=c2c_token or C2C_TOKEN)
 
 
 app = Flask(__name__)

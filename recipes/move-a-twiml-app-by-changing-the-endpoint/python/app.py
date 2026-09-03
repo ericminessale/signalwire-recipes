@@ -3,11 +3,11 @@
 The compatibility API page (https://signalwire.com/docs/compatibility-api)
 says to "update the base URL from api.twilio.com to your-space.signalwire.com"
 and that "Your existing TwiML/cXML response handlers work without
-modification." The SDK's compat client does the first part: every request goes
-to `/api/laml/2010-04-01/Accounts/<project id>/...` on your Space, with your
-project id as the account and your API token as the password. The second part
-is this Flask handler, a TwiML document served as cXML with nothing changed
-but the name.
+modification." The SDK's compat client does the first part. Every request goes
+to `/api/laml/2010-04-01/Accounts/<project id>/...` on your Space. Your project
+id is the account and your API token is the password. The second part is this
+Flask handler, a TwiML document served as cXML with nothing changed but the
+name.
 
 Written against signalwire-sdk 3.0.1 (RestClient.compat.calls) and Flask.
 """

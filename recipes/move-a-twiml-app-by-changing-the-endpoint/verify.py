@@ -4,13 +4,13 @@ Claim: a TwiML app moves to SignalWire by changing the REST base and the
 credentials. The compat client posts the same Calls body to the LaML path on
 your Space, and your cXML handler serves the same document it served before.
 
-Proof: with the HTTP layer replaced by a recorder, `place` makes one POST to
+Proof: the HTTP layer is a recorder. `place` makes one POST to
 `/api/laml/2010-04-01/Accounts/<project id>/Calls`, the path the SDK's compat
-namespace builds from the project id, with exactly `To`, `From` and `Url`, the
-compat spec's two required fields and the handler URL. The Flask handler
-answers a POST with `text/xml` that parses, whose root is `Response` and whose
-children are `Say`, with the greeting and a voice, and `Hangup`. The project id
-and token appear nowhere in that document. Expected values live here, not in
+namespace builds from the project id. The body is exactly `To`, `From` and
+`Url`: the compat spec's two required fields and the handler URL. The Flask
+handler answers a POST with `text/xml` that parses. Its root is `Response` and
+its children are `Say`, with the greeting and a voice, and `Hangup`. The project
+id and token appear nowhere in that document. Expected values live here, not in
 app.py.
 """
 import os

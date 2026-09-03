@@ -199,7 +199,7 @@ SMS, MMS, and chat on the same agent.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
-| [Publish events to browsers with PubSub](publish-events-to-browsers-with-pubsub/) | A PubSub token grants read or write on named channels for a number of minutes, and your server mints one per member with the role your sign-in decided. The browser never holds the project API token. | Python |
+| [Publish events to browsers with PubSub](publish-events-to-browsers-with-pubsub/) | A PubSub token grants read or write on named channels for a number of minutes. Your server mints one per member, and decides who may write. The browser never holds the project API token. | Python |
 | [Text the caller during the call](text-the-caller-during-the-call/) | A tool result carries a SWML send_sms, so the handler texts the caller while the voice call is still up. The model never sees a phone number. | Python, Markup |
 
 ### Other

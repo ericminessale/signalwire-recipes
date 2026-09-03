@@ -12,7 +12,9 @@ It adds that this "is not required if using the SignalWire Compatibility SDK".
 It also says "Your existing TwiML/cXML response handlers work without
 modification". The SDK's compat namespace builds every path as
 `/api/laml/2010-04-01/Accounts/<project id>/...` on your Space. The project id
-sits where Twilio had the account SID, and the API token is the password. The
+sits where Twilio had the account SID, and the API token is the password; the
+SDK sets that basic-auth pair in `rest/_base.py:38` (`self._session.auth = (project, token)`). The verifier proves the
+path and the body, not the credentials, which the recorder never sees. The
 compat spec's Calls create requires `To` and `From` and takes `Url`, "The URL to
 handle the call". The handler is a Flask route that returns the TwiML document
 as `text/xml`, and the document is the one you had.

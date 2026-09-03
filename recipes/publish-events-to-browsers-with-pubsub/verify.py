@@ -79,8 +79,8 @@ def main():
     client = recipe.app.test_client()
     r = client.post("/pubsub/token", json={"member_id": "dana"})
     assert r.status_code == 200 and r.get_json() == {"token": "t-reader", "channel": "workshop-board"}, r.get_json()
-    # a browser asking to publish, without the board's key, is refused and
-    # mints nothing (codex, wave 11 review: the role must not come from the client)
+    # a browser may ask to publish; without the board's key the server refuses
+    # and mints nothing
     r = client.post("/pubsub/token", json={"member_id": "dana", "role": "publisher"})
     assert r.status_code == 403, r.status_code
     r = client.post("/pubsub/token", json={"member_id": "dana", "role": "publisher"},
@@ -90,7 +90,13 @@ def main():
     r = client.post("/pubsub/token", json={"member_id": "board-1", "role": "publisher"},
                     headers={"X-Board-Key": "board-verifier-key"})
     assert r.get_json() == {"token": "t-writer", "channel": "workshop-board"}, r.get_json()
-    assert [c["body"]["channels"]["workshop-board"]["write"] for c in rec2.calls] == [False, True]
+    # both route bodies in full: one per member, with that member's id
+    assert [c["body"] for c in rec2.calls] == [
+        {"ttl": 60, "member_id": "dana",
+         "channels": {"workshop-board": {"read": True, "write": False}}, "state": {"role": "reader"}},
+        {"ttl": 60, "member_id": "board-1",
+         "channels": {"workshop-board": {"read": True, "write": True}}, "state": {"role": "publisher"}},
+    ], [c["body"] for c in rec2.calls]
     assert client.post("/pubsub/token", json={}).status_code == 400
     assert len(rec2.calls) == 2, "a request without a member id must mint nothing"
     for c in rec2.calls:

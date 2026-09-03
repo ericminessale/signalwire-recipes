@@ -28,9 +28,10 @@ client = RestClient()
 
 CHANNEL = os.getenv("CHANNEL", "workshop-board")
 TOKEN_TTL_MINUTES = int(os.getenv("TOKEN_TTL_MINUTES", "60"))
-# Only the board process holds this. A browser cannot ask to be a publisher;
-# it can only present the key, and browsers do not have it. Replace the
-# header check with your own session check when you have sign-in.
+# Only the board process holds this. A browser may ask to be a publisher; it
+# gets a publisher token only if it also presents this key, and browsers do
+# not have it. Replace the header check with your own session check when you
+# have sign-in.
 BOARD_KEY = os.getenv("BOARD_KEY")
 
 

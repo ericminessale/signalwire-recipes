@@ -1593,16 +1593,14 @@ and a paced batch send.
 
 ## Open work
 
-- **Review debt from the codex outage (2026-09-02).** `codex review` is owed
-  on every commit after 394bbdc, and these recipes never got a clean sol
-  round: `run-a-bedrock-voice-agent` (r3), `record-a-video-room` (r3),
-  `stream-a-video-room-to-rtmp` (r5), `give-an-agent-a-video-avatar` (r3),
-  `transcribe-a-call-in-the-background` (r3), `export-recordings-and-enforce-retention`
-  (r2), `verify-a-webhook-signature` (r3), `handle-call-status-callbacks` (r5),
-  `route-calls-by-dialed-number-or-time` (r2, partial verdict applied),
-  `let-a-browser-dial-your-agent-with-no-dashboard-setup` (r2),
-  `build-an-ivr-without-a-server` (r2). Each had its last verdict applied
-  and verifies and lints clean; run the round when codex is back (Sep 6).
+- **Review debt cleared (2026-09-02, late).** Codex reviewed every range after
+  394bbdc (`docs/CODEX_REVIEW_2026-09-02_{wave9,wave10,wave11,teamdocs-build,ui-2026-09-02}.md`,
+  each with an *Applied* section), and sol ran a closing round on all nineteen
+  recipes that had none (`docs/RECIPE_REVIEW_2026-09-02_closing_rounds.md`,
+  verdicts verbatim and an *Applied* note per recipe, refusals stated with a
+  reason). One SHIP (RTMP); the other eighteen were fixed in eight gated
+  batches. Commits after `efc4d49` (batch 7) are owed a `codex review` in the
+  ordinary course.
 - **Corpus after wave 11 (2026-09-02): 96 of 121 folders written**, all
   passing `python verify.py` and the lint. Waves 10 and 11 (eight recipes)
   went in on the gate alone because codex was down; they are on the review

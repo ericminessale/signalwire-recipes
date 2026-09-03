@@ -12,8 +12,7 @@
   "provenance": "new",
   "category": "voice",
   "products": [
-    "voice",
-    "messaging"
+    "voice"
   ],
   "capabilities": [
     "migration"
