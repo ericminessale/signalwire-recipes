@@ -119,6 +119,8 @@ def main():
     assert "At least one of `digits` or `speech` must be provided" in desc, desc
     digits, speech = props["digits"], props["speech"]
     assert digits["required"] == ["max"], digits
+    # the clock does not start on its own: the spec's default is false
+    assert props["start_input_timers"].get("default") is False, props["start_input_timers"]
     # found by what they carry, so inserting a request cannot silently move them
     collects = [c["body"]["params"] for c in rec.calls
                 if c["body"]["command"] == "calling.collect"]
@@ -146,12 +148,12 @@ def main():
         {"command": "calling.collect", "id": CALL,
          "params": {"control_id": COLLECT, "initial_timeout": 10,
                     "digits": {"max": 10, "terminators": "#", "digit_timeout": 5},
-                    "status_url": STATUS}},
+                    "start_input_timers": True, "status_url": STATUS}},
         {"command": "calling.collect", "id": CALL,
          "params": {"control_id": COLLECT, "initial_timeout": 10,
                     "speech": {"end_silence_timeout": 1.5, "speech_timeout": 15,
                                "language": "en-US"},
-                    "status_url": STATUS}},
+                    "start_input_timers": True, "status_url": STATUS}},
         {"command": "calling.collect.stop", "id": CALL,
          "params": {"control_id": COLLECT}},
     ]
@@ -166,8 +168,9 @@ def main():
     print(f"ok: seven POST {PATH} for id {CALL[:8]}...: play tts with and without "
           f"a status_url, an audio item, play.stop, a digits collect and a speech "
           f"collect with documented fields, collect.stop; each item type is pinned to "
-          f"its own required param, and a collect with no status_url is refused "
-          f"before any request")
+          f"its own required param, both collects start the input timers the spec "
+          f"defaults to false, and a collect with no status_url is refused before "
+          f"any request")
 
 
 if __name__ == "__main__":

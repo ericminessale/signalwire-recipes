@@ -30,9 +30,16 @@ CONTROL_ID = "agent-desk-recording"
 PAUSE_BEHAVIOR = "silence"
 
 
+# The REST defaults are prompt-style: stop after 4s without speech, after 0.5s
+# of silence, or on `#`. SWML's whole-call verb, record_call, defaults these
+# three to 0, 0 and "", and a call recording wants those.
+WHOLE_CALL = {"initial_timeout": 0, "end_silence_timeout": 0, "terminators": ""}
+
+
 def start(call_id, status_url=None, control_id=CONTROL_ID):
-    """Record both directions to one stereo mp3, with no length limit."""
-    audio = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0}
+    """Record both directions to one stereo mp3, for as long as the call runs."""
+    audio = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0,
+             **WHOLE_CALL}
     params = {"control_id": control_id, "record": {"audio": audio}}
     if status_url:
         # the recording URL arrives here when the recording finishes

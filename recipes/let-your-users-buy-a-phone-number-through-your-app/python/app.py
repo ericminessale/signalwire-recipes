@@ -58,7 +58,9 @@ def onboard(name, permissions=PERMISSIONS):
     token = platform.project.tokens.create(name=f"{name} numbers",
                                            permissions=list(permissions),
                                            subproject_id=project["id"])
-    record = {"name": name, "project_id": project["id"],
+    # token_id is the only handle for PATCH or DELETE later: the spec
+    # documents no way to list a project's tokens
+    record = {"name": name, "project_id": project["id"], "token_id": token["id"],
               "permissions": token["permissions"], "token": token["token"]}
     tenants = _load()
     tenants[name] = record

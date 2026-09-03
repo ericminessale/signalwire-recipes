@@ -38,6 +38,7 @@ import verifylib as V  # noqa: E402
 TENANT = "Acme Dental"
 TENANT_PROJECT = "9b1c7e42-5a3d-4f61-8c2e-0d7a6b5f4e30"
 TENANT_TOKEN = "PT-tenant"
+TOKEN_ID = "5c4b3a2d-1e0f-4a9b-8c7d-6e5f4a3b2c1d"
 NUMBER = "+14155550123"
 NUMBER_ID = "3f2a1c88-77bd-4e15-9a02-6c5b4d3e2f10"
 HOOK = "https://app.example.com/acme/"
@@ -57,7 +58,7 @@ def main():
     platform = V.Recorder(responses=[
         {"id": TENANT_PROJECT, "name": TENANT, "subproject": True,
          "parent_project_id": PLATFORM_PROJECT},
-        {"id": "5c4b3a2d-1e0f-4a9b-8c7d-6e5f4a3b2c1d", "name": f"{TENANT} numbers",
+        {"id": TOKEN_ID, "name": f"{TENANT} numbers",
          "permissions": WANT_PERMISSIONS, "token": TENANT_TOKEN},
     ])
     # every namespace, not just the two the recipe happens to use: a number
@@ -87,8 +88,12 @@ def main():
     assert list(recipe.PERMISSIONS) == WANT_PERMISSIONS, recipe.PERMISSIONS
     record = recipe.onboard(TENANT)
     assert record == {"name": TENANT, "project_id": TENANT_PROJECT,
-                      "permissions": WANT_PERMISSIONS,
+                      "token_id": TOKEN_ID, "permissions": WANT_PERMISSIONS,
                       "token": TENANT_TOKEN}, record
+    # the id the token's own PATCH and DELETE need, since nothing lists tokens
+    spec_paths = V.spec("rest")["paths"]
+    assert set(spec_paths["/api/project/tokens/{token_id}"]) == {"patch", "delete"}
+    assert "get" not in spec_paths["/api/project/tokens"]
     # the record survives the process, because the token is shown once
     assert json.loads(store.read_text(encoding="utf-8")) == {TENANT: record}
     assert built == [], "onboarding must use the platform client"

@@ -1672,6 +1672,21 @@ gate cannot see. The record is `docs/RECIPE_REVIEW_2026-09-03_wave12.md`.
 - **`calling.record` is `control_id` plus `record.audio`**, and
   `calling.record.pause` takes `behavior` `skip` or `silence`. One control id
   carries start, pause, resume and stop.
+- **The REST recording's audio defaults are prompt-style, and they end a call
+  recording** (codex, on cd7fbfc): `initial_timeout` 4, `end_silence_timeout`
+  0.5, `terminators` `#`. Omit them and the recording stops at the first quiet
+  moment. The bundled SWML schema's `record_call`, the verb for a whole call,
+  defaults the same three to `0`, `0` and the empty string, so that set is
+  attributable rather than invented. `max_length: 0` only removes the duration
+  cap.
+- **`calling.collect`'s `start_input_timers` defaults to `false`**, so
+  `initial_timeout` never starts counting and a silent caller leaves the collect
+  open. Send `true`, or send `calling.collect.start_input_timers` for the same
+  `control_id` once the prompt has finished playing.
+- **A token's `id` is the only handle it has.** `PATCH` and `DELETE
+  /api/project/tokens/{token_id}` address it, and the spec documents no `GET`
+  that lists a project's tokens, so a record that keeps the token value and
+  drops the id cannot rotate or revoke it.
 - **A partial stub makes a negative claim unfalsifiable.** Stubbing
   `client._http` and one namespace leaves every other namespace on the real
   `HttpClient`, so "the platform client sent no number request" could not fail
@@ -1721,8 +1736,10 @@ gate cannot see. The record is `docs/RECIPE_REVIEW_2026-09-03_wave12.md`.
   the next wave) are Eric's to take with or without it.
 - **Corpus after wave 12 (2026-09-03): 101 of 126 folders written**, all
   passing `python verify.py` and the lint. Wave 12's four REST recipes are
-  reviewed (in-house workflow, `docs/RECIPE_REVIEW_2026-09-03_wave12.md`) but
-  are owed a `codex review` whenever the backend is up again. Waves 10 and 11 (eight recipes)
+  reviewed twice: the in-house workflow
+  (`docs/RECIPE_REVIEW_2026-09-03_wave12.md`) and, once the backend came back,
+  `codex review --commit cd7fbfc` (`docs/CODEX_REVIEW_2026-09-03_wave12.md`,
+  three findings, all applied). Waves 10 and 11 (eight recipes)
   went in on the gate alone because codex was down; they are on the review
   debt list too.
 - **The 25 unwritten folders, and why each waits.** Seven builds and

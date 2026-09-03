@@ -1,0 +1,47 @@
+{
+  "name": "@signalwire/sdk",
+  "version": "2.0.5",
+  "description": "SignalWire AI Agents SDK for TypeScript/Node.js",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "bin": {
+    "swaig-test": "./dist/cli/swaig-test.js"
+  },
+  "scripts": {
+    "generate:verbs": "npx tsx src/generateVerbTypes.ts",
+    "prebuild": "npm run generate:verbs",
+    "build": "tsc",
+    "postbuild": "cp src/schema.json dist/schema.json",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:examples": "tsc --noEmit --project tsconfig.examples.json",
+    "dev": "tsc --watch",
+    "enumerate:doc-surface": "npx tsx scripts/enumerate-doc-surface.ts"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^1.11.0",
+    "ajv": "^8.18.0",
+    "cheerio": "^1.2.0",
+    "hono": "^4.4.0",
+    "js-yaml": "^4.1.1",
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.0",
+    "@types/ws": "^8.5.10",
+    "tsx": "^4.21.0",
+    "typescript": "^5.5.0",
+    "vitest": "^4.1.5"
+  }
+}

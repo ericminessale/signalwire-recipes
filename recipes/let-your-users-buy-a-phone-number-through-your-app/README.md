@@ -53,7 +53,9 @@ with the required `number`, `PUT` and `DELETE` on
 shared `HttpClient` every namespace holds.
 
 The spec documents no `GET` for tokens, so the value is read from the create
-response and stored then. `tenants.json` stands in for the table where you keep
+response and stored then. The response's `id` is stored beside it, because
+`PATCH` and `DELETE /api/project/tokens/{token_id}` are how a credential is
+rotated or revoked and nothing lists them. `tenants.json` stands in for the table where you keep
 it. It holds a live credential, so it is in `.gitignore`; in your app that row
 belongs in your database, encrypted.
 
@@ -90,7 +92,8 @@ The verifier gives each client its own recorder and asserts the following.
 
 - the recipe's permission list is the one the verifier expects, every value is in the spec's enum, `numbers` is in it and `management` is not
 - onboarding sends `POST /api/projects` and `POST /api/project/tokens`, with the exact bodies, on the platform client
-- the stored record carries the project id and the token, and survives as a file
+- the stored record carries the project id, the token and the token id, and survives as a file
+- the spec documents `PATCH` and `DELETE` for a token id, and no `GET` that would list tokens
 - a record with an empty token, or an empty project id, raises and builds no client
 - the four clients built afterwards all carry the tenant's basic-auth pair and the space host
 - the platform client, with every namespace recorded, sends no number request at all

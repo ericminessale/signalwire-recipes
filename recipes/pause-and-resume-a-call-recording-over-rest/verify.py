@@ -31,7 +31,12 @@ PATH = "/api/calling/calls"
 CALL = "6d3f4a0e-2b1c-4e7a-9f0d-1c2b3a4d5e6f"
 CONTROL = "agent-desk-recording"
 STATUS = "https://desk.example.com/recording-events"
-AUDIO = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0}
+AUDIO = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0,
+         "initial_timeout": 0, "end_silence_timeout": 0, "terminators": ""}
+# what the REST command applies when those three are left out
+PROMPT_DEFAULTS = {"initial_timeout": 4, "end_silence_timeout": 0.5, "terminators": "#"}
+# what SWML's whole-call verb uses instead, in the bundled schema
+WHOLE_CALL_DEFAULTS = {"initial_timeout": 0, "end_silence_timeout": 0, "terminators": ""}
 
 
 def variant(command):
@@ -83,6 +88,18 @@ def main():
     assert AUDIO["direction"] in directions, (AUDIO["direction"], directions)
     assert "status_url" in props, sorted(props)
 
+    # the three the recipe sets on purpose: left out, the command stops the
+    # recording the way a voice prompt stops
+    rest_defaults = {k: deref(audio["properties"][k]).get("default")
+                     for k in PROMPT_DEFAULTS}
+    assert rest_defaults == PROMPT_DEFAULTS, rest_defaults
+    # SWML's whole-call verb defaults them to what this recipe sends
+    record_call = V.swml_schema()["$defs"]["RecordCall"]["properties"]["record_call"]
+    swml_defaults = {k: record_call["properties"][k].get("default")
+                     for k in WHOLE_CALL_DEFAULTS}
+    assert swml_defaults == WHOLE_CALL_DEFAULTS, swml_defaults
+    assert {k: AUDIO[k] for k in WHOLE_CALL_DEFAULTS} == WHOLE_CALL_DEFAULTS, AUDIO
+
     # calling.record.pause: behavior is one of the spec's two values
     top, required, props, _ = variant("calling.record.pause")
     assert required == ["control_id"], required
@@ -119,7 +136,11 @@ def main():
 
     print(f"ok: five POST {PATH} for id {CALL[:8]}...: record with documented stereo "
           f"mp3 audio params and a status_url, pause with behavior silence, resume, "
-          f"stop, each body naming control_id {CONTROL}; no status_url means no key")
+          f"stop, each body naming control_id {CONTROL}; the three prompt-style "
+          f"defaults ({PROMPT_DEFAULTS['initial_timeout']}s, "
+          f"{PROMPT_DEFAULTS['end_silence_timeout']}s, "
+          f"{PROMPT_DEFAULTS['terminators']}) are overridden with the values SWML's "
+          f"record_call uses; no status_url means no key")
 
 
 if __name__ == "__main__":

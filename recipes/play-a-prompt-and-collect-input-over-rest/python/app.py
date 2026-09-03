@@ -59,8 +59,10 @@ def ask_digits(call_id, status_url, max_digits=10, control_id=COLLECT_ID):
     """Collect up to max_digits keypad digits, ended early by #."""
     _needs_status_url(status_url)
     digits = {"max": max_digits, "terminators": "#", "digit_timeout": 5}
+    # start_input_timers defaults to false, and then initial_timeout never runs
     return client.calling.collect(call_id, control_id=control_id, digits=digits,
-                                  initial_timeout=10, status_url=status_url)
+                                  initial_timeout=10, start_input_timers=True,
+                                  status_url=status_url)
 
 
 def ask_speech(call_id, status_url, language="en-US", control_id=COLLECT_ID):
@@ -68,7 +70,8 @@ def ask_speech(call_id, status_url, language="en-US", control_id=COLLECT_ID):
     _needs_status_url(status_url)
     speech = {"end_silence_timeout": 1.5, "speech_timeout": 15, "language": language}
     return client.calling.collect(call_id, control_id=control_id, speech=speech,
-                                  initial_timeout=10, status_url=status_url)
+                                  initial_timeout=10, start_input_timers=True,
+                                  status_url=status_url)
 
 
 def stop_collect(call_id, control_id=COLLECT_ID):

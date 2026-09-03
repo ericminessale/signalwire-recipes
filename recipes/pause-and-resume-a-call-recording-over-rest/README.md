@@ -18,6 +18,12 @@ shapes.
 - `calling.record` requires `control_id` and `record`, and `record` requires
   `audio`. The audio params include `stereo`, `direction`, `format` and
   `max_length`, where `0` means no limit.
+- Three audio params decide when the recording stops on its own, and their REST
+  defaults suit a voice prompt: `initial_timeout` 4 seconds, `end_silence_timeout`
+  0.5 seconds, `terminators` `#`. Left alone they would end a call recording
+  during the first pause. SWML's whole-call verb, `record_call`, defaults the
+  same three to `0`, `0` and the empty string, and that is what this recipe
+  sends.
 - `calling.record.pause` requires `control_id` and takes a `behavior`: `skip`
   omits the paused audio from the file, `silence` replaces it with silence and
   keeps the timing.
@@ -30,9 +36,11 @@ platform does with them.
 
 ```python
 CONTROL_ID = "agent-desk-recording"
+WHOLE_CALL = {"initial_timeout": 0, "end_silence_timeout": 0, "terminators": ""}
 
 def start(call_id, status_url=None):
-    audio = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0}
+    audio = {"stereo": True, "direction": "both", "format": "mp3", "max_length": 0,
+             **WHOLE_CALL}
     params = {"control_id": CONTROL_ID, "record": {"audio": audio}}
     if status_url:
         params["status_url"] = status_url
@@ -90,6 +98,7 @@ plus a `start` with no status URL, and asserts the following.
 - each helper adds exactly one `POST` to the documented calling path
 - `calling.record` requires `control_id` and `record`, `record` requires `audio`, and every audio key sent is a documented `RecordAudioParams` property
 - the sent `format` and `direction` are in the spec's enums
+- the REST defaults for `initial_timeout`, `end_silence_timeout` and `terminators` are 4, 0.5 and `#`, the bundled SWML schema's `record_call` defaults them to 0, 0 and the empty string, and the recipe sends the second set
 - `calling.record.pause` requires `control_id`, its `behavior` enum is exactly `skip` and `silence`, and the sent value is one of them
 - resume and stop require only `control_id`
 - each body equals the expected `{"command", "id", "params"}` shape, the five expected bodies all name one control id, and an omitted `status_url` is an absent key rather than a null
@@ -101,6 +110,10 @@ gap of silence is what the finished recording shows.
 
 Pausing the recording does not pause the call. The caller keeps talking; only
 the file stops filling.
+
+What a recording does at `initial_timeout: 0` is the platform's behaviour, not
+something this recipe proves. The value is the one SWML uses for a whole-call
+recording.
 
 ## What to change first
 

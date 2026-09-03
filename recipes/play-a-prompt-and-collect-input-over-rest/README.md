@@ -19,6 +19,10 @@ the call id can run them on a call it did not set up. The vendored REST spec,
   one of `digits` or `speech`". `digits` requires `max`. Results are
   "delivered asynchronously via the `status_url` webhook", so the recipe
   refuses a collect with no status URL before it is sent.
+- `start_input_timers` defaults to `false`, and then `initial_timeout` does not
+  start counting. Both collects send `true`. Send `false` instead when the
+  prompt is still playing, and start the clock yourself with
+  `calling.collect.start_input_timers` for the same `control_id`.
 
 The verifier proves the six requests and the refusal. The spec is the
 authority for what the platform does with them.
@@ -37,7 +41,8 @@ def ask_digits(call_id, status_url, max_digits=10, control_id=COLLECT_ID):
     _needs_status_url(status_url)
     digits = {"max": max_digits, "terminators": "#", "digit_timeout": 5}
     return client.calling.collect(call_id, control_id=control_id, digits=digits,
-                                  initial_timeout=10, status_url=status_url)
+                                  initial_timeout=10, start_input_timers=True,
+                                  status_url=status_url)
 ```
 
 What the platform receives for `ask_digits`:
@@ -48,6 +53,7 @@ What the platform receives for `ask_digits`:
  "params": {"control_id": "agent-desk-input",
             "initial_timeout": 10,
             "digits": {"max": 10, "terminators": "#", "digit_timeout": 5},
+            "start_input_timers": true,
             "status_url": "https://your-host/collect-events"}}
 ```
 
@@ -96,6 +102,7 @@ asserts the following.
 - `calling.play` requires `control_id` and `play`, the item type enum is exactly the four types, and each item type is pinned to its own required param: `text` for `tts`, `url` for `audio`, `duration` for `silence`
 - the spec's `calling.play` description names the four playback states, and its `calling.collect` description says results are delivered to the `status_url` webhook
 - `calling.collect` requires only `control_id`, `digits` requires `max`, and every sent `digits` and `speech` key is documented
+- the spec defaults `start_input_timers` to `false`, and both collects send `true`
 - the two stop commands require only `control_id`
 - each body equals the expected `{"command", "id", "params"}` shape, and every param is a documented property
 
