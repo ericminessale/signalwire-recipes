@@ -19,8 +19,6 @@ the section it would add.
 
 Written against signalwire-sdk 3.0.1 (signalwire.livewire).
 """
-import os
-
 from dotenv import load_dotenv
 from signalwire.livewire import Agent, AgentServer, AgentSession, JobContext
 from signalwire.livewire import cli_ns as cli
@@ -49,7 +47,7 @@ server = AgentServer()
 
 
 def build_session():
-    """The LiveKit shape: an Agent, a session, a greeting."""
+    """The LiveKit shape: an Agent with instructions and a tool, and a session."""
     agent = Agent(
         instructions=("You are the front desk at Ridgeline Cycles. Answer questions "
                       "about opening hours with the opening_hours tool, and keep "

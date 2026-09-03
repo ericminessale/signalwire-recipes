@@ -13,9 +13,9 @@ method, `AgentSession._build_sw_agent()`, which builds an `AgentBase`. The
 a SWAIG function through `define_tool`. The name is the function's, the
 description is its docstring, and the parameters come from its type hints, each
 required unless it has a default. The session's endpointing delays become
-`ai.params`. The pipeline arguments livekit code passes, `stt`, `tts`, `vad`,
-`turn_detection`, are accepted and logged as no-ops, because the platform does
-that work.
+`ai.params`. LiveWire accepts the pipeline arguments livekit code passes,
+`stt`, `tts`, `vad` and `turn_detection`, and logs them as no-ops, because the
+platform does that work.
 
 ## How it works
 
@@ -50,7 +50,7 @@ What the platform receives, inside the `ai` verb:
 
 Two lines are SignalWire's rather than LiveKit's. In 3.0.1 `run_app` runs the
 `AgentBase` it finds in `ctx._agent` and logs "no agent was started" if the
-entrypoint left nothing there, and nothing else builds it. So the entrypoint
+entrypoint left nothing there. Nothing else builds it. So the entrypoint
 calls `session._build_sw_agent()` and assigns the result. And
 `max_endpointing_delay` becomes `attention_timeout` in milliseconds, which the
 bundled schema bounds at 10,000 to 600,000. The LiveKit default of 3.0 seconds
@@ -104,8 +104,8 @@ The parameter descriptions are the parameter names, because LiveWire builds
 them from type hints and has no other text to use. A caller-facing description
 needs the SignalWire `define_tool` route instead.
 
-`session.say()` before the build is dropped when `instructions` are set. The
-build sets the instructions as prompt text, then adds the greeting as a prompt
+The build drops a `session.say()` made before it when `instructions` are set. It
+sets the instructions as prompt text, then adds the greeting as a prompt
 section, and text wins. Put the greeting in the instructions.
 
 ## What to change first

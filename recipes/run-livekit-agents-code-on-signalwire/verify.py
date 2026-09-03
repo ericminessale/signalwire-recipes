@@ -47,7 +47,7 @@ def main():
     # a fresh context has no agent: run_app would log "no agent was started"
     ctx = JobContext()
     assert ctx._agent is None
-    asyncio.get_event_loop().run_until_complete(recipe.entrypoint(ctx))
+    asyncio.run(recipe.entrypoint(ctx))
     agent = ctx._agent
     assert agent is not None, "the entrypoint must leave the AgentBase in ctx._agent"
     V.assert_basic_auth_from_env(agent)
@@ -61,15 +61,20 @@ def main():
     prompt = ai["prompt"]
     assert prompt == {"text": INSTRUCTIONS}, prompt
     assert ai["params"] == {"end_of_speech_timeout": 500, "attention_timeout": 15000}, ai["params"]
-    bounds = V.swml_schema()["$defs"]["AIParams"]["properties"]
+    defs = V.swml_schema()["$defs"]
+    bounds = defs["AIParams"]["properties"]
     assert bounds["end_of_speech_timeout"]["minimum"] == 250
+    # both ends of the range the README quotes, from the schema's own definition
+    att = defs["AttentionTimeout"]
+    assert att.get("minimum") == 10000 and att.get("maximum") == 600000, att
     assert "10,000" in bounds["attention_timeout"]["description"]
+    assert "600,000" in bounds["attention_timeout"]["description"]
 
     # the two 3.0.1 edges: default delays render out of range, and say() is dropped
     from signalwire.livewire import Agent, AgentSession
     default_session = AgentSession()
     plain = Agent(instructions=INSTRUCTIONS, tools=[recipe.opening_hours])
-    asyncio.get_event_loop().run_until_complete(default_session.start(plain))
+    asyncio.run(default_session.start(plain))
     default_session.say(GREETING)
     default_doc = json.loads(default_session._build_sw_agent()._render_swml())
     default_ai = next(v for v in default_doc["sections"]["main"] if "ai" in v)["ai"]
@@ -95,6 +100,31 @@ def main():
         got = agent._execute_swaig_function("opening_hours", {"day": day}, call_id="c1")
         assert got == {"response": reply}, (day, got)
         assert recipe.opening_hours(day) == reply, day
+    # and it is that function, not a copy: change the table it reads and the
+    # agent's answer changes with it (sol r1)
+    recipe.HOURS["monday"] = "noon to 1"
+    try:
+        got = agent._execute_swaig_function("opening_hours", {"day": "Monday"}, call_id="c1")
+        assert got == {"response": "On Monday the shop is open from noon to 1."}, got
+    finally:
+        recipe.HOURS["monday"] = "9 to 6"
+
+    # a type-hinted parameter with a default is optional; one without is required
+    from signalwire.livewire import function_tool
+
+    @function_tool
+    def hours_for(day: str, style: str = "short") -> str:
+        """Hours for a day, short or long."""
+        return f"{day}: {style}"
+
+    opt_session = AgentSession(max_endpointing_delay=15.0)
+    opt_agent = Agent(instructions=INSTRUCTIONS, tools=[hours_for])
+    asyncio.run(opt_session.start(opt_agent))
+    opt_doc = json.loads(opt_session._build_sw_agent()._render_swml())
+    opt_ai = next(v for v in opt_doc["sections"]["main"] if "ai" in v)["ai"]
+    (opt_fn,) = opt_ai["SWAIG"]["functions"]
+    assert set(opt_fn["parameters"]["properties"]) == {"day", "style"}, opt_fn["parameters"]
+    assert opt_fn["parameters"]["required"] == ["day"], opt_fn["parameters"]
 
     print(f"ok: the rtc_session entrypoint leaves an AgentBase in ctx._agent whose ai verb carries "
           f"the instructions and one SWAIG function, opening_hours(day), answering "

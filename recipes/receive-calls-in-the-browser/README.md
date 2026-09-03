@@ -1,6 +1,6 @@
 # Receive calls in the browser
 
-> A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML `connect` to that address is the document that rings the registered browser.
+> A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML `connect` to that address is the document that sends a call to the registered browser.
 
 **Scenario:** a workshop mechanic who takes the shop's calls at a laptop, with no desk phone
 
@@ -14,7 +14,8 @@ got, each with a `name` such as `/private/dana` and its `channels`.
 uniquely identifies the subscriber. Often it's an email". It answers with
 `subscriber_id`, `token` and `refresh_token`. The bundled schema lists a "Call
 Fabric Resource address" among the forms `connect.to` takes. A document that
-connects to the subscriber's address is therefore the document that rings them.
+connects to the subscriber's address is therefore the document that sends a
+call to them. Whether it rings is the platform's side of a live call.
 You reach the REST calls as `client.fabric.subscribers.create`, `list_addresses`
 and `client.fabric.tokens.create_subscriber_token`.
 
@@ -101,14 +102,16 @@ python verify.py
 You swap the SDK's HTTP layer for a recorder that answers with a resource, one
 address and one token. You call the helpers and assert the following.
 
-- `create_subscriber` makes one `POST` to the documented subscribers path with exactly `email` and `display_name`, then one `GET` of the resource's addresses with no body or query, and returns the address name
+- `create_subscriber` makes one `POST` to the documented subscribers path with exactly `email` and `display_name`
+- it then makes one `GET` of the resource's addresses with no body or query, and returns the address name
 - a subscriber that lists no address fails with a message that names it
 - `browser_token` makes one `POST` to the documented subscriber tokens path with exactly `reference`
 - the spec requires exactly `email` on the subscriber and exactly `reference` on the token, and describes `reference` as what identifies the subscriber
 - the token answers with `subscriber_id`, `token` and `refresh_token`; the address list carries `id`, `name` and `channels`, and the fixture uses only documented fields
 - the document validates, its verbs are `answer`, `play`, `connect`, `hangup`, and `connect` is exactly the address with a 30-second timeout
 - the bundled schema lists a Call Fabric Resource address among the forms `connect.to` takes
-- the browser client builds a `SignalWire` client from a token, calls `client.online` with an `incomingCallHandlers` entry, and answers with `invite.accept` into a root element; it type-checks against the installed `@signalwire/js` when `typescript/node_modules` exists
+- the browser client builds a `SignalWire` client from a token, calls `client.online` with an `incomingCallHandlers` entry, and answers with `invite.accept` into a root element
+- the client type-checks against the installed `@signalwire/js` when `typescript/node_modules` exists
 
 ## Limitations
 
@@ -122,6 +125,6 @@ after your own sign-in and hand it over HTTPS.
 ## What to change first
 
 Change `ring` to connect to `EMAIL` instead of the address and run the
-verifier. The `connect` assertion fails. The schema's forms for `connect.to`
-are a number, a SIP URI, a Fabric address or a queue, and an email is none of
-them.
+verifier. `add_verb` raises `SchemaValidationError` while the document is being
+built, before any assertion runs. The schema's forms for `connect.to` are a
+number, a SIP URI, a Fabric address or a queue, and an email is none of them.
