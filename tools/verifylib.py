@@ -185,6 +185,44 @@ def assert_documented(kind, method, path, body=None, params=None):
     return op
 
 
+def node_surface(here, *args, env=None):
+    """Type-check, compile and run a recipe's typescript/record.ts, offline.
+
+    Returns the JSON object the recorder printed, or None when the surface's
+    node_modules is absent. As with the type check, SIGNALWIRE_REQUIRE_TSC=1
+    refuses that, so CI cannot pass on a surface it never ran.
+
+    record.ts is the Node half of the proof: it swaps the client's fetch the way
+    the Python verifier swaps client._http, calls the same helpers, and prints
+    what it captured. The expected values stay in verify.py.
+    """
+    ts = pathlib.Path(here) / "typescript"
+    tsc = ts / "node_modules" / ".bin" / ("tsc.cmd" if os.name == "nt" else "tsc")
+    if not tsc.exists():
+        if os.environ.get("SIGNALWIRE_REQUIRE_TSC"):
+            raise AssertionError(
+                f"SIGNALWIRE_REQUIRE_TSC is set and {tsc} is missing: "
+                f"run npm ci in {ts} before verifying")
+        return None
+    subprocess.run([str(tsc)], cwd=ts, check=True)
+    run_env = dict(os.environ)
+    run_env.update({
+        "SIGNALWIRE_PROJECT_ID": "proj-1234",
+        "SIGNALWIRE_API_TOKEN": "PT-test",
+        "SIGNALWIRE_SPACE": "example.signalwire.com",
+    })
+    run_env.update(env or {})
+    out = subprocess.run(["node", str(ts / "dist" / "record.js"), *args],
+                         cwd=ts, env=run_env, check=True,
+                         capture_output=True, text=True).stdout
+    # the SDK logs to stdout, so take the last line that is a JSON object
+    for line in reversed(out.splitlines()):
+        line = line.strip()
+        if line.startswith("{"):
+            return json.loads(line)
+    raise AssertionError(f"typescript/record.ts printed no JSON:\n{out[-800:]}")
+
+
 def type_check_typescript(here, what="the installed types"):
     """Run tsc --noEmit on a recipe's typescript/ directory.
 

@@ -11,7 +11,9 @@ empty disconnect params are all read from the vendored spec, not assumed. Every
 documented reason reaches the wire and the default is `hangup`, so narrowing the
 guard fails here. A reason outside the enum is refused before any request is
 made. The spec's command table is read for the sentence the README makes about
-each command. Expected values live here, not in app.py.
+each command. The TypeScript surface goes through the same recorder seam and is
+held to the same expected bodies, so the two surfaces are compared against this
+file rather than against each other. Expected values live here, not in app.py.
 """
 import json
 import os
@@ -141,11 +143,27 @@ def main():
     for command, says in TABLE.items():
         assert rows.get(command) == says, (command, rows.get(command))
 
+    # the TypeScript surface: the same helpers, the same recorder seam, held to
+    # the expected bodies above
+    node = V.node_surface(HERE, CALL, DEST)
+    if node is None:
+        ts_note = "typescript not run (npm ci in typescript/ first)"
+    else:
+        assert node["reasons"] == REASONS, node["reasons"]
+        assert len(node["refused"]) == 1 and "rejected" in node["refused"][0], node["refused"]
+        assert [(c["method"], c["path"]) for c in node["captured"]] == [
+            ("POST", PATH)] * 3, node["captured"]
+        assert [c["body"] for c in node["captured"]] == expected, node["captured"]
+        assert [c["body"] for c in node["every"]] == [
+            {"command": "calling.end", "id": CALL, "params": {"reason": r}}
+            for r in REASONS + [DEFAULT_REASON]], node["every"]
+        ts_note = "typescript sends the same three bodies and refuses the same reason"
+
     print(f"ok: three POST {PATH} for id {CALL[:8]}...: calling.end with an enum "
           f"reason, calling.transfer with a required dest, calling.disconnect with "
           f"empty params; all six reasons and the {DEFAULT_REASON} default reach "
           f"the wire, an undocumented one is refused before any request, and the "
-          f"spec's command table says what the README says it says")
+          f"spec's command table says what the README says it says; {ts_note}")
 
 
 if __name__ == "__main__":

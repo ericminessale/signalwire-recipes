@@ -50,7 +50,9 @@ What the platform receives for `transfer`:
 ```
 
 The SDK's `calling` namespace, `rest/namespaces/calling.py`, sends every call
-command to that one path and puts the call id in `id`. The spec marks
+command to that one path and puts the call id in `id`. The TypeScript SDK,
+`@signalwire/sdk`, does the same: `client.calling.end(callId, { reason })`
+produces the body above, which is what the verifier checks. The spec marks
 `command`, `id` and `params` required on all three commands. `dest` accepts a
 string or an object. An object carries an inline SWML document, for when the
 new leg needs a document of its own.
@@ -68,6 +70,15 @@ cp ../.env.example .env          # project id, API token, space
 python app.py end <call_id> busy
 python app.py transfer <call_id> sip:tier2@pbx.example.com
 python app.py disconnect <call_id>
+```
+
+The TypeScript surface is the same three commands on `@signalwire/sdk`:
+
+```bash
+cd typescript
+npm ci
+cp ../.env.example .env
+npm start end <call_id> busy
 ```
 
 Take the call id from a tool webhook, a status callback, or the `dial`
@@ -94,6 +105,7 @@ and asserts the following.
 - `calling.transfer` requires `dest`, and the spec accepts a string or an object for it
 - `calling.disconnect` documents no params, and the sent params are empty
 - each body equals the expected `{"command", "id", "params"}` shape, and every param is a documented property
+- the TypeScript surface, driven through the same recorder seam, sends those same three bodies, refuses the same undocumented reason, and puts all six reasons on the wire
 
 ## Limitations
 

@@ -5,7 +5,8 @@
   "summary": "Hang up a live call with a reason, send it to a new destination, or unbridge it from its peer, each with one REST command addressed to the call id.",
   "scenario": "Your agent desktop has a Hang up button and a Transfer box, and the call was not started by that page",
   "surfaces": [
-    "python"
+    "python",
+    "typescript"
   ],
   "governed": false,
   "demo": "none",
@@ -29,7 +30,8 @@
       "tools/openapi/rest.json Calling.CallRequest variants calling.end (params.reason enum hangup|cancel|busy|noAnswer|decline|error), calling.transfer (params.dest required; SIP URI, phone number, SWML URL or inline SWML), calling.disconnect (no params); each requires command, id, params",
       "tools/openapi/rest.json POST /api/calling/calls description, command table: calling.end \"Terminate an active call immediately\"; calling.transfer \"Transfer a call to a new destination (SIP URI, phone number, or inline SWML)\"; calling.disconnect \"Disconnect bridged calls without hanging up either leg\"",
       "sdk rest/namespaces/calling.py:25-29 _execute puts call_id in body.id; :38 end, :41 transfer, :44 disconnect",
-      "verified 2026-09-03: recipes/end-or-transfer-a-live-call-over-rest/verify.py"
+      "verified 2026-09-03: recipes/end-or-transfer-a-live-call-over-rest/verify.py",
+      "npm @signalwire/sdk 2.0.5 (TypeScript peer of the Python Agents SDK): RestClient({project, token, host, fetchImpl}); calling.end/transfer/disconnect send the same POST /api/calling/calls bodies; client.<ns>._http._fetch is the recorder seam"
     ]
   },
   "subcategory": "call-control",

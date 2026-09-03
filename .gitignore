@@ -43,3 +43,6 @@ tenants.json
 # a research agent unpacked an npm tarball here once
 package/
 *.tgz
+
+# compiled output of a typescript surface
+recipes/*/typescript/dist/
