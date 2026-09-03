@@ -6,8 +6,9 @@
 
 ## What this demonstrates
 
-Three documented pieces, joined by one id. The SWAIG tool webhook carries the
-call's `call_id`, so the handler can key its notes by it. `enter_queue` puts the
+Three documented pieces, joined by one id. The SWAIG tool webhook, documented
+in the REST spec as `ai-swaig-tool-webhook`, carries the call's `call_id`, so
+the handler can key its notes by it. `enter_queue` puts the
 caller in a named queue. The bundled schema requires `queue_name` and
 `transfer_after_bridge` on it. It describes the verb as placing the call where
 "it will wait to be connected to an available agent or resource". The vendored REST
@@ -58,17 +59,24 @@ takes its `call_id`, and shows the notes filed under it.
 ```bash
 cd python
 pip install -r requirements.txt
-cp ../.env.example .env          # then edit .env: credentials, the basic-auth pair, QUEUE_NAME
+cp ../.env.example .env          # then edit .env: credentials, the basic-auth pair, QUEUE_NAME, QUEUE_ID
 python app.py                    # the agent, on port 3000
-python app.py brief              # in another shell: who is next, and what the agent learned
+python app.py take               # in another shell: the human's document, on port 3001
+python app.py brief              # in a third: who is next, and what the agent learned
 ```
+
+`QUEUE_ID` is the id of the queue named in `QUEUE_NAME`. `enter_queue` creates
+the queue by name on first use, and `GET /api/relay/rest/queues` lists it with
+its id. Point the human's number at the `take` document, behind the same
+basic-auth pair.
 
 The webhook needs a public HTTPS URL. For a local run, expose port 3000 with a
 tunnel such as ngrok and use that hostname. Point the shop's number at
 `https://<user>:<password>@<your-host>/triage/`. The schema says a queue that
 does not exist is created on first use, so the first hand-off creates
-`support`. Serve `take().get_document()` from any SWML webhook and point the
-human's number at it; the human dials in and is bridged to the caller.
+`support`. The `take` command serves the human's document on port 3001, behind
+the same basic-auth pair. Expose it the same way and point the human's number
+at it. When the human dials in, the platform bridges the front of the queue.
 
 ## Verify it
 
@@ -86,9 +94,8 @@ recorder, and asserts the following.
 - executing it with a tool webhook body that carries `call_id` and `caller_id_num` returns the exact response and one action
 - that action's SWML validates, holds exactly one `enter_queue` with `queue_name: support` and `transfer_after_bridge: "false"`, and carries `transfer: "true"`
 - the notes sit under the call id with the name, the issue and the number, and nothing else
-- `find_queue` makes one `GET` of the documented queues list and picks the queue by `friendly_name`
 - the notes land in the file at `NOTES_PATH`, and `brief`, run after the module is reloaded as a second process would load it, reads them back from there
-- `brief` makes one `GET` of the documented next-member path, with no body or query, and returns the member's position, wait and the notes for its `call_id`
+- `brief` makes one `GET` of the documented next-member path for the configured `QUEUE_ID`, with no body or query, and returns the member's position, wait and the notes for its `call_id`
 - the spec documents `call_id`, `position` and `wait_time` on the member and describes the read as "without dequeuing"
 - the human's document validates and connects to `queue:support`; the schema requires `queue_name` and `transfer_after_bridge` and lists the `queue:` form for `connect.to`
 
@@ -96,10 +103,14 @@ recorder, and asserts the following.
 
 You prove the documents, the tool result and the requests. Who the platform
 bridges to whom, and how long the caller waits, are the platform's side of a
-live call. The next-member read does not dequeue; the bridge does.
+live call. The next-member read does not dequeue; the bridge does. The two are
+not one step. Between the read and the bridge the front of the queue can
+change, and the screen would then describe a different caller than the one
+bridged. Correlate by `call_id` on the bridged call before you act on the notes.
 
-The notes are in the agent's process. Put them in a store the human's screen
-can read, keyed by `call_id`, before anything depends on it.
+The notes are a local JSON file the two processes share, written whole and
+swapped in. It is not a store for concurrent hand-offs or for production; put
+them in a database keyed by `call_id` before anything depends on it.
 
 ## What to change first
 

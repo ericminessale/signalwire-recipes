@@ -11,8 +11,8 @@ Proof: execute the tool offline with a tool webhook body that carries
 `enter_queue` verb, `transfer` set to "true", and the document validates. The
 notes sit under that call id with the caller's name, issue and number. With
 the HTTP layer replaced by a recorder that answers the queue list and the next
-member, `brief` makes one GET of the queues and one GET of the next member, and
-returns the notes for the member's `call_id`. The bundled schema requires
+member, `brief` makes one GET of the next member for the configured queue id
+and returns the notes for the member's `call_id`. The bundled schema requires
 `queue_name` and `transfer_after_bridge` on `enter_queue` and lists the
 `queue:` form for `connect.to`; the spec documents `call_id` on a queue member.
 The human's document validates and connects to `queue:support`. Expected values
@@ -33,6 +33,7 @@ os.environ.update({
     "SIGNALWIRE_API_TOKEN": "PT-test",
     "SIGNALWIRE_SPACE": "example.signalwire.com",
     "QUEUE_NAME": "support",
+    "QUEUE_ID": "4d5e6f70-8192-4a3b-9c4d-5e6f708192a3",
     "NOTES_PATH": str(HERE / "python" / ".verify-notes.json"),
 })
 
@@ -77,25 +78,20 @@ def main():
     assert V.verb_names(action["SWML"]) == ["enter_queue"], V.verb_names(action["SWML"])
     assert V.first(action["SWML"], "enter_queue") == {"queue_name": "support",
                                                        "transfer_after_bridge": "false"}
-    # the notes are on disk, where a second process can read them; the first
-    # version kept a dictionary that python app.py brief never saw (codex)
+    # the notes are on disk, where a second process can read them
     assert json.loads(notes_file.read_text(encoding="utf-8")) == {CALL: NOTE}
 
     # the human's side: the next member's call_id is the key
     rec = V.Recorder(responses=[
-        {"data": [{"id": "other", "friendly_name": "sales"}, {"id": QID, "friendly_name": "support"}]},
         {"call_id": CALL, "queue_id": QID, "position": 1, "wait_time": 42},
     ])
-    recipe.client.queues._http = rec
-    queue_id = recipe.find_queue()
-    assert queue_id == QID
     import importlib
     recipe = importlib.reload(recipe)  # a second interpreter, as far as NOTES go
     recipe.client.queues._http = rec
-    screen = recipe.brief(queue_id)
+    screen = recipe.brief()            # the queue id comes from QUEUE_ID
     assert screen == {"call_id": CALL, "position": 1, "waiting_seconds": 42, "notes": NOTE}, screen
     assert [(c["method"], c["path"]) for c in rec.calls] == \
-        [("GET", QUEUES), ("GET", f"{QUEUES}/{QID}/members/next")], rec.calls
+        [("GET", f"{QUEUES}/{QID}/members/next")], rec.calls
     assert all(c["params"] is None and c["body"] is None for c in rec.calls), rec.calls
     spec = V.spec("rest")
     V.assert_documented("rest", "GET", QUEUES, None)

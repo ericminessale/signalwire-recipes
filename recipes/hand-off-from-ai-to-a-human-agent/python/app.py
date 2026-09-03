@@ -2,14 +2,14 @@
 
 Two halves and one key. The agent's `hand_off` tool writes what it learned
 under the call's id, then returns a SWML action whose one verb is
-`enter_queue`; the bundled schema requires `queue_name` and
-`transfer_after_bridge`, and describes the verb as placing the call in a named
-queue "where it will wait to be connected to an available agent or resource".
-The human's side asks the vendored REST spec's
-`GET /api/relay/rest/queues/{queue_id}/members/next` for the next member, whose
-documented fields include `call_id`, and looks the notes up by it. The human
-takes the call with a `connect` whose `to` is `queue:<name>`, a form the
-bundled schema lists for `connect.to`.
+`enter_queue`. The bundled schema requires `queue_name` and
+`transfer_after_bridge` on it. It describes the verb as placing the call in a
+named queue "where it will wait to be connected to an available agent or
+resource". The human's side asks the vendored REST spec's
+`GET /api/relay/rest/queues/{queue_id}/members/next` for the next member.
+Its documented fields include `call_id`, and the notes are looked up by it.
+The human takes the call with a `connect` whose `to` is `queue:<name>`, a form
+the bundled schema lists for `connect.to`.
 
 The call id is the join. The SWAIG tool webhook carries it as `call_id`, the
 queue member carries it as `call_id`, and nothing else has to agree.
@@ -33,6 +33,8 @@ load_dotenv()
 client = RestClient()
 
 QUEUE = os.getenv("QUEUE_NAME", "support")
+# the queue's id, for the human's screen: the REST list of queues carries it
+QUEUE_ID = os.getenv("QUEUE_ID")
 
 # call_id -> what the agent learned before it handed off. The agent and the
 # human's screen are two processes (python app.py, then python app.py brief),
@@ -44,7 +46,10 @@ NOTES_PATH = Path(os.getenv("NOTES_PATH", "handoff-notes.json"))
 def save_note(call_id, note):
     notes = load_notes()
     notes[call_id] = note
-    NOTES_PATH.write_text(json.dumps(notes, indent=2), encoding="utf-8")
+    # write whole, then swap in: a reader never sees a half-written file
+    tmp = NOTES_PATH.with_suffix(".tmp")
+    tmp.write_text(json.dumps(notes, indent=2), encoding="utf-8")
+    os.replace(tmp, NOTES_PATH)
 
 
 def load_notes():
@@ -97,16 +102,11 @@ class TriageAgent(AgentBase):
         return result
 
 
-def find_queue(name=QUEUE):
-    """The queue's id, by its friendly name, from the documented list."""
-    for queue in client.queues.list().get("data", []):
-        if queue.get("friendly_name") == name:
-            return queue["id"]
-    raise LookupError(f"no queue named {name}")
-
-
-def brief(queue_id):
+def brief(queue_id=None):
     """What the human's screen shows: the next caller and the agent's notes."""
+    queue_id = queue_id or QUEUE_ID
+    if not queue_id:
+        raise SystemExit("QUEUE_ID is required for brief; see .env.example")
     member = client.queues.get_next_member(queue_id)
     call_id = member["call_id"]
     return {"call_id": call_id, "position": member.get("position"),
@@ -128,6 +128,9 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) == 2 and sys.argv[1] == "brief":
-        print(json.dumps(brief(find_queue()), indent=2))
+        print(json.dumps(brief(), indent=2))
+    elif len(sys.argv) == 2 and sys.argv[1] == "take":
+        # the human's document, served behind the same basic-auth pair
+        take().serve(port=int(os.getenv("TAKE_PORT", "3001")))
     else:
         agent.run()
