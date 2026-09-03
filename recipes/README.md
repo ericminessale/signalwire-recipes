@@ -117,7 +117,7 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Receive calls in the browser](receive-calls-in-the-browser/) | A subscriber is a Fabric resource with an address of its own, and a subscriber token is what a browser registers with. A SWML connect to that address is the document that sends a call to the registered browser. | Python, TypeScript |
 | [Record a call](record-a-call/) | Start a recording and pick it up from the completion webhook. | Python, Markup |
 | [Reduce background noise on a call](reduce-background-noise-on-a-call/) | denoise switches noise reduction on for a leg and stop_denoise switches it off, in SWML or mid-call over REST as calling.denoise and calling.denoise.stop. | Markup, Python |
-| [Register a SIP endpoint and receive calls](register-a-sip-endpoint-and-receive-calls/) | A subscriber's SIP credential is a username and password any softphone registers with, created with one POST. A SWML connect to the subscriber's Fabric address is the document that rings it. | Python |
+| [Register a SIP endpoint and receive calls](register-a-sip-endpoint-and-receive-calls/) | A subscriber's SIP credential is a username and password a softphone registers with, created with one POST. A SWML connect to the subscriber's Fabric address is the document that sends a call to it. | Python |
 | [Send DTMF to someone else's IVR](send-dtmf-to-an-external-ivr/) | Drive another company's phone tree from your own code. | Python |
 | [Stream call audio to your own server](stream-call-audio-to-your-own-server/) | tap sends a copy of a call's audio to a WebSocket or RTP destination of yours, and stop_tap ends it by control id. The same pair exists mid-call over REST as calling.tap and calling.tap.stop. | Markup, Python |
 | [Take a voicemail](take-a-voicemail/) | When the bridge to the owner does not happen, connect's failed branch plays a prompt and record takes the message in the foreground. Recording events, with the download URL, go to status_url. | Markup, Python |
@@ -187,7 +187,7 @@ SMS, MMS, and chat on the same agent.
 | [Handle opt-outs yourself](handle-opt-outs-yourself/) | Your webhook handler records a STOP from the inbound message webhook and confirms it with a send_sms document. Every later send checks that record before it makes a request, so a refused send is never a request. The handler accepts the webhook only with SignalWire's signature over it. | Python |
 | [Redact a message body after sending](redact-a-message-body-after-sending/) | One PATCH with body "" clears a sent message's stored body in SignalWire's records. The empty string is the only value the spec accepts, and only a message in a terminal state is eligible. | Python |
 | [Register a 10DLC brand and campaign](register-a-10dlc-brand-and-campaign/) | A brand and campaign are registered over REST, numbers are assigned to the campaign, and the status webhook reports carrier approval. | Python |
-| [Send a batch within your rate limit](send-a-batch-within-your-rate-limit/) | A batch goes out one message per interval for the number type's documented rate, and a batch bigger than the documented backlog is refused before any request. Nothing is sent faster than the platform would deliver it. | Python |
+| [Send a batch within your rate limit](send-a-batch-within-your-rate-limit/) | A batch goes out one message per interval for the number type's documented rate. Requests start at the published nominal interval; what the platform then delivers, and when, is its side. | Python |
 
 ### Routing & queueing
 

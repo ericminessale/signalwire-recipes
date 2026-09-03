@@ -1,19 +1,19 @@
 """Prove the claim without a network.
 
 Claim: a batch goes out one message per interval for the number type's
-documented rate, and a batch bigger than the documented backlog is refused
-before any request.
+documented rate. Requests start at the published nominal interval; delivery
+is the platform's side.
 
-Proof: with the HTTP layer replaced by a recorder and the clock and sleep
-replaced by a fake clock that advances only when the pacer sleeps, ten
-messages at the 10DLC rate of 4 per second make ten POSTs to the documented
-messages path, each with exactly `to`, `from` and `body`. The clock reads at
-the ten sends are 0.25 seconds apart, so the batch takes 2.25 seconds of
-fake time, and no send is early. At the toll-free rate the spacing is one
-third of a second. A batch of 10,001 recipients raises before any request, as
-does an unknown number type. The rates and the backlog are the verifier's own
-numbers, taken from the rate limits page, and must equal the app's. Expected
-values live here, not in app.py.
+Proof: the HTTP layer is a recorder, and the clock and sleep are a fake clock
+that advances only when the pacer sleeps. Ten messages at the 10DLC rate of 4
+per second make ten POSTs to the documented messages path, each with exactly
+`to`, `from` and `body`. The clock reads at the ten sends are 0.25 seconds
+apart, so the batch takes 2.25 seconds of fake time, and no send is early. At
+the toll-free rate the spacing is one third of a second. A sleep that
+overshoots, and a platform that answers slowly, never let two sends bunch up.
+An unknown number type raises before any request. The rates are the
+verifier's own numbers, taken from the rate limits page, and must equal the
+app's. Expected values live here, not in app.py.
 """
 import os
 import pathlib
@@ -35,7 +35,6 @@ import verifylib as V  # noqa: E402
 MESSAGES = "/api/messaging/messages"
 # https://signalwire.com/docs/platform/rate-limits, fetched 2026-09-02
 RATES = {"10dlc": 4, "toll-free": 3, "short-code": 10}
-BACKLOG = 10_000
 BODY = "Your bike is ready for pickup."
 
 
@@ -77,7 +76,7 @@ def main():
     V.sdk_banner()
     import app as recipe
 
-    assert recipe.LIMITS == RATES and recipe.BACKLOG == BACKLOG, (recipe.LIMITS, recipe.BACKLOG)
+    assert recipe.LIMITS == RATES, recipe.LIMITS
 
     # ten messages at 4 per second: 0.25 s apart, 2.25 s of fake time
     rec, clock, stamps, recipients, results = paced_run(recipe, "10dlc", 10)
@@ -117,13 +116,31 @@ def main():
     gaps = [round(b - a, 4) for a, b in zip(stamps, stamps[1:])]
     assert gaps == [0.3333] * 3, gaps
 
-    # too big for the backlog, or an unknown type: refused before any request
+    # a platform that answers slowly: the next send follows the answer, and
+    # the pacer never bunches sends up to catch up (sol r1)
+    slow = FakeClock()
+    rec4 = V.Recorder(responses=[{"id": f"m{i}", "status": "queued"} for i in range(5)])
+    stamps4 = []
+    real_post4 = rec4.post
+
+    def slow_post(path, body=None, params=None):
+        stamps4.append(slow.now)
+        slow.now += 0.4                     # the request itself takes longer than the interval
+        return real_post4(path, body, params)
+
+    rec4.post = slow_post
+    recipe.http = rec4
+    recipe.send_batch([f"+1555030{i:04d}" for i in range(5)], BODY, "10dlc",
+                      clock=slow.clock, sleep=slow.sleep)
+    gaps4 = [round(b - a, 6) for a, b in zip(stamps4, stamps4[1:])]
+    assert gaps4 == [0.4] * 4, gaps4
+    assert slow.sleeps == [], slow.sleeps    # nothing to wait for; nothing to catch up either
+
+    # an unknown type: refused before any request
     rec = V.Recorder()
     recipe.http = rec
-    for kwargs, fragment in (({"recipients": ["+15550100000"] * (BACKLOG + 1), "number_type": "10dlc"},
-                              "10001 messages exceed the 10000-message backlog"),
-                             ({"recipients": ["+15550100000"], "number_type": "pager"},
-                              "number_type must be one of")):
+    for kwargs, fragment in (({"recipients": ["+15550100000"], "number_type": "pager"},
+                              "number_type must be one of"),):
         try:
             recipe.send_batch(kwargs["recipients"], BODY, kwargs["number_type"],
                               clock=lambda: 0.0, sleep=lambda s: None)

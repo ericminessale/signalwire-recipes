@@ -2,7 +2,7 @@
   "slug": "send-a-batch-within-your-rate-limit",
   "title": "Send a batch within your rate limit",
   "alias": "one POST per interval at the documented MPS",
-  "summary": "A batch goes out one message per interval for the number type's documented rate, and a batch bigger than the documented backlog is refused before any request. Nothing is sent faster than the platform would deliver it.",
+  "summary": "A batch goes out one message per interval for the number type's documented rate. Requests start at the published nominal interval; what the platform then delivers, and when, is its side.",
   "scenario": "A bike shop texting two hundred customers that the spring service special is on, from one 10DLC number",
   "surfaces": [
     "python"

@@ -1,16 +1,16 @@
 """Prove the claim without a network.
 
-Claim: a subscriber's SIP credential is a username and password any softphone
+Claim: a subscriber's SIP credential is a username and password a softphone
 registers with, created with one POST. A SWML `connect` to the subscriber's
-Fabric address is the document that rings it.
+Fabric address is the document that sends a call to it.
 
 Proof: with the HTTP layer replaced by a recorder, `create_subscriber` makes
-one POST to the documented subscribers path and one GET of its addresses, and
+one POST to the documented subscribers path and one GET of its addresses.
 `add_sip_credential` makes one POST to the documented subscriber SIP endpoints
 path with exactly `username`, `password` and `caller_id`. The spec requires
-exactly `username` and `password` there, documents the other fields the
-recipe leaves out, and documents the response. The password comes from the
-environment, and a missing one stops the call before any request. The
+exactly `username` and `password` there. It documents the other fields the
+recipe leaves out, and the response. The password is read from the environment
+inside the function, and a missing one stops the call before any request. The
 document validates, contains answer, connect, hangup, and its `connect.to` is
 the address; the bundled schema lists a Call Fabric Resource address among the
 forms `connect.to` takes. Expected values live here, not in app.py.
@@ -81,7 +81,11 @@ def main():
 
     # no password, no request
     try:
-        recipe.add_sip_credential(resource_id, password=None)
+        saved = os.environ.pop("SIP_PASSWORD")
+        try:
+            recipe.add_sip_credential(resource_id)
+        finally:
+            os.environ["SIP_PASSWORD"] = saved
     except SystemExit as e:
         assert "SIP_PASSWORD" in str(e), str(e)
     else:

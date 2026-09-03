@@ -4,13 +4,13 @@ The rate limits page (https://signalwire.com/docs/platform/rate-limits) gives
 messaging throughput per number type: "4 MPS" for 10DLC, "3 messages per
 second (MPS)" for toll-free, "10 MPS" for short codes, and a backlog of
 "10,000 queued messages". Past the rate, SignalWire queues messages in the
-order received; once the backlog is full, "SignalWire will stop adding to the
+order received. Once the backlog is full, "SignalWire will stop adding to the
 Messaging queue". So a batch that sends faster than its number's rate is not
-faster, it is queued, and a batch bigger than the backlog loses its tail.
+faster, it is queued, and a burst that fills the queue loses what did not fit.
 
-This pacer sends one message per interval for the number type and refuses a
-batch the backlog could not hold. The clock and the sleep are arguments, so
-the verifier can run it in no time at all.
+This pacer sends one message per interval for the number type, so the queue
+never builds. The clock and the sleep are arguments, so the verifier can run
+it in no time at all.
 
 Written against signalwire-sdk 3.0.1 (RestClient). The 3.0.1 client has no
 messaging namespace, so the send goes through the HTTP client every namespace
@@ -37,22 +37,16 @@ NUMBER_TYPE = os.getenv("NUMBER_TYPE", "10dlc")
 
 # messages per second, from the rate limits page
 LIMITS = {"10dlc": 4, "toll-free": 3, "short-code": 10}
-# the platform's queue depth, from the same page
-BACKLOG = 10_000
 
 
 def send_batch(recipients, body, number_type=NUMBER_TYPE,
                clock=time.monotonic, sleep=time.sleep):
     """One message per recipient, no faster than the number type's rate.
 
-    Refuses a batch the backlog could not hold before sending anything. Returns
-    the platform's response for each message, in order."""
+    Returns the platform's response for each message, in order."""
     if number_type not in LIMITS:
         raise ValueError(f"number_type must be one of {sorted(LIMITS)}, "
                          f"not {number_type!r}")
-    if len(recipients) > BACKLOG:
-        raise ValueError(f"{len(recipients)} messages exceed the {BACKLOG}-message "
-                         f"backlog; split the batch")
     interval = 1 / LIMITS[number_type]
     results = []
     next_at = clock()

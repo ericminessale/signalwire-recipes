@@ -1,21 +1,22 @@
 # Register a SIP endpoint and receive calls
 
-> A subscriber's SIP credential is a username and password any softphone registers with, created with one POST. A SWML `connect` to the subscriber's Fabric address is the document that rings it.
+> A subscriber's SIP credential is a username and password a softphone registers with, created with one POST. A SWML `connect` to the subscriber's Fabric address is the document that sends a call to it.
 
 **Scenario:** a shop that wants the workshop's desk phone on a SIP softphone, reached from the main number
 
 ## What this demonstrates
 
 The vendored REST spec's
-`POST /api/fabric/resources/subscribers/{id}/sip_endpoints` "Create Subscriber
-SIP credential" requires exactly `username` and `password`. It also takes
+`POST /api/fabric/resources/subscribers/{fabric_subscriber_id}/sip_endpoints`
+"Create Subscriber SIP credential" requires exactly `username` and `password`. It also takes
 `caller_id`, `send_as`, `ciphers`, `codecs` and `encryption`, whose values are
 `required`, `optional` or `default`. The subscriber it hangs off is one
 `POST /api/fabric/resources/subscribers` with an `email`, and
 `GET /api/fabric/resources/{id}/addresses` lists the subscriber's Fabric
 address. The bundled schema lists a "Call Fabric Resource address" among the
 forms `connect.to` takes. A document that connects to that address therefore
-rings whatever registered with the credential. You reach the REST calls as
+sends a call to whatever registered with the credential. Whether it rings is
+the platform's side of a live call. You reach the REST calls as
 `client.fabric.subscribers.create`, `list_addresses` and `create_sip_endpoint`.
 
 ## How it works
@@ -55,8 +56,8 @@ And the document a number runs, with the address from the listing:
   {"answer": {}}, {"connect": {"to": "/private/workshop", "timeout": 30}}, {"hangup": {}}]}}
 ```
 
-The password comes from the environment and nowhere else, and a missing one
-stops the call before any request. The recipe leaves `ciphers`, `codecs` and
+The function reads the password from `SIP_PASSWORD` when it runs, and a missing
+one stops the call before any request. The recipe leaves `ciphers`, `codecs` and
 `encryption` at the platform's defaults; set them when your softphone needs a
 particular one.
 

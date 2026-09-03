@@ -1,14 +1,14 @@
 """Register a SIP endpoint and receive calls.
 
-A subscriber's SIP credential is a username and password any softphone
+A subscriber's SIP credential is a username and password a softphone
 registers with. The vendored REST spec's
-`POST /api/fabric/resources/subscribers/{id}/sip_endpoints` requires exactly
-those two fields and takes `caller_id`, `send_as`, `ciphers`, `codecs` and
-`encryption`. The subscriber itself is one
+`POST /api/fabric/resources/subscribers/{fabric_subscriber_id}/sip_endpoints`
+requires exactly those two fields and takes `caller_id`, `send_as`, `ciphers`,
+`codecs` and `encryption`. The subscriber itself is one
 `POST /api/fabric/resources/subscribers` with an `email`, and
 `GET /api/fabric/resources/{id}/addresses` lists its Fabric address. A SWML
-`connect` whose `to` is that address rings whatever registered with the
-credential; the bundled schema lists a "Call Fabric Resource address" among
+`connect` whose `to` is that address sends a call to whatever registered with
+the credential. The bundled schema lists a "Call Fabric Resource address" among
 the forms `connect.to` takes.
 
 Written against signalwire-sdk 3.0.1 (RestClient.fabric.subscribers,
@@ -29,7 +29,6 @@ client = RestClient()
 
 EMAIL = os.getenv("SUBSCRIBER_EMAIL", "workshop@ridgeline.example")
 SIP_USERNAME = os.getenv("SIP_USERNAME", "workshop-desk")
-SIP_PASSWORD = os.getenv("SIP_PASSWORD")
 CALLER_ID = os.getenv("SIP_CALLER_ID", "+15550001111")
 
 
@@ -42,10 +41,11 @@ def create_subscriber(email=EMAIL):
     return resource["id"], addresses[0]["name"]
 
 
-def add_sip_credential(subscriber_id, username=SIP_USERNAME, password=SIP_PASSWORD,
-                       caller_id=CALLER_ID):
+def add_sip_credential(subscriber_id, username=SIP_USERNAME, caller_id=CALLER_ID):
     """What the softphone registers with. `username` and `password` are the
-    spec's two required fields; the password never comes from code."""
+    spec's two required fields; the password is read from the environment here
+    and is not a parameter, so no caller can pass one in."""
+    password = os.getenv("SIP_PASSWORD")
     if not password:
         raise SystemExit("SIP_PASSWORD is required; see .env.example")
     return client.fabric.subscribers.create_sip_endpoint(
