@@ -39,3 +39,7 @@ handoff-notes.json
 
 # the tenant provisioning recipe: a local store holding live tenant tokens
 tenants.json
+
+# a research agent unpacked an npm tarball here once
+package/
+*.tgz
