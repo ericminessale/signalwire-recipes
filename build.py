@@ -98,6 +98,74 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .wrap{max-width:1560px;margin:0 auto;
   padding:0 max(32px,env(safe-area-inset-right)) 120px max(32px,env(safe-area-inset-left));}
 
+/* SignalWire.com shell. The utility row scrolls away; the primary bar stays. */
+.sw-utility{max-width:1560px;height:42px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;justify-content:flex-end;gap:28px;
+  color:var(--fg-muted);font-size:12px;}
+.sw-utility a:hover,.sw-nav a:hover,.sw-footer a:hover{color:#fff;}
+.sw-global{position:sticky;top:0;z-index:80;padding:0 32px 14px;
+  background:linear-gradient(to bottom,var(--page) 0,var(--page) 78%,transparent 100%);}
+.sw-global-in{position:relative;max-width:1560px;min-height:58px;margin:0 auto;
+  padding:0 18px;display:flex;align-items:center;gap:28px;background:#17171b;
+  border:1px solid var(--line-2);border-radius:var(--r-md);box-shadow:var(--lip);}
+.sw-home{display:inline-flex;align-items:center;flex:none;}
+.sw-home .lg,.sw-foot-brand .lg{display:block;width:auto;height:23px;}
+.sw-nav{display:flex;align-items:center;justify-content:center;gap:26px;
+  margin-left:auto;font-size:12.5px;color:var(--fg-muted);}
+.sw-cta{display:inline-flex;align-items:center;gap:10px;margin-left:auto;
+  padding:9px 17px;border-radius:var(--r-md);background:var(--fuchsia);color:#fff;
+  font-size:12.5px;font-weight:600;white-space:nowrap;}
+.sw-cta:hover{background:#ff3f81;color:#fff;}
+.sw-cta:focus-visible,.sw-home:focus-visible,.sw-nav a:focus-visible,
+.sw-menu a:focus-visible,.sw-footer a:focus-visible{outline:2px solid var(--fuchsia);
+  outline-offset:3px;border-radius:var(--r-sm);}
+.sw-menu{display:none;margin-left:auto;}
+.sw-menu summary{width:42px;height:42px;display:grid;place-items:center;cursor:pointer;
+  list-style:none;border-radius:var(--r-md);color:#fff;}
+.sw-menu summary::-webkit-details-marker{display:none;}
+.sw-menu summary::before{content:"";width:18px;height:12px;border-block:2px solid currentColor;
+  box-shadow:inset 0 5px 0 -3px currentColor;}
+.sw-menu[open] summary{background:rgba(255,255,255,.06);}
+.sw-mobile-nav{position:absolute;top:calc(100% + 9px);right:0;width:min(320px,calc(100vw - 32px));
+  padding:12px;display:grid;background:#17171b;border:1px solid var(--line-2);
+  border-radius:var(--r-lg);box-shadow:var(--lift);}
+.sw-mobile-nav a{padding:10px 12px;border-radius:var(--r-sm);font-size:13px;color:var(--fg-2);}
+.sw-mobile-cta{margin-top:7px;text-align:center;background:var(--fuchsia);color:#fff;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.sw-footer{border-top:1px solid var(--line);background:#0d0d11;}
+.sw-footer-in{max-width:1560px;margin:0 auto;padding:70px 32px 28px;}
+.sw-foot-grid{display:grid;grid-template-columns:minmax(210px,1.45fr) repeat(5,minmax(110px,1fr));
+  gap:34px;}
+.sw-foot-brand p{max-width:25ch;margin:20px 0 0;color:var(--fg-muted);font-size:13px;line-height:1.7;}
+.sw-cert{display:block;margin-top:16px;color:var(--fg-subtle);font-size:11px;}
+.sw-foot-col h2{font-family:var(--head);font-size:13px;font-weight:600;letter-spacing:0;}
+.sw-foot-col nav{display:grid;gap:9px;margin-top:16px;}
+.sw-foot-col a{color:var(--fg-muted);font-size:12px;line-height:1.45;}
+.sw-foot-bottom{display:flex;align-items:center;gap:28px;margin-top:54px;padding-top:24px;
+  border-top:1px solid var(--line);color:var(--fg-subtle);font-size:10.5px;}
+.sw-foot-bottom a{color:var(--fg-subtle);}
+.sw-status{display:inline-flex;align-items:center;gap:8px;color:var(--fg-2);}
+.sw-status::before{content:"";width:7px;height:7px;border-radius:50%;background:#38d996;}
+
+@media (max-width:1000px){
+  .sw-nav,.sw-global>.sw-global-in>.sw-cta{display:none;}
+  .sw-menu{display:block;}
+  .sw-foot-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .sw-foot-brand{grid-column:1/-1;margin-bottom:12px;}
+}
+@media (max-width:600px){
+  .sw-utility{display:none;}
+  .sw-global{padding:10px 16px 12px;}
+  .sw-global-in{min-height:54px;padding:0 13px;}
+  .sw-home .lg{height:20px;}
+  .sw-footer-in{padding:50px 20px 24px;}
+  .sw-foot-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 24px;}
+  .sw-foot-bottom{align-items:flex-start;flex-wrap:wrap;gap:12px 20px;margin-top:42px;}
+  .sw-status{flex-basis:100%;}
+}
+
 /* hero, centred like the site's section heads */
 .hero{padding:76px 0 0;text-align:center;}
 .eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.16em;
@@ -118,7 +186,7 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .btn:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;}
 
 /* sticky filter strip */
-.controls{position:sticky;top:0;z-index:50;background:var(--page);
+.controls{position:sticky;top:72px;z-index:50;background:var(--page);
   border-bottom:1px solid var(--line);margin-top:58px;padding:14px 0;
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 #q{flex:1 1 15rem;min-width:11rem;background:var(--surface);color:var(--fg);
@@ -1260,6 +1328,108 @@ def load():
 LOGO = '<svg class="lg" viewBox="0 0 3804 825" aria-label="SignalWire"><path fill="#044ef4" d="M18.93 247.67C126.99 139.86 194.19 72.93 244.29 22.79Q254.73 12.33 268.2 6.71C284.47-.09 303.67 1.72 319.64 8.86C340.08 18.02 352.21 38.14 355.3 59.78c2.35 16.46-2.27 31.84-12.15 44.99q-2.9 3.86-10.63 11.66C258.58 191.04 180.32 268.66 109.87 337.87C88.91 358.47 58.5 363.09 32.96 348.7 10.51 336.04-.28 312.08.43 286.94.84 272.18 8.63 257.94 18.93 247.67Z"/><path fill="#f72a72" d="M665.26 449.81a.38.38 0 0 1-.33.61q-5.28-.39-9.67-.42c-21.47-.15-39.61 7.25-55.81 20.72q-4.62 3.84-14.06 13.94-14.09 15.07-32.69 32.81a.68.67 46.5 0 1-.96-.03q-.01-.02-2.83-2.79Q519.79 486.07 386.1 351.94q-9.76-9.79-12.89-14c-14.21-19.16-16.05-41.29-7.18-63.16q10.26-25.32 35.72-34.76c18.5-6.86 39.07-6.38 56.23 4.06q5.49 3.34 18.82 16.62Q619.85 403.22 662.07 445.95q.86.88 3.19 3.86Z"/><path fill="#f72a72" d="M52.59 370.92q3.38-.04 10.99-.25c16.25-.44 31.01-4.43 44.34-13.44q7.74-5.23 19.06-17.17 4.85-5.12 36.52-37.15a.55.55 0 0 1 .71-.06q2.76 2.01 9.24 8.48 94.27 94.2 160.71 160.72 7.6 7.6 11.85 14.08c11.97 18.22 13.81 40.35 4.98 60.87q-9.39 22.76-31.9 32.22c-18.98 7.97-40.82 8.52-58.7-2.18q-5.47-3.27-17.87-15.65Q128.29 448.23 52.34 371.53a.36.36 0 0 1 .25-.61Z"/><path fill="#044ef4" d="M510.7 577.7q45.26-44.89 96.59-95.41c25.64-25.23 63.88-24.74 90.15-.56q18.78 17.28 18.84 43.01c.04 18.39-5.51 35.18-18.57 48.22Q563.93 706.56 471.73 798.23q-11.12 11.05-26.46 16.48c-38.94 13.8-80.08-14.59-83.94-54.69c-1.87-19.32 5.41-38.1 19.11-52.09Q415.71 671.9 510.7 577.7Z"/><path fill="#fff" d="M960.39 446.64c3.15 5.6 6.52 12.5 10.1 17.7c23.44 34.02 62.95 51.01 103.48 44.09 19.88-3.39 39.82-12.72 49.83-30.59q7.03-12.55 7.43-29 .53-21.78-13.99-37.62-7.2-7.86-23.38-16.91c-25.46-14.23-49.86-24.54-79.55-37.12-11.8-5-27.46-12.12-37.54-17.96q-17.7-10.26-28.74-22.23-20.05-21.74-25.06-51.22c-6.98-41.03 2.74-83.4 34.13-112.11c20.59-18.84 46.37-28.85 74.15-32.68 51.58-7.1 96.22 9.63 133.51 44.51q6.12 5.72 10.94 12.38a.64.63 50.8 0 1-.08.84l-46.34 42.35a.75.75 0 0 1-1.08-.06c-26.9-31.1-60.5-45.81-101.75-34.37-33.86 9.39-49.63 46.92-30.45 76.9c8.7 13.61 25.7 24.03 40.76 31.46 34.23 16.88 68.78 27.65 97.48 43.48c25.61 14.13 46.5 35.09 56.58 62.64 18.14 49.58 7.48 104.38-33.28 139.58c-21.62 18.68-48.41 29.13-76.98 32.4-41.14 4.72-81.88-1.28-116.65-23.25q-25.06-15.83-45.67-42.18c-5.89-7.53-11.51-17.8-16.2-25.76a.36.36 0 0 1 .12-.49l57.23-35.04a.72.71-30.2 0 1 1 .26Z"/><circle fill="#fff" cx="1281.63" cy="159.44" r="40.07"/><circle fill="#fff" cx="3203.24" cy="159.48" r="40.08"/><rect fill="#fff" x="2411.92" y="125.9" width="64" height="442.06" rx=".62"/><path fill="#fff" d="M3000.98 568a.61.59-81.4 0 1-.57.43h-75.36a.36.36 0 0 1-.35-.27l-99.38-356.08a1.48 1.48 0 0 0-2.85 0l-98.14 355.79a.44.44 0 0 1-.42.32h-75.44a.58.58 0 0 1-.56-.42L2516.73 126.49a.43.43 0 0 1 .41-.56h71.1a.82.81 81.9 0 1 .78.59l97.69 332.36a1.25 1.25 0 0 0 2.4-.02l94.25-332.59a.5.5 0 0 1 .48-.37h79.88a.77.77 0 0 1 .74.56l95.09 331.47a1.54 1.54 0 0 0 2.96.01l97.45-331.57a.66.66 0 0 1 .63-.47h70.79a.31.31 0 0 1 .3.4L3000.98 568Z"/><path fill="#fff" d="M1923.39 567.55q-.11-78.78-.03-182.53 .01-7.92-2.97-18.43c-5.86-20.62-21.62-34.85-42.8-38.33-34.61-5.7-65.04 14.17-70.31 49.65q-.71 4.78-.74 16.72-.14 69.6-.04 172.72a.58.58 0 0 1-.58.58h-63.86a.34.34 0 0 1-.34-.34V274.34a.47.47 0 0 1 .47-.47h63.67a.41.4-90 0 1 .4.41v21.29a.44.44 0 0 0 .68.36q11.25-7.6 15.34-10.37 12.85-8.69 28.78-13.93c33.51-11.05 69.24-2.55 97.25 18.31c27.03 20.12 39.97 49.98 40.44 83.31.78 54.7.61 104.95.34 190.01q-.01 1.03-.55 4.47a.66.65-85.3 0 1-.64.55h-63.78a.73.73 0 0 1-.73-.73Z"/><path fill="#fff" d="M3779.14 492.97a.68.68 0 0 1 .37.9c-24.13 56.01-86.6 84.75-145.08 80.76-37.88-2.59-73.01-15.76-100.4-42.07c-44.27-42.51-57.25-106.7-37.05-163.87 14.31-40.53 43.73-72.12 83.22-88.95c33.03-14.07 72.3-16.17 106.68-7.08 70.37 18.59 116.11 87.8 108.25 159.68a.53.53 0 0 1-.53.47h-237.15a.61.59-86.1 0 0-.59.53c-1.35 10.6 1.42 22.1 6.15 31.34q17.33 33.95 51.37 46.34c44 16.01 83.15-5.05 110.45-39.08a.73.72-59.8 0 1 .84-.23l53.47 21.26ZM3722 381.39c-7.73-35.69-45.03-56.53-79.02-56.44c-36.03.1-68.65 21.71-80.38 56.19a.52.51 9.3 0 0 .49.68h158.56a.36.35-6.4 0 0 .35-.43Z"/><path fill="#fff" d="M1612.18 540.9a.23.23 0 0 0-.37-.14c-50.69 40.47-117.4 44.93-172.95 12.9q-30.88-17.81-49.37-47.1c-40.34-63.92-31.02-150.48 25.96-201.44 37.26-33.33 91.07-45.62 139.09-32.27q32.81 9.12 58.75 31.31a.35.34 20.2 0 0 .57-.26v-29.33a.54.54 0 0 1 .54-.54h65.35a.56.56 0 0 1 .56.56q.12 193.45-.08 293.13-.06 28-11.2 56.1c-17.72 44.7-55.44 78.55-101.92 91.23-69.03 18.82-149.45-9.14-188.28-70.38a.84.83-37.1 0 1 .15-1.06l43.99-38.91a.53.53 0 0 1 .8.12c21.22 33.44 53.61 55.69 93.93 56.71 21.03.53 39.7-5.27 56.94-17.11c21.06-14.46 34.12-35.32 37.88-60.47q3.13-20.95-.34-43.06ZM1613.83 420.99a91.72 91.72 0 0 0-91.72-91.72 91.72 91.72 0 0 0-91.72 91.72a91.72 91.72 0 0 0 91.72 91.72 91.72 91.72 0 0 0 91.72-91.72Z"/><path fill="#fff" d="M2283.91 567.65v-34.67a.33.33 0 0 0-.56-.23c-26.5 26.86-60.21 42.26-98.35 42.05-37.01-.21-70.66-11.91-98.08-37.21c-57.54-53.08-67.12-140.42-24-205.45 8.61-13 19.19-24.83 31.95-34.38c43.12-32.26 101.65-40.32 150.69-16.35q20.53 10.04 37.26 25.86a.34.34 0 0 0 .57-.25v-32.4a.59.58 0 0 1 .59-.58h64.85a.74.74 0 0 1 .74.74v292.91a.59.59 0 0 1-.59.59h-64.43a.64.63 0 0 1-.64-.63ZM2101.79 418.15a91.85 91.67-178.2 0 0 88.92 94.51 91.85 91.67-178.2 0 0 94.69-88.74a91.85 91.67-178.2 0 0-88.93-94.51 91.85 91.67-178.2 0 0-94.68 88.74Z"/><path fill="#fff" d="M3364.06 316.07a.25.25 0 0 0 .46.14q5.41-7.82 10.03-14.15c20.14-27.58 52.15-40.62 85.63-31q2.89.83 5.73 2.54a.41.41 0 0 1 .2.35v56.88a.51.51 0 0 1-.53.51c-9.19-.28-21-1.01-29.26-.73c-38.7 1.28-64.56 29.5-70.45 66.84q-1.12 7.06-1.24 21.19c-.31 35.17-.24 74.64-.15 148.75a.61.61 0 0 1-.61.61h-63.97a.25.25 0 0 1-.25-.25V274.38a.48.47 0 0 1 .48-.47h63.28a.65.65 0 0 1 .65.65v41.51Z"/><rect fill="#fff" x="1249.36" y="273.86" width="64.6" height="294.26" rx=".42"/><rect fill="#fff" x="3171.11" y="273.94" width="64.7" height="294.22" rx=".66"/></svg>'
 
 
+SW_PRIMARY_NAV = (
+    ("Platform", "https://signalwire.com/platform/programmable-unified-communications"),
+    ("Solutions", "https://signalwire.com/use-case"),
+    ("Learn", "https://signalwire.com/resources"),
+    ("Pricing", "https://signalwire.com/pricing"),
+    ("About", "https://signalwire.com/about-us"),
+    ("Developers", "https://signalwire.com/developers"),
+)
+
+SW_FOOTER_NAV = (
+    ("Solutions", (
+        ("Contact Center", "https://signalwire.com/use-case/contact-center"),
+        ("Customer Notifications", "https://signalwire.com/use-case/customer-notifications"),
+        ("IVR & Call Routing", "https://signalwire.com/use-case/ivr-call-routing"),
+        ("Voice AI Agents", "https://signalwire.com/use-case/voice-ai-agents"),
+        ("View all →", "https://signalwire.com/use-case"),
+    )),
+    ("Compare", (
+        ("LiveKit", "https://signalwire.com/compare/livekit-alternative"),
+        ("Plivo", "https://signalwire.com/compare/plivo-alternative"),
+        ("Telnyx", "https://signalwire.com/compare/telnyx-alternative"),
+        ("Twilio", "https://signalwire.com/compare/twilio-alternative"),
+    )),
+    ("Developers", (
+        ("Dev Docs", "https://signalwire.com/docs"),
+        ("Discord", "https://discord.com/invite/F2WNYTNjuF"),
+        ("FreeSWITCH", "https://signalwire.com/developers/freeswitch"),
+        ("GitHub", "https://github.com/signalwire"),
+        ("Status Page", "https://signalwire.trust.pagerduty.com/posts/dashboard"),
+    )),
+    ("Learn", (
+        ("Blog", "https://signalwire.com/blog"),
+        ("Guides", "https://signalwire.com/resources?content-type=guides"),
+        ("Customer Stories", "https://signalwire.com/resources?content-type=customer-stories"),
+        ("Events", "https://signalwire.com/resources?content-type=events"),
+        ("Webinars", "https://signalwire.com/resources?content-type=webinars"),
+        ("Podcasts", "https://signalwire.com/resources?content-type=podcasts"),
+        ("View all →", "https://signalwire.com/resources"),
+    )),
+    ("About", (
+        ("About Us", "https://signalwire.com/about-us"),
+        ("Careers", "https://signalwire.com/careers"),
+        ("Contact Us", "https://signalwire.com/contact"),
+        ("Legal", "https://signalwire.com/legal"),
+        ("Why SignalWire?", "https://signalwire.com/why-signalwire"),
+    )),
+)
+
+
+def global_header():
+    primary = "".join(
+        '<a href="%s">%s</a>' % (esc(url), esc(label))
+        for label, url in SW_PRIMARY_NAV
+    )
+    return (
+        '<div class="sw-utility" aria-label="SignalWire utility links">'
+        '<a href="https://signalwire.com/search">Search</a>'
+        '<a href="https://signalwire.com/docs">Dev Docs</a>'
+        '<a href="https://signalwire.com/signin">Log In</a></div>'
+        '<header class="sw-global"><div class="sw-global-in">'
+        '<a class="sw-home" href="https://signalwire.com/" '
+        'aria-label="SignalWire home">' + LOGO + '</a>'
+        '<nav class="sw-nav" aria-label="SignalWire">' + primary + '</nav>'
+        '<a class="sw-cta" href="https://signalwire.com/signup">'
+        'Start building <span aria-hidden="true">→</span></a>'
+        '<details class="sw-menu"><summary><span class="sr-only">Open menu</span>'
+        '</summary><nav class="sw-mobile-nav" aria-label="SignalWire mobile">'
+        + primary + '<a href="https://signalwire.com/docs">Dev Docs</a>'
+        '<a href="https://signalwire.com/signin">Log In</a>'
+        '<a class="sw-mobile-cta" href="https://signalwire.com/signup">'
+        'Start building →</a>'
+        '</nav></details></div></header>'
+    )
+
+
+def global_footer():
+    columns = "".join(
+        '<section class="sw-foot-col"><h2>%s</h2><nav>%s</nav></section>'
+        % (
+            esc(title),
+            "".join(
+                '<a href="%s">%s</a>' % (esc(url), esc(label))
+                for label, url in links
+            ),
+        )
+        for title, links in SW_FOOTER_NAV
+    )
+    return (
+        '<footer class="sw-footer"><div class="sw-footer-in">'
+        '<div class="sw-foot-grid"><div class="sw-foot-brand">'
+        '<a href="https://signalwire.com/" aria-label="SignalWire home">'
+        + LOGO + '</a><p>Programmable unified communications for the AI era.</p>'
+        '<span class="sw-cert">SOC 2 Certified</span></div>' + columns + '</div>'
+        '<div class="sw-foot-bottom"><span>© 2026 SignalWire, Inc.</span>'
+        '<a href="https://m.signalwire.com/policies?doc=privacy">Privacy Policy</a>'
+        '<a href="https://info.signalwire.com/hubfs/PDFs/'
+        'SignalWire-Cloud-Agreement.pdf">Cloud Agreement</a>'
+        '<a class="sw-status" href="https://signalwire.trust.pagerduty.com/posts/dashboard">'
+        'All systems operational</a></div></div></footer>'
+    )
+
+
 def social(title, desc, path=None):
     """Open Graph and Twitter tags, so a shared link unfurls.
 
@@ -1303,7 +1473,9 @@ def page(title, body, favicon_title=None, desc=None, path=None):
         'display=swap">\n'
         "<style>" + CSS + "</style>\n"
         '<a class="skip" href="#main">Skip to content</a>\n'
-        '<div id="main">' + body + "</div>"
+        + global_header()
+        + '<main id="main">' + body + "</main>"
+        + global_footer()
     )
 
 
@@ -1605,7 +1777,7 @@ def build_index(recipes, body_only=False):
                 '<a class="btn" href="https://signalwire.com/docs">Read the docs</a>')
     body = """<div class="wrap">
 <header class="hero">
-  <p class="eyebrow">%s<span class="dot"></span>Recipes</p>
+  <p class="eyebrow">Developer resources<span class="dot"></span>Recipes</p>
   <h1>Working code for every part of a call</h1>
   <p>Clone a folder, add your credentials, and it runs. Most are under two hundred
   lines. The builds show what they look like assembled.</p>
@@ -1622,7 +1794,7 @@ def build_index(recipes, body_only=False):
 <p class="empty" id="none" hidden>Nothing matches that filter.</p>
 <p class="hint"><kbd>/</kbd> to search &middot; <kbd>Esc</kbd> to clear</p>
 </div>
-<script>%s</script>""" % (LOGO, hero_cta, chips, featured,
+<script>%s</script>""" % (hero_cta, chips, featured,
                           "".join(sections), JS)
     return body if body_only else page(
         "SignalWire Recipes", body,
@@ -1799,16 +1971,11 @@ def build_detail(r, body_only=False):
 
     out = [
         '<div class="wrap"><div class="detail%s">' % ("" if surfaces else " solo"),
-        # Every page carries the mark. The lockup is the home link, which
-        # is what a logo is for; the explicit back link stays beside it
-        # because this is documentation and people navigate it that way.
-        # The mark sits on its own line and the way back sits under it, where
-        # a breadcrumb goes. Pushed to the far right it read as detached from
-        # both the header and the page.
+        # The global shell carries the company mark. This local header names
+        # the Recipes section and keeps the documentation breadcrumb nearby.
         '<header class="shead">'
         '<a class="slock" href="../index.html" data-home '
         'aria-label="SignalWire Recipes, back to all recipes">'
-        + LOGO + '<span class="dot" aria-hidden="true"></span>'
         '<span class="sname">Recipes</span></a>'
         '<a class="sback" href="../index.html" data-home>&larr; all recipes</a>'
         + gh_cta(r)
@@ -2051,7 +2218,6 @@ def build_404():
         '<div class="wrap"><div class="detail solo">'
         '<header class="shead"><a class="slock" href="/" '
         'aria-label="SignalWire Recipes, back to all recipes">'
-        + LOGO + '<span class="dot" aria-hidden="true"></span>'
         '<span class="sname">Recipes</span></a></header>'
         '<div class="dh"><h1>No recipe at this address</h1></div>'
         '<div class="drule"></div>'
