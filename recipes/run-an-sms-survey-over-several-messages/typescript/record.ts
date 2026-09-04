@@ -70,7 +70,14 @@ const comment = inbound(fresh, "Quick service", "dup-2");
 const done = textOf(recipe.handleInbound(comment));
 // a retry of the final answer, after the survey is complete
 const doneAgain = textOf(recipe.handleInbound(comment));
-const redelivery = { first, second, again, late, done, doneAgain };
+// answer, STOP, then a late retry of the answer: silence, not the cached question
+const quiet = `${customer}3`;
+await recipe.begin(quiet);
+const earlier = inbound(quiet, "5", "late-0");
+recipe.handleInbound(earlier);
+recipe.handleInbound(inbound(quiet, "STOP"));
+const afterStop = textOf(recipe.handleInbound(earlier));
+const redelivery = { first, second, again, late, done, doneAgain, afterStop };
 
 let refusedBegin = false;
 try {

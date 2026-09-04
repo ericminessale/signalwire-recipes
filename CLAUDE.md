@@ -1853,7 +1853,11 @@ use cases the mechanism-first enumeration had not.
   repeated-YES-becomes-the-comment on the first pass and, on the second, that
   keeping one id let a late retry of the rating be stored as the comment while
   a retried final answer got silence. One id is not a dedup; the verifier
-  retries an earlier answer late and the final answer after completion.
+  retries an earlier answer late and the final answer after completion. On
+  the third pass codex caught the cache being consulted before the `stopped`
+  check, which would have texted a cached question to a number that said
+  STOP: the order is STOP words, stopped, cache, then completed. Its request
+  to migrate the one-commit `last` field was refused: no installed base.
 - **MFA has one recipe because the product is three endpoints.**
   `/mfa/sms`, `/mfa/call`, `/mfa/{id}/verify`, all used and all pinned by
   `send-an-otp-by-sms-with-voice-fallback`. A "verify a number at signup"

@@ -127,17 +127,20 @@ export function handleInbound(message: Message): Swml {
     save(state);
     return reply(STOPPED);
   }
-  const seen = record?.seen ?? {};
+  if (!record || record.stopped) {
+    // not in a survey, or out of it: nothing is sent and nothing is recorded.
+    // This runs before the cache, or a late retry of an earlier answer would
+    // text a question to a number that said STOP
+    return silence();
+  }
+  const seen = record.seen ?? {};
   if (message.message_id in seen) {
     // the webhook was delivered again, maybe late: the answer it got the first
     // time, and the state is not touched. A retried rating parsed at the
     // comment step would otherwise be stored as the comment
     return reply(seen[message.message_id]);
   }
-  if (!record || record.stopped || record.step >= QUESTIONS.length) {
-    // not in a survey: nothing is sent and nothing is recorded
-    return silence();
-  }
+  if (record.step >= QUESTIONS.length) return silence();
 
   const [key, question, kind] = QUESTIONS[record.step];
   const answer = parse(kind, message.body);

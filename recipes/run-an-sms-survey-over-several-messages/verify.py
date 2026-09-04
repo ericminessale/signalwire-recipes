@@ -151,6 +151,17 @@ def main():
     assert finished["answers"]["comment"] == "Quick service"
     assert set(finished["seen"]) == {"dup-0", "dup-1", "dup-2"}, finished["seen"]
 
+    # answer, STOP, then a late retry of the answer: silence, not the cached
+    # next question, because that number opted out in between
+    quiet = "+14155550666"
+    recipe.begin(quiet)
+    first = inbound(quiet, "5", "late-0")["message"]
+    assert text_of(recipe.handle_inbound(first)) == Q2
+    assert text_of(recipe.handle_inbound(inbound(quiet, "STOP")["message"])) == STOPPED
+    doc = recipe.handle_inbound(first)
+    assert doc["sections"]["main"] == [], doc
+    assert json.loads(STATE.read_text(encoding="utf-8"))[quiet]["stopped"] is True
+
     # STOP ends it, and a stopped number is refused a first question, no request
     rec2 = V.Recorder()
     recipe.http = rec2
@@ -211,7 +222,8 @@ def main():
         assert node["refusedBegin"] is True, node
         assert node["signature"] == {"forged": 403, "signed": 200}, node
         assert node["redelivery"] == {"first": Q2, "second": Q3, "again": Q3,
-                                      "late": Q2, "done": DONE, "doneAgain": DONE}, node
+                                      "late": Q2, "done": DONE, "doneAgain": DONE,
+                                      "afterStop": None}, node
         assert node["begin"] == {"noKey": 403, "wrongKey": 403, "sentAfterRefusals": 0,
                                  "withKey": 200, "sentWithKey": 1}, node
         ts_note = ("typescript runs the same turns to the same replies and state, "
@@ -225,7 +237,8 @@ def main():
           f"number and a second begin is refused with no request; the route "
           f"refuses an unsigned POST with 403 and answers a signed one; a redelivered "
           f"message gets the same reply and changes nothing, a late retry too, and a "
-          f"retried final answer gets the closing line again; /begin refuses a missing "
+          f"retried final answer gets the closing line again, while a retry after STOP "
+          f"gets silence; /begin refuses a missing "
           f"or wrong key with no request and sends with the right one; {ts_note}")
 
 

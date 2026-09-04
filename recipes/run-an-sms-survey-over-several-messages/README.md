@@ -27,6 +27,7 @@ Four things the handler does that a survey needs.
   when the retry is late or the survey is already complete. The record keeps
   every `message_id` it acted on, with the reply it gave. Without that, a
   retried rating would be parsed at the comment step and stored as the comment.
+  A retry that arrives after STOP gets silence, not the cached question.
 - `/begin` sends texts at your expense, so it is behind a key the server holds
   and your systems present as `X-Survey-Key`. The public internet gets a 403.
 
@@ -126,7 +127,7 @@ recorder, and asserts the following.
 - a text after the last question, and a text from a number not in a survey, each get an empty document and change nothing
 - STOP marks the number, a second `begin` for it raises with no request made
 - the Flask route returns 403 to an unsigned POST and 200 to one signed with the documented HMAC
-- the same `message_id` delivered twice gets the same reply and leaves the state exactly as it was, a late retry of an earlier answer does too, and a retried final answer gets the closing line again
+- the same `message_id` delivered twice gets the same reply and leaves the state exactly as it was, a late retry of an earlier answer does too, a retried final answer gets the closing line again, and a retry after STOP gets an empty document
 - `/begin` refuses a missing or wrong `X-Survey-Key` with 403 and no request, and sends with the right one
 - the TypeScript surface runs the same turns from an empty file to the same replies and state, answers a redelivered message without moving, refuses the same `begin`, and its server gates the signature and the key the same way
 

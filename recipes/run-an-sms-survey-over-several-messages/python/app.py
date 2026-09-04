@@ -127,14 +127,18 @@ def handle_inbound(message):
         state[sender] = {**(record or {"step": 0, "answers": {}}), "stopped": True}
         _save(state)
         return reply(STOPPED)
-    seen = (record or {}).get("seen", {})
+    if not record or record["stopped"]:
+        # not in a survey, or out of it: nothing is sent and nothing is
+        # recorded. This runs before the cache, or a late retry of an earlier
+        # answer would text a question to a number that said STOP
+        return silence()
+    seen = record.get("seen", {})
     if message.get("message_id") in seen:
         # the webhook was delivered again, maybe late: the answer it got the
         # first time, and the state is not touched. A retried rating parsed at
         # the comment step would otherwise be stored as the comment
         return reply(seen[message["message_id"]])
-    if not record or record["stopped"] or record["step"] >= len(QUESTIONS):
-        # not in a survey: nothing is sent and nothing is recorded
+    if record["step"] >= len(QUESTIONS):
         return silence()
 
     key, _, kind = QUESTIONS[record["step"]]
