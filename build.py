@@ -98,6 +98,10 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
 .wrap{max-width:1560px;margin:0 auto;
   padding:0 max(32px,env(safe-area-inset-right)) 120px max(32px,env(safe-area-inset-left));}
 
+/* The official logo is wrapped in an inline span. Removing its baseline gap
+   centers the visible wordmark, not merely its line box, inside the nav. */
+.fr-nav__logo>span{display:flex;align-items:center;line-height:0;}
+
 /* SignalWire.com shell. The utility row scrolls away; the primary bar stays. */
 .sw-utility{max-width:1560px;height:42px;margin:0 auto;padding:0 32px;
   display:flex;align-items:center;justify-content:flex-end;gap:28px;
@@ -704,10 +708,17 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
 .fstatus{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
   white-space:nowrap;margin:0;}
 .fplay{width:26px;height:26px;display:inline-flex;align-items:center;
-  justify-content:center;border-radius:50%;cursor:pointer;font-size:9px;
-  letter-spacing:1px;line-height:1;color:var(--accent);
+  justify-content:center;border-radius:50%;cursor:pointer;color:var(--accent);
   background:rgba(var(--accent-rgb),.09);border:1px solid rgba(var(--accent-rgb),.28);
   transition:background 130ms ease,border-color 130ms ease;}
+.fplay-icon{position:relative;display:block;width:7px;height:10px;}
+.fplay-icon::before,.fplay-icon::after{content:"";position:absolute;top:0;
+  width:2px;height:10px;border-radius:1px;background:currentColor;}
+.fplay-icon::before{left:0;}
+.fplay-icon::after{right:0;}
+.fplay.is-paused .fplay-icon::before{left:0;width:8px;border-radius:0;
+  clip-path:polygon(0 0,100% 50%,0 100%);}
+.fplay.is-paused .fplay-icon::after{display:none;}
 .fplay:hover{background:rgba(var(--accent-rgb),.17);border-color:rgba(var(--accent-rgb),.5);}
 .fplay:focus-visible{outline:2px solid var(--fuchsia);outline-offset:2px;}
 @media (prefers-reduced-motion:reduce){.ftrack{transition:none;}}
@@ -973,7 +984,7 @@ function apply(){
   }));
   playBtn&&playBtn.addEventListener('click',()=>{
     paused=!paused;
-    playBtn.textContent=paused?'\u25B6':'\u2759\u2759';
+    playBtn.classList.toggle('is-paused',paused);
     playBtn.setAttribute('aria-label',paused?'Play featured':'Pause featured');
     paused?stop():start();
   });
@@ -1452,30 +1463,110 @@ def social(title, desc, path=None):
     return "\n".join(out) + "\n"
 
 
+CHROME_FILE = ROOT / "templates" / "signalwire-chrome.html"
+CHROME_START = '<h2 class="lp-section__title">CUT HERE — START OF CONTENT</h2>'
+CHROME_END = '<h2 class="lp-section__title">CUT HERE — END OF CONTENT</h2>'
+
+
+def official_chrome(title, desc=None, path=None):
+    """Return the official SignalWire header and footer around page content.
+
+    The source file is vendored byte-for-byte from SignalWire's generated
+    chrome template. Only page-owned metadata is substituted; its styles,
+    navigation, tracking scripts, status widget, and footer remain untouched.
+    """
+    if not CHROME_FILE.exists():
+        raise SystemExit(
+            "missing templates/signalwire-chrome.html — run "
+            "python tools/update_signalwire_chrome.py"
+        )
+    source = CHROME_FILE.read_text(encoding="utf-8")
+    if source.count(CHROME_START) != 1 or source.count(CHROME_END) != 1:
+        raise SystemExit("official chrome markers are missing or ambiguous")
+    required = (
+        '<nav class="fr-nav">',
+        '<footer class="fr-foot">',
+        'fr-nav__item--has-menu',
+        'GTM-567VSN6',
+        'GTM-T23S86H',
+        'js.hs-scripts.com/47316764.js',
+        '@signalwire/status-widget@0.2.0',
+        '<sw-status',
+    )
+    missing = [value for value in required if value not in source]
+    if missing:
+        raise SystemExit(
+            "official chrome is missing required components: " + ", ".join(missing)
+        )
+
+    start_at = source.index(CHROME_START)
+    header_end = source.rfind('<section class="lp-section', 0, start_at)
+    end_at = source.index(CHROME_END)
+    footer_tag = source.index('<footer class="fr-foot">', end_at)
+    footer_start = source.rfind(
+        '<div class="lp-accent-bar"></div>', end_at, footer_tag
+    )
+    if header_end < 0 or footer_start < 0:
+        raise SystemExit("official chrome boundaries could not be located")
+
+    header = source[:header_end]
+    footer = source[footer_start:]
+    page_desc = desc or title
+
+    header, changed = re.subn(
+        r"<title>.*?</title>",
+        lambda _: "<title>%s</title>" % esc(title),
+        header,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if changed != 1:
+        raise SystemExit("official chrome has no unique title element")
+
+    for attr, key, value in (
+        ("name", "description", page_desc),
+        ("property", "og:title", title),
+        ("property", "og:description", page_desc),
+        ("name", "twitter:title", title),
+        ("name", "twitter:description", page_desc),
+    ):
+        pattern = (
+            r'(<meta\s+%s="%s"\s+content=")[^"]*(">)'
+            % (attr, re.escape(key))
+        )
+        header, changed = re.subn(
+            pattern,
+            lambda match, value=value: match.group(1) + esc(value) + match.group(2),
+            header,
+            count=1,
+        )
+        if changed != 1:
+            raise SystemExit("official chrome is missing metadata for %s" % key)
+
+    additions = []
+    if not INDEXABLE:
+        additions.append('<meta name="robots" content="noindex,nofollow">')
+    additions.append('<meta property="og:site_name" content="SignalWire Recipes">')
+    if BASE and path is not None:
+        additions.append(
+            '<meta property="og:url" content="%s">'
+            % esc(BASE.rstrip("/") + path)
+        )
+    additions.append('<meta name="theme-color" content="#0f0f12">')
+    additions.append('<style id="recipes-css">%s</style>' % CSS)
+    header = header.replace(
+        "</head>", "\n".join(additions) + "\n</head>", 1
+    )
+    return header, footer
+
+
 def page(title, body, favicon_title=None, desc=None, path=None):
+    header, footer = official_chrome(title, desc, path)
     return (
-        '<meta charset="utf-8">\n'
-        # without this every page renders at 980px on a phone and zooms out,
-        # so none of the responsive CSS applies on a real device
-        '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
-        "<title>" + esc(title) + "</title>\n"
-        # A prototype host must not become a competing source for a site whose
-        # whole point is being retrieved. robots.txt asks; this tells, and it
-        # travels with the page if the file is ever missed.
-        + ('' if INDEXABLE else
-           '<meta name="robots" content="noindex,nofollow">\n')
-        + social(title, desc, path)
-        + '<meta name="theme-color" content="#0f0f12">\n'
-        '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-        "family=Instrument+Sans:wght@400;500;600;700&family=Lexend:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&"
-        'display=swap">\n'
-        "<style>" + CSS + "</style>\n"
-        '<a class="skip" href="#main">Skip to content</a>\n'
-        + global_header()
-        + '<main id="main">' + body + "</main>"
-        + global_footer()
+        header
+        + '<a class="skip" href="#main">Skip to content</a>\n'
+        + '<main id="main">' + body + "</main>\n"
+        + footer
     )
 
 
@@ -1709,7 +1800,7 @@ def build_index(recipes, body_only=False):
         nav = ('<div class="fnav">'
                '<div class="fdots"></div>'
                '<button type="button" class="fplay" aria-label="Pause featured">'
-               '&#10073;&#10073;</button></div>')
+               '<span class="fplay-icon" aria-hidden="true"></span></button></div>')
         featured = (
             '<section class="feat" id="feat" aria-labelledby="feath">'
             '<div class="feathead"><h2 class="feath" id="feath">Featured</h2>%s</div>'
@@ -2406,7 +2497,9 @@ def build_preview(recipes):
         )
     body = "".join(parts) + "<script>%s</script><script>%s</script>" % (DETAIL_JS, PREVIEW_JS)
     html_doc = page("SignalWire Recipes - preview", body)
-    return html_doc.replace("</style>", PREVIEW_CSS + "</style>", 1)
+    return html_doc.replace(
+        "</style>\n</head>", PREVIEW_CSS + "</style>\n</head>", 1
+    )
 
 
 def main():

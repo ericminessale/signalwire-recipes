@@ -91,6 +91,7 @@ work with this code.
 |---|---|
 | `recipes/` | every recipe and build, one folder each |
 | `vocab/` | categories, task groups, surfaces and evidence types |
+| `templates/signalwire-chrome.html` | official SignalWire header, footer, tracking, and status components |
 | `tools/` | the linter, the render checks and the verification helpers |
 | `build.py` | generates the static site from the folders |
 | `verify.py` | runs every recipe's verifier |
@@ -117,6 +118,12 @@ not belong in a deploy build.
 While `indexable` is false the build writes a `robots.txt` that disallows
 everything and puts `noindex` on every page. It refuses to finish if a page
 escapes without the tag.
+
+The generated pages wrap their recipe content in SignalWire's official page
+chrome. Refresh that vendored source with
+`python tools/update_signalwire_chrome.py`; do not hand-edit it. The updater
+validates that the navigation, Google Tag Manager, HubSpot, and live status
+components are present before replacing the local copy.
 
 A live in-page demo needs an endpoint that mints Browser SDK tokens. Vercel can
 host one, which is why it is the target; the demo slot on each recipe page is
