@@ -3879,6 +3879,36 @@
         "sdk rest/namespaces/calling.py:138-140 live_translate; npm @signalwire/sdk 2.0.5 liveTranslate",
         "verified 2026-09-03: recipes/control-live-translation-on-a-call-in-progress/verify.py"
       ]
+    },
+    {
+      "slug": "run-an-sms-survey-over-several-messages",
+      "claim": "A survey advances one inbound message at a time with the state kept by the sender's number, re-asks an answer that does not fit, and ends on STOP.",
+      "kind": "recipe",
+      "status": "verified",
+      "launch": false,
+      "products": [
+        "messaging"
+      ],
+      "task_group": "routing",
+      "lens": "messaging",
+      "interfaces": [
+        "swml",
+        "rest"
+      ],
+      "capabilities": [
+        "webhooks",
+        "state",
+        "opt-out"
+      ],
+      "folds": [
+        "Eric, 2026-09-04: SMS surveys as a use case"
+      ],
+      "evidence": [
+        "tools/openapi/rest.json inbound_message_webhook payload {message, vars, params}; message.from, to, body (string or null)",
+        "tools/openapi/rest.json POST /api/messaging/messages requires to and from",
+        "docs swml/reference/messaging/reply; docs swml/guides/webhook-security",
+        "verified 2026-09-04: recipes/run-an-sms-survey-over-several-messages/verify.py"
+      ]
     }
   ],
   "_patched_round5": true

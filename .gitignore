@@ -46,3 +46,6 @@ package/
 
 # compiled output of a typescript surface
 recipes/*/typescript/dist/
+
+# the SMS survey recipe: per-number progress, a local stand-in for your table
+survey-state.json

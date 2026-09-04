@@ -4,10 +4,10 @@ Generated from `docs/enum/inventory.json` by `docs/enum/render_inventory.py`. Do
 
 ## Counts
 
-**131 rows.** By kind: recipe 109 · build 9 · guide 4 · tool 2 · hold 7.  
-By status: verified 51 · written 5 · stub 8 · proposed 60 · hold 7.  
-Recipes per public category: AI Agents 37 · Voice 53 · Messaging 10 · MFA 1 · Video 6 · Fax 2.  
-Rows per planning lens: AI Agents & Automation 44 · Voice & Call Control 41 · Messaging & Realtime Chat 15 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 7 · Fax 2.  
+**132 rows.** By kind: recipe 110 · build 9 · guide 4 · tool 2 · hold 7.  
+By status: verified 52 · written 5 · stub 8 · proposed 60 · hold 7.  
+Recipes per public category: AI Agents 37 · Voice 53 · Messaging 11 · MFA 1 · Video 6 · Fax 2.  
+Rows per planning lens: AI Agents & Automation 44 · Voice & Call Control 41 · Messaging & Realtime Chat 16 · Video & WebRTC 13 · Numbers, Identity & Trust 9 · SIP, PBX & Migration 7 · Fax 2.  
 Launch set: 19. Rows carrying a NEEDS VERIFICATION marker: 15.
 
 ## Column key
@@ -1198,7 +1198,7 @@ A TwiML application using the supported cXML subset runs on SignalWire by changi
   - platform-docs D.4: VirtualAgent deprecated; no unsupported-TwiML page found
   - NEEDS VERIFICATION: a compatibility smoke matrix over the 18 documented verbs before this can launch; VirtualAgent is deprecated and no unsupported-TwiML page exists
 
-## Messaging — 10 recipes
+## Messaging — 11 recipes
 
 #### Routing & queueing
 
@@ -1212,6 +1212,19 @@ Sends go out from a pool, and each recipient always sees the same From number.
 - evidence:
   - docs apis/rest/number-groups/create-number-group (sticky_sender)
   - sdk rest/namespaces/number_groups.py
+
+### `run-an-sms-survey-over-several-messages`
+
+A survey advances one inbound message at a time with the state kept by the sender's number, re-asks an answer that does not fit, and ends on STOP.
+
+- kind **recipe** · status **verified** · category **Messaging** (messaging) · task group **Routing & queueing** · lens Messaging & Realtime Chat
+- interfaces: swml, rest · capabilities: webhooks, state, opt-out
+- folds: Eric, 2026-09-04: SMS surveys as a use case
+- evidence:
+  - tools/openapi/rest.json inbound_message_webhook payload {message, vars, params}; message.from, to, body (string or null)
+  - tools/openapi/rest.json POST /api/messaging/messages requires to and from
+  - docs swml/reference/messaging/reply; docs swml/guides/webhook-security
+  - verified 2026-09-04: recipes/run-an-sms-survey-over-several-messages/verify.py
 
 #### Governance
 

@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-106 of 131 folders are written and verified. The rest are planned and carry a stub.
+107 of 132 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -14,7 +14,7 @@ and without a network.
 
 - [AI Agents](#ai-agents) (36)
 - [Voice](#voice) (51)
-- [Messaging](#messaging) (9)
+- [Messaging](#messaging) (10)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
 - [Fax](#fax) (2)
@@ -202,6 +202,7 @@ SMS, MMS, and chat on the same agent.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
+| [Run an SMS survey over several messages](run-an-sms-survey-over-several-messages/) | Text a customer a question, keep track of where each number is in the survey, ask the next question when a reply arrives, re-ask when it does not fit, and stop the moment they say STOP. | Python, TypeScript |
 | [Send from a number group with sticky sender](send-from-a-number-group-with-sticky-sender/) | When you create a number group with sticky_sender: true, the platform picks From numbers out of that pool and holds one per recipient. A compat send names the group as MessagingServiceSid and carries no From. | Python |
 
 ### Tools & integrations
