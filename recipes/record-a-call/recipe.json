@@ -15,27 +15,8 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "extract",
-  "tier": "launch",
   "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:record-phone-calls"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/record-call",
-      "docs apis/rest/calls/call-commands (calling.record)",
-      "sdk agent_base.py:121 record_call=True",
-      "demo veronica veronica.py:186-191 record_call in the constructor",
-      "demo pathfinder agent.py:224-235 add_post_answer_verb(record_call) with %{call.id} in status_url",
-      "verified 2026-08-25: recipes/record-a-call/verify.py (schema-validated SWML, both surfaces)"
-    ]
-  },
   "prerequisites": [
     "answer-an-inbound-call"
   ],

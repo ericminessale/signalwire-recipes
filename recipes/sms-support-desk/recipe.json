@@ -21,23 +21,6 @@
   ],
   "kind": "build",
   "surfaces": [],
-  "governed": true,
   "demo": "observe",
-  "provenance": "new",
-  "tier": "next",
-  "repo": "",
-  "plan": {
-    "kind": "build",
-    "status": "stub",
-    "lens": "messaging",
-    "folds": [
-      "c:sms-support-desk (stub, no repo)",
-      "t:sms-conversation-threading",
-      "t:hotel-guest-services"
-    ],
-    "evidence": [
-      "folder exists in recipes/ with recipe.json only; NEEDS A REPO: a build must be a thing you run",
-      "OUT OF SCOPE 2026-08-25 (recipe waves): this is a build row, not a recipe. A build is a repository you run, so it needs a repo and a composes list verified against its code, not the recipe authoring protocol. Untouched by waves 3 to 5 deliberately."
-    ]
-  }
+  "repo": ""
 }

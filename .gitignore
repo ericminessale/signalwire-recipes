@@ -7,25 +7,33 @@ __pycache__/
 .venv/
 node_modules/
 
+# Local assistant instructions and working state are not repository content.
+/CLAUDE.md
+/claude.md
+/CLAUDE.local.md
+/claude.local.md
+/AGENTS.md
+/agents.md
+/AGENTS.local.md
+/agents.local.md
+/GEMINI.md
+/gemini.md
+/.mcp.json
+/.aider*
+/.claude/
+/.codex/
+/.continue/
+/.cursor/
+
+# Internal roadmap, review material, and the roadmap-driven scaffolder stay local.
+/docs/
+/scaffold.py
+
 # seeded design canvas (rebuild with seed-canvas.mjs)
 design/signalwire-recipes-directions.html
 
-# codex review session logs (answers are saved to docs/*_REVIEW_*.md)
-docs/_sol_*.log
-
-# playwright-cli session logs and snapshots
+# Browser test session logs and snapshots
 .playwright-cli/
-
-# internal planning material stays local: briefs, reviews, handoffs, marketing
-# inputs, competitive enumeration. The shareable list is docs/INVENTORY.md;
-# inventory.json and its renderer stay because scaffold.py seeds from them.
-docs/*
-!docs/INVENTORY.md
-!docs/team/
-!docs/enum/
-docs/enum/*
-!docs/enum/inventory.json
-!docs/enum/render_inventory.py
 
 # abandoned design exploration from an early session; kept locally
 design/

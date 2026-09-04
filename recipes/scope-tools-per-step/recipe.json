@@ -15,25 +15,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "extract",
-  "tier": "launch",
   "subcategory": "governance",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:build-conversational-workflow"
-    ],
-    "evidence": [
-      "sdk contexts.py:192 Step.set_functions (inherits previous step when unset)",
-      "recipes/scope-tools-per-step/python/app.py renders SWML with functions per step",
-      "demo testbot nav suite",
-      "phase 2: transfer_to_human emits a bare connect action (not in the documented SWAIG action list) - switch to FunctionResult.connect(); unrelated to the scoping claim"
-    ]
-  },
   "prerequisites": [
     "give-an-agent-a-tool"
   ],

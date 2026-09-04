@@ -16,25 +16,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
-  "tier": "next",
   "subcategory": "governance",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:receive-sms-webhook (signature part)",
-      "variant: SWAIG signature request"
-    ],
-    "evidence": [
-      "https://signalwire.com/docs/swml/guides/webhook-security (fetched 2026-09-02): X-Signalwire-Signature HMAC-SHA1 hex on every signed request, X-Signalwire-SHA256-Signature on call requests; signed payload is url + raw body with no separator; key in Dashboard API Credentials",
-      "sdk 3.0.1 implements no verification (no hmac import); standard library here",
-      "verified 2026-09-02: recipes/verify-a-webhook-signature/verify.py"
-    ]
-  },
   "prerequisites": [
     "answer-an-inbound-call"
   ],

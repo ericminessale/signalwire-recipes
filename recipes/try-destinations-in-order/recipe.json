@@ -8,9 +8,7 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,23 +16,6 @@
   "capabilities": [
     "failover"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:sip-failover-routing",
-      "t:shift-fill-engine"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/connect (serial, parallel[])",
-      "sdk relay/call.py:604 connect(devices)",
-      "schema.json Connect: oneOf ConnectDeviceSingle/Serial/Parallel/SerialParallel; ConnectSwitch case on connect_result",
-      "docs swml/reference/connect: connect_result connected|failed, connect_failed_reason, result runs once the peer leg has ended",
-      "verified 2026-09-02: recipes/try-destinations-in-order/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "transfer-a-call"

@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -17,21 +15,6 @@
   "capabilities": [
     "pubsub"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "sol gap #1"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/pubsub/tokens: ttl (minutes, 1 to 43,200) and channels ({name: {read, write}}) required; member_id, state; 200 token",
-      "sdk rest/namespaces/pubsub.py PubSubResource.create_token",
-      "The subscribe and publish calls are the Browser SDK's and are not proven here",
-      "verified 2026-09-02: recipes/publish-events-to-browsers-with-pubsub/verify.py"
-    ]
-  },
   "subcategory": "tools",
   "related": [
     "push-events-from-an-agent-to-the-browser",

@@ -14,26 +14,6 @@
   "surfaces": [
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "other",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#6",
-      "variant: POST /api/fabric/resources/ai_agents creates the same agent as a Resource",
-      "t:ai-assistant-phone-setup",
-      "t:create-ai-assistant"
-    ],
-    "evidence": [
-      "docs swml/guides/deployment",
-      "docs apis/rest/ai-agents/ai-agents-custom/create-ai-agent",
-      "docs platform/resources",
-      "verified 2026-08-25: recipes/run-an-agent-from-one-yaml-file/verify.py"
-    ]
-  }
+  "subcategory": "other"
 }

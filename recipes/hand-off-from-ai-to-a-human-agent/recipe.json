@@ -16,27 +16,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "observe",
-  "provenance": "rewrite",
-  "tier": "next",
   "subcategory": "handoff",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:ai-after-hours-emergency-triage",
-      "t:after-hours-nurse-triage"
-    ],
-    "evidence": [
-      "schema.json EnterQueueObject: queue_name, transfer_after_bridge required; ConnectDeviceSingle.to lists queue:<name>",
-      "tools/openapi/rest.json GET /api/relay/rest/queues/{queue_id}/members/next: call_id, position, wait_time; 'without dequeuing'",
-      "SWAIG tool webhook carries call_id (docs apis/rest/webhooks/ai-swaig-tool-webhook)",
-      "FunctionResult.execute_swml(transfer=True) puts the flag inside the document; the action is built by hand as {SWML, transfer}",
-      "verified 2026-09-02: recipes/hand-off-from-ai-to-a-human-agent/verify.py"
-    ]
-  },
   "prerequisites": [
     "route-a-call-to-an-ai-agent",
     "queue-a-call-until-an-agent-is-free"

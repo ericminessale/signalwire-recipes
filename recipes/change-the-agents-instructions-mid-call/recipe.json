@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,20 +15,6 @@
   "capabilities": [
     "contexts"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [],
-    "evidence": [
-      "sdk function_result.py:699 switch_context",
-      "docs swml/guides/context-switch",
-      "sdk function_result.py:699-725 switch_context emits the key context_switch; object form when consolidate/full_reset/user_prompt set, bare string otherwise",
-      "schema.json ContextSwitchAction documents context_switch as an object (system_prompt, user_prompt, consolidate, full_reset)",
-      "verified 2026-09-01: recipes/change-the-agents-instructions-mid-call/verify.py"
-    ]
-  },
   "subcategory": "handoff",
   "prerequisites": [
     "give-an-agent-a-tool"

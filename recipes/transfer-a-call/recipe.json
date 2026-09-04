@@ -15,29 +15,8 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "extract",
-  "tier": "launch",
   "subcategory": "handoff",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:transfer-live-phone-calls",
-      "variant: sip_refer",
-      "variant: SIP URI with custom headers (c:bridge-a-call-to-sip)"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/connect (transfer_after_bridge)",
-      "docs apis/rest/calls/call-commands (calling.transfer)",
-      "docs swml/reference/calling/sip-refer",
-      "docs swml/reference/calling/connect (SIP headers[])",
-      "docs apis/rest/sip-gateway/create-sip-gateway",
-      "verified 2026-08-25: recipes/transfer-a-call/verify.py (schema-validated SWML, both surfaces)"
-    ]
-  },
   "prerequisites": [
     "answer-an-inbound-call"
   ],

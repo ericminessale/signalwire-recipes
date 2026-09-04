@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,28 +15,6 @@
   "capabilities": [
     "serverless"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:edge-ai-assistant-backend",
-      "t:edge-voice-agent-holds-call"
-    ],
-    "evidence": [
-      "sdk web_mixin.py:302 run()",
-      "sdk core/logging_config.py:44-72 mode detection",
-      "demo cloud-functions",
-      "sdk-surface: Cloudflare adapter ABSENT",
-      "demo cloud-functions aws/handler.py:107, gcloud/main.py:132, azure/function_app/__init__.py:106 (legacy SDK 1.0.8-1.0.10 - port before quoting)",
-      "demo utility handler.py:17-20 Mangum on Lambda",
-      "sdk core/mixins/serverless_mixin.py handle_serverless_request lambda branch: rawPath or pathParameters.proxy, base64 body, swaig -> _execute_swaig_function, else _render_swml; returns statusCode/headers/body",
-      "sdk core/mixins/auth_mixin.py:139 _check_lambda_auth reads the event's Authorization header",
-      "sdk core/logging_config.py:44-72 get_execution_mode keyed on AWS_LAMBDA_FUNCTION_NAME etc.",
-      "verified 2026-09-02: recipes/run-an-agent-as-a-cloud-function/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [
     "give-an-agent-a-tool"

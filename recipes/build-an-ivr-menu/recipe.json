@@ -15,26 +15,8 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
-  "tier": "launch",
   "subcategory": "routing",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:build-ivr-phone-menu",
-      "t:ai-powered-ivr-replacement (see collect-speech-input-and-branch)"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/prompt, switch",
-      "docs compatibility-api/cxml/reference/voice (Gather)",
-      "verified 2026-08-25: recipes/build-an-ivr-menu/verify.py (schema-validated SWML, both surfaces)",
-      "settled 2026-08-25 (sol, docs swml/reference/calling/prompt): `prompt_value` holds the collected digits or utterance; `prompt_result` is the status enum (match_digits, match_speech, no_input). build-an-ivr-menu uses the correct variable."
-    ]
-  },
   "prerequisites": [
     "answer-an-inbound-call"
   ],

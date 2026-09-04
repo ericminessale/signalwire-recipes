@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -17,20 +15,5 @@
   "capabilities": [
     "relay"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "proposed",
-    "lens": "voice",
-    "folds": [
-      "marketing assessment: RELAY had zero representation",
-      "t:edge-webhook-aggregator (webhook-less control)"
-    ],
-    "evidence": [
-      "sdk relay/client.py:91,202,216,343 RelayClient on_call/connect/dial",
-      "demo workshop examples/03-relay-realtime/python/app.py (smoke-tested against mocks only)",
-      "docs server-sdks/guides/relay-client"
-    ]
-  },
   "subcategory": "call-control"
 }

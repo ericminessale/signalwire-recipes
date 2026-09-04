@@ -22,7 +22,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-GENERATOR_SRC = ["build.py", "scaffold.py", "vocab.py"]
+GENERATOR_SRC = ["build.py", "vocab.py"]
 
 sys.path.insert(0, str(ROOT))
 import vocab  # noqa: E402
@@ -117,10 +117,7 @@ def guard_synthetic():
                     "capabilities": ["ci"],
                     "subcategory": "other",
                     "surfaces": ["zzlang"],
-                    "governed": False,
                     "demo": "none",
-                    "provenance": "new",
-                    "tier": "later",
                 },
                 indent=2,
             ),

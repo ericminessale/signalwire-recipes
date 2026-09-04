@@ -15,23 +15,6 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "ai-to-ai",
-  "provenance": "extract",
-  "tier": "next",
-  "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:build-conference-calling",
-      "scenario t:conference-live-poll-dtmf (DTMF polling is not evidenced; scenario only)"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/join-conference",
-      "docs compatibility-api/rest (Conferences, Participants)",
-      "verified 2026-08-25: recipes/build-a-conference-call/verify.py"
-    ]
-  }
+  "subcategory": "call-control"
 }

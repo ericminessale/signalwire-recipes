@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,25 +15,6 @@
   "capabilities": [
     "observability"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "features Mid-call AI message injection",
-      "variant: poll for application input during silence (functions_on_speaker_timeout)"
-    ],
-    "evidence": [
-      "docs apis/rest/calls/call-commands (calling.ai_message)",
-      "sdk rest/namespaces/calling.py ai_message",
-      "features Mid-call AI message injection",
-      "demo chess app.py:271-296 RestClient.calling.ai_message + functions_on_speaker_timeout polling (app.py:850-856)",
-      "tools/openapi/rest.json Calling.CallRequest variant calling.ai_message: required command, id, params; params role enum system|user|assistant, message_text, reset{full_reset,system_prompt,user_prompt}, global_data",
-      "sdk rest/namespaces/calling.py:25-29 _execute puts call_id in body.id; :122 ai_message",
-      "verified 2026-09-02: recipes/inject-a-message-into-a-live-ai-call/verify.py"
-    ]
-  },
   "subcategory": "observe",
   "prerequisites": [
     "give-an-agent-a-tool"

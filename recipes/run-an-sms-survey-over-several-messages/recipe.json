@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -20,22 +18,6 @@
     "state",
     "opt-out"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "Eric, 2026-09-04: SMS surveys as a use case; the corpus kept no state across inbound messages"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json webhooks subpackage_messagingWebhooks.inbound_message_webhook: payload {message, vars, params}; message requires message_id, project_id, space_id, direction, type, from, to, body (string or null), media, segments, timestamp",
-      "tools/openapi/rest.json POST /api/messaging/messages: Message.CreateMessageRequest requires to and from; body, media, status_callback",
-      "docs swml/reference/messaging/reply: the messaging SWML reply verb, body; the bundled schema is voice SWML and does not carry it, so the verifier asserts the shape",
-      "docs swml/guides/webhook-security: X-Signalwire-Signature is HMAC-SHA1 hex over url + raw body, SHA-256 on call requests",
-      "verified 2026-09-04: recipes/run-an-sms-survey-over-several-messages/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "reply-to-an-inbound-sms",

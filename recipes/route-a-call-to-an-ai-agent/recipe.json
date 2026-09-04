@@ -15,25 +15,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "demos",
-  "tier": "next",
-  "subcategory": "routing",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:route-phone-calls-to-ai-agent",
-      "t:build-voice-ai-agent"
-    ],
-    "evidence": [
-      "features Phone number management (swml_webhook resource)",
-      "docs apis/rest/swml-webhook/create-swml-webhook",
-      "sdk rest/namespaces/fabric.py assign_phone_route",
-      "verified 2026-08-25: recipes/route-a-call-to-an-ai-agent/verify.py",
-      "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
-    ]
-  }
+  "subcategory": "routing"
 }

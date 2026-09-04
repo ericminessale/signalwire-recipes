@@ -8,9 +8,7 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -18,26 +16,6 @@
   "capabilities": [
     "observability"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:webhook-debugger-ai-assistant"
-    ],
-    "evidence": [
-      "sdk ai_config_mixin.py:419 enable_debug_events",
-      "sdk agent_base.py:432 on_debug_event",
-      "docs apis/rest/webhooks (AI debug webhook)",
-      "docs platform/ai/analytics",
-      "demo pathfinder agent.py:191-214 debug_webhook_url/debug_webhook_level",
-      "sdk agent_base.py:1063-1067 debug_webhook_url/debug_webhook_level written into params at render",
-      "sdk web_mixin.py _handle_debug_events_request: basic auth, POST only, label or action, handler(event_type, body)",
-      "docs swml/reference/ai/params: debug_webhook_url, debug_webhook_level 0-2",
-      "verified 2026-09-02: recipes/stream-agent-debug-events/verify.py"
-    ]
-  },
   "subcategory": "observe",
   "prerequisites": [
     "give-an-agent-a-tool"

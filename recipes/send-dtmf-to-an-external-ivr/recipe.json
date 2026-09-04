@@ -14,24 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:outbound-hold-agent"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/send-digits",
-      "demo pathfinder",
-      "features DTMF keypad",
-      "demo pathfinder tools.py:110-114,265-273 execute_swml -> send_digits with w/W pacing; model classifies, code picks the digit",
-      "verified 2026-08-25: recipes/send-dtmf-to-an-external-ivr/verify.py"
-    ]
-  }
+  "subcategory": "call-control"
 }

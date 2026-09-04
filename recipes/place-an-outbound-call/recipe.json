@@ -14,24 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:make-outbound-phone-call",
-      "t:fraud-alert-verification"
-    ],
-    "evidence": [
-      "docs apis/rest/calls/call-commands (dial)",
-      "sdk relay/client.py:343 dial",
-      "compat Calls create",
-      "verified 2026-08-25: recipes/place-an-outbound-call/verify.py"
-    ]
-  }
+  "subcategory": "call-control"
 }

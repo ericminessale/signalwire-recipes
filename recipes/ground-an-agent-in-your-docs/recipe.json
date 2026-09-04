@@ -15,31 +15,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "rewrite",
-  "tier": "launch",
   "subcategory": "knowledge",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#2",
-      "t:ai-assistant-knowledge-base",
-      "t:ai-tech-support-voice-agent",
-      "variant: local .swsearch index via native_vector_search"
-    ],
-    "evidence": [
-      "docs apis/rest/documents/search-documents",
-      "sdk skills/datasphere/skill.py:17",
-      "sdk skills/native_vector_search/skill.py:19",
-      "sdk rest/namespaces/datasphere.py",
-      "demo personal-assistant (native_vector_search over a .swsearch index, legacy SDK 1.0.x - do not quote)",
-      "demo testbot (DataSphere corpus + RestClient.datasphere.documents.search)",
-      "verified 2026-08-25: recipes/ground-an-agent-in-your-docs/verify.py"
-    ]
-  },
   "prerequisites": [
     "give-an-agent-a-tool"
   ],

@@ -18,26 +18,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "narrow",
-  "tier": "next",
-  "subcategory": "governance",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "#12 (canonical: medical appointment line - recording disclosure spoken, consent captured, then recording starts)",
-      "t:call-compliance",
-      "c:force-a-disclosure-before-the-call-proceeds (same mechanism: no business step reachable before the consent step)"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/record-call",
-      "sdk function_result.py:883 record_call from a tool result",
-      "sdk contexts.py:179 set_step_criteria, :252 set_valid_steps",
-      "t:ai-debt-collection-compliance-agent",
-      "verified 2026-08-25: recipes/get-recording-consent-before-recording/verify.py"
-    ]
-  }
+  "subcategory": "governance"
 }

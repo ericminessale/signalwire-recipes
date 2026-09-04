@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,21 +17,6 @@
     "rest",
     "recording"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "round 7 gap: live-call control over REST (5 of 31 commands covered)"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json Calling.CallRequest variants calling.record (params required control_id, record{audio: Calling.RecordAudioParams}; status_url), calling.record.pause (control_id required; behavior enum skip|silence), calling.record.resume and calling.record.stop (control_id required)",
-      "tools/openapi/rest.json Calling.RecordAudioParams: beep, format (default mp3), stereo, direction (default speak), initial_timeout, end_silence_timeout, max_length (0 = no limit), terminators (default #), input_sensitivity",
-      "sdk rest/namespaces/calling.py:64-74 record, record_pause, record_resume, record_stop",
-      "verified 2026-09-03: recipes/pause-and-resume-a-call-recording-over-rest/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "record-a-call"

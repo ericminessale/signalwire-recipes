@@ -5,9 +5,7 @@
   "summary": "Submit the dashboard porting form and letter of authorization, then track the manually assigned firm order commitment date.",
   "scenario": "",
   "surfaces": [],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice",
@@ -16,21 +14,5 @@
   "capabilities": [
     "numbers"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "guide",
-    "status": "proposed",
-    "lens": "numbers-identity",
-    "folds": [
-      "t:number-porting-status-tracker",
-      "t:porting-order-tracker-dashboard",
-      "t:porting-loa-automation",
-      "sol correction: no porting API"
-    ],
-    "evidence": [
-      "docs platform/porting-into-signalwire",
-      "platform-docs: no Porting namespace in the REST spec"
-    ]
-  },
   "subcategory": "other"
 }

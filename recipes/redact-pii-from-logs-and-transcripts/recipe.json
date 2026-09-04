@@ -8,9 +8,7 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -18,19 +16,5 @@
   "capabilities": [
     "compliance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "proposed",
-    "lens": "ai",
-    "folds": [
-      "t:call-recording-redactor"
-    ],
-    "evidence": [
-      "demo veronica veronica.py:198 set_param(redact_prompt, ...)",
-      "docs platform/ai/content-redaction",
-      "docs swml/reference/calling/ai/params (redact_prompt)"
-    ]
-  },
   "subcategory": "governance"
 }

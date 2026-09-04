@@ -8,9 +8,7 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging",
@@ -19,26 +17,6 @@
   "capabilities": [
     "sms"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "t:ai-restaurant-reservation-voice-agent (SMS confirm)",
-      "t:ai-real-estate-showing-scheduler"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/send-sms",
-      "sdk function_result.py:741 send_sms",
-      "demo barbiera agent.py:1071 send_sms with a short link",
-      "demo cabby cabby.py:579,667",
-      "demo goair voyager.py:1830",
-      "sdk function_result.py:741-800 send_sms builds a SWML document with one send_sms verb and hands it to execute_swml",
-      "docs apis/rest/webhooks/ai-swaig-tool-webhook: caller_id_num in the tool POST body",
-      "verified 2026-09-02: recipes/text-the-caller-during-the-call/verify.py"
-    ]
-  },
   "subcategory": "tools",
   "prerequisites": [
     "give-an-agent-a-tool"

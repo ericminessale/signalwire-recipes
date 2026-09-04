@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -17,22 +15,6 @@
   "capabilities": [
     "sms"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "t:send-bulk-sms",
-      "t:sms-marketing-campaign",
-      "t:emergency-mass-notification-system"
-    ],
-    "evidence": [
-      "https://signalwire.com/docs/platform/rate-limits (fetched 2026-09-02): 10DLC 4 MPS, toll-free 3 MPS, short code 10 MPS, 10,000 queued messages, then the queue stops accepting",
-      "tools/openapi/rest.json POST /api/messaging/messages: to, from required",
-      "verified 2026-09-02: recipes/send-a-batch-within-your-rate-limit/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "send-an-sms"

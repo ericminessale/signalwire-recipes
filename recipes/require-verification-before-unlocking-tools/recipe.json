@@ -15,30 +15,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "new",
-  "tier": "launch",
   "subcategory": "governance",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#8",
-      "t:ai-lab-results-notification-voice",
-      "t:prescription-refill-line",
-      "t:ai-pre-visit-clearance-voice-agent"
-    ],
-    "evidence": [
-      "sdk function_result.py:628 toggle_functions",
-      "sdk tool_mixin.py:39 active:false via swaig_fields",
-      "docs swml/guides/toggle-functions",
-      "demo pathfinder tools.py:260,385 toggle_functions gating a tool",
-      "verified 2026-08-25: recipes/require-verification-before-unlocking-tools/verify.py",
-      "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
-    ]
-  },
   "prerequisites": [
     "give-an-agent-a-tool"
   ],

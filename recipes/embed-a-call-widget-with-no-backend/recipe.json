@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,22 +16,6 @@
     "call-fabric",
     "tokens"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [
-      "c:browser-call-widget (build stub with no repo; this is one claim, so a recipe)",
-      "t:click-to-call-webrtc-with-ai-assist"
-    ],
-    "evidence": [
-      "https://signalwire.com/docs/browser-sdk/guides/click-to-call-widget (fetched 2026-09-02): script tag + <sw-click-to-call token destination label>; token from Dashboard Tools > Click to Call; routes through embeds.signalwire.com",
-      "tools/openapi/rest.json POST /api/fabric/embeds/tokens: token required (Click to Call Token); 201 token",
-      "sdk rest/namespaces/fabric.py FabricTokens.create_embed_token",
-      "verified 2026-09-02: recipes/embed-a-call-widget-with-no-backend/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "related": [
     "call-from-a-browser",

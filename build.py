@@ -30,8 +30,6 @@ CATEGORIES = [(c["key"], c["label"]) for c in V["categories"]]
 CAT_LABEL = V["category_label"]
 SURFACE_ABBR = V["surface_abbr"]
 
-TIER_ORDER = {"launch": 0, "next": 1, "later": 2}
-
 CSS = """
 :root{
   color-scheme:dark;
@@ -2247,7 +2245,7 @@ def build_preview(recipes):
 
 def main():
     if not RECIPES.exists():
-        print("no recipes/ dir — run scaffold.py first")
+        print("no recipes/ dir — add a recipe folder first")
         return 1
     recipes = load()
     global _USED_IN, _TITLES
@@ -2299,13 +2297,12 @@ def main():
     (SITE / "robots.txt").write_text(build_robots(), encoding="utf-8")
     (SITE / "404.html").write_text(build_404(), encoding="utf-8")
 
-    launch = sum(1 for r in recipes if r.get("tier") == "launch")
     check_highlighting()
     check_noindex()
     check_advertised_urls()
     print(
         f"build: {len(written)} of {len(recipes)} recipes written -> site/  "
-        f"({launch} launch tier, {len(written)*2+3} files, "
+        f"({len(written)*2+3} files, "
         f"{len(recipes) - len(written)} planned rows hidden on the index)"
     )
     return 0

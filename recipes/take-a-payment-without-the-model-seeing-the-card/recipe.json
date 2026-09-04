@@ -16,27 +16,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "none",
-  "provenance": "blocked",
-  "tier": "next",
-  "subcategory": "governance",
-  "plan": {
-    "kind": "hold",
-    "status": "hold",
-    "lens": "voice",
-    "folds": [
-      "#10",
-      "t:ai-pci-protected-payment-collection",
-      "c:pause-recording-around-a-payment (fold as the recording half)"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/pay",
-      "docs compatibility-api/cxml/reference/voice (Pay)",
-      "sdk function_result.py:797 pay()",
-      "demo utility agent.py:754-775 pay()",
-      "demo testbot stripe_pay.py - Stripe test-mode payment_connector; pay.connector_isolation asserted live",
-      "HOLD: security review - a test-mode connector exists (testbot); the remaining blocker is the PCI statement and review of what the connector receives"
-    ]
-  }
+  "subcategory": "governance"
 }

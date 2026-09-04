@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -17,22 +15,6 @@
   "capabilities": [
     "transcription"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "distinct from start-live-transcription (no partials)"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json calling.transcribe variant: control_id required, status_url; calling.transcribe.stop: control_id",
-      "tools/openapi/rest.json webhooks transcribe_status_callback: event_type completed|failed, params.text omitted when none",
-      "sdk rest/namespaces/calling.py transcribe, transcribe_stop",
-      "SWML transcribe verb is absent from the 3.0.1 bundled schema, so the recipe uses REST",
-      "verified 2026-09-02: recipes/transcribe-a-call-in-the-background/verify.py"
-    ]
-  },
   "subcategory": "observe",
   "prerequisites": [
     "record-a-call"

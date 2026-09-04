@@ -15,22 +15,6 @@
   "surfaces": [
     "typescript"
   ],
-  "governed": false,
   "demo": "text",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "other",
-  "plan": {
-    "kind": "hold",
-    "status": "hold",
-    "lens": "messaging",
-    "folds": [
-      "#27"
-    ],
-    "evidence": [
-      "docs apis/rest/ai-chat/chat-methods",
-      "NEEDS VERIFICATION: browser-side auth to the AI Chat API (a token proxy is likely required)",
-      "HOLD 2026-08-25: chat-mode AI kernel is unreleased (Knowledge MCP get_doc(mary): listed under 'Unreleased but functioning' and on the two-quarter roadmap). Do not write against the AI Chat API until it ships."
-    ]
-  }
+  "subcategory": "other"
 }

@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,24 +17,6 @@
     "numbers",
     "compliance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "numbers-identity",
-    "folds": [
-      "sol gap #6",
-      "t:e911-address-validator"
-    ],
-    "evidence": [
-      "docs platform/e911 (self-service, US only, test with 933)",
-      "docs apis/rest/e-911-addresses/create-address",
-      "sdk rest/namespaces/addresses.py",
-      "tools/openapi/rest.json POST /api/relay/rest/addresses required [label,country,first_name,last_name,street_number,street_name,city,state,postal_code]; POST /api/relay/rest/phone_numbers/{id}/e911_address required [e911_address_id]",
-      "sdk rest/namespaces/addresses.py create; no wrapper for the e911_address path in 3.0.1",
-      "verified 2026-09-02: recipes/register-an-e911-address-for-a-number/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "buy-a-number-and-point-it-at-your-app"

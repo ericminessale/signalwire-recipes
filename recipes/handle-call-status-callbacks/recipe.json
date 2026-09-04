@@ -15,23 +15,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
-  "tier": "next",
   "subcategory": "observe",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [],
-    "evidence": [
-      "tools/openapi/compat.json POST Calls: StatusCallback, StatusCallbackEvent (valid values initiated, ringing, answered, completed, ringing_forwarded, ringing_queued; default completed), StatusCallbackMethod",
-      "tools/openapi/compat.json webhooks voice_status_callback: required fields, CallStatus enum, CallDuration only on completed, SequenceNumber starting at 0, best-effort",
-      "sdk rest/namespaces/compat.py CompatCalls.create",
-      "verified 2026-09-02: recipes/handle-call-status-callbacks/verify.py"
-    ]
-  },
   "related": [
     "reconcile-webhooks-against-the-logs-api",
     "check-consent-before-an-outbound-call"

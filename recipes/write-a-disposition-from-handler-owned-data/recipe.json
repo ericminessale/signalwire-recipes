@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -18,24 +16,6 @@
     "governance",
     "post-prompt"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#13 (canonical: lead qualification)",
-      "t:ai-sales-demo-booking-agent"
-    ],
-    "evidence": [
-      "sdk function_result.py add_action('set_global_data', ...) emits the wire key",
-      "sdk agent_base.py:962-980, 1116-1117 post_prompt_url built with credentials and __token",
-      "sol round 5 P0: #13 requires handler-written data, #24 transcript analysis",
-      "sdk web_mixin.py _handle_post_prompt_request: basic auth, then _find_summary_in_post_data, then on_summary(summary, body)",
-      "docs apis/rest/webhooks/ai-post-prompt-callback: global_data and call_log included when action is post_conversation",
-      "verified 2026-09-02: recipes/write-a-disposition-from-handler-owned-data/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "give-an-agent-a-tool"

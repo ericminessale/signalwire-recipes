@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -20,22 +18,6 @@
     "dtmf",
     "speech"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "round 7 gap: live-call control over REST (5 of 31 commands covered)"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json Calling.CallRequest variant calling.play: params required control_id, play (array of {type: audio|tts|silence|ringtone, params}); Calling.PlayTtsItem params require text; Calling.PlayAudioItem params require url; status_url receives playing|paused|finished|error",
-      "tools/openapi/rest.json calling.play.stop, calling.play.pause, calling.play.resume: params required control_id",
-      "tools/openapi/rest.json calling.collect: params required control_id; at least one of digits (max required; terminators, digit_timeout) or speech (end_silence_timeout, speech_timeout, language, hints, model, engine); results delivered to status_url as result.type digit|speech; calling.collect.stop requires control_id",
-      "sdk rest/namespaces/calling.py:48-60 play, play_pause, play_resume, play_stop; :77-83 collect, collect_stop",
-      "verified 2026-09-03: recipes/play-a-prompt-and-collect-input-over-rest/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "build-an-ivr-menu"

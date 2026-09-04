@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice",
@@ -18,19 +16,6 @@
   "capabilities": [
     "sip"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [],
-    "evidence": [
-      "sdk agent_server.py:147 setup_sip_routing",
-      "sdk core/mixins/web_mixin.py:1319 register_routing_callback mounts <route>/<path> and turns a returned route into a 307; swml_service.py extract_sip_username reads call.to",
-      "sdk agent_server.py:147 setup_sip_routing registers its callback after register() has copied the routes, so it mounts nothing in 3.0.1 (probe 2026-09-02: /sales/sip 404)",
-      "verified 2026-09-02: recipes/route-sip-calls-to-agents-by-username/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "connect-a-pbx-with-a-domain-application"

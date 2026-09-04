@@ -8,29 +8,12 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
   ],
   "capabilities": [],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [],
-    "evidence": [
-      "docs swml/reference/calling/denoise",
-      "docs apis/rest/calls/call-commands (calling.denoise)",
-      "schema.json Denoise and StopDenoise: empty objects, unevaluatedProperties not",
-      "tools/openapi/rest.json calling.denoise and calling.denoise.stop variants: command, id, params required; params has no properties",
-      "sdk rest/namespaces/calling.py denoise, denoise_stop",
-      "verified 2026-09-02: recipes/reduce-background-noise-on-a-call/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "take-a-voicemail"

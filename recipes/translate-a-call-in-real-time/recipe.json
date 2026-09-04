@@ -15,28 +15,8 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "ai-to-ai",
-  "provenance": "narrow",
-  "tier": "next",
   "subcategory": "other",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "sol gap #5",
-      "t:ai-real-time-translation-bridge",
-      "t:three-way-ai-interpreter",
-      "t:webrtc-ai-interpreter-live-calls"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/live-translate",
-      "features Live Translate (no update action; stop + restart to change pair)",
-      "demo (none)",
-      "verified 2026-08-25: recipes/translate-a-call-in-real-time/verify.py"
-    ]
-  },
   "featured": true,
   "feature_line": "Real-time call translation",
   "feature_rank": 2

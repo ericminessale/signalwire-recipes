@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -17,23 +15,6 @@
   "capabilities": [
     "migration"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [
-      "launch #10",
-      "t:migrate-from-twilio",
-      "sol: single highest-intent search with nothing for it"
-    ],
-    "evidence": [
-      "https://signalwire.com/docs/compatibility-api: update the base URL from api.twilio.com to your-space.signalwire.com; handlers work without modification (docs/enum/platform-docs.md D)",
-      "sdk rest/namespaces/compat.py CompatNamespace base /api/laml/2010-04-01/Accounts/{project}",
-      "tools/openapi/compat.json POST /Accounts/{AccountSid}/Calls: To, From required; Url",
-      "verified 2026-09-02: recipes/move-a-twiml-app-by-changing-the-endpoint/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [
     "answer-an-inbound-call"

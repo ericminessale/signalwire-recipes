@@ -8,9 +8,7 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,23 +16,6 @@
   "capabilities": [
     "recording"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:voicemail",
-      "t:ai-voicemail-transcription-forwarding",
-      "t:voicemail-smart-router"
-    ],
-    "evidence": [
-      "docs call-flow-builder/reference/nodes (Voicemail Recording)",
-      "schema.json Record: beep, format wav|mp3|mp4, max_length, end_silence_timeout, terminators, status_url",
-      "docs swml/reference/record: foreground, record_url and record_result, status_url payload",
-      "verified 2026-09-02: recipes/take-a-voicemail/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "try-destinations-in-order"

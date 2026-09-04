@@ -14,23 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "observe",
-  "provenance": "extract",
-  "tier": "next",
-  "subcategory": "observe",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "../Barge Demo exists in the workspace"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/join-conference (muted, end_on_exit)",
-      "features Barge",
-      "verified 2026-08-25: recipes/barge-into-a-live-call/verify.py",
-      "NEEDS VERIFICATION 2026-08-25: where caller_id_num arrives in SWAIG post data. require-verification-before-unlocking-tools reads it at the top level of raw_data; sol asked for raw_data['global_data']. No source we hold settles it, so the two supervisor recipes read global_data first and fall back to the top level, and are correct either way. Confirm against a real call and collapse the fallback."
-    ]
-  }
+  "subcategory": "observe"
 }

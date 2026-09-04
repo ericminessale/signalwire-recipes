@@ -5,9 +5,7 @@
   "summary": "Submit the verification form required before a toll-free number can send SMS, then wait for carrier review.",
   "scenario": "",
   "surfaces": [],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -15,22 +13,5 @@
   "capabilities": [
     "compliance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "guide",
-    "status": "proposed",
-    "lens": "messaging",
-    "folds": [
-      "t:toll-free-sms",
-      "t:toll-free-sms-campaign-manager",
-      "t:shortcode-sms",
-      "t:hosted-messaging-campaign-manager (hosted messaging is a form too)"
-    ],
-    "evidence": [
-      "docs platform/messaging/toll-free-numbers",
-      "docs platform/phone-numbers#short-codes",
-      "docs platform/messaging/hosted-messaging"
-    ]
-  },
   "subcategory": "governance"
 }

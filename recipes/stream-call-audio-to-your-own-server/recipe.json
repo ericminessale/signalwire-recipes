@@ -8,9 +8,7 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,25 +16,6 @@
   "capabilities": [
     "media-streaming"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:media-stream-custom-audio-mixer",
-      "t:media-stream-voice-cloak",
-      "t:conversation-relay-voice-bot"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/tap and stop-tap",
-      "docs apis/rest/calls/call-commands (calling.tap, calling.tap.stop)",
-      "schema.json Tap: uri required (rtp://, ws://, wss://), direction speak|listen|both, codec PCMU|PCMA, control_id; StopTap.control_id",
-      "tools/openapi/rest.json calling.tap variant: control_id, tap{type audio, params}, device oneOf ws{uri, codec}|rtp{addr, port, codec, ptime}; calling.tap.stop",
-      "sdk rest/namespaces/calling.py tap, tap_stop",
-      "verified 2026-09-02: recipes/stream-call-audio-to-your-own-server/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "record-a-call"

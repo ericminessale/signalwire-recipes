@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -18,23 +16,6 @@
     "opt-out",
     "compliance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "t:sms-opt-out-management"
-    ],
-    "evidence": [
-      "https://signalwire.com/docs/platform/messaging (fetched 2026-09-02): customers are responsible for handling inbound stop requests; no send again unless opted back in via Unstop",
-      "tools/openapi/rest.json webhooks inbound_message_webhook: message{from,to,body,type,...} required; the URL answers with SWML",
-      "schema.json SendSMS/SMSWithBody: to_number, from_number, body required; sections.main [] validates",
-      "tools/openapi/rest.json POST /api/messaging/messages: to, from required",
-      "sdk 3.0.1 has no messaging namespace; send goes through RestClient._http",
-      "verified 2026-09-02: recipes/handle-opt-outs-yourself/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "send-an-sms"

@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -19,22 +17,6 @@
     "call-fabric",
     "tokens"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [
-      "demo example (the canonical shape 12 demos copy)"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/fabric/resources/swml_webhooks: primary_request_url required; used_for calling|messaging",
-      "tools/openapi/rest.json GET /api/fabric/resources/{id}/addresses: id, name, channels",
-      "tools/openapi/rest.json POST /api/fabric/guests/tokens: allowed_addresses required (up to 10), expire_at; 201 token, refresh_token",
-      "sdk rest/namespaces/fabric.py swml_webhooks.create/list_addresses, tokens.create_guest_token",
-      "verified 2026-09-02: recipes/let-a-browser-dial-your-agent-with-no-dashboard-setup/verify.py"
-    ]
-  },
   "subcategory": "tools",
   "prerequisites": [
     "route-a-call-to-an-ai-agent"

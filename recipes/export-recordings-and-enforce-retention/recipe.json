@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,24 +16,6 @@
     "recording",
     "compliance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "sol correction (S3-compatible storage is not our product)",
-      "t:cloud-storage-call-archive",
-      "t:storage-voicemail-archive"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json GET /api/relay/rest/recordings (links.next pagination; every variant carries id, created_at, url, duration_in_seconds); DELETE /api/relay/rest/recordings/{id} 204",
-      "docs platform/media-protection: protected media requires API auth to fetch",
-      "docs compatibility-api/cxml/reference/voice/record (storageUrl) is the record-time alternative; SWML exposes none",
-      "sdk rest/namespaces/recordings.py list/get/delete",
-      "verified 2026-09-02: recipes/export-recordings-and-enforce-retention/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "record-a-call"

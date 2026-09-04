@@ -7,30 +7,12 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
   ],
   "capabilities": [],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:multi-number-identity-router",
-      "t:texml-dynamic-call-router",
-      "t:call-forwarding"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json webhooks inbound_call_webhook: call.to 'The number/URI of the destination of this call', call.to_number for phone calls, eleven required call fields",
-      "sdk SWMLService add_verb/get_document; schema Connect, Play, Hangup",
-      "verified 2026-09-02: recipes/route-calls-by-dialed-number-or-time/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "answer-an-inbound-call"

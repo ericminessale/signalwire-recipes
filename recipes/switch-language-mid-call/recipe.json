@@ -15,27 +15,6 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "narrow",
-  "tier": "next",
-  "subcategory": "other",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#33",
-      "t:ai-multilingual-code-switching-agent",
-      "t:ai-language-learning-phone-tutor"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/ai/multilingual",
-      "sdk ai_config_mixin.py:75 add_language",
-      "features Multilingual support",
-      "demo ginospizza add_language(inworld voice) (legacy SDK)",
-      "verified 2026-08-25: recipes/switch-language-mid-call/verify.py",
-      "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
-    ]
-  }
+  "subcategory": "other"
 }

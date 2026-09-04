@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -18,28 +16,6 @@
     "tool-calling",
     "contexts"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#1",
-      "t:ai-restaurant-reservation-voice-agent",
-      "t:ai-event-rsvp-phone-line",
-      "t:restaurant-reservation-waitlist",
-      "scenario drive-thru (holyguacamole) - the commit half"
-    ],
-    "evidence": [
-      "sdk tool_mixin.py:26 define_tool",
-      "sdk contexts.py",
-      "demo bobbystable",
-      "demo holyguacamole",
-      "demo goair voyager.py:216-272 code-enforced confirmation before commit",
-      "sdk function_result.py add_action('set_global_data') is the wire key; raw_data carries global_data and call_id",
-      "verified 2026-09-02: recipes/commit-a-transaction-from-a-call/verify.py"
-    ]
-  },
   "subcategory": "tools",
   "prerequisites": [
     "give-an-agent-a-tool"

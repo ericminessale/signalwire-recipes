@@ -8,9 +8,7 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -20,28 +18,5 @@
     "sidecar",
     "observability"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "hold",
-    "status": "hold",
-    "lens": "ai",
-    "folds": [
-      "#22",
-      "#23",
-      "#25",
-      "t:ai-sales-coach-whisper",
-      "t:edge-compliance-monitor",
-      "t:click-to-call-webrtc-with-ai-assist",
-      "scenario: sentiment / distress flagging"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/ai-sidecar",
-      "docs apis/rest/calls/call-commands (ai_sidecar poke/ask/stop/status)",
-      "features Real-time agent assist (Coach) - off by default, pre-release verb",
-      "demo sidecar",
-      "HOLD: runtime failures observed in the call center (stop contract, mid-call mode switch) must be re-tested; cannot coexist with live_transcribe on one call",
-      "demo sidecar sidecar_app.py:1723-1900 (answer -> record_call -> tap -> ai_sidecar -> cond -> connect); 14 event types; no explicit stop - ends with the call"
-    ]
-  },
   "subcategory": "observe"
 }

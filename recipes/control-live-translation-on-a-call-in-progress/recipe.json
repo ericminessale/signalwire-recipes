@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice",
@@ -20,22 +18,6 @@
     "rest",
     "translation"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "round 7 gap: live-call control over REST"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json Calling.CallRequest variant calling.live_translate: params required action, a oneOf of Calling.LiveTranslateStartAction, LiveTranslateInjectAction, LiveTranslateSummarizeAction and LiveTranslateStopAction",
-      "tools/openapi/rest.json start requires from_lang, to_lang and direction (an array of SWML.Calling.TranscribeDirection, enum remote-caller|local-caller) and takes voices, filters, webhook, live_events, ai_summary, speech_engine (deepgram|google), speech_timeout, vad settings; inject requires message and direction (the same enum as a single string); summarize requires nothing and takes webhook and prompt",
-      "sdk rest/namespaces/calling.py:138-140 live_translate",
-      "npm @signalwire/sdk 2.0.5 client.calling.liveTranslate sends the same bodies",
-      "verified 2026-09-03: recipes/control-live-translation-on-a-call-in-progress/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "translate-a-call-in-real-time"

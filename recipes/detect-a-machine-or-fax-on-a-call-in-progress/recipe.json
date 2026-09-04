@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,23 +17,6 @@
     "rest",
     "amd"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "round 7 gap: live-call control over REST"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json Calling.CallRequest variant calling.detect: params required control_id and detect; detect is a oneOf of Calling.DetectMachineConfig, Calling.DetectFaxConfig and Calling.DetectDigitConfig, each requiring type from the enum machine|fax|digit; timeout and status_url; the description says detection runs asynchronously up to timeout seconds and results are delivered via the status_url webhook",
-      "tools/openapi/rest.json Calling.DetectMachineConfig params defaults: initial_timeout 4.5, end_silence_timeout 1, machine_voice_threshold 1.25, machine_words_threshold 6, detect_interruptions false, detect_message_end true; DetectFaxConfig tone enum CNG|CED|cng|ced; DetectDigitConfig digits",
-      "tools/openapi/rest.json calling.detect.stop: params required control_id",
-      "sdk rest/namespaces/calling.py:87-91 detect, detect_stop",
-      "npm @signalwire/sdk 2.0.5 client.calling.detect / detectStop send the same bodies",
-      "verified 2026-09-03: recipes/detect-a-machine-or-fax-on-a-call-in-progress/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "place-an-outbound-call"

@@ -9,9 +9,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -22,19 +20,5 @@
     "tap",
     "recording"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "hold",
-    "status": "hold",
-    "lens": "ai",
-    "folds": [
-      "scenario #22",
-      "candidate build from signalwire-demos/sidecar"
-    ],
-    "evidence": [
-      "repo github.com/signalwire-demos/sidecar",
-      "HOLD: inherits the ai_sidecar re-test hold"
-    ]
-  },
   "subcategory": "observe"
 }

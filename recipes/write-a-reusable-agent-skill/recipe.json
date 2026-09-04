@@ -14,24 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "tools",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#32"
-    ],
-    "evidence": [
-      "sdk core/skill_base.py:19",
-      "sdk skills/registry.py:132,350",
-      "demo cabby cabby.py:15 imports GoogleMapsClient from a skill directly",
-      "verified 2026-08-25: recipes/write-a-reusable-agent-skill/verify.py",
-      "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
-    ]
-  }
+  "subcategory": "tools"
 }

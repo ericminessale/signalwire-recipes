@@ -14,27 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "demos",
-  "tier": "next",
-  "subcategory": "tools",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:ai-voice-agent-with-function-calling",
-      "t:ai-assistant-multi-tool",
-      "t:agent-with-tool-calling",
-      "scenario: a silent sentiment-reporting tool (c:classify-sentiment-from-a-transcript; FEATURES Sentiment reporting)"
-    ],
-    "evidence": [
-      "sdk tool_mixin.py:26,175,187",
-      "docs swml/reference/calling/ai/swaig/functions",
-      "demo example",
-      "demo workshop 01 define_tool",
-      "verified 2026-08-25: recipes/give-an-agent-a-tool/verify.py"
-    ]
-  }
+  "subcategory": "tools"
 }

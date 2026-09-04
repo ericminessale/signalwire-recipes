@@ -7,9 +7,7 @@
   "surfaces": [
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "video",
   "products": [
     "video"
@@ -18,18 +16,5 @@
     "call-fabric",
     "video"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "proposed",
-    "lens": "video",
-    "folds": [
-      "launch #11 (browser -> subscriber -> video/chat) split: this is the video half"
-    ],
-    "evidence": [
-      "docs browser-sdk/reference/webrtc-call (81 members)",
-      "NEEDS VERIFICATION: mid-call audio->video upgrade API on a v4 Call"
-    ]
-  },
   "subcategory": "call-control"
 }

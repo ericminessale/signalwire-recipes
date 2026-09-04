@@ -5,9 +5,7 @@
   "summary": "Apply menu rules in code, use a voice for each guest, and push live order events to a browser board.",
   "scenario": "",
   "surfaces": [],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -17,19 +15,5 @@
     "contexts",
     "call-fabric"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "build",
-    "status": "written",
-    "lens": "ai",
-    "folds": [
-      "scenario #18",
-      "candidate from signalwire-demos/holyguacamole (3.x SDK)"
-    ],
-    "evidence": [
-      "repo github.com/signalwire-demos/holyguacamole",
-      "composes: commit-a-transaction-from-a-call, push-events-from-an-agent-to-the-browser, configure-an-agent-per-request, let-a-browser-dial-your-agent-with-no-dashboard-setup - to verify"
-    ]
-  },
   "kind": "build"
 }

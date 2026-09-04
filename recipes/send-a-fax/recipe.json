@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "fax",
   "products": [
     "fax"
@@ -17,22 +15,6 @@
   "capabilities": [
     "fax"
   ],
-  "tier": "launch",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "fax",
-    "folds": [
-      "launch #12 (split from send-and-receive-a-fax)"
-    ],
-    "evidence": [
-      "docs platform/fax",
-      "compat Faxes create",
-      "docs swml/reference/calling/send-fax",
-      "platform-docs: no native /api/fax send endpoint",
-      "verified 2026-08-25: recipes/send-a-fax/verify.py (requests checked against tools/openapi)"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "buy-a-number-and-point-it-at-your-app"

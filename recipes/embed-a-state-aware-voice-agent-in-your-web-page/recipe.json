@@ -41,20 +41,5 @@
     "keep-heavy-state-out-of-global-data",
     "run-an-agent-as-a-cloud-function"
   ],
-  "governed": false,
-  "demo": "none",
-  "provenance": "extract",
-  "tier": "next",
-  "plan": {
-    "kind": "build",
-    "status": "written",
-    "lens": "ai",
-    "folds": [],
-    "evidence": [
-      "site: github.com/ericminessale/harbor-docs (Astro Starlight, src/components/DocsBotWidget.tsx, functions/api/docsbot-config.json.ts)",
-      "agent: SignalWire AI Agent Automated Testing Protocol/agents/docs-bot/agent.py, 4b3967a, not yet in a repository of its own",
-      "composes verified against agent.py on 2026-09-02: search_docs tool over DataSphere (line 808), swml_user_event navigate/scroll_to (1822, 2126), video_idle_file/video_talking_file (800), per-tool fillers (1578...), guests/tokens with allowed_addresses of an external_swml_handlers address (2436), calling.ai_message silent global_data merge (272-324), per-call global_data seeding in on_swml_request (1090-1123), page state held in RAM (500-537), Lambda via Mangum in lambda_handler.py",
-      "the widget dials with the Browser SDK v3 UMD (public/signalwire.js) and bridges user_event to window CustomEvents (DocsBotWidget.tsx 545-637)"
-    ]
-  }
+  "demo": "none"
 }

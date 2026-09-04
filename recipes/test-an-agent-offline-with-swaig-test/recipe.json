@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,21 +15,6 @@
   "capabilities": [
     "testing"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "guide",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [],
-    "evidence": [
-      "sdk cli/test_swaig.py:222 (--dump-swml, --exec, --simulate-serverless)",
-      "features Swaig-test CLI",
-      "demo ginospizza test_flow.sh (131 swaig-test cases)",
-      "demo pathfinder (201 offline tests)",
-      "sdk pyproject.toml console script swaig-test = signalwire.cli.swaig_test_wrapper:main; cli/test_swaig.py --dump-swml --raw, --list-tools, --exec <fn> --<arg> value",
-      "verified 2026-09-02: recipes/test-an-agent-offline-with-swaig-test/verify.py"
-    ]
-  },
   "subcategory": "observe",
   "prerequisites": [
     "give-an-agent-a-tool"

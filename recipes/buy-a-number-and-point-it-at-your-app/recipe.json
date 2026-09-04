@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice",
@@ -19,23 +17,6 @@
     "numbers",
     "call-fabric"
   ],
-  "tier": "launch",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "numbers-identity",
-    "folds": [
-      "t:number-search-and-purchase-api",
-      "t:smart-number-geo-assignment",
-      "t:merge-employee-onboarding"
-    ],
-    "evidence": [
-      "docs apis/rest/phone-numbers/search-available-phone-numbers (areacode, region, starts_with)",
-      "docs apis/rest/phone-numbers (purchase, update, assign phone route)",
-      "sdk rest/namespaces/phone_numbers.py",
-      "verified 2026-08-25: recipes/buy-a-number-and-point-it-at-your-app/verify.py (requests checked against tools/openapi)"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [],
   "related": [

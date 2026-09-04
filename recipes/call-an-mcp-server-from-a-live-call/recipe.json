@@ -14,26 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "extract",
-  "tier": "next",
-  "subcategory": "tools",
-  "plan": {
-    "kind": "recipe",
-    "status": "stub",
-    "lens": "ai",
-    "folds": [
-      "#28",
-      "variant: SDK mcp_gateway skill for stdio servers"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/ai/swaig (mcp_servers)",
-      "sdk ai_config_mixin.py:493 add_mcp_server",
-      "sdk skills/mcp_gateway/skill.py:22",
-      "features External Tools",
-      "demo testbot mcp/gateway_main.py (mcp_gateway skill, separate process)",
-      "NEEDS VERIFICATION 2026-08-25: add_mcp_server() emits ai.SWAIG.mcp_servers, and that key is absent from the SDK's own bundled schema.json (0 occurrences), whose SWAIG object sets unevaluatedProperties:{not:{}}. A document configured this way therefore fails validate_swml() against 3.0.1. The client side is not broken the way enable_mcp_server() is (the config does render), but the recipe cannot be proven offline: the document does not validate and discovery happens on the platform at session start. Confirm against a live agent and a newer schema."
-    ]
-  }
+  "subcategory": "tools"
 }

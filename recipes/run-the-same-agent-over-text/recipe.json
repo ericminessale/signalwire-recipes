@@ -17,27 +17,6 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "text",
-  "provenance": "new",
-  "tier": "next",
-  "subcategory": "other",
-  "plan": {
-    "kind": "hold",
-    "status": "hold",
-    "lens": "messaging",
-    "folds": [
-      "#26",
-      "t:chat-with-ai-assistant",
-      "t:sms-chatbot-with-conversation-memory",
-      "t:omnichannel-ai-receptionist",
-      "web chat is put-an-agent-in-a-web-chat-widget (#27); same API from the browser"
-    ],
-    "evidence": [
-      "docs apis/rest/ai-chat/chat-methods (JSON-RPC, chat scope)",
-      "docs platform/ai/quickstart (Python AI Chat client)",
-      "NEEDS VERIFICATION: the SMS bridge - SWML messaging has no ai method, so the handler must call /api/ai/chat and reply; confirm conversation_id handling across messages",
-      "HOLD 2026-08-25: chat-mode AI kernel is unreleased (Knowledge MCP get_doc(mary): listed under 'Unreleased but functioning' and on the two-quarter roadmap). Do not write against the AI Chat API until it ships."
-    ]
-  }
+  "subcategory": "other"
 }

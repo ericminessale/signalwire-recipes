@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -19,18 +17,5 @@
     "testing",
     "benchmark"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "tool",
-    "status": "proposed",
-    "lens": "ai",
-    "folds": [
-      "reference, not a rebuild: signalwire-demos/testbot"
-    ],
-    "evidence": [
-      "demo testbot catalog.py (107 capabilities / 16 suites; README says 99 - stale)",
-      "demo testbot README: update_global_data -> set_global_data, set_metadata -> set_meta_data, swml_change_step -> change_step, play_background_file -> playback_bg"
-    ]
-  },
   "subcategory": "observe"
 }

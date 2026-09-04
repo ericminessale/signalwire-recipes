@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,20 +15,6 @@
   "capabilities": [
     "migration"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [
-      "t:migrate-from-vapi"
-    ],
-    "evidence": [
-      "sdk livewire/__init__.py: Agent, AgentSession._build_sw_agent, function_tool, AgentServer.rtc_session, run_app runs ctx._agent",
-      "3.0.1 edges: default max_endpointing_delay renders attention_timeout 3000 below the schema minimum 10000; session.say() before the build is dropped when instructions are set",
-      "verified 2026-09-02: recipes/run-livekit-agents-code-on-signalwire/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [
     "route-a-call-to-an-ai-agent"

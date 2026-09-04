@@ -15,33 +15,8 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
-  "tier": "launch",
   "subcategory": "other",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "t:send-sms",
-      "t:send-sms-notifications",
-      "t:sms-delivery-receipts",
-      "variant: MMS via media[]",
-      "t:send-mms-picture-message",
-      "duplicate status callbacks are your handler's problem - idempotency is app-side, stated as such"
-    ],
-    "evidence": [
-      "docs apis/rest/messages/create-message",
-      "docs apis/rest/webhooks/message-status-callback",
-      "sdk rest/namespaces/compat.py messages.create",
-      "sdk relay/client.py:406 send_message",
-      "demo barbiera reminders.py:56-72 RestClient(...).messages.create from a cron script",
-      "resolved: RestClient has no native messages namespace (sdk-surface \u00a78; docs server-sdks/reference/python/rest/client) - use client.compat.messages.create, direct native REST, or RelayClient.send_message; do not imply platform idempotency",
-      "verified 2026-08-25: recipes/send-an-sms/verify.py against sdk 3.0.1"
-    ]
-  },
   "prerequisites": [
     "buy-a-number-and-point-it-at-your-app"
   ],

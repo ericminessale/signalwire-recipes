@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -17,20 +15,6 @@
   "capabilities": [
     "identity"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "numbers-identity",
-    "folds": [],
-    "evidence": [
-      "docs apis/rest/verified-caller-id/create-verified-caller-id",
-      "sdk rest/namespaces/verified_callers.py",
-      "tools/openapi/rest.json POST /api/relay/rest/verified_caller_ids required [number]; PUT .../{id}/verification required [verification_code]; POST .../{id}/verification redial",
-      "sdk rest/namespaces/verified_callers.py create, submit_verification, redial_verification",
-      "verified 2026-09-02: recipes/verify-a-caller-id-for-outbound-calls/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [],
   "related": [

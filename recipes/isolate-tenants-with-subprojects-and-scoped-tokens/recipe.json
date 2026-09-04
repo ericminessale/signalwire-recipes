@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice",
@@ -19,21 +17,6 @@
     "multi-tenant",
     "security"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "numbers-identity",
-    "folds": [
-      "sol gap #7"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/projects: name required; response id, subproject, parent_project_id, signing_key",
-      "tools/openapi/rest.json POST /api/project/tokens: name, permissions required; subproject_id; Project.TokenPermission enum of eleven",
-      "sdk rest/namespaces/project.py: tokens.create; no wrapper for POST /api/projects, sent through RestClient._http",
-      "verified 2026-09-02: recipes/isolate-tenants-with-subprojects-and-scoped-tokens/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "related": [
     "reconcile-webhooks-against-the-logs-api"

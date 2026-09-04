@@ -16,28 +16,8 @@
     "typescript",
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "demos",
-  "tier": "launch",
   "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [
-      "t:webrtc-browser-calling",
-      "demo example"
-    ],
-    "evidence": [
-      "docs browser-sdk/reference/signalwire (dial)",
-      "docs browser-sdk/guides/authentication (SAT, guest)",
-      "docs apis/rest/subscribers/tokens/create-subscriber-token",
-      "demo example web/app.js:95-132 client.dial",
-      "demo sidecar static/app.js",
-      "verified 2026-08-25: recipes/call-from-a-browser/verify.py"
-    ]
-  },
   "prerequisites": [],
   "related": [
     "get-a-webrtc-token-with-restricted-dial-targets"

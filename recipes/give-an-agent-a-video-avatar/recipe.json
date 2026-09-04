@@ -8,9 +8,7 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -19,21 +17,6 @@
   "capabilities": [
     "video"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "demo santa, cinebot, bobbystable, example (avatar files)"
-    ],
-    "evidence": [
-      "schema.json AIParams: video_idle_file, video_listening_file, video_talking_file, each 'Only works for calls that support video.'",
-      "docs swml/reference/calling/ai/params",
-      "sdk core/mixins/ai_config_mixin.py set_params merges into ai.params",
-      "verified 2026-09-02: recipes/give-an-agent-a-video-avatar/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [
     "route-a-call-to-an-ai-agent"

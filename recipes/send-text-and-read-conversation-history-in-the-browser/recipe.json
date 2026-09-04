@@ -7,9 +7,7 @@
   "surfaces": [
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging",
@@ -19,19 +17,5 @@
     "call-fabric",
     "chat"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "proposed",
-    "lens": "messaging",
-    "folds": [
-      "sol round 5: the most important omission"
-    ],
-    "evidence": [
-      "docs browser-sdk/guides/messaging-chat (Address.sendText, history, channels$)",
-      "docs browser-sdk/reference/address",
-      "platform-docs F: conversations are append-only chat+call logs shared across a user's clients"
-    ]
-  },
   "subcategory": "other"
 }

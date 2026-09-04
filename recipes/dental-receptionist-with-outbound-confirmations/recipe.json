@@ -5,9 +5,7 @@
   "summary": "Handle inbound reception calls and place outbound appointment confirmations from one service connected to a practice-management API.",
   "scenario": "",
   "surfaces": [],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents",
@@ -17,19 +15,5 @@
     "outbound",
     "contexts"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "build",
-    "status": "written",
-    "lens": "ai",
-    "folds": [
-      "scenario #14 (reminder caller)",
-      "candidate from signalwire-demos/dental (3.x SDK)"
-    ],
-    "evidence": [
-      "repo github.com/signalwire-demos/dental",
-      "composes: place-an-outbound-ai-call, configure-an-agent-per-request, walk-a-caller-through-ordered-steps - to verify"
-    ]
-  },
   "kind": "build"
 }

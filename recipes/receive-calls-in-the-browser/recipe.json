@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,19 +17,6 @@
     "call-fabric",
     "tokens"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/fabric/resources/subscribers: email required; GET {id}/addresses: name, channels",
-      "tools/openapi/rest.json POST /api/fabric/subscribers/tokens: reference required; subscriber_id, token, refresh_token",
-      "schema.json ConnectDeviceSingle.to lists a Call Fabric Resource address",
-      "verified 2026-09-02: recipes/receive-calls-in-the-browser/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "call-from-a-browser"

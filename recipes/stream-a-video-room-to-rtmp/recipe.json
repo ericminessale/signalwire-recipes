@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "video",
   "products": [
     "video"
@@ -19,21 +17,6 @@
     "streaming",
     "rtmp"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [
-      "split from record-and-stream-a-video-room"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/video/rooms/{id}/streams: url required, RTMP or RTMPS; 201 id, url, stream_type",
-      "tools/openapi/rest.json PUT /api/video/streams/{id}: url required; DELETE 204; GET rooms/{id}/streams",
-      "sdk rest/namespaces/video.py: rooms.create_stream, rooms.list_streams, streams.update, streams.delete",
-      "verified 2026-09-02: recipes/stream-a-video-room-to-rtmp/verify.py"
-    ]
-  },
   "subcategory": "observe",
   "prerequisites": [
     "create-a-video-room-and-join-from-the-browser"

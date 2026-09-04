@@ -15,29 +15,8 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "observe",
-  "provenance": "rewrite",
-  "tier": "launch",
   "subcategory": "observe",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "#20",
-      "#21 (browser caption renderer)",
-      "c:get-a-live-transcript-of-a-call (superseded; two stubs for one claim)",
-      "t:media-stream-live-transcription",
-      "t:ai-conference-note-taker"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/live-transcribe (action.start/stop/summarize, direction, ai_summary)",
-      "docs apis/rest/calls/call-commands (calling.live_transcribe)",
-      "docs apis/rest/webhooks (Transcript status callback)",
-      "verified 2026-08-25: recipes/start-live-transcription/verify.py"
-    ]
-  },
   "prerequisites": [
     "answer-an-inbound-call"
   ],

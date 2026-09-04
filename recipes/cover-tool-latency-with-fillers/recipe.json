@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,24 +15,6 @@
   "capabilities": [
     "tool-calling"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "t:ai-assistant-filler-messages-demo"
-    ],
-    "evidence": [
-      "sdk tool_mixin.py:33 fillers, registry.py:43 wait_file",
-      "docs swml/reference/calling/ai/swaig/functions (fillers, wait_file)",
-      "demo housecall trenton.py:406 wait_file (legacy SDK 1.0.x - re-verify against 3.0.1)",
-      "sdk agent_base.py:905-924 renders wait_file, fillers, wait_file_loops on the function entry",
-      "sdk ai_config_mixin.py:140-146 both filler kinds must be passed or the deprecated `fillers` key renders",
-      "schema.json FunctionFillers is oneOf single-language objects; a two-key dict fails validation (verified 2026-09-01)",
-      "verified 2026-09-01: recipes/cover-tool-latency-with-fillers/verify.py"
-    ]
-  },
   "subcategory": "tools",
   "prerequisites": [
     "give-an-agent-a-tool"

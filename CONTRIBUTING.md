@@ -24,25 +24,18 @@ that ships Python and YAML is one folder with `python/` and `swml/` in it.
 
 ## Add a folder
 
-Two routes. The scaffolder seeds from the planned list, so add your row to
-`docs/enum/inventory.json` first:
+Copy the nearest complete recipe folder, rename it for the mechanism you are
+demonstrating, and replace its metadata, prose, code, and verifier. For
+example:
 
 ```bash
-python scaffold.py           # creates folders for launch rows with no folder
-python scaffold.py --all     # every row, not only the launch set
+cp -R recipes/send-an-sms recipes/your-recipe-name
 ```
 
-It writes `recipe.json`, a README skeleton, `.env.example` and an empty entry
-file per surface. It never deletes and never overwrites prose you have
-written, so it is safe to re-run.
-
-To skip the plan, copy the nearest existing recipe folder and edit it. The
-generator reads `recipe.json` and nothing else, so a hand-made folder is a
-first-class one.
-
-Either way, fill in `summary`, `subcategory` and `products`. Category is
-derived from `products`, so list every product the recipe touches and let the
-category follow.
+The generator reads `recipe.json` and nothing else, so a copied folder is a
+first-class recipe. Fill in `summary`, `subcategory`, and `products`. Category
+is derived from `products`, so list every product the recipe touches and let
+the category follow.
 
 ## The README is the page
 

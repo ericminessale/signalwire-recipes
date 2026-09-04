@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": true,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -18,24 +16,6 @@
     "contexts",
     "governance"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#3 (pattern it teaches: separate personas whose steps each name one tool)",
-      "t:omnichannel-ai-receptionist"
-    ],
-    "evidence": [
-      "sdk contexts.py:820 set_isolated, :192 set_functions per step, :353 swml_change_context",
-      "demo afterhours swml_change_context (emergency vs non-emergency)",
-      "per-persona voice dropped from the claim: languages are agent-level in the SDK",
-      "sdk contexts.py:820 set_isolated renders context.isolated; :265 Step.set_valid_contexts; :192 set_functions",
-      "schema.json Contexts requires a context named default; ContextsPOMObject.isolated resets conversation history to only the system prompt",
-      "verified 2026-09-02: recipes/split-one-number-into-isolated-personas/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "scope-tools-per-step"

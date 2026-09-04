@@ -8,9 +8,7 @@
     "python",
     "swml"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,23 +17,6 @@
     "sip",
     "byoc"
   ],
-  "tier": "launch",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [
-      "launch #9",
-      "t:inbound-sip-routing"
-    ],
-    "evidence": [
-      "docs platform/voice/sip/bring-your-own-carrier",
-      "docs apis/rest/domain-applications/create-domain-application (ip_auth, call_handler)",
-      "docs apis/rest/sip-gateway/create-sip-gateway",
-      "platform-docs: dedicated Domain Applications guide needs verification (link serves the SIP credentials page)",
-      "verified 2026-08-25: recipes/connect-a-pbx-with-a-domain-application/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "transfer-a-call"

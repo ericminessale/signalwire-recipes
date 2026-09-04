@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,22 +15,6 @@
   "capabilities": [
     "security"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [],
-    "evidence": [
-      "sdk agent_base.py:931-936 __token",
-      "sdk web_mixin.py:867-882 enforcement",
-      "sdk security/session_manager.py:92",
-      "sdk security/session_manager.py:55-91 HMAC over call_id:function:expiry:nonce; validate_token checks function, expiry, signature, call_id",
-      "sdk agent_base.py:931-936 __token appended to web_hook_url for secure functions when call_id is known",
-      "sdk web_mixin.py:768 basic auth first; :862-882 token checked only when present",
-      "verified 2026-09-01: recipes/protect-tool-webhooks-with-per-call-tokens/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "give-an-agent-a-tool"

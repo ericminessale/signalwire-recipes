@@ -7,27 +7,12 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
   ],
   "capabilities": [],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [],
-    "evidence": [
-      "sdk agents/bedrock.py: BedrockAgent._render_swml replaces ai with amazon_bedrock, copying prompt (+voice_id, temperature, top_p), SWAIG, params, global_data, post_prompt",
-      "schema.json AmazonBedrock def",
-      "docs swml/reference/calling/amazon-bedrock",
-      "verified 2026-09-02: recipes/run-a-bedrock-voice-agent/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [
     "route-a-call-to-an-ai-agent"

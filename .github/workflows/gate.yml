@@ -45,6 +45,9 @@ jobs:
       - name: Prose, structure and required files
         run: python tools/lint_recipes.py
 
+      - name: Public tree contains no internal project state
+        run: python tools/check_public_tree.py
+
       - name: The generated index is current
         run: python tools/gen_index.py --check
 

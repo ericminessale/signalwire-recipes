@@ -94,11 +94,10 @@ handler with its test client. It asserts the following.
 ## Limitations
 
 You prove the request and the document. Which TwiML verbs and attributes the
-platform runs is the cXML reference's list. `docs/enum/platform-docs.md`
-records the exceptions. `<VirtualAgent>` is deprecated, `<Play>` inside
-`<Gather>` has no `digits`, and `<Start>`, `<Siprec>`, `<Autopilot>`, `<Client>`
-and `<Task>` have no reference pages. Check your handlers' verbs against that
-list before you move.
+platform runs is defined by the public cXML reference. `<VirtualAgent>` is
+deprecated, `<Play>` inside `<Gather>` has no `digits`, and `<Start>`,
+`<Siprec>`, `<Autopilot>`, `<Client>` and `<Task>` have no reference pages.
+Check your handlers' verbs against the reference before you move.
 
 The document here is static. A handler that reads request parameters keeps
 reading the same names; the compat spec documents them under the Calls

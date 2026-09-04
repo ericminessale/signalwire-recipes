@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -17,23 +15,6 @@
   "capabilities": [
     "serverless"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "sol gap #9",
-      "t:ai-phone-tree-builder-from-description"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/fabric/resources/call_flows: title required, relayml the calling SWML document, flow_data optional",
-      "tools/openapi/rest.json POST /api/fabric/resources/{id}/phone_routes: phone_route_id and handler required",
-      "schema.json Prompt (play required, max_digits), Switch (variable, case); prompt_value holds the digits",
-      "sdk rest/namespaces/fabric.py call_flows.create, resources.assign_phone_route",
-      "verified 2026-09-02: recipes/build-an-ivr-without-a-server/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "answer-an-inbound-call"

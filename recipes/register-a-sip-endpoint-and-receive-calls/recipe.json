@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,24 +16,6 @@
     "sip",
     "call-fabric"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [
-      "t:sip-registration",
-      "t:setup-sip-trunk",
-      "t:configure-sip-codecs"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/fabric/resources/subscribers/{fabric_subscriber_id}/sip_endpoints: username, password required; caller_id, send_as, ciphers, codecs, encryption",
-      "tools/openapi/rest.json POST /api/fabric/resources/subscribers: email required; GET {id}/addresses",
-      "sdk rest/namespaces/fabric.py SubscribersResource.create_sip_endpoint",
-      "schema.json ConnectDeviceSingle.to lists a Call Fabric Resource address",
-      "verified 2026-09-02: recipes/register-a-sip-endpoint-and-receive-calls/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "answer-an-inbound-call"

@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,24 +15,6 @@
   "capabilities": [
     "prefabs"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#17 (canonical: survey prefab)",
-      "t:ai-receptionist-with-booking-tools"
-    ],
-    "evidence": [
-      "sdk prefabs/receptionist.py:21",
-      "sdk prefabs/survey.py:23",
-      "sdk prefabs/info_gatherer.py:24",
-      "sdk prefabs/receptionist.py:21 ctor(departments, name, route, greeting, voice); tools collect_caller_info, transfer_call; transfer_call handler emits connect(final=True) with post_process",
-      "sdk prefabs/survey.py:23 ctor(survey_name, questions, ...); tools validate_response, log_response; rating validated against scale",
-      "verified 2026-09-01: recipes/start-from-a-prefab-agent/verify.py"
-    ]
-  },
   "subcategory": "other",
   "related": [
     "give-an-agent-a-tool",

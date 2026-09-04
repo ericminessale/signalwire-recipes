@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -19,22 +17,6 @@
     "rest",
     "sip"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "sip-migration",
-    "folds": [
-      "round 7 gap: live-call control over REST"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/calling/calls description, command table: calling.refer \"Transfer a SIP call via SIP REFER\"",
-      "tools/openapi/rest.json Calling.CallRequest variant calling.refer: params required device; Calling.ReferDevice requires type and params; CallingReferDeviceType enum is exactly [sip]; Calling.ReferSipParams requires to (must start with sip:), with optional from (must start with sip: when provided), username and password; status_url receives refer lifecycle webhooks",
-      "sdk rest/namespaces/calling.py:149-151 refer",
-      "npm @signalwire/sdk 2.0.5 client.calling.refer sends the same body",
-      "verified 2026-09-03: recipes/transfer-a-sip-call-with-refer/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "connect-a-pbx-with-a-domain-application"

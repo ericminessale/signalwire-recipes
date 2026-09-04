@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "talk",
-  "provenance": "new",
   "category": "ai-agents",
   "products": [
     "ai-agents"
@@ -17,27 +15,6 @@
   "capabilities": [
     "contexts"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "ai",
-    "folds": [
-      "#4",
-      "variant: gather_info typed answers without tools",
-      "t:ai-hiring-phone-screen",
-      "t:ai-compliance-quiz-phone",
-      "t:ai-standup-facilitator-phone"
-    ],
-    "evidence": [
-      "sdk contexts.py:596 add_step, :252 set_valid_steps",
-      "sdk contexts.py:329 set_gather_info",
-      "gather_info variant is absent from the bundled schema.json (sdk-surface section 4); the claim does not depend on it",
-      "sdk contexts.py:490-533 Step.to_dict renders step_criteria, functions, valid_steps, end",
-      "sdk contexts.py:1215-1262 ContextBuilder.validate refuses an unknown valid_steps target",
-      "verified 2026-09-01: recipes/walk-a-caller-through-ordered-steps/verify.py"
-    ]
-  },
   "subcategory": "governance",
   "prerequisites": [
     "scope-tools-per-step"

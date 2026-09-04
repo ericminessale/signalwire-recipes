@@ -8,9 +8,7 @@
     "swml",
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "video",
   "products": [
     "video",
@@ -19,21 +17,6 @@
   "capabilities": [
     "video"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [],
-    "evidence": [
-      "docs swml/reference/calling/join-room",
-      "docs compatibility-api/cxml/reference/voice (Connect Room)",
-      "tools/openapi/rest.json POST /api/fabric/resources/conference_rooms required name, enable_room_previews",
-      "schema.json JoinRoom: join_room.name required",
-      "sdk rest/namespaces/fabric.py conference_rooms CRUD",
-      "verified 2026-09-02: recipes/add-a-phone-caller-to-a-video-room/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "create-a-video-room-and-join-from-the-browser"

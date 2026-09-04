@@ -8,9 +8,7 @@
     "python",
     "typescript"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,22 +16,6 @@
   "capabilities": [
     "rest"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "round 7 gap: live-call control over REST (5 of 31 commands covered)"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json Calling.CallRequest variants calling.end (params.reason enum hangup|cancel|busy|noAnswer|decline|error), calling.transfer (params.dest required; SIP URI, phone number, SWML URL or inline SWML), calling.disconnect (no params); each requires command, id, params",
-      "tools/openapi/rest.json POST /api/calling/calls description, command table: calling.end \"Terminate an active call immediately\"; calling.transfer \"Transfer a call to a new destination (SIP URI, phone number, or inline SWML)\"; calling.disconnect \"Disconnect bridged calls without hanging up either leg\"",
-      "sdk rest/namespaces/calling.py:25-29 _execute puts call_id in body.id; :38 end, :41 transfer, :44 disconnect",
-      "verified 2026-09-03: recipes/end-or-transfer-a-live-call-over-rest/verify.py",
-      "npm @signalwire/sdk 2.0.5 (TypeScript peer of the Python Agents SDK): RestClient({project, token, host, fetchImpl}); calling.end/transfer/disconnect send the same POST /api/calling/calls bodies; client.<ns>._http._fetch is the recorder seam"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [
     "place-an-outbound-call"

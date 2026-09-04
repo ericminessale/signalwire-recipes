@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "voice",
   "products": [
     "voice"
@@ -18,26 +16,6 @@
     "identity",
     "numbers"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "numbers-identity",
-    "folds": [
-      "t:cnam-caller-id-lookup-enrichment",
-      "t:number-lookup-fraud-screener",
-      "t:phone-number-lookup",
-      "t:sip-cnam-lookup",
-      "t:bulk-number-validation-cleaner"
-    ],
-    "evidence": [
-      "docs apis/rest/phone-numbers/lookup-phone-number (include=, billable)",
-      "sdk rest/namespaces/lookup.py",
-      "tools/openapi/rest.json GET /api/relay/rest/lookup/phone_number/{e164_number}: include=carrier,cnam (billable); PhoneNumberLookupResponse carrier{lrn,spid,ocn,lata,city,state,jurisdiction,lec,linetype} cnam{caller_id}",
-      "sdk rest/namespaces/lookup.py phone_number(e164, **params)",
-      "verified 2026-09-02: recipes/look-up-a-callers-carrier-and-name/verify.py"
-    ]
-  },
   "subcategory": "other",
   "prerequisites": [],
   "related": [

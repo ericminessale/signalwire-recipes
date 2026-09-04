@@ -14,25 +14,6 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "extract",
-  "tier": "next",
-  "subcategory": "call-control",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "voice",
-    "folds": [
-      "t:texml-voicemail-drop"
-    ],
-    "evidence": [
-      "docs swml/reference/calling/detect-machine (detect_message_end)",
-      "compat Calls MachineDetection/AsyncAmd",
-      "features AMD shipped 2026-06-09",
-      "settled 2026-08-25 (sol, docs swml/reference/calling/detect-machine): detect_result values are lowercase machine, human, fax, unknown, detecting, error.",
-      "verified 2026-08-25: recipes/detect-an-answering-machine/verify.py",
-      "audited 2026-08-25: sol returned ship after three rounds (split one recipe per brief; a five-recipe brief killed codex three times without a verdict)."
-    ]
-  }
+  "subcategory": "call-control"
 }

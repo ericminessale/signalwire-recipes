@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "video",
   "products": [
     "video"
@@ -17,20 +15,6 @@
   "capabilities": [
     "video"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "video",
-    "folds": [],
-    "evidence": [
-      "docs apis/rest/video/video-conferences/create-video-conference (theme colors, record_on_start, enable_chat)",
-      "docs apis/rest/video/conference-tokens/get-conference-token",
-      "tools/openapi/rest.json POST /api/video/conferences required display_name; theme fields light_*/dark_*; GET /api/video/conferences/{id}/conference_tokens -> data[{id, name, token, scopes}]",
-      "sdk rest/namespaces/video.py VideoConferences (CrudResource) create, list_conference_tokens",
-      "verified 2026-09-02: recipes/launch-a-prebuilt-video-conference/verify.py"
-    ]
-  },
   "subcategory": "call-control",
   "prerequisites": [],
   "related": [

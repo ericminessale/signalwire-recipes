@@ -7,9 +7,7 @@
   "surfaces": [
     "python"
   ],
-  "governed": false,
   "demo": "none",
-  "provenance": "new",
   "category": "messaging",
   "products": [
     "messaging"
@@ -18,24 +16,6 @@
     "sticky-sender",
     "numbers"
   ],
-  "tier": "next",
-  "plan": {
-    "kind": "recipe",
-    "status": "verified",
-    "lens": "messaging",
-    "folds": [
-      "sol gap #6",
-      "t:number-warmup-reputation-builder"
-    ],
-    "evidence": [
-      "tools/openapi/rest.json POST /api/relay/rest/number_groups: name required; sticky_sender boolean default false",
-      "tools/openapi/rest.json POST .../number_group_memberships: phone_number_id required",
-      "tools/openapi/compat.json POST Messages: To required; From or MessagingServiceSid",
-      "https://signalwire.com/docs/compatibility-api/rest/messages/create-message (fetched 2026-09-02): MessagingServiceSid is the ID of a number group",
-      "sdk rest/namespaces/number_groups.py create, add_membership; compat.py CompatMessages.create",
-      "verified 2026-09-02: recipes/send-from-a-number-group-with-sticky-sender/verify.py"
-    ]
-  },
   "subcategory": "routing",
   "prerequisites": [
     "send-an-sms"
