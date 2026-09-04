@@ -37,6 +37,9 @@ http = client._http
 FROM = os.getenv("SMS_FROM")
 SIGNING_KEY = os.getenv("SIGNALWIRE_SIGNING_KEY")
 INBOUND_URL = os.getenv("INBOUND_URL")
+# /begin sends billable texts with your credentials, so it is behind a key the
+# server holds and your own systems present as X-Survey-Key
+ADMIN_KEY = os.getenv("SURVEY_ADMIN_KEY")
 
 # where each number's progress lives; swap for your database
 STATE_PATH = Path(os.getenv("SURVEY_STATE_PATH", "survey-state.json"))
@@ -127,6 +130,10 @@ def handle_inbound(message):
     if not record or record["stopped"] or record["step"] >= len(QUESTIONS):
         # not in a survey: nothing is sent and nothing is recorded
         return silence()
+    if record.get("last", {}).get("message_id") == message.get("message_id"):
+        # the webhook was delivered again: same answer, and the state is not
+        # touched, or a repeated YES would land in the comment box
+        return reply(record["last"]["reply"])
 
     key, _, kind = QUESTIONS[record["step"]]
     answer = parse(kind, message.get("body"))
@@ -135,10 +142,10 @@ def handle_inbound(message):
 
     record["answers"][key] = answer
     record["step"] += 1
+    text = DONE if record["step"] == len(QUESTIONS) else QUESTIONS[record["step"]][1]
+    record["last"] = {"message_id": message.get("message_id"), "reply": text}
     _save(state)
-    if record["step"] == len(QUESTIONS):
-        return reply(DONE)
-    return reply(QUESTIONS[record["step"]][1])
+    return reply(text)
 
 
 def signed(headers, url, raw_body, key=None):
@@ -174,6 +181,9 @@ def inbound():
 
 @app.post("/begin")
 def begin_route():
+    """Your systems start a survey here, never the public internet."""
+    if not ADMIN_KEY or request.headers.get("X-Survey-Key") != ADMIN_KEY:
+        abort(403)
     try:
         return jsonify(begin(request.get_json(force=True)["to"]))
     except OptedOut as exc:
@@ -182,7 +192,7 @@ def begin_route():
 
 if __name__ == "__main__":
     for name, value in (("SMS_FROM", FROM), ("SIGNALWIRE_SIGNING_KEY", SIGNING_KEY),
-                        ("INBOUND_URL", INBOUND_URL)):
+                        ("INBOUND_URL", INBOUND_URL), ("SURVEY_ADMIN_KEY", ADMIN_KEY)):
         if not value:
             raise SystemExit(f"{name} is required; see .env.example")
     if len(sys.argv) == 3 and sys.argv[1] == "begin":

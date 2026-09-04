@@ -36,7 +36,9 @@ const recipe = await import("./index.js");
 const [customer = "", other = ""] = process.argv.slice(2);
 const from = process.env["SMS_FROM"] ?? "";
 
-const inbound = (sender: string, body: string) => ({ from: sender, to: from, body });
+let counter = 0;
+const inbound = (sender: string, body: string, id?: string) =>
+  ({ message_id: id ?? `m-${++counter}`, from: sender, to: from, body });
 const textOf = (doc: { sections: { main: unknown[] } }) => {
   const [step] = doc.sections.main as { reply?: { body: string } }[];
   return step ? step.reply?.body ?? null : null;
@@ -53,6 +55,16 @@ for (const [who, body] of [[customer, "great"], [customer, " 4 "], [customer, "Y
 await recipe.begin(other);
 replies.push(textOf(recipe.handleInbound(inbound(other, "STOP"))));
 
+// the same message delivered twice: the second copy answers the same and
+// changes nothing
+const fresh = `${customer}1`;
+await recipe.begin(fresh);
+const once = inbound(fresh, "Yes", "dup-1");
+const first = textOf(recipe.handleInbound(inbound(fresh, "4", "dup-0")));
+const second = textOf(recipe.handleInbound(once));
+const again = textOf(recipe.handleInbound(once));
+const redelivery = { first, second, again };
+
 let refusedBegin = false;
 try {
   await recipe.begin(other);
@@ -67,6 +79,14 @@ const address = server.address();
 const port = typeof address === "object" && address ? address.port : 0;
 const raw = JSON.stringify({ message: inbound(other, "4") });
 const forged = await fetchReal(`http://127.0.0.1:${port}/inbound`, raw, {});
+const beginBody = JSON.stringify({ to: `${customer}2` });
+const sentBefore = sent.length;
+const noKey = await fetchReal(`http://127.0.0.1:${port}/begin`, beginBody, {});
+const wrongKey = await fetchReal(`http://127.0.0.1:${port}/begin`, beginBody,
+                                 { "X-Survey-Key": "nope" });
+const sentAfterRefusals = sent.length - sentBefore;
+const withKey = await fetchReal(`http://127.0.0.1:${port}/begin`, beginBody,
+                                { "X-Survey-Key": process.env["SURVEY_ADMIN_KEY"] ?? "" });
 const sig = createHmac("sha1", process.env["SIGNALWIRE_SIGNING_KEY"] ?? "")
   .update(process.env["INBOUND_URL"] + raw).digest("hex");
 const signedRes = await fetchReal(`http://127.0.0.1:${port}/inbound`, raw,
@@ -77,8 +97,10 @@ const state = JSON.parse(
   (await import("node:fs")).readFileSync(process.env["SURVEY_STATE_PATH"] ?? "", "utf-8"));
 console.log(JSON.stringify({
   sent: sent.filter((c) => c.path === "/api/messaging/messages").slice(0, 1),
-  replies, state, refusedBegin,
+  replies, state, refusedBegin, redelivery,
   signature: { forged: forged.status, signed: signedRes.status },
+  begin: { noKey: noKey.status, wrongKey: wrongKey.status, sentAfterRefusals,
+           withKey: withKey.status, sentWithKey: sent.length - sentBefore },
 }));
 
 // the recorder above replaced fetch; the local server needs a real one

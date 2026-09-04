@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE.parent.parent / "tools"))
 sys.path.insert(0, str(HERE / "python"))
 STATE = pathlib.Path(tempfile.mkdtemp()) / "survey-state.json"
 FROM, KEY, URL = "+15550001111", "sign-me", "https://survey.example.com/inbound"
+ADMIN = "start-surveys"
 os.environ.update({
     "SIGNALWIRE_PROJECT_ID": "proj-1234",
     "SIGNALWIRE_API_TOKEN": "PT-test",
@@ -37,6 +38,7 @@ os.environ.update({
     "SIGNALWIRE_SIGNING_KEY": KEY,
     "INBOUND_URL": URL,
     "SURVEY_STATE_PATH": str(STATE),
+    "SURVEY_ADMIN_KEY": ADMIN,
 })
 
 import verifylib as V  # noqa: E402
@@ -53,9 +55,14 @@ REASK_SCALE = "Please reply with a single number from 1 to 5."
 STOPPED = "You will receive no more messages from Ridgeline Cycles."
 
 
-def inbound(sender, body):
+COUNTER = [0]
+
+
+def inbound(sender, body, message_id=None):
     """The documented inbound-message payload, with every required key."""
-    return {"message": {"message_id": "m-1", "project_id": "proj-1234",
+    COUNTER[0] += 1
+    return {"message": {"message_id": message_id or f"m-{COUNTER[0]}",
+                        "project_id": "proj-1234",
                         "space_id": "sp-1", "direction": "inbound", "type": "sms",
                         "from": sender, "to": FROM, "body": body, "media": [],
                         "segments": 1, "timestamp": "2026-09-04T09:00:00Z"},
@@ -101,9 +108,13 @@ def main():
     assert text_of(recipe.handle_inbound(inbound(CUSTOMER, "Yes")["message"])) == Q3
     assert text_of(recipe.handle_inbound(inbound(CUSTOMER, "Friendly staff")["message"])) == DONE
     state = json.loads(STATE.read_text(encoding="utf-8"))
+    last = state[CUSTOMER].pop("last")
     assert state[CUSTOMER] == {"step": 3, "stopped": False,
                                "answers": {"rating": 4, "recommend": True,
                                            "comment": "Friendly staff"}}, state
+    # the record remembers the message it last acted on, and what it answered
+    assert last == {"message_id": "m-4", "reply": DONE}, last
+    state[CUSTOMER]["last"] = last
 
     # after the last question, a stray text is silence: nothing sent, nothing kept
     doc = recipe.handle_inbound(inbound(CUSTOMER, "hello?")["message"])
@@ -115,6 +126,18 @@ def main():
     doc = recipe.handle_inbound(inbound(OTHER, "4")["message"])
     assert doc["sections"]["main"] == [], doc
     assert OTHER not in json.loads(STATE.read_text(encoding="utf-8"))
+
+    # the same message delivered twice: the second copy gets the same reply and
+    # changes nothing, or a repeated YES would land in the comment box
+    dup = "+14155550777"
+    recipe.begin(dup)
+    assert text_of(recipe.handle_inbound(inbound(dup, "4", "dup-0")["message"])) == Q2
+    once = inbound(dup, "Yes", "dup-1")["message"]
+    assert text_of(recipe.handle_inbound(once)) == Q3
+    before = json.loads(STATE.read_text(encoding="utf-8"))[dup]
+    assert text_of(recipe.handle_inbound(once)) == Q3
+    assert json.loads(STATE.read_text(encoding="utf-8"))[dup] == before
+    assert before["step"] == 2 and before["answers"] == {"rating": 4, "recommend": True}
 
     # STOP ends it, and a stopped number is refused a first question, no request
     rec2 = V.Recorder()
@@ -144,30 +167,52 @@ def main():
         # OTHER had stopped, so even a signed reply gets an empty document
         assert real.get_json()["sections"]["main"] == [], real.get_json()
 
+        # /begin spends money with your credentials, so it wants the server's
+        # key: no key and a wrong key are refused with no request made
+        rec3 = V.Recorder(responses=[{"id": "msg-2"}])
+        recipe.http = rec3
+        target = {"to": "+14155550555"}
+        assert web.post("/begin", json=target).status_code == 403
+        assert web.post("/begin", json=target,
+                        headers={"X-Survey-Key": "nope"}).status_code == 403
+        assert rec3.calls == [], rec3.calls
+        ok = web.post("/begin", json=target, headers={"X-Survey-Key": ADMIN})
+        assert ok.status_code == 200, ok.status_code
+        assert len(rec3.calls) == 1, rec3.calls
+
     # the TypeScript surface runs the same conversation from an empty file
     node = V.node_surface(HERE, CUSTOMER, OTHER, env={
-        "SMS_FROM": FROM, "SIGNALWIRE_SIGNING_KEY": KEY, "INBOUND_URL": URL})
+        "SMS_FROM": FROM, "SIGNALWIRE_SIGNING_KEY": KEY, "INBOUND_URL": URL,
+        "SURVEY_ADMIN_KEY": ADMIN})
     if node is None:
         ts_note = "typescript not run (npm ci in typescript/ first)"
     else:
         assert node["sent"] == [{"method": "POST", "path": MESSAGES,
                                  "body": {"to": CUSTOMER, "from": FROM, "body": Q1}}], node
         assert node["replies"] == [REASK_SCALE, Q2, Q3, DONE, None, None, STOPPED], node
+        ts_last = node["state"][CUSTOMER].pop("last")
         assert node["state"][CUSTOMER] == {"step": 3, "stopped": False,
                                            "answers": {"rating": 4, "recommend": True,
                                                        "comment": "Friendly staff"}}
+        assert ts_last == {"message_id": "m-4", "reply": DONE}, ts_last
         assert node["state"][OTHER]["stopped"] is True
         assert node["refusedBegin"] is True, node
         assert node["signature"] == {"forged": 403, "signed": 200}, node
-        ts_note = ("typescript runs the same seven turns to the same replies and "
-                   "state, refuses the same begin, and gates the same signature")
+        assert node["redelivery"] == {"first": Q2, "second": Q3, "again": Q3}, node
+        assert node["begin"] == {"noKey": 403, "wrongKey": 403, "sentAfterRefusals": 0,
+                                 "withKey": 200, "sentWithKey": 1}, node
+        ts_note = ("typescript runs the same turns to the same replies and state, "
+                   "answers a redelivered message without moving, refuses the same "
+                   "begin, gates the same signature, and refuses /begin without the key")
 
     print(f"ok: begin sends one documented POST {MESSAGES} and records step 0; a "
           f"reload later, four replies advance the survey through re-ask, 4, YES "
           f"and a comment to the closing line, with the answers on disk; a stray "
           f"text and an unknown number get an empty document; STOP marks the "
           f"number and a second begin is refused with no request; the route "
-          f"refuses an unsigned POST with 403 and answers a signed one; {ts_note}")
+          f"refuses an unsigned POST with 403 and answers a signed one; a redelivered "
+          f"message gets the same reply and changes nothing; /begin refuses a missing "
+          f"or wrong key with no request and sends with the right one; {ts_note}")
 
 
 if __name__ == "__main__":

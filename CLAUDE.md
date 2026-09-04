@@ -1829,6 +1829,46 @@ that already owned the play family. Call-command coverage went from 25 of 42 to
   fails every range comparison silently. Where a README shows a command line,
   the verifier passes what that command line passes.
 
+## SMS survey, and a use-case source (2026-09-04)
+
+Eric asked for SMS surveys and 2FA and then the real question: "is there a
+better source we can scrape for product offerings", because he kept finding
+use cases the mechanism-first enumeration had not.
+
+- **`run-an-sms-survey-over-several-messages`** is the first recipe that keeps
+  state across inbound messages. Every inbound text is a fresh webhook, so a
+  survey is a state machine keyed by the sender's number, kept in a file
+  because the server and `begin` are two processes. Both surfaces.
+- **The bundled SWML schema has no messaging verbs.** `reply` fails
+  `validate_swml`, so a messaging document is asserted by shape, as
+  `reply-to-an-inbound-sms` already did. An empty `main` still validates.
+- **A route that spends your money is not a stand-in for your sign-in**
+  (codex, 782e624, and the PubSub token before it). `/begin` had to be public
+  for `/inbound` to be, and it sent billable texts to any `to`. It is behind a
+  server-held key now. Any recipe that exposes an action route beside a
+  webhook route gets the same check.
+- **A webhook can be delivered twice.** The inbound payload's `message_id` is
+  required for a reason; the handler keeps the last id it acted on and answers
+  a redelivery without moving. Codex found the repeated-YES-becomes-the-comment
+  case; the verifier now delivers the same message twice.
+- **MFA has one recipe because the product is three endpoints.**
+  `/mfa/sms`, `/mfa/call`, `/mfa/{id}/verify`, all used and all pinned by
+  `send-an-otp-by-sms-with-voice-fallback`. A "verify a number at signup"
+  recipe would be the same claim in a different scenario, which the taxonomy
+  rule forbids. MFA is one of the six pricing-page product lines, so promotion
+  is not the concern.
+- **Use-case coverage needs a use-case source.** The enumeration was
+  mechanism-first (schema, specs, SDK). Computed against the REST spec's tags,
+  26 of 63 have no recipe touching any path (hosted SWML/cXML scripts and
+  applications, every WhatsApp tag, most SIP and PBX admin, short codes,
+  addresses, phone routes, Dialogflow agents). The company's own list of what
+  it promotes is the six `signalwire.com/use-case/*` pages; the Compatibility
+  API is Twilio-shaped, so Twilio's tutorial catalogue is its use-case
+  catalogue (those pages are JavaScript-rendered and do not fetch). A
+  round-8 list review should walk use cases first and map them onto those
+  tag gaps. The compat tag count undercounts, because recipes reach compat
+  through SDK namespaces rather than literal paths.
+
 ## Open work
 
 - **Review debt cleared (2026-09-02, late).** Codex reviewed every range after

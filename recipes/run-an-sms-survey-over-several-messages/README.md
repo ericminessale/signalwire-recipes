@@ -23,6 +23,11 @@ Four things the handler does that a survey needs.
   happens before any request is made.
 - The webhook checks the platform's signature before it touches state, because
   an unsigned POST could otherwise fill your survey with anything.
+- A webhook delivered twice gets the same reply twice and moves nothing. The
+  record keeps the last `message_id` it acted on, or a repeated YES would land
+  in the comment box.
+- `/begin` sends texts at your expense, so it is behind a key the server holds
+  and your systems present as `X-Survey-Key`. The public internet gets a 403.
 
 The vendored REST spec documents the inbound payload as `{message, vars,
 params}`, where `message` carries `from`, `to` and a `body` that may be null.
@@ -95,7 +100,8 @@ npm start                        # the same two routes
 Point the number's message handler at your public `/inbound` URL, and put that
 exact URL in `INBOUND_URL`: the signature is computed over the URL as
 SignalWire called it. `SMS_FROM` is that number, and
-`SIGNALWIRE_SIGNING_KEY` is the project's signing key.
+`SIGNALWIRE_SIGNING_KEY` is the project's signing key. `SURVEY_ADMIN_KEY` is
+whatever your own systems will send as `X-Survey-Key` when they start a survey.
 
 Survey traffic from a 10DLC number needs a registered campaign; see
 [Register a 10DLC brand and campaign](../register-a-10dlc-brand-and-campaign/).
@@ -119,7 +125,9 @@ recorder, and asserts the following.
 - a text after the last question, and a text from a number not in a survey, each get an empty document and change nothing
 - STOP marks the number, a second `begin` for it raises with no request made
 - the Flask route returns 403 to an unsigned POST and 200 to one signed with the documented HMAC
-- the TypeScript surface runs the same seven turns from an empty file to the same replies and the same state, refuses the same `begin`, and its server gates the same signature
+- the same `message_id` delivered twice gets the same reply and leaves the state exactly as it was
+- `/begin` refuses a missing or wrong `X-Survey-Key` with 403 and no request, and sends with the right one
+- the TypeScript surface runs the same turns from an empty file to the same replies and state, answers a redelivered message without moving, refuses the same `begin`, and its server gates the signature and the key the same way
 
 ## Limitations
 

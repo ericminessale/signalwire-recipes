@@ -33,6 +33,9 @@ const http = (client.calling as unknown as {
 export const FROM = process.env["SMS_FROM"] ?? "";
 export const SIGNING_KEY = process.env["SIGNALWIRE_SIGNING_KEY"] ?? "";
 export const INBOUND_URL = process.env["INBOUND_URL"] ?? "";
+// /begin sends billable texts with your credentials, so it is behind a key the
+// server holds and your own systems present as X-Survey-Key
+export const ADMIN_KEY = process.env["SURVEY_ADMIN_KEY"] ?? "";
 
 // where each number's progress lives; swap for your database
 export const STATE_PATH = process.env["SURVEY_STATE_PATH"] ?? "survey-state.json";
@@ -63,9 +66,12 @@ export const STOPPED = "You will receive no more messages from Ridgeline Cycles.
 
 export type Record_ = {
   step: number; answers: Record<string, unknown>; stopped: boolean;
+  last?: { message_id: string; reply: string };
 };
 type State = Record<string, Record_>;
-export type Message = { from: string; to: string; body: string | null };
+export type Message = {
+  message_id: string; from: string; to: string; body: string | null;
+};
 type Swml = { version: string; sections: { main: unknown[] } };
 
 export class OptedOut extends Error {}
@@ -125,6 +131,11 @@ export function handleInbound(message: Message): Swml {
     // not in a survey: nothing is sent and nothing is recorded
     return silence();
   }
+  if (record.last?.message_id === message.message_id) {
+    // the webhook was delivered again: same answer, and the state is not
+    // touched, or a repeated YES would land in the comment box
+    return reply(record.last.reply);
+  }
 
   const [key, question, kind] = QUESTIONS[record.step];
   const answer = parse(kind, message.body);
@@ -132,8 +143,10 @@ export function handleInbound(message: Message): Swml {
 
   record.answers[key] = answer;
   record.step += 1;
+  const text = record.step === QUESTIONS.length ? DONE : QUESTIONS[record.step][1];
+  record.last = { message_id: message.message_id, reply: text };
   save(state);
-  return reply(record.step === QUESTIONS.length ? DONE : QUESTIONS[record.step][1]);
+  return reply(text);
 }
 
 /** True only when a signature header is present and matches. */
@@ -175,6 +188,10 @@ export function serve(port: number) {
       return send(200, handleInbound(JSON.parse(raw.toString()).message));
     }
     if (req.method === "POST" && req.url === "/begin") {
+      // your systems start a survey here, never the public internet
+      if (!ADMIN_KEY || req.headers["x-survey-key"] !== ADMIN_KEY) {
+        return send(403, { error: "no survey key" });
+      }
       try {
         return send(200, await begin(JSON.parse(raw.toString()).to));
       } catch (error) {
@@ -188,7 +205,7 @@ export function serve(port: number) {
 
 if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, "/"))) {
   for (const [name, value] of Object.entries({ SMS_FROM: FROM, SIGNALWIRE_SIGNING_KEY:
-      SIGNING_KEY, INBOUND_URL })) {
+      SIGNING_KEY, INBOUND_URL, SURVEY_ADMIN_KEY: ADMIN_KEY })) {
     if (!value) throw new Error(`${name} is required; see .env.example`);
   }
   if (process.argv[2] === "begin" && process.argv[3]) {
