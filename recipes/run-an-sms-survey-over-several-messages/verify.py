@@ -108,13 +108,13 @@ def main():
     assert text_of(recipe.handle_inbound(inbound(CUSTOMER, "Yes")["message"])) == Q3
     assert text_of(recipe.handle_inbound(inbound(CUSTOMER, "Friendly staff")["message"])) == DONE
     state = json.loads(STATE.read_text(encoding="utf-8"))
-    last = state[CUSTOMER].pop("last")
+    seen = state[CUSTOMER].pop("seen")
     assert state[CUSTOMER] == {"step": 3, "stopped": False,
                                "answers": {"rating": 4, "recommend": True,
                                            "comment": "Friendly staff"}}, state
-    # the record remembers the message it last acted on, and what it answered
-    assert last == {"message_id": "m-4", "reply": DONE}, last
-    state[CUSTOMER]["last"] = last
+    # the record remembers every message it acted on, and what it answered
+    assert seen == {"m-2": Q2, "m-3": Q3, "m-4": DONE}, seen
+    state[CUSTOMER]["seen"] = seen
 
     # after the last question, a stray text is silence: nothing sent, nothing kept
     doc = recipe.handle_inbound(inbound(CUSTOMER, "hello?")["message"])
@@ -131,13 +131,25 @@ def main():
     # changes nothing, or a repeated YES would land in the comment box
     dup = "+14155550777"
     recipe.begin(dup)
-    assert text_of(recipe.handle_inbound(inbound(dup, "4", "dup-0")["message"])) == Q2
-    once = inbound(dup, "Yes", "dup-1")["message"]
-    assert text_of(recipe.handle_inbound(once)) == Q3
+    rating = inbound(dup, "4", "dup-0")["message"]
+    yes = inbound(dup, "Yes", "dup-1")["message"]
+    assert text_of(recipe.handle_inbound(rating)) == Q2
+    assert text_of(recipe.handle_inbound(yes)) == Q3
     before = json.loads(STATE.read_text(encoding="utf-8"))[dup]
-    assert text_of(recipe.handle_inbound(once)) == Q3
+    assert text_of(recipe.handle_inbound(yes)) == Q3
+    # a late retry of the rating, after the survey moved on: it must not be
+    # parsed at the comment step and stored as the comment
+    assert text_of(recipe.handle_inbound(rating)) == Q2
     assert json.loads(STATE.read_text(encoding="utf-8"))[dup] == before
     assert before["step"] == 2 and before["answers"] == {"rating": 4, "recommend": True}
+    # a retry of the final answer, after the survey is complete, gets DONE again
+    comment = inbound(dup, "Quick service", "dup-2")["message"]
+    assert text_of(recipe.handle_inbound(comment)) == DONE
+    finished = json.loads(STATE.read_text(encoding="utf-8"))[dup]
+    assert text_of(recipe.handle_inbound(comment)) == DONE
+    assert json.loads(STATE.read_text(encoding="utf-8"))[dup] == finished
+    assert finished["answers"]["comment"] == "Quick service"
+    assert set(finished["seen"]) == {"dup-0", "dup-1", "dup-2"}, finished["seen"]
 
     # STOP ends it, and a stopped number is refused a first question, no request
     rec2 = V.Recorder()
@@ -190,15 +202,16 @@ def main():
         assert node["sent"] == [{"method": "POST", "path": MESSAGES,
                                  "body": {"to": CUSTOMER, "from": FROM, "body": Q1}}], node
         assert node["replies"] == [REASK_SCALE, Q2, Q3, DONE, None, None, STOPPED], node
-        ts_last = node["state"][CUSTOMER].pop("last")
+        ts_seen = node["state"][CUSTOMER].pop("seen")
         assert node["state"][CUSTOMER] == {"step": 3, "stopped": False,
                                            "answers": {"rating": 4, "recommend": True,
                                                        "comment": "Friendly staff"}}
-        assert ts_last == {"message_id": "m-4", "reply": DONE}, ts_last
+        assert ts_seen == {"m-2": Q2, "m-3": Q3, "m-4": DONE}, ts_seen
         assert node["state"][OTHER]["stopped"] is True
         assert node["refusedBegin"] is True, node
         assert node["signature"] == {"forged": 403, "signed": 200}, node
-        assert node["redelivery"] == {"first": Q2, "second": Q3, "again": Q3}, node
+        assert node["redelivery"] == {"first": Q2, "second": Q3, "again": Q3,
+                                      "late": Q2, "done": DONE, "doneAgain": DONE}, node
         assert node["begin"] == {"noKey": 403, "wrongKey": 403, "sentAfterRefusals": 0,
                                  "withKey": 200, "sentWithKey": 1}, node
         ts_note = ("typescript runs the same turns to the same replies and state, "
@@ -211,7 +224,8 @@ def main():
           f"text and an unknown number get an empty document; STOP marks the "
           f"number and a second begin is refused with no request; the route "
           f"refuses an unsigned POST with 403 and answers a signed one; a redelivered "
-          f"message gets the same reply and changes nothing; /begin refuses a missing "
+          f"message gets the same reply and changes nothing, a late retry too, and a "
+          f"retried final answer gets the closing line again; /begin refuses a missing "
           f"or wrong key with no request and sends with the right one; {ts_note}")
 
 

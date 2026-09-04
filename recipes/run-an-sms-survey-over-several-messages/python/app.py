@@ -127,13 +127,15 @@ def handle_inbound(message):
         state[sender] = {**(record or {"step": 0, "answers": {}}), "stopped": True}
         _save(state)
         return reply(STOPPED)
+    seen = (record or {}).get("seen", {})
+    if message.get("message_id") in seen:
+        # the webhook was delivered again, maybe late: the answer it got the
+        # first time, and the state is not touched. A retried rating parsed at
+        # the comment step would otherwise be stored as the comment
+        return reply(seen[message["message_id"]])
     if not record or record["stopped"] or record["step"] >= len(QUESTIONS):
         # not in a survey: nothing is sent and nothing is recorded
         return silence()
-    if record.get("last", {}).get("message_id") == message.get("message_id"):
-        # the webhook was delivered again: same answer, and the state is not
-        # touched, or a repeated YES would land in the comment box
-        return reply(record["last"]["reply"])
 
     key, _, kind = QUESTIONS[record["step"]]
     answer = parse(kind, message.get("body"))
@@ -143,7 +145,7 @@ def handle_inbound(message):
     record["answers"][key] = answer
     record["step"] += 1
     text = DONE if record["step"] == len(QUESTIONS) else QUESTIONS[record["step"]][1]
-    record["last"] = {"message_id": message.get("message_id"), "reply": text}
+    record.setdefault("seen", {})[message["message_id"]] = text
     _save(state)
     return reply(text)
 

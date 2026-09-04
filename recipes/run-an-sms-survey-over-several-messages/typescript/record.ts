@@ -59,11 +59,18 @@ replies.push(textOf(recipe.handleInbound(inbound(other, "STOP"))));
 // changes nothing
 const fresh = `${customer}1`;
 await recipe.begin(fresh);
-const once = inbound(fresh, "Yes", "dup-1");
-const first = textOf(recipe.handleInbound(inbound(fresh, "4", "dup-0")));
-const second = textOf(recipe.handleInbound(once));
-const again = textOf(recipe.handleInbound(once));
-const redelivery = { first, second, again };
+const rating = inbound(fresh, "4", "dup-0");
+const yes = inbound(fresh, "Yes", "dup-1");
+const first = textOf(recipe.handleInbound(rating));
+const second = textOf(recipe.handleInbound(yes));
+const again = textOf(recipe.handleInbound(yes));
+// a late retry of the rating, after the survey moved on
+const late = textOf(recipe.handleInbound(rating));
+const comment = inbound(fresh, "Quick service", "dup-2");
+const done = textOf(recipe.handleInbound(comment));
+// a retry of the final answer, after the survey is complete
+const doneAgain = textOf(recipe.handleInbound(comment));
+const redelivery = { first, second, again, late, done, doneAgain };
 
 let refusedBegin = false;
 try {

@@ -66,7 +66,7 @@ export const STOPPED = "You will receive no more messages from Ridgeline Cycles.
 
 export type Record_ = {
   step: number; answers: Record<string, unknown>; stopped: boolean;
-  last?: { message_id: string; reply: string };
+  seen?: Record<string, string>;
 };
 type State = Record<string, Record_>;
 export type Message = {
@@ -127,14 +127,16 @@ export function handleInbound(message: Message): Swml {
     save(state);
     return reply(STOPPED);
   }
+  const seen = record?.seen ?? {};
+  if (message.message_id in seen) {
+    // the webhook was delivered again, maybe late: the answer it got the first
+    // time, and the state is not touched. A retried rating parsed at the
+    // comment step would otherwise be stored as the comment
+    return reply(seen[message.message_id]);
+  }
   if (!record || record.stopped || record.step >= QUESTIONS.length) {
     // not in a survey: nothing is sent and nothing is recorded
     return silence();
-  }
-  if (record.last?.message_id === message.message_id) {
-    // the webhook was delivered again: same answer, and the state is not
-    // touched, or a repeated YES would land in the comment box
-    return reply(record.last.reply);
   }
 
   const [key, question, kind] = QUESTIONS[record.step];
@@ -144,7 +146,7 @@ export function handleInbound(message: Message): Swml {
   record.answers[key] = answer;
   record.step += 1;
   const text = record.step === QUESTIONS.length ? DONE : QUESTIONS[record.step][1];
-  record.last = { message_id: message.message_id, reply: text };
+  (record.seen ??= {})[message.message_id] = text;
   save(state);
   return reply(text);
 }

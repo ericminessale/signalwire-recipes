@@ -1847,10 +1847,13 @@ use cases the mechanism-first enumeration had not.
   for `/inbound` to be, and it sent billable texts to any `to`. It is behind a
   server-held key now. Any recipe that exposes an action route beside a
   webhook route gets the same check.
-- **A webhook can be delivered twice.** The inbound payload's `message_id` is
-  required for a reason; the handler keeps the last id it acted on and answers
-  a redelivery without moving. Codex found the repeated-YES-becomes-the-comment
-  case; the verifier now delivers the same message twice.
+- **A webhook can be delivered twice, and late.** The inbound payload's
+  `message_id` is required for a reason. The handler keeps every id it acted
+  on with the reply it gave, checked before any survey-state guard. Codex found
+  repeated-YES-becomes-the-comment on the first pass and, on the second, that
+  keeping one id let a late retry of the rating be stored as the comment while
+  a retried final answer got silence. One id is not a dedup; the verifier
+  retries an earlier answer late and the final answer after completion.
 - **MFA has one recipe because the product is three endpoints.**
   `/mfa/sms`, `/mfa/call`, `/mfa/{id}/verify`, all used and all pinned by
   `send-an-otp-by-sms-with-voice-fallback`. A "verify a number at signup"
