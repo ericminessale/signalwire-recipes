@@ -4,7 +4,7 @@
 
 Every folder here is self-contained. Clone the repository, open one, and run it.
 
-107 of 132 folders are written and verified. The rest are planned and carry a stub.
+113 of 138 folders are written and verified. The rest are planned and carry a stub.
 
 Each recipe proves one claim about the platform. Its `verify.py` checks that claim
 against the document the platform actually receives, so it runs without an account
@@ -12,8 +12,8 @@ and without a network.
 
 ## Contents
 
-- [AI Agents](#ai-agents) (36)
-- [Voice](#voice) (51)
+- [AI Agents](#ai-agents) (39)
+- [Voice](#voice) (54)
 - [Messaging](#messaging) (10)
 - [MFA](#mfa) (1)
 - [Video](#video) (5)
@@ -58,6 +58,7 @@ Agents that answer, reason, and act on a live call.
 | Recipe | What it shows | Runs as |
 |---|---|---|
 | [Ground a voice AI agent in your documents](ground-an-agent-in-your-docs/) | Connect a voice AI agent to your documents so it retrieves relevant content before answering. | Python |
+| [Remember a returning caller across calls](remember-a-returning-caller-across-calls/) | Have the platform save a summary when a call ends and hand it back when the same number calls again, so the agent picks up where it left off. | Python, TypeScript |
 
 ### Monitoring
 
@@ -71,6 +72,7 @@ Agents that answer, reason, and act on a live call.
 
 | Recipe | What it shows | Runs as |
 |---|---|---|
+| [Give an AI agent a SIP address](give-an-ai-agent-a-sip-address/) | Create a SIP address that rings a hosted AI agent, so a SIP phone or PBX can reach it without a phone number in between. | Python, TypeScript |
 | [Route a call to an AI agent](route-a-call-to-an-ai-agent/) | Point a phone number at an agent and let it answer. | Python |
 
 ### Tools & integrations
@@ -79,6 +81,7 @@ Agents that answer, reason, and act on a live call.
 |---|---|---|
 | [Commit a transaction from a call](commit-a-transaction-from-a-call/) | Use an allow-list to validate the caller's confirmation before one transaction tool commits the request. | Python |
 | [Cover AI agent tool latency with fillers](cover-tool-latency-with-fillers/) | Play localized filler phrases or a hosted wait file while a slow AI agent tool finishes. | Python |
+| [Create a hosted voice AI agent with one REST call](create-a-hosted-voice-ai-agent-with-one-rest-call/) | Turn the agent definition you would serve yourself into a resource SignalWire hosts, with one POST, then put a phone number on it with one more. | Python, TypeScript |
 | [Extract structured data after a call](extract-structured-data-after-a-call/) | Get typed fields out of a finished conversation instead of parsing a transcript. | Python |
 | [Give a voice AI agent a tool](give-an-agent-a-tool/) | Let the model call your function, and decide what it gets back. | Python |
 | [Let a browser dial your agent with no dashboard setup](let-a-browser-dial-your-agent-with-no-dashboard-setup/) | Create a dialable voice AI endpoint and a restricted guest token over REST, without configuring either in the dashboard. | Python |
@@ -171,8 +174,11 @@ Call control, routing, recording, conferencing, SIP, and calling from the browse
 | [Build an IVR without a server](build-an-ivr-without-a-server/) | Create and assign a serverless IVR call flow through REST, without hosting a webhook server. | Python |
 | [Collect speech input and branch on it](collect-speech-input-and-branch/) | Ask an open question, recognise the answer, and take a different path for each. | Python, Markup |
 | [Dial destinations in order or all at once, with a failure path](try-destinations-in-order/) | Dial destinations sequentially or simultaneously, then run a failure branch if no connection succeeds. | Markup, Python |
+| [Forward calls to a phone and keep the caller's number](forward-calls-to-a-phone-and-keep-the-callers-number/) | Forward every call on a number to a phone, and show that phone the original caller's number instead of your own. | Python, TypeScript |
 | [Offer a callback instead of a hold](offer-a-callback-instead-of-a-hold/) | Collect the caller's number and context, end the held call, then call them back with that context. | Python |
 | [Queue a call until an agent is free](queue-a-call-until-an-agent-is-free/) | Callers wait in a named queue with hold audio and are bridged in order as agents connect to it. | Markup, Python |
+| [Reject callers on a blocklist before answering](reject-callers-on-a-blocklist-before-answering/) | Read the caller's number when SignalWire fetches your call document, and decline a listed number before the call is answered while everyone else is connected. | Python, TypeScript |
+| [Relay calls and texts through a proxy number](relay-calls-and-texts-through-a-proxy-number/) | Pair two people on one number of yours so calls and texts between them are relayed with your number showing, and neither ever sees the other's. | Python, TypeScript |
 | [Route SIP calls to AI agents by username](route-sip-calls-to-agents-by-username/) | Map SIP usernames on one domain to different AI agents and return the selected agent's call flow. | Python |
 | [Route calls by dialed number or time](route-calls-by-dialed-number-or-time/) | Read the dialed number and local time from each inbound webhook, then return the matching call flow. | Python |
 

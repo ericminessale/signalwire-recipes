@@ -57,3 +57,7 @@ recipes/*/typescript/dist/
 
 # the SMS survey recipe: per-number progress, a local stand-in for your table
 survey-state.json
+
+# the proxy-number recipe: pairings, a local stand-in for your table
+proxy-sessions.json
+caller-memory.json

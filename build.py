@@ -144,6 +144,8 @@ h1,h2,h3{font-family:var(--head);font-weight:600;letter-spacing:-.04em;
   gap:34px;}
 .sw-foot-brand p{max-width:25ch;margin:20px 0 0;color:var(--fg-muted);font-size:13px;line-height:1.7;}
 .sw-cert{display:block;margin-top:16px;color:var(--fg-subtle);font-size:11px;}
+/* the chrome's footer badge is 3.86:1 at 12px; lift it to AA */
+.fr-foot__badge{color:var(--fg-muted);}
 .sw-foot-col h2{font-family:var(--head);font-size:13px;font-weight:600;letter-spacing:0;}
 .sw-foot-col nav{display:grid;gap:9px;margin-top:16px;}
 .sw-foot-col a{color:var(--fg-muted);font-size:12px;line-height:1.45;}
@@ -713,7 +715,7 @@ summary.cat-h:focus-visible{outline:2px solid var(--fuchsia);outline-offset:3px;
   transition:background 130ms ease,border-color 130ms ease;}
 .fplay-icon{position:relative;display:block;width:7px;height:10px;}
 .fplay-icon::before,.fplay-icon::after{content:"";position:absolute;top:0;
-  width:2px;height:10px;border-radius:1px;background:currentColor;}
+  width:2px;height:10px;border-radius:999px;background:currentColor;}
 .fplay-icon::before{left:0;}
 .fplay-icon::after{right:0;}
 .fplay.is-paused .fplay-icon::before{left:0;width:8px;border-radius:0;
