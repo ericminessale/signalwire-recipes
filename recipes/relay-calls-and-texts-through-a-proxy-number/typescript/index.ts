@@ -46,7 +46,8 @@ export function pair(a: string, b: string, proxy = PROXY): string[] {
   for (const participant of [a, b]) {
     const old = sessions[key(proxy, participant)];
     delete sessions[key(proxy, participant)];
-    if (old && sessions[key(proxy, old)] === participant) {
+    const back = old ? sessions[key(proxy, old)] ?? "" : "";
+    if (old && key(proxy, back) === key(proxy, participant)) {
       delete sessions[key(proxy, old)];
     }
   }

@@ -43,7 +43,8 @@ import verifylib as V  # noqa: E402
 
 AUTH = {"Authorization": "Basic " + base64.b64encode(f"{USER}:{PASSWORD}".encode()).decode()}
 ALICE, BOB, STRANGER = "+14155550123", "+13105550199", "+12125550100"
-CAROL = "+16465550177"
+CAROL, DAVE = "+16465550177", "+17185550142"
+ALICE_SPELLED = "+1 (415) 555-0123"   # the same participant, as a form might send it
 TEXT = "Running ten minutes late."
 NOT_ACTIVE = "This number is not active for your call."
 
@@ -128,6 +129,15 @@ def main():
     assert V.verb_names(call(BOB)) == ["answer", "play", "hangup"]
     assert text(BOB)["sections"]["main"] == []
     assert len(json.loads(SESSIONS.read_text(encoding="utf-8"))) == 2
+    # the same number spelled differently is the same participant, so Carol's
+    # route back goes too
+    assert web.post("/pair", json={"a": ALICE_SPELLED, "b": DAVE},
+                    headers={"X-Proxy-Key": KEY}).status_code == 200
+    recipe = importlib.reload(recipe)
+    web = recipe.app.test_client()
+    assert V.first(call(ALICE), "connect") == {"to": DAVE, "from": PROXY}
+    assert V.verb_names(call(CAROL)) == ["answer", "play", "hangup"]
+    assert len(json.loads(SESSIONS.read_text(encoding="utf-8"))) == 2
 
     # the schema says what the two fields mean
     defs = V.swml_schema()["$defs"]
@@ -159,7 +169,7 @@ def main():
     assert web.post("/call", json=inbound_call(ALICE)).status_code == 401
     assert web.post("/message", json=inbound_text(ALICE, TEXT)).status_code == 401
 
-    node = V.node_surface(HERE, ALICE, BOB, STRANGER, TEXT, CAROL,
+    node = V.node_surface(HERE, ALICE, BOB, STRANGER, TEXT, CAROL, ALICE_SPELLED, DAVE,
                           env={"SWML_BASIC_AUTH_USER": USER, "SWML_BASIC_AUTH_PASSWORD": PASSWORD,
                                "PROXY_NUMBER": PROXY, "PROXY_ADMIN_KEY": KEY})
     if node is None:
@@ -182,6 +192,8 @@ def main():
         assert V.first(repaired["carol"], "connect") == {"to": ALICE, "from": PROXY}
         assert V.verb_names(repaired["bob"]) == ["answer", "play", "hangup"]
         assert repaired["bobText"]["sections"]["main"] == []
+        assert V.first(node["respelled"]["alice"], "connect") == {"to": DAVE, "from": PROXY}
+        assert V.verb_names(node["respelled"]["carol"]) == ["answer", "play", "hangup"]
         ts_note = ("typescript pairs behind the same key, renders the same six documents, "
                    "and returns the same 401s")
 

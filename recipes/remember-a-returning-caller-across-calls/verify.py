@@ -23,6 +23,7 @@ import os
 import pathlib
 import sys
 import tempfile
+import urllib.parse
 
 HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE.parent.parent / "tools"))
@@ -122,9 +123,12 @@ def main():
                     "conversation_id": DANA_ID}).status_code == 401
 
     # the TypeScript surface renders the same params and answers the same posts
+    # a password with a literal % must survive the URL: the platform's client
+    # decodes the URL before it builds Basic auth
+    ts_password = "pw%41-x"
     node = V.node_surface(HERE, DANA, LEE, DANA_SUMMARY,
                           env={"SWML_BASIC_AUTH_USER": USER,
-                               "SWML_BASIC_AUTH_PASSWORD": PASSWORD})
+                               "SWML_BASIC_AUTH_PASSWORD": ts_password})
     if node is None:
         ts_note = "typescript not run (npm ci in typescript/ first)"
     else:
@@ -132,7 +136,10 @@ def main():
         assert node["params"]["conversation_id"] == DANA_ID, node["params"]
         assert node["otherId"] == LEE_ID, node
         assert node["postPromptUrl"].rstrip("/").endswith("/post_prompt"), node
-        assert f"//{USER}:{PASSWORD}@" in node["postPromptUrl"], node["postPromptUrl"]
+        parts = urllib.parse.urlsplit(node["postPromptUrl"])
+        assert (urllib.parse.unquote(parts.username or ""),
+                urllib.parse.unquote(parts.password or "")) == (USER, ts_password), parts
+        assert "%2541" in node["postPromptUrl"], node["postPromptUrl"]
         assert "conversation_id" not in node["anonParams"], node["anonParams"]
         assert node["saved"] == {"success": True}, node
         assert node["fetched"] == {"conversation_summary": DANA_SUMMARY}, node

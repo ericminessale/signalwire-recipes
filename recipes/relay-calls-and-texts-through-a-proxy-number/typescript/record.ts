@@ -11,7 +11,8 @@ import { join } from "node:path";
 
 process.env["SESSIONS_PATH"] = join(mkdtempSync(join(tmpdir(), "proxy-")), "sessions.json");
 const recipe = await import("./index.js");
-const [alice = "", bob = "", stranger = "", text = "", carol = ""] = process.argv.slice(2);
+const [alice = "", bob = "", stranger = "", text = "", carol = "", aliceSpelled = "",
+       dave = ""] = process.argv.slice(2);
 const proxy = process.env["PROXY_NUMBER"] ?? "";
 const user = process.env["SWML_BASIC_AUTH_USER"] ?? "";
 const password = process.env["SWML_BASIC_AUTH_PASSWORD"] ?? "";
@@ -81,5 +82,12 @@ const repaired = {
   bob: (await post("/call", inboundCall(bob), A)).json,
   bobText: (await post("/message", inboundText(bob), A)).json,
 };
+// the same number spelled differently is the same participant
+await post("/pair", { a: aliceSpelled, b: dave }, { "X-Proxy-Key": adminKey });
+const respelled = {
+  alice: (await post("/call", inboundCall(alice), A)).json,
+  carol: (await post("/call", inboundCall(carol), A)).json,
+};
 server.close();
-console.log(JSON.stringify({ pair: pairRes, call, text: textDocs, unauthorized, repaired }));
+console.log(JSON.stringify({ pair: pairRes, call, text: textDocs, unauthorized, repaired,
+                             respelled }));

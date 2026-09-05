@@ -31,12 +31,16 @@ export const POST_PROMPT_URL = process.env["POST_PROMPT_URL"]
 const AUTH_USER = process.env["SWML_BASIC_AUTH_USER"] ?? "";
 const AUTH_PASSWORD = process.env["SWML_BASIC_AUTH_PASSWORD"] ?? "";
 
-/** The platform gets only the URL, so the credentials travel inside it. */
+/**
+ * The platform gets only the URL, so the credentials travel inside it. They
+ * are percent-encoded first: a literal % in a password would otherwise be read
+ * as an escape by the client that decodes the URL before building Basic auth.
+ */
 export function withCredentials(url: string) {
   const u = new URL(url);
   if (!u.username) {
-    u.username = AUTH_USER;
-    u.password = AUTH_PASSWORD;
+    u.username = encodeURIComponent(AUTH_USER);
+    u.password = encodeURIComponent(AUTH_PASSWORD);
   }
   return u.toString();
 }

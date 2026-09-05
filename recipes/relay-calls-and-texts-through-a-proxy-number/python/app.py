@@ -75,7 +75,8 @@ def pair(a, b, proxy=PROXY):
     # route back, or the old partner could still reach them
     for participant in (a, b):
         old = sessions.pop(_key(proxy, participant), None)
-        if old and sessions.get(_key(proxy, old)) == participant:
+        back = sessions.get(_key(proxy, old), "") if old else ""
+        if old and _key(proxy, back) == _key(proxy, participant):
             del sessions[_key(proxy, old)]
     sessions[_key(proxy, a)] = b
     sessions[_key(proxy, b)] = a
