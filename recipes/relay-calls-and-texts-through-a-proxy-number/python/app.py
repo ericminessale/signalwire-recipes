@@ -71,6 +71,12 @@ def _save(sessions):
 def pair(a, b, proxy=PROXY):
     """On this proxy, A reaches B and B reaches A. Returns the two keys written."""
     sessions = _load()
+    # a participant is in one pairing at a time: drop the old partner's
+    # route back, or the old partner could still reach them
+    for participant in (a, b):
+        old = sessions.pop(_key(proxy, participant), None)
+        if old and sessions.get(_key(proxy, old)) == participant:
+            del sessions[_key(proxy, old)]
     sessions[_key(proxy, a)] = b
     sessions[_key(proxy, b)] = a
     _save(sessions)

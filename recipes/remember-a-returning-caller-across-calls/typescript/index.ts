@@ -28,9 +28,28 @@ export const MEMORY_PATH = process.env["MEMORY_PATH"] ?? "caller-memory.json";
 export const POST_PROMPT_URL = process.env["POST_PROMPT_URL"]
   ?? "http://localhost:3001/post_prompt";
 
-/** One conversation per caller. Digits only, so the id is URL and JSON safe. */
-export const conversationId = (number: string | undefined) =>
-  "caller-" + (number ?? "").replace(/\D/g, "") || "caller-unknown";
+const AUTH_USER = process.env["SWML_BASIC_AUTH_USER"] ?? "";
+const AUTH_PASSWORD = process.env["SWML_BASIC_AUTH_PASSWORD"] ?? "";
+
+/** The platform gets only the URL, so the credentials travel inside it. */
+export function withCredentials(url: string) {
+  const u = new URL(url);
+  if (!u.username) {
+    u.username = AUTH_USER;
+    u.password = AUTH_PASSWORD;
+  }
+  return u.toString();
+}
+
+/**
+ * One conversation per caller, keyed on the digits of the number. A caller
+ * with no digits (anonymous, or a SIP URI with none) gets undefined, so no
+ * memory is kept rather than one memory shared by every such caller.
+ */
+export function conversationId(number: string | undefined) {
+  const digits = (number ?? "").replace(/\D/g, "");
+  return digits ? `caller-${digits}` : undefined;
+}
 
 type Memory = Record<string, string>;
 const load = (): Memory =>
@@ -53,14 +72,13 @@ export class FrontDesk extends AgentBase {
     // save_conversation needs; the summary it asks for is what gets kept
     this.setPostPrompt("Summarise the call in two sentences, including anything "
                        + "the caller asked you to remember.");
-    this.setPostPromptUrl(POST_PROMPT_URL);
+    this.setPostPromptUrl(withCredentials(POST_PROMPT_URL));
     // the SWML request body carries the call, and call.from is the caller
     this.setDynamicConfigCallback((_query, body, _headers, agent) => {
-      const caller = ((body as { call?: { from?: string } }).call ?? {}).from;
-      if (caller) {
-        agent.setParams({
-          save_conversation: true, conversation_id: conversationId(caller),
-        });
+      const call = (body as { call?: { from?: string } }).call ?? {};
+      const cid = conversationId(call.from);
+      if (cid) {
+        agent.setParams({ save_conversation: true, conversation_id: cid });
       }
     });
   }
@@ -99,9 +117,8 @@ function readBody(req: IncomingMessage): Promise<string> {
 
 /** The post-prompt handler, behind the same basic auth the agent uses. */
 export function servePostPrompt(port: number) {
-  const user = process.env["SWML_BASIC_AUTH_USER"] ?? "";
-  const password = process.env["SWML_BASIC_AUTH_PASSWORD"] ?? "";
-  const expected = "Basic " + Buffer.from(`${user}:${password}`).toString("base64");
+  const user = AUTH_USER;
+  const expected = "Basic " + Buffer.from(`${user}:${AUTH_PASSWORD}`).toString("base64");
   return createServer(async (req, res) => {
     const raw = await readBody(req);
     if (!user || req.headers.authorization !== expected) {

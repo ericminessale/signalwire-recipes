@@ -41,6 +41,15 @@ function save(sessions: Sessions) {
 /** On this proxy, A reaches B and B reaches A. Returns the two keys written. */
 export function pair(a: string, b: string, proxy = PROXY): string[] {
   const sessions = load();
+  // a participant is in one pairing at a time: drop the old partner's
+  // route back, or the old partner could still reach them
+  for (const participant of [a, b]) {
+    const old = sessions[key(proxy, participant)];
+    delete sessions[key(proxy, participant)];
+    if (old && sessions[key(proxy, old)] === participant) {
+      delete sessions[key(proxy, old)];
+    }
+  }
   sessions[key(proxy, a)] = b;
   sessions[key(proxy, b)] = a;
   save(sessions);

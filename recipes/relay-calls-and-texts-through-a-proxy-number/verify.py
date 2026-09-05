@@ -43,6 +43,7 @@ import verifylib as V  # noqa: E402
 
 AUTH = {"Authorization": "Basic " + base64.b64encode(f"{USER}:{PASSWORD}".encode()).decode()}
 ALICE, BOB, STRANGER = "+14155550123", "+13105550199", "+12125550100"
+CAROL = "+16465550177"
 TEXT = "Running ten minutes late."
 NOT_ACTIVE = "This number is not active for your call."
 
@@ -116,6 +117,18 @@ def main():
     # a stranger's text is an empty document
     assert text(STRANGER)["sections"]["main"] == []
 
+    # a participant is in one pairing at a time: re-pairing Alice with Carol
+    # removes Bob's route back to her, so Bob is a stranger now
+    assert web.post("/pair", json={"a": ALICE, "b": CAROL},
+                    headers={"X-Proxy-Key": KEY}).status_code == 200
+    recipe = importlib.reload(recipe)
+    web = recipe.app.test_client()
+    assert V.first(call(ALICE), "connect") == {"to": CAROL, "from": PROXY}
+    assert V.first(call(CAROL), "connect") == {"to": ALICE, "from": PROXY}
+    assert V.verb_names(call(BOB)) == ["answer", "play", "hangup"]
+    assert text(BOB)["sections"]["main"] == []
+    assert len(json.loads(SESSIONS.read_text(encoding="utf-8"))) == 2
+
     # the schema says what the two fields mean
     defs = V.swml_schema()["$defs"]
     assert defs["ConnectDeviceSingle"]["properties"]["from"]["description"] == \
@@ -146,7 +159,7 @@ def main():
     assert web.post("/call", json=inbound_call(ALICE)).status_code == 401
     assert web.post("/message", json=inbound_text(ALICE, TEXT)).status_code == 401
 
-    node = V.node_surface(HERE, ALICE, BOB, STRANGER, TEXT,
+    node = V.node_surface(HERE, ALICE, BOB, STRANGER, TEXT, CAROL,
                           env={"SWML_BASIC_AUTH_USER": USER, "SWML_BASIC_AUTH_PASSWORD": PASSWORD,
                                "PROXY_NUMBER": PROXY, "PROXY_ADMIN_KEY": KEY})
     if node is None:
@@ -164,6 +177,11 @@ def main():
         assert V.verb_names(node["call"]["stranger"]) == ["answer", "play", "hangup"]
         assert node["text"]["stranger"]["sections"]["main"] == []
         assert node["unauthorized"] == {"call": 401, "message": 401}, node
+        repaired = node["repaired"]
+        assert V.first(repaired["alice"], "connect") == {"to": CAROL, "from": PROXY}
+        assert V.first(repaired["carol"], "connect") == {"to": ALICE, "from": PROXY}
+        assert V.verb_names(repaired["bob"]) == ["answer", "play", "hangup"]
+        assert repaired["bobText"]["sections"]["main"] == []
         ts_note = ("typescript pairs behind the same key, renders the same six documents, "
                    "and returns the same 401s")
 
@@ -172,7 +190,8 @@ def main():
           f"the number is not active and is hung up on; a text from either party is "
           f"send_sms to the other from {PROXY} and a stranger's text is an empty "
           f"document; every document validates and both webhooks refuse an "
-          f"unauthenticated POST; {ts_note}")
+          f"unauthenticated POST; re-pairing Alice with Carol leaves Bob a stranger; "
+          f"{ts_note}")
 
 
 if __name__ == "__main__":

@@ -111,9 +111,14 @@ inbound webhooks and asserts the following.
 - every document validates, and the schema's descriptions of `connect.from` and `send_sms.from_number` are what the README quotes
 - both webhook payloads carry every field the spec requires, and the spec requires `from` and `to` on each
 - both webhook routes refuse an unauthenticated POST with 401
+- re-pairing Alice with Carol removes Bob's route back to her: Bob's next call hears the not-active line and his text sends nothing
 - the TypeScript surface, on a real port, pairs behind the same key, renders the same six documents, and returns the same 401s
 
 ## Limitations
+
+A participant is in one pairing at a time on a given proxy. Pairing A with C
+removes B's route back to A, or B could keep reaching A while A's replies went
+to C. Two pairings for one person need two proxy numbers.
 
 The verifier proves the documents, not the display. Whether a phone shows the
 proxy number depends on the carriers between the platform and that phone.

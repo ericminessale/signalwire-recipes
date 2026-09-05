@@ -11,7 +11,7 @@ import { join } from "node:path";
 
 process.env["SESSIONS_PATH"] = join(mkdtempSync(join(tmpdir(), "proxy-")), "sessions.json");
 const recipe = await import("./index.js");
-const [alice = "", bob = "", stranger = "", text = ""] = process.argv.slice(2);
+const [alice = "", bob = "", stranger = "", text = "", carol = ""] = process.argv.slice(2);
 const proxy = process.env["PROXY_NUMBER"] ?? "";
 const user = process.env["SWML_BASIC_AUTH_USER"] ?? "";
 const password = process.env["SWML_BASIC_AUTH_PASSWORD"] ?? "";
@@ -73,5 +73,13 @@ const unauthorized = {
   call: (await post("/call", inboundCall(alice), {})).status,
   message: (await post("/message", inboundText(alice), {})).status,
 };
+// re-pairing Alice with Carol removes Bob's route back to her
+await post("/pair", { a: alice, b: carol }, { "X-Proxy-Key": adminKey });
+const repaired = {
+  alice: (await post("/call", inboundCall(alice), A)).json,
+  carol: (await post("/call", inboundCall(carol), A)).json,
+  bob: (await post("/call", inboundCall(bob), A)).json,
+  bobText: (await post("/message", inboundText(bob), A)).json,
+};
 server.close();
-console.log(JSON.stringify({ pair: pairRes, call, text: textDocs, unauthorized }));
+console.log(JSON.stringify({ pair: pairRes, call, text: textDocs, unauthorized, repaired }));

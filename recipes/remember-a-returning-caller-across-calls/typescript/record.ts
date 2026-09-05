@@ -38,6 +38,7 @@ async function render(from: string) {
 }
 const ai = await render(dana);
 const ai2 = await render(lee);
+const ai4 = await render("anonymous");
 
 // the handler on a real port, exactly as the platform would reach it
 const server = recipe.servePostPrompt(0);
@@ -72,6 +73,7 @@ server.close();
 
 console.log(JSON.stringify({
   params: ai["params"], otherId: (ai2["params"] as Record<string, unknown>)["conversation_id"],
-  postPromptUrl: ai["post_prompt_url"], saved: saved.json, fetched: fetched.json,
+  postPromptUrl: ai["post_prompt_url"], anonParams: ai4["params"] ?? {},
+  saved: saved.json, fetched: fetched.json,
   unknown: unknown.json, unauthorized: unauthorized.status,
 }));

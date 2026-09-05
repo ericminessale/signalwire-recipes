@@ -86,8 +86,11 @@ cp ../.env.example .env
 POST_PROMPT_URL=https://your-host/post_prompt npm start
 ```
 
+The code adds the basic auth credentials from `.env` to that URL. The platform
+gets only the URL, and the handler checks them.
+
 Point a number at `https://your-host/front-desk/` behind the basic auth in
-`.env`. Call it, say something worth remembering, hang up, and call again from
+`.env`. Call it, say something worth remembering, hang up. Call again from
 the same number.
 
 ## Verify it
@@ -109,6 +112,11 @@ following.
 - the TypeScript surface renders the same two params per caller, points `post_prompt_url` at its own handler, and that handler saves, answers the fetch, returns `{}` for an unknown id, and refuses a request without credentials
 
 ## Limitations
+
+A caller whose number carries no digits, an anonymous call or a SIP URI
+without any, gets no conversation id. Nothing is saved or fetched for them.
+One memory shared by every anonymous caller would hand one caller's summary to
+the next.
 
 The verifier proves the document and the two POSTs, not what the model does
 with the summary on the next call. That is the prompt's job, and the *Memory*

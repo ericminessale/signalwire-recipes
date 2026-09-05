@@ -31,8 +31,13 @@ MEMORY_PATH = Path(os.getenv("MEMORY_PATH", "caller-memory.json"))
 
 
 def conversation_id(number):
-    """One conversation per caller. Digits only, so the id is URL and JSON safe."""
-    return "caller-" + re.sub(r"\D", "", number or "") or "caller-unknown"
+    """One conversation per caller, keyed on the digits of the number.
+
+    A caller with no digits (anonymous, or a SIP URI with none) gets None, so
+    no memory is kept rather than one memory shared by every such caller.
+    """
+    digits = re.sub(r"\D", "", number or "")
+    return "caller-" + digits if digits else None
 
 
 def _load():
@@ -52,10 +57,9 @@ def configure(query_params, body_params, headers, agent):
 
     The SWML request body carries the call, and `call.from` is the caller.
     """
-    caller = (body_params.get("call") or {}).get("from")
-    if caller:
-        agent.set_params({"save_conversation": True,
-                          "conversation_id": conversation_id(caller)})
+    cid = conversation_id((body_params.get("call") or {}).get("from"))
+    if cid:
+        agent.set_params({"save_conversation": True, "conversation_id": cid})
 
 
 class FrontDesk(AgentBase):

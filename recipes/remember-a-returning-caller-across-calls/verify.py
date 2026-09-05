@@ -74,6 +74,8 @@ def main():
     assert ai["params"]["conversation_id"] == DANA_ID, ai["params"]
     assert ai["post_prompt"]["text"].startswith("Summarise the call"), ai["post_prompt"]
     assert ai["post_prompt_url"].split("?")[0].rstrip("/").endswith("/front-desk/post_prompt"), ai
+    # the platform gets only the URL, so the credentials travel inside it
+    assert f"//{USER}:{PASSWORD}@" in ai["post_prompt_url"], ai["post_prompt_url"]
     assert [s["title"] for s in ai["prompt"]["pom"]] == ["Role", "Memory"], ai["prompt"]
 
     # a different caller gets a different conversation id
@@ -84,6 +86,13 @@ def main():
     plain = web.post("/front-desk/", json={"call": {}}, headers=AUTH).json()
     (ai3,) = [s["ai"] for s in plain["sections"]["main"] if "ai" in s]
     assert "conversation_id" not in ai3.get("params", {}), ai3.get("params")
+    # a caller with no digits gets no memory, rather than one every such caller shares
+    for anonymous in ("anonymous", "Anonymous", "sip:private@example.com"):
+        assert recipe.conversation_id(anonymous) is None, anonymous
+    anon = web.post("/front-desk/", json=swml_request("anonymous"), headers=AUTH).json()
+    (ai4,) = [s["ai"] for s in anon["sections"]["main"] if "ai" in s]
+    assert "conversation_id" not in ai4.get("params", {}), ai4.get("params")
+    assert "save_conversation" not in ai4.get("params", {}), ai4.get("params")
 
     # end of call: the platform posts the summary, and it lands in the file
     for cid, text in ((DANA_ID, DANA_SUMMARY), (LEE_ID, LEE_SUMMARY)):
@@ -123,6 +132,8 @@ def main():
         assert node["params"]["conversation_id"] == DANA_ID, node["params"]
         assert node["otherId"] == LEE_ID, node
         assert node["postPromptUrl"].rstrip("/").endswith("/post_prompt"), node
+        assert f"//{USER}:{PASSWORD}@" in node["postPromptUrl"], node["postPromptUrl"]
+        assert "conversation_id" not in node["anonParams"], node["anonParams"]
         assert node["saved"] == {"success": True}, node
         assert node["fetched"] == {"conversation_summary": DANA_SUMMARY}, node
         assert node["unknown"] == {}, node
@@ -135,7 +146,9 @@ def main():
           f"conversation_id {DANA_ID}, a second caller gets {LEE_ID}, and no caller "
           f"gets none; post_conversation stores the summary, and after a reload "
           f"fetch_conversation returns it as conversation_summary, an unknown id gets "
-          f"an empty object, and an unauthenticated fetch is a 401; {ts_note}")
+          f"an empty object, and an unauthenticated fetch is a 401; a caller with no "
+          f"digits gets no conversation id, and the post_prompt_url carries the "
+          f"credentials; {ts_note}")
 
 
 if __name__ == "__main__":
